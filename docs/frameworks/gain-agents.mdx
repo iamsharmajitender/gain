@@ -1,0 +1,240 @@
+---
+title: G.A.I.N Agents
+sidebar_label: G.A.I.N Agents
+hide_title: true
+---
+
+import Details from '@theme/Details';
+
+<div className="gain-doc-header">
+  <h1 className="gain-doc-title">G.A.I.N Agents</h1>
+  <div className="gain-doc-subtitle">
+    How to build governed agents in enterprise environments: grounded, adaptive, intelligent, native
+    principles applied to agentic workflows.
+  </div>
+</div>
+
+## Design for Governed Autonomy
+
+<div className="gain-section-lead">
+  Agents are not autonomous by default. They earn autonomy through policy boundaries, observable
+  execution, and structured feedback. G.A.I.N Agents treat the model as a planner inside a workflow:
+  intelligence proposes, policy permits, and platform infrastructure executes.
+</div>
+
+## Agent workflow
+
+<div className="gain-section-lead">
+  Agents are <strong>workflows with intelligence</strong>: not free-running loops. An orchestrator
+  drives the flow; policy gates every tool call; state persists across steps so workflows survive
+  retries and handoffs.
+</div>
+
+<div className="gain-llm-flow">
+  <div className="gain-llm-flow__diagram gain-llm-flow__diagram--wide">
+    <div className="gain-llm-flow__track gain-llm-flow__track--6">
+      <div className="gain-llm-flow__step gain-llm-flow__step--product">
+        <span className="gain-llm-flow__step-title">User intent</span>
+        <span className="gain-llm-flow__step-role">Goal · task</span>
+      </div>
+
+      <span className="gain-llm-flow__arrow" aria-hidden="true">→</span>
+
+      <div className="gain-llm-flow__step gain-llm-flow__step--context">
+        <span className="gain-llm-flow__step-title">Orchestrator</span>
+        <span className="gain-llm-flow__step-role">Plan · coordinate</span>
+      </div>
+
+      <span className="gain-llm-flow__arrow" aria-hidden="true">→</span>
+
+      <div className="gain-llm-flow__step gain-llm-flow__step--guard">
+        <span className="gain-llm-flow__step-title">Policy gate</span>
+        <span className="gain-llm-flow__step-role">Allow · deny · escalate</span>
+      </div>
+
+      <span className="gain-llm-flow__arrow" aria-hidden="true">→</span>
+
+      <div className="gain-llm-flow__step gain-llm-flow__step--retrieval">
+        <span className="gain-llm-flow__step-title">Tool execution</span>
+        <span className="gain-llm-flow__step-role">APIs · side effects</span>
+      </div>
+
+      <span className="gain-llm-flow__arrow" aria-hidden="true">→</span>
+
+      <div className="gain-llm-flow__step gain-llm-flow__step--store">
+        <span className="gain-llm-flow__step-title">State store</span>
+        <span className="gain-llm-flow__step-role">Context · retries</span>
+      </div>
+
+      <span className="gain-llm-flow__arrow" aria-hidden="true">→</span>
+
+      <div className="gain-llm-flow__step gain-llm-flow__step--product">
+        <span className="gain-llm-flow__step-title">Output</span>
+        <span className="gain-llm-flow__step-role">Result · handoff</span>
+      </div>
+    </div>
+
+    <div className="gain-llm-flow__branch gain-llm-flow__branch--6">
+      <div className="gain-llm-flow__branch-cell" aria-hidden="true"></div>
+      <div className="gain-llm-flow__branch-cell" aria-hidden="true"></div>
+      <div className="gain-llm-flow__branch-cell" aria-hidden="true"></div>
+      <div className="gain-llm-flow__branch-cell" aria-hidden="true"></div>
+      <div className="gain-llm-flow__branch-cell" aria-hidden="true"></div>
+      <div className="gain-llm-flow__branch-cell" aria-hidden="true"></div>
+      <div className="gain-llm-flow__feedback">
+        <span className="gain-llm-flow__feedback-connector" aria-hidden="true">↗</span>
+        <span className="gain-llm-flow__feedback-card">Observability · feedback</span>
+      </div>
+      <div className="gain-llm-flow__branch-cell" aria-hidden="true"></div>
+      <div className="gain-llm-flow__branch-cell" aria-hidden="true"></div>
+      <div className="gain-llm-flow__branch-cell" aria-hidden="true"></div>
+      <div className="gain-llm-flow__branch-cell" aria-hidden="true"></div>
+    </div>
+
+    <div className="gain-llm-flow__example">
+      <span className="gain-llm-flow__example-label">Example: booking agent</span>
+      <div className="gain-llm-flow__example-pipeline">
+        <span>Search</span>
+        <span className="gain-llm-flow__example-arrow" aria-hidden="true">›</span>
+        <span>Validate</span>
+        <span className="gain-llm-flow__example-arrow" aria-hidden="true">›</span>
+        <span>Reserve</span>
+        <span className="gain-llm-flow__example-arrow" aria-hidden="true">›</span>
+        <span>Notify</span>
+      </div>
+      <span className="gain-llm-flow__example-desc">
+        Each step is a tool call behind a policy gate; state carries the reservation context between steps.
+      </span>
+    </div>
+
+    <div className="gain-llm-flow__footer">
+      <div className="gain-llm-flow__callout gain-llm-flow__callout--gate">
+        <span className="gain-llm-flow__callout-icon" aria-hidden="true">⛨</span>
+        <span><strong>Policy gates every tool</strong>: the orchestrator plans; policy permits before anything executes</span>
+      </div>
+      <div className="gain-llm-flow__callout gain-llm-flow__callout--principle">
+        <span className="gain-llm-flow__callout-icon" aria-hidden="true">↻</span>
+        <span><strong>Workflows persist state</strong>: durable context survives retries, handoffs, and restarts</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+Ask before you ship: **How do agents recover?** **How do workflows persist?** **How do tools chain?**
+If any answer is "the model figures it out," the design is not production-ready.
+
+## G.A.I.N applied to agentic systems
+
+<Details className="gain-accordion" summary="G · Grounded: What controls the agent?">
+  Grounded agent systems enforce authority at every action: the agent plans, but it does not own
+  permission to act. Policy, approvals, and audit are deterministic; reasoning is not.
+
+  **Components**
+
+  - Policy engine: allow/deny rules before every tool invocation
+  - Tool permissions: scoped access per agent profile, tenant, and use case
+  - Human approvals: four-eyes and escalation for high-risk or irreversible actions
+  - Guardrails: input/output filters, rate limits, and action boundaries
+  - Audit logs: tamper-evident record of every plan, tool call, and decision
+
+  **Example:** Agent can retrieve account details but cannot authorize transfers.
+
+  **Design questions**
+
+  - Can the agent call this tool?
+  - Can it approve this action?
+  - Does it need escalation?
+
+  **Principle:** Agents do not own authority.
+</Details>
+
+<Details className="gain-accordion" summary="A · Adaptive: Recovery, persistence, and learning">
+  Adaptive agent systems survive failure and improve from execution. Workflows persist state, retry
+  safely, and feed observability data back into planning quality and policy tuning.
+
+  **Components**
+
+  - Orchestrator: coordinates multi-step flows with explicit handoffs and timeouts
+  - Event bus: async tool results, notifications, and cross-service coordination
+  - State store: durable workflow context across steps, retries, and sessions
+  - Retry logic: idempotent replays, compensating actions, and dead-letter handling
+  - Feedback loops: task success rates, policy violations, and human corrections
+
+  **Design questions**
+
+  - How do agents recover from a failed tool call?
+  - How do workflows persist across restarts?
+  - What triggers a rollback or human handoff?
+
+  **Principle:** Resilient agents are designed to fail safely and learn from it.
+</Details>
+
+<Details className="gain-accordion" summary="I · Intelligent: What reasoning is delegated?">
+  Intelligent agent systems delegate ambiguity to the model and certainty to code. The LLM plans the
+  next step; deterministic systems validate, execute, and record the outcome.
+
+  **Components**
+
+  - Planning: decompose goals into ordered tool calls and decision points
+  - Tool selection: choose the right API or capability from a governed registry
+  - Multi-step reasoning: iterate plan → act → observe until the task completes or policy blocks
+  - Summarization: condense tool outputs into structured state for the next step
+
+  **Example:** LLM plans the next tool call; the platform executes it only after policy clears.
+
+  **Design questions**
+
+  - What should the model decide?
+  - What should be deterministic?
+
+  **Principle:** Intelligence plans, systems execute.
+</Details>
+
+<Details className="gain-accordion" summary="N · Native: Platform resilience">
+  Native agent systems run on infrastructure built for concurrent, long-running, observable
+  workflows. Scale, latency, and reliability are platform concerns, not agent-prompt concerns.
+
+  **Components**
+
+  - Kubernetes: elastic compute for agent runtimes and tool sidecars
+  - APIs and queues: async execution, backpressure, and decoupled tool chains
+  - Observability stack: distributed traces, spans per tool call, and SLO dashboards
+  - Rate limits and quotas: per-tenant concurrency, token budgets, and cost controls
+
+  **Design questions**
+
+  - How does the agent runtime scale under load?
+  - How is latency managed across multi-step workflows?
+
+  **Principle:** Agents need platform resilience.
+</Details>
+
+## Key patterns
+
+<Details className="gain-accordion" summary="ReAct loop">
+  Reason and act in structured cycles: the agent plans, selects tools, observes results, and
+  iterates until the task is complete or a policy boundary is reached.
+</Details>
+
+<Details className="gain-accordion" summary="Tool registry">
+  Register tools with typed schemas, permission scopes, and audit trails. A governed tool registry
+  prevents agents from executing unbounded or untraceable actions.
+</Details>
+
+<Details className="gain-accordion" summary="Policy gates">
+  Enforce business rules, compliance constraints, and authorization checks before every agent action.
+  Policy gates are the difference between a demo and a production agent.
+</Details>
+
+<Details className="gain-accordion" summary="Agent memory">
+  Separate working memory, episodic history, and long-term knowledge stores. Memory architecture
+  determines whether agents maintain context or repeat mistakes.
+</Details>
+
+<Details className="gain-accordion" summary="Multi-agent coordination">
+  Orchestrate specialized agents with clear handoff protocols and shared state contracts.
+  Multi-agent systems require explicit coordination: implicit coordination fails at scale.
+</Details>
+
+For component-level diagrams, see [Blueprints → Agent Flow Model](/blueprints/agent-flow-model). For
+implementation steps, see [Playbooks → Agentic Systems Design](/playbooks/agentic-systems-design).

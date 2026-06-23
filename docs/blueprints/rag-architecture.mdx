@@ -1,0 +1,73 @@
+---
+title: RAG Architecture
+sidebar_label: RAG Architecture
+hide_title: true
+
+---
+
+import Details from '@theme/Details';
+
+<div className="gain-doc-header">
+  <h1 className="gain-doc-title">RAG Architecture</h1>
+  <div className="gain-doc-subtitle">Reference architecture for indexing, retrieval, reranking, and generation layers.</div>
+</div>
+
+## RAG System Layers
+
+<div className="gain-section-lead">
+  A production RAG system is four distinct layers: indexing, retrieval, reranking, and generation: each with its own scaling characteristics, failure modes, and optimization levers.
+</div>
+
+<div className="gain-two-col">
+  <div>
+    <ul className="gain-checklist">
+      <li>Document ingestion</li>
+      <li>Vector indexing</li>
+      <li>Hybrid retrieval</li>
+      <li>Cross-encoder reranking</li>
+      <li>Grounded generation</li>
+    </ul>
+  </div>
+  <div className="gain-diagram-wrap">
+
+```mermaid
+flowchart TD
+  Docs["Documents"] --> Index["Indexing Layer"]
+  Index --> VectorDB["Vector Store"]
+  Query["User Query"] --> Retrieve["Retrieval Layer"]
+  VectorDB --> Retrieve
+  Retrieve --> Rerank["Reranking Layer"]
+  Rerank --> Generate["Generation Layer"]
+  Generate --> Answer["Grounded Answer"]
+
+  classDef source fill:#dbeafe,stroke:#93c5fd,color:#1e293b
+  classDef index fill:#ede9fe,stroke:#c4b5fd,color:#1e293b
+  classDef retrieve fill:#ffedd5,stroke:#fdba74,color:#1e293b
+  classDef output fill:#dcfce7,stroke:#86efac,color:#1e293b
+
+  class Docs,Query source
+  class Index,VectorDB index
+  class Retrieve,Rerank,Generate retrieve
+  class Answer output
+```
+
+  </div>
+</div>
+
+## Key Patterns
+
+<Details className="gain-accordion" summary="Indexing Layer">
+  Chunk, embed, and store documents with metadata preservation. Index design determines the ceiling on retrieval quality: no reranker can fix a bad index.
+</Details>
+
+<Details className="gain-accordion" summary="Retrieval Layer">
+  Combine dense vector search with sparse keyword matching for hybrid retrieval. Pure semantic search misses exact matches; pure keyword search misses paraphrases.
+</Details>
+
+<Details className="gain-accordion" summary="Reranking Layer">
+  Apply cross-encoder models to reorder retrieved candidates by relevance. Reranking is typically the highest-ROI quality improvement in a RAG pipeline.
+</Details>
+
+<Details className="gain-accordion" summary="Generation Layer">
+  Pass reranked context to the LLM with structured prompts and output validation. Generation quality depends entirely on retrieval quality upstream.
+</Details>

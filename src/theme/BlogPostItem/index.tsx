@@ -1,0 +1,76 @@
+import React, {type ReactNode} from 'react';
+import clsx from 'clsx';
+import Link from '@docusaurus/Link';
+import {useBlogPost} from '@docusaurus/plugin-content-blog/client';
+import BlogPostItemContainer from '@theme/BlogPostItem/Container';
+import BlogPostItemHeader from '@theme/BlogPostItem/Header';
+import BlogPostItemContent from '@theme/BlogPostItem/Content';
+import BlogPostItemFooter from '@theme/BlogPostItem/Footer';
+import type {Props} from '@theme/BlogPostItem';
+import {findTypeTag, TYPE_TAG_LABELS} from '@site/src/data/insightTags';
+
+function formatInsightDate(date: Date | string): string {
+  return new Date(date)
+    .toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+      timeZone: 'UTC',
+    })
+    .toUpperCase();
+}
+
+function BlogPostItemListView({className}: Pick<Props, 'className'>): ReactNode {
+  const {metadata, assets} = useBlogPost();
+  const {title, description, permalink, date, tags} = metadata;
+  const imageUrl = assets.image;
+  const typeTag = findTypeTag(tags);
+  const typeLabel = typeTag ? TYPE_TAG_LABELS[typeTag] : null;
+
+  return (
+    <BlogPostItemContainer className={clsx('gain-insight-card', className)}>
+      <Link to={permalink} className="gain-insight-card__link">
+        <div className="gain-insight-card__thumb">
+          {typeLabel && (
+            <span
+              className={clsx('gain-insight-card__type', `gain-insight-card__type--${typeTag}`)}>
+              {typeLabel}
+            </span>
+          )}
+          {imageUrl ? (
+            <img src={imageUrl} alt="" loading="lazy" />
+          ) : (
+            <div className="gain-insight-card__thumb-placeholder" aria-hidden />
+          )}
+        </div>
+        <div className="gain-insight-card__body">
+          <h2 className="gain-insight-card__title">{title}</h2>
+          {description && (
+            <p className="gain-insight-card__desc">{description}</p>
+          )}
+          <time
+            className="gain-insight-card__date"
+            dateTime={new Date(date).toISOString()}>
+            {formatInsightDate(date)}
+          </time>
+        </div>
+      </Link>
+    </BlogPostItemContainer>
+  );
+}
+
+export default function BlogPostItem({children, className}: Props): ReactNode {
+  const {isBlogPostPage} = useBlogPost();
+
+  if (!isBlogPostPage) {
+    return <BlogPostItemListView className={className} />;
+  }
+
+  return (
+    <BlogPostItemContainer className={className}>
+      <BlogPostItemHeader />
+      <BlogPostItemContent>{children}</BlogPostItemContent>
+      <BlogPostItemFooter />
+    </BlogPostItemContainer>
+  );
+}

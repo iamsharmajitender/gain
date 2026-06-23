@@ -1,0 +1,206 @@
+---
+title: G.A.I.N LLM
+sidebar_label: G.A.I.N LLM
+hide_title: true
+---
+
+import Details from '@theme/Details';
+
+<div className="gain-doc-header">
+  <h1 className="gain-doc-title">G.A.I.N LLM</h1>
+  <div className="gain-doc-subtitle">
+    How to design enterprise-safe LLM applications: grounded, adaptive, intelligent, native principles
+    applied to production model integration.
+  </div>
+</div>
+
+## Design for Enterprise-Safe LLMs
+
+<div className="gain-section-lead">
+  An LLM in production is a frozen function wrapped in architecture: not a chatbot endpoint. G.A.I.N
+  LLM treats the model as one component in a governed system: bounded by policy, validated before it
+  reaches business logic, and operated on platform infrastructure built to scale and control cost.
+</div>
+
+## Request flow
+
+<div className="gain-section-lead">
+  LLMs should <strong>augment</strong> systems, not replace them. The model sits inside a pipeline; never as the only gate between a user and a business outcome.
+</div>
+
+<div className="gain-llm-flow">
+  <div className="gain-llm-flow__diagram">
+    <div className="gain-llm-flow__track">
+      <div className="gain-llm-flow__step gain-llm-flow__step--product">
+        <span className="gain-llm-flow__step-title">Application</span>
+        <span className="gain-llm-flow__step-role">User · UX</span>
+      </div>
+
+      <span className="gain-llm-flow__arrow" aria-hidden="true">→</span>
+
+      <div className="gain-llm-flow__step gain-llm-flow__step--context">
+        <span className="gain-llm-flow__step-title">Context Builder</span>
+        <span className="gain-llm-flow__step-role">Prompt · retrieval</span>
+      </div>
+
+      <span className="gain-llm-flow__arrow" aria-hidden="true">→</span>
+
+      <div className="gain-llm-flow__step gain-llm-flow__step--model">
+        <span className="gain-llm-flow__step-title">LLM</span>
+        <span className="gain-llm-flow__step-role">Inference</span>
+      </div>
+
+      <span className="gain-llm-flow__arrow" aria-hidden="true">→</span>
+
+      <div className="gain-llm-flow__step gain-llm-flow__step--guard">
+        <span className="gain-llm-flow__step-title">Validator</span>
+        <span className="gain-llm-flow__step-role">Schema · policy · grounding</span>
+      </div>
+
+      <span className="gain-llm-flow__arrow" aria-hidden="true">→</span>
+
+      <div className="gain-llm-flow__step gain-llm-flow__step--product">
+        <span className="gain-llm-flow__step-title">Business System</span>
+        <span className="gain-llm-flow__step-role">Outcome · workflow</span>
+      </div>
+    </div>
+
+    <div className="gain-llm-flow__branch">
+      <div className="gain-llm-flow__branch-cell" aria-hidden="true"></div>
+      <div className="gain-llm-flow__branch-cell" aria-hidden="true"></div>
+      <div className="gain-llm-flow__branch-cell" aria-hidden="true"></div>
+      <div className="gain-llm-flow__branch-cell" aria-hidden="true"></div>
+      <div className="gain-llm-flow__branch-cell" aria-hidden="true"></div>
+      <div className="gain-llm-flow__branch-cell" aria-hidden="true"></div>
+      <div className="gain-llm-flow__feedback">
+        <span className="gain-llm-flow__feedback-connector" aria-hidden="true">↗</span>
+        <span className="gain-llm-flow__feedback-card">Evaluation · feedback</span>
+      </div>
+      <div className="gain-llm-flow__branch-cell" aria-hidden="true"></div>
+      <div className="gain-llm-flow__branch-cell" aria-hidden="true"></div>
+    </div>
+
+    <div className="gain-llm-flow__footer">
+      <div className="gain-llm-flow__callout gain-llm-flow__callout--gate">
+        <span className="gain-llm-flow__callout-icon" aria-hidden="true">⛨</span>
+        <span><strong>Validation gate</strong>: deterministic check before anything reaches business logic</span>
+      </div>
+      <div className="gain-llm-flow__callout gain-llm-flow__callout--principle">
+        <span className="gain-llm-flow__callout-icon" aria-hidden="true">↻</span>
+        <span><strong>Model augments</strong>: the LLM is one step in the pipeline, not the only gate to an outcome</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+Ask before you ship: **Is the LLM on the critical path?** **Where does validation happen?** If the
+answer to the first is yes and the second is unclear, the design is not ready for production.
+
+## G.A.I.N applied to LLM systems
+
+<Details className="gain-accordion" summary="G · Grounded: Controls around model behavior">
+  Grounded LLM systems enforce operational boundaries around what a model can see, generate, and
+  expose. Governance is not a compliance checkbox. It is how enterprise trust is earned.
+
+  **Components**
+
+  - Prompt policies: versioned contracts for system and user prompts
+  - Input redaction: strip or mask PII and sensitive data before inference
+  - Output filters: block policy violations, hallucinated facts, and unsafe content
+  - Risk scoring: classify requests and responses by sensitivity and exposure
+
+  **Design questions**
+
+  - What can be generated?
+  - What must be blocked?
+
+  **Principle:** Model freedom needs operational boundaries.
+</Details>
+
+<Details className="gain-accordion" summary="A · Adaptive: Learning from production">
+  Adaptive LLM systems improve from real usage: not from hope. Validation, evaluation, and feedback
+  loops close the gap between demo quality and production reliability.
+
+  **Components**
+
+  - Output validators: schema checks, grounding verification, business-rule gates
+  - Quality evaluation: golden datasets, regression runs, human review queues
+  - Feedback capture: thumbs, corrections, escalation signals tied to traces
+  - Prompt and model tuning: A/B tests and version rollouts driven by eval data
+
+  **Design questions**
+
+  - How do we know when quality degrades?
+  - What triggers a rollback or human handoff?
+
+  **Principle:** Production feedback is the only benchmark that matters.
+</Details>
+
+<Details className="gain-accordion" summary="I · Intelligent: Core model capabilities">
+  Intelligent LLM systems apply model capabilities where ambiguity exists: and deterministic logic
+  everywhere else. Not every problem needs a probabilistic answer.
+
+  **Components**
+
+  - Reasoning: multi-step inference for complex queries
+  - Classification: intent detection, routing, sentiment, risk tiering
+  - Summarization: condense documents and conversations with citation
+  - Tool planning: structured selection of APIs and enterprise tools
+
+  **Design questions**
+
+  - Which tasks are probabilistic?
+  - Which need deterministic support alongside the model?
+
+  **Principle:** Use intelligence where ambiguity exists; use code where certainty is required.
+</Details>
+
+<Details className="gain-accordion" summary="N · Native: Platform and infrastructure">
+  Native LLM systems are built for scale from day one. Gateways, GPU pools, caching, and cost controls
+  are not optimizations. They are architecture.
+
+  **Components**
+
+  - Model gateways: single entrypoint, provider abstraction, auth and quotas
+  - GPU infrastructure: inference clusters, autoscaling, residency zones
+  - Response caching: semantic and exact-match caches for latency and cost
+  - Rate limits and cost controls: per-tenant budgets, token accounting, spend alerts
+
+  **Design questions**
+
+  - How do we scale under load?
+  - How do we control spend without throttling the business?
+
+  **Principle:** LLM systems are infrastructure-heavy systems.
+</Details>
+
+## Key patterns
+
+<Details className="gain-accordion" summary="Prompt contracts">
+  Define prompts with structured inputs, output schemas, and failure modes. Prompts are API
+  interfaces: version them, test them, and treat changes as breaking changes.
+</Details>
+
+<Details className="gain-accordion" summary="Fine-tuning">
+  Adapt base models to domain-specific tasks with curated datasets and evaluation benchmarks.
+  Fine-tuning delivers the highest ROI when retrieval and prompting have reached their limits.
+</Details>
+
+<Details className="gain-accordion" summary="RAG integration">
+  Combine LLM generation with retrieved context for grounded responses. See
+  [G.A.I.N RAG](/frameworks/gain-rag) for retrieval patterns and
+  [LLM Gateway](/blueprints/llm-gateway) for the component blueprint.
+</Details>
+
+<Details className="gain-accordion" summary="Caching">
+  Cache semantically similar requests to reduce latency and cost. Balance hit rates against response
+  freshness: stale cached answers erode trust faster than slow ones.
+</Details>
+
+<Details className="gain-accordion" summary="Fallback strategies">
+  Route to alternative models, cached responses, or human escalation when primary inference fails.
+  Fallback architecture prevents a single model outage from becoming a business outage.
+</Details>
+
+For component-level diagrams and gateway design, see [Blueprints → LLM Gateway](/blueprints/llm-gateway).
+For implementation steps, see [Playbooks → LLM Integration Guide](/playbooks/llm-integration-guide).

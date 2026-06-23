@@ -1,0 +1,229 @@
+---
+title: G.A.I.N Evaluation
+sidebar_label: G.A.I.N Evaluation
+hide_title: true
+---
+
+import Details from '@theme/Details';
+
+<div className="gain-doc-header">
+  <h1 className="gain-doc-title">G.A.I.N Evaluation</h1>
+  <div className="gain-doc-subtitle">
+    How to validate enterprise AI systems: grounded, adaptive, intelligent, native principles
+    applied to quality gates, scoring pipelines, and production readiness.
+  </div>
+</div>
+
+## Design for AI Evaluation
+
+<div className="gain-section-lead">
+  Evaluation is how enterprise AI proves it is fit to ship: and fit to stay shipped. A one-off test
+  suite is not enough. G.A.I.N Evaluation treats validation as a continuous pipeline aligned with
+  business rules, instrumented on the request path, and backed by operational infrastructure.
+</div>
+
+## Evaluation pipeline
+
+<div className="gain-section-lead">
+  Evaluation is a <strong>pipeline</strong>, not a test. Scores are produced after the same stages a
+  production request traverses: retrieval, generation, validation: so offline results predict
+  online behavior.
+</div>
+
+<div className="gain-llm-flow">
+  <div className="gain-llm-flow__diagram">
+    <div className="gain-llm-flow__track">
+      <div className="gain-llm-flow__step gain-llm-flow__step--input">
+        <span className="gain-llm-flow__step-title">Prompt</span>
+        <span className="gain-llm-flow__step-role">Template · variables</span>
+      </div>
+
+      <span className="gain-llm-flow__arrow" aria-hidden="true">→</span>
+
+      <div className="gain-llm-flow__step gain-llm-flow__step--retrieval">
+        <span className="gain-llm-flow__step-title">Retrieval</span>
+        <span className="gain-llm-flow__step-role">Context · chunks</span>
+      </div>
+
+      <span className="gain-llm-flow__arrow" aria-hidden="true">→</span>
+
+      <div className="gain-llm-flow__step gain-llm-flow__step--model">
+        <span className="gain-llm-flow__step-title">LLM</span>
+        <span className="gain-llm-flow__step-role">Generation</span>
+      </div>
+
+      <span className="gain-llm-flow__arrow" aria-hidden="true">→</span>
+
+      <div className="gain-llm-flow__step gain-llm-flow__step--guard">
+        <span className="gain-llm-flow__step-title">Validator</span>
+        <span className="gain-llm-flow__step-role">Schema · grounding · policy</span>
+      </div>
+
+      <span className="gain-llm-flow__arrow" aria-hidden="true">→</span>
+
+      <div className="gain-llm-flow__step gain-llm-flow__step--score">
+        <span className="gain-llm-flow__step-title">Score</span>
+        <span className="gain-llm-flow__step-role">Pass · fail · metrics</span>
+      </div>
+    </div>
+
+    <div className="gain-llm-flow__branch">
+      <div className="gain-llm-flow__branch-cell" aria-hidden="true"></div>
+      <div className="gain-llm-flow__branch-cell" aria-hidden="true"></div>
+      <div className="gain-llm-flow__branch-cell" aria-hidden="true"></div>
+      <div className="gain-llm-flow__branch-cell" aria-hidden="true"></div>
+      <div className="gain-llm-flow__branch-cell" aria-hidden="true"></div>
+      <div className="gain-llm-flow__branch-cell" aria-hidden="true"></div>
+      <div className="gain-llm-flow__branch-cell" aria-hidden="true"></div>
+      <div className="gain-llm-flow__branch-cell" aria-hidden="true"></div>
+      <div className="gain-llm-flow__feedback gain-llm-flow__feedback--col9 gain-llm-flow__feedback--multi">
+        <span className="gain-llm-flow__feedback-connector" aria-hidden="true">↗</span>
+        <div className="gain-llm-flow__feedback-row">
+          <span className="gain-llm-flow__feedback-card gain-llm-flow__feedback-card--offline">Offline eval</span>
+          <span className="gain-llm-flow__feedback-card gain-llm-flow__feedback-card--online">Online eval</span>
+          <span className="gain-llm-flow__feedback-card gain-llm-flow__feedback-card--human">Human eval</span>
+        </div>
+      </div>
+    </div>
+
+    <div className="gain-llm-flow__example">
+      <span className="gain-llm-flow__example-label">Three layers</span>
+      <div className="gain-llm-flow__example-pipeline">
+        <span>Offline</span>
+        <span className="gain-llm-flow__example-arrow" aria-hidden="true">›</span>
+        <span>Online</span>
+        <span className="gain-llm-flow__example-arrow" aria-hidden="true">›</span>
+        <span>Human</span>
+      </div>
+      <span className="gain-llm-flow__example-desc">
+        <strong>Offline</strong>: golden datasets and regression on every change.{' '}
+        <strong>Online</strong>: sampled production traffic and drift detection.{' '}
+        <strong>Human</strong>: review queues for high-risk or low-confidence outputs.
+      </span>
+    </div>
+
+    <div className="gain-llm-flow__footer">
+      <div className="gain-llm-flow__callout gain-llm-flow__callout--gate">
+        <span className="gain-llm-flow__callout-icon" aria-hidden="true">⛨</span>
+        <span><strong>Same path as production</strong>: scores mirror retrieval, generation, and validation stages</span>
+      </div>
+      <div className="gain-llm-flow__callout gain-llm-flow__callout--principle">
+        <span className="gain-llm-flow__callout-icon" aria-hidden="true">↻</span>
+        <span><strong>Pipeline, not a test</strong>: offline results predict online behavior when the eval path matches production</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+Ask before you ship: **What defines “good” for this use case?** **Which layer catches which failure
+mode?**
+
+## G.A.I.N applied to evaluation
+
+<Details className="gain-accordion" summary="G · Grounded: What defines “good”?">
+  Grounded evaluation anchors scores in business rules and compliance: not generic benchmark
+  leaderboards. “Good” is defined by policy, risk appetite, and domain accountability.
+
+  **Components**
+
+  - Policy correctness: outputs respect allowlists, blocklists, and entitlement rules
+  - Compliance checks: regulatory, classification, and residency requirements pass before release
+  - Risk thresholds: tiered gates for high-impact decisions (financial, medical, legal)
+  - Golden criteria: use-case owners define pass/fail rubrics tied to business outcomes
+
+  **Design questions**
+
+  - Who signs off on what “good” means?
+  - What score blocks a release or triggers escalation?
+
+  **Principle:** Evaluation must align with business rules.
+</Details>
+
+<Details className="gain-accordion" summary="A · Adaptive: Evaluation as a pipeline">
+  Adaptive evaluation runs continuously across offline, online, and human layers. Results feed
+  rollbacks, prompt updates, and retrieval tuning: evaluation is how systems learn what broke.
+
+  **Components**
+
+  - Offline eval: regression on golden sets before every model, prompt, or index change
+  - Online eval: production sampling, shadow scoring, and drift baselines
+  - Human eval: expert review queues for edge cases, disputes, and calibration
+  - Validator stage: schema, grounding, and business-rule gates in the scoring path
+
+  **Design questions**
+
+  - How often do offline runs gate deployment?
+  - What online signal triggers a human review?
+
+  **Principle:** Evaluation is a pipeline, not a test.
+</Details>
+
+<Details className="gain-accordion" summary="I · Intelligent: What is being evaluated?">
+  Intelligent evaluation measures AI behavior end-to-end: not just final text. Relevance without
+  correct reasoning, or fluent answers without proper tool use, still fail in production.
+
+  **Components**
+
+  - Relevance: did retrieval return the right context for the question?
+  - Correctness: is the answer factually supported and policy-compliant?
+  - Reasoning: are plan steps coherent; does the chain of thought hold?
+  - Tool usage: correct tool selected, valid arguments, policy-respecting invocation
+
+  **Design questions**
+
+  - Are we scoring output only, or the full behavior trace?
+  - How do we eval multi-step agent and RAG flows?
+
+  **Principle:** Measure behavior, not just output.
+</Details>
+
+<Details className="gain-accordion" summary="N · Native: Evaluation infrastructure">
+  Native evaluation needs platform infrastructure: datasets, replay, and harnesses are operational
+  systems with SLAs, not spreadsheets on a shared drive.
+
+  **Components**
+
+  - Eval datasets: versioned golden questions, expected behaviors, and rubric metadata
+  - Replay systems: reproduce production requests against new models or prompts deterministically
+  - Test harnesses: CI integration, scheduled regression, and comparison across versions
+  - Score stores: historical results, trend lines, and release gate audit trails
+
+  **Design questions**
+
+  - How are datasets versioned and owned?
+  - Can we replay last week’s failures against today’s build?
+
+  **Principle:** Evaluation needs operational infrastructure.
+</Details>
+
+## Key patterns
+
+<Details className="gain-accordion" summary="Golden datasets per capability">
+  Maintain separate golden sets for LLM, RAG, and agent use cases. A chat benchmark does not validate
+  retrieval quality; a Q&A set does not validate tool orchestration.
+</Details>
+
+<Details className="gain-accordion" summary="Regression gates in CI/CD">
+  Block promotion when offline scores drop below threshold on any critical dimension. Eval gates
+  belong in the pipeline: not in a quarterly review.
+</Details>
+
+<Details className="gain-accordion" summary="LLM-as-judge (with guardrails)">
+  Use models to score relevance and faithfulness at scale: but calibrate against human labels and
+  never use a judge as the only compliance gate.
+</Details>
+
+<Details className="gain-accordion" summary="Citation and grounding checks">
+  For RAG, score whether each claim is supported by a retrieved chunk. Grounding eval is the
+  fastest path to measuring hallucination rate with business meaning.
+</Details>
+
+<Details className="gain-accordion" summary="Agent task success metrics">
+  For agents, score end-to-end task completion, tool accuracy, policy violations, and steps to
+  completion: not just whether the final message sounds right.
+</Details>
+
+For platform hooks, see [Blueprints → AI Control Plane](/blueprints/control-plane) (evaluation
+framework). For telemetry and production sampling, see
+[G.A.I.N Observability](/frameworks/gain-observability). For RAG-specific eval steps, see
+[Playbooks → Build Enterprise RAG](/playbooks/build-enterprise-rag).

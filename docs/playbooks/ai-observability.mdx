@@ -1,0 +1,150 @@
+---
+title: AI Observability
+sidebar_label: AI Observability
+hide_title: true
+
+---
+
+import Details from '@theme/Details';
+
+<div className="gain-doc-header">
+  <h1 className="gain-doc-title">AI Observability</h1>
+  <div className="gain-doc-subtitle">
+    Five signals, five storage tiers, five retention policies: and four consumers that read them.
+  </div>
+</div>
+
+## Design for AI Observability
+
+<div className="gain-section-lead">
+  AI observability is not a dashboard. It is a capture-and-retention architecture. Each signal has a
+  different consumer, retention window, and blast radius if you get it wrong. Read left to right:{' '}
+  <strong>capture → store → consume</strong>.
+</div>
+
+<div className="gain-obs-pipeline">
+  <div className="gain-obs-pipeline__diagram">
+    <div className="gain-obs-pipeline__entry">
+      <span className="gain-obs-pipeline__node gain-obs-pipeline__node--query">Query</span>
+      <span className="gain-obs-pipeline__arrow" aria-hidden="true">→</span>
+      <span className="gain-obs-pipeline__node gain-obs-pipeline__node--app">Agentic app / RAG service / OTel SDK</span>
+      <span className="gain-obs-pipeline__arrow" aria-hidden="true">→</span>
+      <span className="gain-obs-pipeline__node gain-obs-pipeline__node--collector">OTel Collector</span>
+    </div>
+
+    <div className="gain-obs-pipeline__headers">
+      <span className="gain-obs-pipeline__header">Capture (in the request path)</span>
+      <span></span>
+      <span className="gain-obs-pipeline__header">Storage tiers</span>
+      <span></span>
+      <span className="gain-obs-pipeline__header">Consumers</span>
+    </div>
+
+    <div className="gain-obs-pipeline__row">
+      <span className="gain-obs-pipeline__signal gain-obs-pipeline__signal--logs">logs</span>
+      <span className="gain-obs-pipeline__row-arrow" aria-hidden="true">→</span>
+      <span className="gain-obs-pipeline__store gain-obs-pipeline__store--logs">
+        <span className="gain-obs-pipeline__store-name">Log Store</span>
+        <span className="gain-obs-pipeline__store-retention">structured logs · 30 d</span>
+      </span>
+      <span className="gain-obs-pipeline__row-arrow" aria-hidden="true">→</span>
+      <span className="gain-obs-pipeline__consumers">
+        <span className="gain-obs-pipeline__consumer gain-obs-pipeline__consumer--dash">Dashboards</span>
+      </span>
+    </div>
+
+    <div className="gain-obs-pipeline__row">
+      <span className="gain-obs-pipeline__signal gain-obs-pipeline__signal--metrics">metrics</span>
+      <span className="gain-obs-pipeline__row-arrow" aria-hidden="true">→</span>
+      <span className="gain-obs-pipeline__store gain-obs-pipeline__store--metrics">
+        <span className="gain-obs-pipeline__store-name">TSDB</span>
+        <span className="gain-obs-pipeline__store-retention">metrics · 13 m</span>
+      </span>
+      <span className="gain-obs-pipeline__row-arrow" aria-hidden="true">→</span>
+      <span className="gain-obs-pipeline__consumers">
+        <span className="gain-obs-pipeline__consumer gain-obs-pipeline__consumer--dash">Dashboards</span>
+        <span className="gain-obs-pipeline__consumer gain-obs-pipeline__consumer--slo">SLO + burn-rate alerts</span>
+      </span>
+    </div>
+
+    <div className="gain-obs-pipeline__row">
+      <span className="gain-obs-pipeline__signal gain-obs-pipeline__signal--traces">traces</span>
+      <span className="gain-obs-pipeline__row-arrow" aria-hidden="true">→</span>
+      <span className="gain-obs-pipeline__store gain-obs-pipeline__store--traces">
+        <span className="gain-obs-pipeline__store-name">Trace Store</span>
+        <span className="gain-obs-pipeline__store-retention">sampled traces · 30 d</span>
+      </span>
+      <span className="gain-obs-pipeline__row-arrow" aria-hidden="true">→</span>
+      <span className="gain-obs-pipeline__consumers">
+        <span className="gain-obs-pipeline__consumer gain-obs-pipeline__consumer--dash">Dashboards</span>
+        <span className="gain-obs-pipeline__consumer gain-obs-pipeline__consumer--drift">Drift detector</span>
+      </span>
+    </div>
+
+    <div className="gain-obs-pipeline__row">
+      <span className="gain-obs-pipeline__signal gain-obs-pipeline__signal--raw">raw prompt/response</span>
+      <span className="gain-obs-pipeline__row-arrow" aria-hidden="true">→</span>
+      <span className="gain-obs-pipeline__store gain-obs-pipeline__store--raw">
+        <span className="gain-obs-pipeline__store-name">Restricted Store</span>
+        <span className="gain-obs-pipeline__store-retention">encrypted · 90 d</span>
+      </span>
+      <span className="gain-obs-pipeline__row-arrow" aria-hidden="true">→</span>
+      <span className="gain-obs-pipeline__consumers">
+        <span className="gain-obs-pipeline__consumer gain-obs-pipeline__consumer--drift">Drift detector</span>
+      </span>
+    </div>
+
+    <div className="gain-obs-pipeline__row">
+      <span className="gain-obs-pipeline__signal gain-obs-pipeline__signal--audit">audit record</span>
+      <span className="gain-obs-pipeline__row-arrow" aria-hidden="true">→</span>
+      <span className="gain-obs-pipeline__store gain-obs-pipeline__store--audit">
+        <span className="gain-obs-pipeline__store-name">Audit Log</span>
+        <span className="gain-obs-pipeline__store-retention">immutable · 7 y</span>
+      </span>
+      <span className="gain-obs-pipeline__row-arrow" aria-hidden="true">→</span>
+      <span className="gain-obs-pipeline__consumers">
+        <span className="gain-obs-pipeline__consumer gain-obs-pipeline__consumer--replay">Regulator replay</span>
+      </span>
+    </div>
+  </div>
+</div>
+
+| Signal | Store | Retention | Consumer |
+| --- | --- | --- | --- |
+| **Structured logs** | Log store | 30 d | Dashboards |
+| **Metrics** | TSDB | 13 mo | Dashboards, SLO alerts |
+| **Sampled traces** | Trace store | 30 d | Dashboards, drift detector |
+| **Raw prompt/response** | Restricted store | encrypted, 90 d | Drift detector |
+| **Audit record** | Audit log | immutable, 7 y | Regulator replay |
+
+## Key practices
+
+<Details className="gain-accordion" summary="Capture in the request path">
+  Instrument at the point of inference through an OTel SDK into a collector on the hot path, not as a
+  batch job afterward. Routing, sampling, and redaction happen once in the collector.
+</Details>
+
+<Details className="gain-accordion" summary="Five tiers, five retention policies">
+  Do not collapse logs, metrics, traces, raw prompts, and audit records into one bucket. Retention is
+  a governance decision: raw prompts are short and encrypted; audit logs are long and immutable.
+</Details>
+
+<Details className="gain-accordion" summary="Four consumers, four questions">
+  Dashboards answer <em>what is happening now</em>. SLO alerts answer <em>are we burning budget</em>.
+  Drift detection answers <em>is quality eroding</em>. Regulator replay answers <em>can we prove what
+  we did</em>.
+</Details>
+
+<Details className="gain-accordion" summary="Redact at the collector">
+  Strip PII and sensitive payloads before persistence. The collector is the privacy boundary: not the
+  dashboard.
+</Details>
+
+<Details className="gain-accordion" summary="Sample expensive signals">
+  Metrics are always-on; traces and raw prompt/response are sampled or gated. Instrumentation is not
+  free on the request path.
+</Details>
+
+For the framework view, see [G.A.I.N Observability](/frameworks/gain-observability). For the full
+architecture breakdown, see
+[Insights → AI Observability in Enterprise](/insights/ai-observability-in-enterprise).

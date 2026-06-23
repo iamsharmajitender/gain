@@ -1,0 +1,257 @@
+---
+title: G.A.I.N MCP
+sidebar_label: G.A.I.N MCP
+hide_title: true
+---
+
+import Details from '@theme/Details';
+
+<div className="gain-doc-header">
+  <h1 className="gain-doc-title">G.A.I.N MCP</h1>
+  <div className="gain-doc-subtitle">
+    How to integrate Model Context Protocol in enterprise environments: grounded, adaptive,
+    intelligent, native principles applied to governed tool and resource access.
+  </div>
+</div>
+
+## Design for Governed MCP
+
+<div className="gain-section-lead">
+  MCP standardizes how models discover tools, read resources, and invoke capabilities: but in
+  enterprise it is a <strong>protocol inside architecture</strong>, not a shortcut around governance.
+  G.A.I.N MCP treats every MCP server as a bounded capability surface: registered, authenticated,
+  policy-gated, and fully auditable.
+</div>
+
+## MCP invocation flow
+
+<div className="gain-section-lead">
+  MCP is a <strong>transport and contract layer</strong> between intelligent clients and enterprise
+  systems. The client plans; the gateway permits; the server executes: validation happens before
+  results re-enter the workflow.
+</div>
+
+<div className="gain-llm-flow">
+  <div className="gain-llm-flow__diagram gain-llm-flow__diagram--wide">
+    <div className="gain-llm-flow__track gain-llm-flow__track--6">
+      <div className="gain-llm-flow__step gain-llm-flow__step--product">
+        <span className="gain-llm-flow__step-title">MCP client</span>
+        <span className="gain-llm-flow__step-role">Agent · LLM</span>
+      </div>
+
+      <span className="gain-llm-flow__arrow" aria-hidden="true">→</span>
+
+      <div className="gain-llm-flow__step gain-llm-flow__step--context">
+        <span className="gain-llm-flow__step-title">Server registry</span>
+        <span className="gain-llm-flow__step-role">Discover · route</span>
+      </div>
+
+      <span className="gain-llm-flow__arrow" aria-hidden="true">→</span>
+
+      <div className="gain-llm-flow__step gain-llm-flow__step--guard">
+        <span className="gain-llm-flow__step-title">Policy gate</span>
+        <span className="gain-llm-flow__step-role">Scope · allow · deny</span>
+      </div>
+
+      <span className="gain-llm-flow__arrow" aria-hidden="true">→</span>
+
+      <div className="gain-llm-flow__step gain-llm-flow__step--retrieval">
+        <span className="gain-llm-flow__step-title">MCP server</span>
+        <span className="gain-llm-flow__step-role">Host · protocol</span>
+      </div>
+
+      <span className="gain-llm-flow__arrow" aria-hidden="true">→</span>
+
+      <div className="gain-llm-flow__step gain-llm-flow__step--store">
+        <span className="gain-llm-flow__step-title">Tool / resource</span>
+        <span className="gain-llm-flow__step-role">Invoke · read</span>
+      </div>
+
+      <span className="gain-llm-flow__arrow" aria-hidden="true">→</span>
+
+      <div className="gain-llm-flow__step gain-llm-flow__step--guard">
+        <span className="gain-llm-flow__step-title">Validation</span>
+        <span className="gain-llm-flow__step-role">Schema · policy · output</span>
+      </div>
+    </div>
+
+    <div className="gain-llm-flow__branch gain-llm-flow__branch--6">
+      <div className="gain-llm-flow__branch-cell" aria-hidden="true"></div>
+      <div className="gain-llm-flow__branch-cell" aria-hidden="true"></div>
+      <div className="gain-llm-flow__branch-cell" aria-hidden="true"></div>
+      <div className="gain-llm-flow__branch-cell" aria-hidden="true"></div>
+      <div className="gain-llm-flow__branch-cell" aria-hidden="true"></div>
+      <div className="gain-llm-flow__branch-cell" aria-hidden="true"></div>
+      <div className="gain-llm-flow__feedback">
+        <span className="gain-llm-flow__feedback-connector" aria-hidden="true">↗</span>
+        <span className="gain-llm-flow__feedback-card">Observability · audit</span>
+      </div>
+      <div className="gain-llm-flow__branch-cell" aria-hidden="true"></div>
+      <div className="gain-llm-flow__branch-cell" aria-hidden="true"></div>
+      <div className="gain-llm-flow__branch-cell" aria-hidden="true"></div>
+      <div className="gain-llm-flow__branch-cell" aria-hidden="true"></div>
+    </div>
+
+    <div className="gain-llm-flow__return">
+      <span className="gain-llm-flow__return-icon" aria-hidden="true">↩</span>
+      <span><strong>Return to client</strong>: validated results re-enter the workflow; planning continues</span>
+    </div>
+
+    <div className="gain-llm-flow__example">
+      <span className="gain-llm-flow__example-label">Example: account agent</span>
+      <div className="gain-llm-flow__example-pipeline">
+        <span>Discover tools</span>
+        <span className="gain-llm-flow__example-arrow" aria-hidden="true">›</span>
+        <span>Authorize session</span>
+        <span className="gain-llm-flow__example-arrow" aria-hidden="true">›</span>
+        <span>Read account</span>
+        <span className="gain-llm-flow__example-arrow" aria-hidden="true">›</span>
+        <span>Invoke lookup</span>
+        <span className="gain-llm-flow__example-arrow" aria-hidden="true">›</span>
+        <span>Validate response</span>
+        <span className="gain-llm-flow__example-arrow" aria-hidden="true">›</span>
+        <span>Continue planning</span>
+      </div>
+      <span className="gain-llm-flow__example-desc">
+        Payment tools remain blocked at the policy gate.
+      </span>
+    </div>
+
+    <div className="gain-llm-flow__footer">
+      <div className="gain-llm-flow__callout gain-llm-flow__callout--gate">
+        <span className="gain-llm-flow__callout-icon" aria-hidden="true">⛨</span>
+        <span><strong>Gateway permits</strong>: the client plans; policy gates servers, tools, and resources before execution</span>
+      </div>
+      <div className="gain-llm-flow__callout gain-llm-flow__callout--principle">
+        <span className="gain-llm-flow__callout-icon" aria-hidden="true">↻</span>
+        <span><strong>Validate before re-entry</strong>: MCP is transport and contract; validation happens before results return to the workflow</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+Ask before you ship: **Which MCP servers are registered?** **Which tools are exposed per client?**
+**Where is validation before results return to the model?**
+
+## G.A.I.N applied to MCP
+
+<Details className="gain-accordion" summary="G · Grounded: What controls MCP access?">
+  Grounded MCP integrations enforce authority before any tool list, resource read, or invocation
+  crosses the enterprise boundary. The protocol connects systems; policy decides what is allowed.
+
+  **Components**
+
+  - Policy engine: allow/deny rules on servers, tools, and resources per client and tenant
+  - Tool permissions: scoped manifests; sensitive tools hidden or require elevated scope
+  - Human approvals: escalation for irreversible or high-risk MCP invocations
+  - Guardrails: input/output filtering on MCP messages and tool arguments
+  - Audit logs: record every `list_tools`, `call_tool`, and `read_resource` with actor and trace ID
+
+  **Example:** MCP server exposes account lookup but cannot authorize transfers without approval.
+
+  **Design questions**
+
+  - Can this client call this tool?
+  - Can it approve this action?
+  - Does it need escalation?
+
+  **Principle:** MCP exposes capability, not authority.
+</Details>
+
+<Details className="gain-accordion" summary="A · Adaptive: How MCP fits the workflow">
+  Adaptive MCP integrations survive retries, session drops, and evolving server manifests.
+  Orchestration owns the workflow; MCP is how capability is reached: not the workflow itself.
+
+  **Components**
+
+  - Orchestrator: MCP client lifecycle inside agent or control-plane runtime
+  - Tool chain: ordered invocations across one or more MCP servers
+  - Event bus: async tool results and notifications between services
+  - State store: session context, tool outputs, and conversation state across steps
+  - Retry logic: idempotent replays, timeouts, and compensating actions on failed calls
+
+  **Example: booking flow via MCP:** Search → Validate → Reserve → Notify: each step an MCP tool
+  behind policy, state carried between invocations.
+
+  **Design questions**
+
+  - How do clients recover from a failed MCP call?
+  - How do sessions persist across reconnects?
+  - How do tools chain across multiple servers?
+
+  **Principle:** MCP is a protocol inside governed workflows.
+</Details>
+
+<Details className="gain-accordion" summary="I · Intelligent: What reasoning uses MCP?">
+  Intelligent MCP clients use the model to discover and plan invocations: deterministic systems
+  validate arguments, enforce policy, and execute. The model interprets tool output; it does not
+  bypass entitlements.
+
+  **Components**
+
+  - Planning: decompose goals into MCP tool and resource steps
+  - Tool selection: choose from server manifest based on task and context
+  - Multi-step reasoning: iterate discover → invoke → observe until complete or blocked
+  - Summarization: condense resource contents and tool results for the next planning step
+
+  **Example:** LLM plans the next MCP tool call; the gateway executes only after policy clears.
+
+  **Design questions**
+
+  - What should the model decide?
+  - What should be deterministic (routing, auth, validation)?
+
+  **Principle:** Intelligence plans, systems execute.
+</Details>
+
+<Details className="gain-accordion" summary="N · Native: Where MCP runs on the platform">
+  Native MCP deployments are platform-managed: servers are hosted, scaled, and observed like any
+  other enterprise integration. Transport choice and gateway placement are infrastructure decisions.
+
+  **Components**
+
+  - Kubernetes: host MCP servers as services or sidecars with health checks and autoscaling
+  - MCP gateway: central proxy for auth, routing, rate limits, and protocol normalization
+  - APIs and queues: async tools, long-running jobs, and backpressure across MCP boundaries
+  - Observability stack: distributed traces per MCP session, tool span, and latency SLOs
+
+  **Design questions**
+
+  - How does MCP traffic scale under concurrent agent sessions?
+  - How is latency managed across multi-server tool chains?
+
+  **Principle:** MCP needs platform resilience.
+</Details>
+
+## Key patterns
+
+<Details className="gain-accordion" summary="MCP gateway">
+  Front MCP traffic through a platform gateway: authenticate clients, enforce policy, normalize
+  transports (stdio, SSE, streamable HTTP), and emit audit events. Product teams never connect
+  directly to arbitrary MCP servers.
+</Details>
+
+<Details className="gain-accordion" summary="Server registry">
+  Catalog approved MCP servers with owner, scope, environment, and manifest version. Registration is
+  the control point for what enters the enterprise tool surface: same discipline as a tool registry.
+</Details>
+
+<Details className="gain-accordion" summary="Scoped manifests">
+  Publish different tool and resource lists per client profile, tenant, or use case. Not every agent
+  sees every capability: manifests are entitlement-aware, not all-or-nothing.
+</Details>
+
+<Details className="gain-accordion" summary="Resources vs tools">
+  Use **resources** for read-only context (documents, configs, account snapshots) and **tools** for
+  actions with side effects. Mixing the two blurs policy boundaries and complicates audit.
+</Details>
+
+<Details className="gain-accordion" summary="Federated MCP">
+  Compose multiple domain-owned MCP servers behind one gateway. Each server owns a bounded context;
+  the orchestrator chains calls: no monolithic god-server.
+</Details>
+
+For agent orchestration patterns, see [G.A.I.N Agents](/frameworks/gain-agents). For component-level
+diagrams, see [Blueprints → Agent Flow Model](/blueprints/agent-flow-model) and
+[Control Plane](/blueprints/control-plane) (tool registry). For implementation steps, see
+[Playbooks → Agentic Systems Design](/playbooks/agentic-systems-design).

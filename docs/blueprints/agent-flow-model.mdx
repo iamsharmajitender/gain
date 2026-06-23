@@ -1,0 +1,73 @@
+---
+title: Agent Flow Model
+sidebar_label: Agent Flow Model
+hide_title: true
+
+---
+
+import Details from '@theme/Details';
+
+<div className="gain-doc-header">
+  <h1 className="gain-doc-title">Agent Flow Model</h1>
+  <div className="gain-doc-subtitle">Reference model for agent orchestration: planning, tools, memory, and policy-governed execution.</div>
+</div>
+
+## Agent Execution Flow
+
+<div className="gain-section-lead">
+  Agent behavior is predictable only when the execution flow is explicit: from intent parsing through tool selection, policy checks, and structured output delivery.
+</div>
+
+<div className="gain-two-col">
+  <div>
+    <ul className="gain-checklist">
+      <li>Intent parsing</li>
+      <li>Plan generation</li>
+      <li>Tool selection</li>
+      <li>Policy validation</li>
+      <li>Result synthesis</li>
+    </ul>
+  </div>
+  <div className="gain-diagram-wrap">
+
+```mermaid
+flowchart TD
+  Intent["User Intent"] --> Parse["Intent Parser"]
+  Parse --> Plan["Plan Generator"]
+  Plan --> Select["Tool Selector"]
+  Select --> Execute["Tool Execution"]
+  Execute --> Validate["Policy Validator"]
+  Validate --> Synthesize["Result Synthesizer"]
+  Synthesize --> Output["Structured Output"]
+
+  classDef input fill:#dbeafe,stroke:#93c5fd,color:#1e293b
+  classDef process fill:#ede9fe,stroke:#c4b5fd,color:#1e293b
+  classDef guard fill:#ffedd5,stroke:#fdba74,color:#1e293b
+  classDef output fill:#dcfce7,stroke:#86efac,color:#1e293b
+
+  class Intent input
+  class Parse,Plan,Select,Execute process
+  class Validate guard
+  class Synthesize,Output output
+```
+
+  </div>
+</div>
+
+## Key Patterns
+
+<Details className="gain-accordion" summary="Planning Loop">
+  Decompose complex tasks into steps before execution. Planning reduces tool misuse and makes agent reasoning auditable.
+</Details>
+
+<Details className="gain-accordion" summary="Tool Selection">
+  Match available tools to plan steps with schema validation. Explicit tool selection prevents agents from calling inappropriate or unauthorized tools.
+</Details>
+
+<Details className="gain-accordion" summary="Policy Validation">
+  Check every action against business rules before and after execution. Policy validation is the governance layer that makes agents enterprise-ready.
+</Details>
+
+<Details className="gain-accordion" summary="Result Synthesis">
+  Combine tool outputs into structured, user-facing responses. Synthesis ensures consistency regardless of how many tools were invoked.
+</Details>

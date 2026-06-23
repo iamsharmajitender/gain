@@ -1,0 +1,253 @@
+---
+title: G.A.I.N Identity
+sidebar_label: G.A.I.N Identity
+hide_title: true
+---
+
+import Details from '@theme/Details';
+
+<div className="gain-doc-header">
+  <h1 className="gain-doc-title">G.A.I.N Identity</h1>
+  <div className="gain-doc-subtitle">
+    Why identity should shape context before the model: grounded, adaptive, intelligent, native
+    principles applied to identity-aware AI in enterprise environments.
+  </div>
+</div>
+
+## Design for Identity-Aware AI
+
+<div className="gain-section-lead">
+  Enterprise AI that ignores identity will leak data, violate policy, and produce answers the caller
+  was never entitled to see. G.A.I.N Identity resolves <strong>who is asking</strong> before{' '}
+  <strong>what context is assembled</strong>: identity is not a header on the request. It is the
+  first input to every retrieval, tool, and generation decision.
+</div>
+
+## Identity-first request flow
+
+<div className="gain-section-lead">
+  Identity must exist <strong>before</strong> context. Policy evaluates the principal; the context
+  builder retrieves only what that principal may see; the model reasons within that bounded view.
+</div>
+
+<div className="gain-identity-flow">
+  <div className="gain-llm-flow__diagram gain-llm-flow__diagram--wide">
+    <div className="gain-identity-flow__ingress gain-identity-flow__zone gain-identity-flow__zone--ingress">
+      <span className="gain-identity-flow__zone-title">Ingress</span>
+      <div className="gain-identity-flow__ingress-track">
+        <span className="gain-llm-flow__step gain-llm-flow__step--product">
+          <span className="gain-llm-flow__step-title">User</span>
+          <span className="gain-llm-flow__step-role">Request · token</span>
+        </span>
+        <span className="gain-llm-flow__arrow" aria-hidden="true">→</span>
+        <span className="gain-llm-flow__step gain-llm-flow__step--input">
+          <span className="gain-llm-flow__step-title">API Gateway</span>
+          <span className="gain-llm-flow__step-role">AuthN · validate</span>
+        </span>
+        <span className="gain-llm-flow__arrow" aria-hidden="true">→</span>
+        <span className="gain-llm-flow__step gain-llm-flow__step--guard-lite">
+          <span className="gain-llm-flow__step-title">Identity Provider</span>
+          <span className="gain-llm-flow__step-role">SSO · OIDC · IAM</span>
+        </span>
+      </div>
+      <span className="gain-identity-flow__claims">claims: roles · attributes · tenant · limits</span>
+    </div>
+
+    <div className="gain-identity-flow__connector">
+      <span className="gain-identity-flow__connector-icon" aria-hidden="true">↓</span>
+      <span>principal bound before context assembly</span>
+    </div>
+
+    <div className="gain-identity-flow__pipeline">
+      <div className="gain-identity-flow__zone gain-identity-flow__zone--permit">
+        <span className="gain-identity-flow__zone-title">Resolve &amp; permit</span>
+        <span className="gain-identity-flow__zone-note">Policy layer: rules stay here</span>
+        <div className="gain-identity-flow__zone-track">
+          <span className="gain-identity-flow__zone-step gain-identity-flow__zone-step--guard-lite">
+            <span className="gain-identity-flow__zone-step-title">Identity</span>
+            <span className="gain-identity-flow__zone-step-role">Principal · claims</span>
+          </span>
+          <span className="gain-llm-flow__arrow" aria-hidden="true">→</span>
+          <span className="gain-identity-flow__zone-step gain-identity-flow__zone-step--guard">
+            <span className="gain-identity-flow__zone-step-title">Policy</span>
+            <span className="gain-identity-flow__zone-step-role">Entitlements · scope</span>
+          </span>
+        </div>
+      </div>
+
+      <span className="gain-identity-flow__pipeline-arrow" aria-hidden="true">→</span>
+
+      <div className="gain-identity-flow__zone gain-identity-flow__zone--context">
+        <span className="gain-identity-flow__zone-title">Assemble</span>
+        <span className="gain-identity-flow__zone-note">Retrieve as the user</span>
+        <div className="gain-identity-flow__zone-track">
+          <span className="gain-identity-flow__zone-step gain-identity-flow__zone-step--context">
+            <span className="gain-identity-flow__zone-step-title">Context builder</span>
+            <span className="gain-identity-flow__zone-step-role">Scoped retrieval · tools</span>
+          </span>
+        </div>
+      </div>
+
+      <span className="gain-identity-flow__pipeline-arrow" aria-hidden="true">→</span>
+
+      <div className="gain-identity-flow__zone gain-identity-flow__zone--model">
+        <span className="gain-identity-flow__zone-title">Reason</span>
+        <span className="gain-identity-flow__zone-note">LLM: bounded view only</span>
+        <div className="gain-identity-flow__zone-track">
+          <span className="gain-identity-flow__zone-step gain-identity-flow__zone-step--model">
+            <span className="gain-identity-flow__zone-step-title">LLM</span>
+            <span className="gain-identity-flow__zone-step-role">Within allowed context</span>
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <div className="gain-identity-flow__audit">
+      <span className="gain-identity-flow__audit-connector" aria-hidden="true">↗</span>
+      <span className="gain-identity-flow__audit-card">Audit · lineage</span>
+    </div>
+
+    <div className="gain-llm-flow__example">
+      <span className="gain-llm-flow__example-label">Same question · three principals</span>
+      <div className="gain-llm-flow__example-pipeline">
+        <span>Manager</span>
+        <span className="gain-llm-flow__example-arrow" aria-hidden="true">›</span>
+        <span>Employee</span>
+        <span className="gain-llm-flow__example-arrow" aria-hidden="true">›</span>
+        <span>Auditor</span>
+      </div>
+      <span className="gain-llm-flow__example-desc">
+        Each receives different retrieved context, tool scopes, and response detail: not because the
+        prompt differs, but because <strong>identity drives entitlement</strong>.
+      </span>
+    </div>
+
+    <div className="gain-llm-flow__footer">
+      <div className="gain-llm-flow__callout gain-llm-flow__callout--gate">
+        <span className="gain-llm-flow__callout-icon" aria-hidden="true">⛨</span>
+        <span><strong>Identity before context</strong>: policy evaluates the principal; retrieval filters before the model runs</span>
+      </div>
+      <div className="gain-llm-flow__callout gain-llm-flow__callout--principle">
+        <span className="gain-llm-flow__callout-icon" aria-hidden="true">↻</span>
+        <span><strong>No entitlement bypass</strong>: if the user cannot access it directly, the model must not see it in context</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+Ask before you ship: **Is identity resolved before retrieval?** **Can the model access context the
+user could not access directly?**
+
+## G.A.I.N applied to identity-aware AI
+
+<Details className="gain-accordion" summary="G · Grounded: Policies based on identity">
+  Grounded identity-aware systems bind every capability to a principal: human, service, or agent.
+  Entitlement is evaluated deterministically; the model does not decide what the user may know.
+
+  **Components**
+
+  - Role and attribute policies: RBAC, ABAC, and tenant-scoped rules
+  - Document and data entitlements: per-source access tied to identity claims
+  - Tool and API scopes: which MCP tools, agents, and integrations a principal may invoke
+  - Segregation rules: manager vs employee vs auditor views of the same domain
+
+  **Example:** Manager sees team performance summaries; employee sees own records; auditor sees
+  read-only compliance trails: same copilot, different grounded context.
+
+  **Design questions**
+
+  - What can this identity retrieve, invoke, and see in a response?
+  - What must be denied regardless of how the question is phrased?
+
+  **Principle:** Identity drives entitlement.
+</Details>
+
+<Details className="gain-accordion" summary="A · Adaptive: Identity before context">
+  Adaptive identity architecture threads the principal through every stage: auth at the gateway,
+  policy before retrieval, scoped context assembly, and audit on the way out. Identity is not
+  re-established mid-flight.
+
+  **Components**
+
+  - Identity resolution: SSO session, service account, or federated token at ingress
+  - Policy evaluation: allow/deny and scope reduction before context build
+  - Context builder: retrieval filters, metadata constraints, and tool manifests per principal
+  - Session continuity: identity and scope persist across multi-turn and agent workflows
+
+  **Design questions**
+
+  - Where is identity first bound to the request trace?
+  - How do scopes change on elevation or delegation?
+
+  **Principle:** Identity must exist before context.
+</Details>
+
+<Details className="gain-accordion" summary="I · Intelligent: Behavior within allowed context">
+  Intelligent systems change what the model <em>can</em> reason over: not just how it phrases the
+  answer. Context quality is identity-dependent; the same model with different scoped context
+  produces legitimately different outcomes.
+
+  **Components**
+
+  - Scoped retrieval: indexes filtered by identity before chunks reach the prompt
+  - Response shaping: detail level, field masking, and citation rules per role
+  - Agent planning bounds: tool lists and goals constrained by principal capabilities
+  - Abstention: model declines when scoped context is insufficient rather than guessing
+
+  **Design questions**
+
+  - Does the model receive only identity-allowed context?
+  - How is ambiguity handled when scope is intentionally narrow?
+
+  **Principle:** Context quality is identity-dependent.
+</Details>
+
+<Details className="gain-accordion" summary="N · Native: Enterprise identity providers">
+  Native identity-aware AI inherits the enterprise IdP. It does not invent a parallel user store.
+  Federation, workload identity, and token lifecycle are platform concerns wired at the gateway.
+
+  **Components**
+
+  - SSO / OIDC: human users via corporate identity provider
+  - IAM: service accounts, roles, and least-privilege bindings for workloads
+  - Federation: B2B partners and multi-org access with scoped trust
+  - Token brokering: short-lived tokens injected at the control-plane boundary
+
+  **Design questions**
+
+  - Which IdP is authoritative for humans vs machines?
+  - How are tokens refreshed and revoked mid-session?
+
+  **Principle:** AI inherits enterprise identity systems.
+</Details>
+
+## Key patterns
+
+<Details className="gain-accordion" summary="Principal on every span">
+  Attach resolved identity (subject, tenant, roles) to traces, audit logs, and eval records from
+  gateway ingress. Forensics without a principal are incomplete.
+</Details>
+
+<Details className="gain-accordion" summary="Retrieve as the user">
+  Retrieval filters must mirror what the user could fetch from source systems directly. If RAG
+  bypasses entitlements, it becomes an exfiltration channel.
+</Details>
+
+<Details className="gain-accordion" summary="Agent and service identity">
+  Machine callers need workload identity with the same rigor as humans: scoped service accounts, not
+  shared API keys with god-mode access.
+</Details>
+
+<Details className="gain-accordion" summary="Just-in-time elevation">
+  Sensitive actions require step-up auth or approval; elevated scope is time-bound and fully audited.
+  Permanent broad scope for convenience is a policy failure.
+</Details>
+
+<Details className="gain-accordion" summary="Break-glass access">
+  Emergency override paths exist but are rare, approved, logged, and reviewed. Break-glass is not
+  a backdoor. It is a governed exception with evidence.
+</Details>
+
+For platform-level IAM patterns, see [Architecture → Governance &amp; Security](/architecture/governance-security).
+For retrieval entitlements, see [G.A.I.N RAG](/frameworks/gain-rag). For policy enforcement at the
+gateway, see [Blueprints → AI Control Plane](/blueprints/control-plane).

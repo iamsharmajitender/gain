@@ -1,0 +1,273 @@
+---
+title: Enterprise AI Operating Model
+sidebar_label: G.A.I.N AIOM
+hide_title: true
+---
+
+import Details from '@theme/Details';
+
+<div className="gain-doc-header">
+  <h1 className="gain-doc-title">
+    G.A.I.N AIOM 
+    <span style={{ fontSize: '0.7em' }}>_Enterprise AI Operating Model (AIOM)_</span>
+  </h1>
+  <div className="gain-doc-subtitle">
+    Who builds and runs what in enterprise AI. Team boundaries across application, control,
+    runtime, and data / knowledge planes.
+  </div>
+</div>
+
+<div className="gain-section-lead">
+  Enterprise AI programs stall when ownership is fuzzy. This operating model assigns{' '}
+  <strong>who delivers each layer</strong> and <strong>where accountability sits</strong> in a large
+  org. Start with three core planes: application, control, and runtime. In large enterprises, add a
+  fourth <strong>data / knowledge plane</strong> when the data organization is mature enough to own
+  pipelines, embeddings, and catalog separately from AI platform orchestration.
+</div>
+
+## How This Maps to G.A.I.N
+
+| G.A.I.N pillar | Where it lives | Who primarily owns it |
+| --- | --- | --- |
+| **G · Grounded** | Context Engine, data pipelines, knowledge sources | Data Platform + AI Platform |
+| **A · Adaptive** | Feedback loops, KPIs, workflow evolution | Product / Domain Teams |
+| **I · Intelligent** | Routing, policy, agents, evaluation | AI Platform Team |
+| **N · Native** | Inference runtime, GPU clusters, scaling, storage | Infrastructure / Cloud Team |
+
+The **control plane** is where G.A.I.N is operationalized: governance, orchestration, and
+capability patterns such as G.A.I.N RAG, G.A.I.N Agents, G.A.I.N MCP, G.A.I.N Observability, G.A.I.N Evaluation, G.A.I.N Identity, and G.A.I.N LLM. For component-level
+diagrams, see [Blueprints](/blueprints).
+
+## The Planes
+
+Three planes are the minimum. A fourth **data / knowledge plane** is common in large orgs where
+enterprise data is a first-class function: not a sub-team of platform engineering.
+
+<div className="gain-planes-diagram">
+  <div className="gain-planes-diagram__stack">
+    <div className="gain-arch-layer gain-arch-layer--user">
+      <span className="gain-arch-layer-title">Application Plane</span>
+      <span className="gain-arch-layer-desc">Business copilots, workflows, products</span>
+      <span className="gain-arch-layer-owner">Owned by: Product / Domain Teams · Adaptive</span>
+    </div>
+    <div className="gain-arch-feedback">↑ consumes</div>
+    <div className="gain-arch-layer gain-arch-layer--gateway">
+      <span className="gain-arch-layer-title">AI Control Plane</span>
+      <span className="gain-arch-layer-desc">Routing, policy, observability, Context Engine orchestration</span>
+      <span className="gain-arch-layer-owner">Owned by: AI Platform Team · Intelligent</span>
+    </div>
+    <div className="gain-arch-feedback">↑ runs on</div>
+    <div className="gain-arch-layer gain-arch-layer--infra">
+      <span className="gain-arch-layer-title">AI Runtime Plane</span>
+      <span className="gain-arch-layer-desc">Models, GPUs, vector stores, inference</span>
+      <span className="gain-arch-layer-owner">Owned by: Infrastructure / Cloud Team · Native</span>
+    </div>
+  </div>
+  <div className="gain-planes-diagram__data">
+    <span className="gain-planes-diagram__feeds" aria-hidden="true">
+      <span className="gain-planes-diagram__feeds-arrow">←</span>
+      <span>feeds</span>
+      <span className="gain-planes-diagram__feeds-target">Context Engine</span>
+    </span>
+    <div className="gain-arch-layer gain-arch-layer--data gain-planes-diagram__data-layer">
+      <span className="gain-arch-layer-title">Data / Knowledge Plane</span>
+      <span className="gain-arch-layer-desc">Pipelines, embeddings, catalogs, governance tags</span>
+      <span className="gain-arch-layer-owner">Owned by: Data Platform Team · Grounded · optional 4th plane</span>
+    </div>
+  </div>
+</div>
+
+Platform decides **how** AI is used. Infrastructure runs **where** AI executes.
+Data provides **what** AI knows. Product defines **why** AI exists.
+
+## Who Owns What?
+
+<Details className="gain-accordion" summary="AI Platform Team. Control Plane">
+  Platform owns **how AI is consumed**: not business logic.
+
+  <ul className="gain-checklist">
+    <li>AI Gateway: standard entrypoint</li>
+    <li>Model abstraction layer: provider swapability</li>
+    <li>Intent classifier: routing intelligence</li>
+    <li>Policy engine: governance</li>
+    <li>Routing engine: cost, latency, risk decisions</li>
+    <li>Prompt templates: standardized invocation</li>
+    <li>Tool registry: reusable enterprise tools</li>
+    <li>Observability: tracing, token cost, quality</li>
+    <li>Evaluation framework: benchmark and regression</li>
+    <li>Secrets integration: secure model credentials</li>
+  </ul>
+</Details>
+
+<Details className="gain-accordion" summary="Infrastructure / Cloud Team. Runtime Plane">
+  Infra owns **where AI runs**: not how it is orchestrated.
+
+  <ul className="gain-checklist">
+    <li>Kubernetes: compute platform</li>
+    <li>GPU clusters: inference infrastructure</li>
+    <li>Networking. VPC and private links</li>
+    <li>Storage: embeddings and artifacts</li>
+    <li>Vector databases: managed infrastructure</li>
+    <li>Scaling policies: autoscaling</li>
+    <li>Security hardening: runtime isolation</li>
+    <li>Model serving stacks: vLLM, Hugging Face TGI</li>
+  </ul>
+</Details>
+
+<Details className="gain-accordion" summary="Data Platform Team. Data / Knowledge Plane (4th plane in large orgs)">
+  Data feeds the Context Engine: not the router. In mature enterprises this is a distinct plane.
+  In smaller programs, merge these responsibilities into the AI Platform team (see note below).
+
+  <ul className="gain-checklist">
+    <li>Data pipelines: freshness</li>
+    <li>Embeddings pipelines: indexing</li>
+    <li>Metadata catalogs: discoverability</li>
+    <li>Data quality: trust</li>
+    <li>Governance tags: classification (PII, sensitive data)</li>
+  </ul>
+</Details>
+
+<Details className="gain-accordion" summary="Product / Domain Teams. Application Plane">
+  Product teams **consume** the control plane: they own business outcomes.
+
+  <ul className="gain-checklist">
+    <li>Use cases: business outcomes</li>
+    <li>UX. Human interaction</li>
+    <li>Workflows: process logic</li>
+    <li>Agent behavior: domain orchestration</li>
+    <li>KPIs. ROI</li>
+  </ul>
+
+  Examples: customer support copilot, claims automation, architecture advisor.
+</Details>
+
+## Flow of a Request
+
+<div className="gain-section-lead">
+  A single request crosses four planes in sequence. The control plane is the densest stage: gateway,
+  policy, and context assembly happen before any model runs. Data feeds context asynchronously;
+  observability spans the full path.
+</div>
+
+<div className="gain-request-flow">
+  <div className="gain-request-flow__diagram">
+    <div className="gain-request-flow__track">
+      <div className="gain-request-flow__stage gain-request-flow__stage--product">
+        <span className="gain-request-flow__stage-title">User request</span>
+        <span className="gain-request-flow__stage-desc">Use case · UX</span>
+        <span className="gain-request-flow__owner">Product</span>
+      </div>
+
+      <span className="gain-request-flow__arrow" aria-hidden="true">→</span>
+
+      <div className="gain-request-flow__stage gain-request-flow__stage--control">
+        <span className="gain-request-flow__stage-title">Control plane</span>
+        <div className="gain-request-flow__pipeline">
+          <span>Gateway</span>
+          <span className="gain-request-flow__pipe-arrow" aria-hidden="true">›</span>
+          <span>Intent</span>
+          <span className="gain-request-flow__pipe-arrow" aria-hidden="true">›</span>
+          <span>Policy</span>
+          <span className="gain-request-flow__pipe-arrow" aria-hidden="true">›</span>
+          <span>Context</span>
+          <span className="gain-request-flow__pipe-arrow" aria-hidden="true">›</span>
+          <span>Router</span>
+        </div>
+        <span className="gain-request-flow__owner">Platform · Security · Data</span>
+      </div>
+
+      <span className="gain-request-flow__arrow" aria-hidden="true">→</span>
+
+      <div className="gain-request-flow__stage gain-request-flow__stage--runtime">
+        <span className="gain-request-flow__stage-title">Runtime</span>
+        <span className="gain-request-flow__stage-desc">Inference · Vector store</span>
+        <span className="gain-request-flow__owner">Infrastructure</span>
+      </div>
+
+      <span className="gain-request-flow__arrow" aria-hidden="true">→</span>
+
+      <div className="gain-request-flow__stage gain-request-flow__stage--product">
+        <span className="gain-request-flow__stage-title">Response</span>
+        <span className="gain-request-flow__stage-desc">Workflow · KPIs</span>
+        <span className="gain-request-flow__owner">Product</span>
+      </div>
+    </div>
+
+    <div className="gain-request-flow__support">
+      <div className="gain-request-flow__feed">
+        <span className="gain-request-flow__feed-arrow" aria-hidden="true">↗</span>
+        <span><strong>Data plane</strong> feeds indexed knowledge into Context</span>
+      </div>
+      <div className="gain-request-flow__obs">
+        <span className="gain-request-flow__obs-icon" aria-hidden="true">↻</span>
+        <span><strong>Observability</strong> traces every hop. Platform + SRE</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+## Boundary Lines
+
+| Team | Should not own |
+| --- | --- |
+| **AI Platform team** | Business-specific prompts · App UI · Product workflows · Enterprise source systems · GPU hardware lifecycle · Embeddings pipelines and indexing logic · Metadata catalog and data quality rules |
+| **Infrastructure / Cloud team** | Model routing logic · Prompt standards · Policy semantics · AI evaluation quality · Data pipeline design · Catalog semantics and governance tags |
+| **Data Platform team** | Context Engine orchestration at request time · Model routing and policy decisions · Prompt templates and agent invocation · Inference hosting and GPU lifecycle · App UI and product workflows · Business-specific agent behavior |
+| **Product / Domain teams** | Direct model SDK integration · Vendor-specific implementations · Raw API keys · Isolated prompt stacks · Data pipelines and embeddings indexing · Metadata catalog and classification tags |
+
+Fragmentation starts when these lines blur.
+
+## Enterprise AI Operating Model
+
+<div className="gain-org-model">
+  <div className="gain-org-model__diagram">
+    <div className="gain-org-model__council">
+      <span className="gain-org-model__council-title">Enterprise AI Council</span>
+      <span className="gain-org-model__council-desc">Strategy · investment · risk · standards</span>
+    </div>
+    <div className="gain-org-model__spine" aria-hidden="true">
+      <span></span><span></span><span></span><span></span>
+    </div>
+    <div className="gain-org-model__teams">
+      <div className="gain-org-model__team gain-org-model__team--control">
+        <span className="gain-org-model__team-title">AI Platform Team</span>
+        <span className="gain-org-model__team-plane">control plane</span>
+        <span className="gain-org-model__team-pillar">Intelligent</span>
+      </div>
+      <div className="gain-org-model__team gain-org-model__team--runtime">
+        <span className="gain-org-model__team-title">Cloud Platform Team</span>
+        <span className="gain-org-model__team-plane">runtime plane</span>
+        <span className="gain-org-model__team-pillar">Native</span>
+      </div>
+      <div className="gain-org-model__team gain-org-model__team--data">
+        <span className="gain-org-model__team-title">Data Platform Team</span>
+        <span className="gain-org-model__team-plane">data / knowledge plane</span>
+        <span className="gain-org-model__team-pillar">Grounded</span>
+      </div>
+      <div className="gain-org-model__team gain-org-model__team--application">
+        <span className="gain-org-model__team-title">Domain Teams</span>
+        <span className="gain-org-model__team-plane">application plane</span>
+        <span className="gain-org-model__team-pillar">Adaptive</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+:::tip[Simple rule]
+- If it decides **which model / under what rules** → Platform. 
+- If it **runs** the model → Infrastructure.
+- If it provides **business truth** → Data. 
+- If it creates **business value** → Product.
+:::
+
+:::note[When to merge the Data Plane into AI Platform]
+You do **not** need a separate fourth plane in every org. Use three planes plus a combined Platform
+team when the program is early-stage or headcount is limited.
+
+**Keep Data as its own plane** when the enterprise already has a data platform organization owning
+pipelines, catalogs, and governance at scale: typical in large banks and regulated industries.
+
+**Merge into AI Platform** when the same team can own Context Engine orchestration *and* embeddings
+pipelines, indexing, and catalog work without splitting accountability. The boundaries in this
+model still apply: only the team structure compresses.
+:::

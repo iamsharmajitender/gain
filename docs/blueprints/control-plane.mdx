@@ -1,0 +1,258 @@
+---
+title: AI Control Plane
+sidebar_label: AI Control Plane
+hide_title: true
+---
+
+import Details from '@theme/Details';
+
+<div className="gain-doc-header">
+  <h1 className="gain-doc-title">AI Control Plane</h1>
+  <div className="gain-doc-subtitle">
+    Component-level blueprint for the platform layer: where G.A.I.N is operationalized through
+    governance, orchestration, and shared capability patterns.
+  </div>
+</div>
+
+<div className="gain-section-lead">
+  The control plane decides <strong>how AI is consumed</strong> across the enterprise. Product teams
+  call stable platform APIs; the control plane handles routing, policy, context assembly, tool
+  access, and observability. It runs <strong>on</strong> the runtime plane and is <strong>fed</strong>{' '}
+  by the data / knowledge plane through the Context Engine.
+</div>
+
+## Plane placement
+
+| Attribute | Value |
+| --- | --- |
+| **G.A.I.N pillar** | Intelligent (primary), Adaptive (feedback hooks) |
+| **Owner** | AI Platform Team |
+| **Consumes** | Runtime plane (inference, vector stores), Data plane (indexed knowledge via Context Engine) |
+| **Consumed by** | Application plane (copilots, workflows, domain agents) |
+
+## Control plane stack
+
+<div className="gain-section-lead">
+  Where the control plane sits in the enterprise stack: application plane above, runtime below, and
+  the platform components owned inside the boundary. See <strong>Request path</strong> below for how
+  a single request flows through these components.
+</div>
+
+<div className="gain-platform-arch">
+  <div className="gain-platform-arch__diagram gain-arch-diagram">
+    <div className="gain-arch-layer gain-arch-layer--user">
+      <span className="gain-arch-layer-title">Application Plane</span>
+      <span className="gain-arch-layer-desc">Domain copilots, workflows, UX</span>
+    </div>
+    <div className="gain-arch-feedback">↓ consumes platform APIs</div>
+    <div className="gain-arch-core gain-control-plane-box gain-platform-arch__highlight">
+      <div className="gain-arch-core-label">AI Control Plane</div>
+      <div className="gain-control-plane-box__stack">
+        <div className="gain-arch-layer gain-arch-layer--gateway">
+          <span className="gain-arch-layer-title">Ingress & Gateway</span>
+          <span className="gain-arch-layer-desc">AuthN/Z, rate limits, request normalization, correlation IDs</span>
+        </div>
+        <div className="gain-arch-layer gain-arch-layer--capability">
+          <span className="gain-arch-layer-title">Intent & Routing</span>
+          <span className="gain-arch-layer-desc">Intent classifier, model router, cost / latency / risk decisions</span>
+        </div>
+        <div className="gain-arch-layer gain-arch-layer--policy">
+          <span className="gain-arch-layer-title">Policy & Governance</span>
+          <span className="gain-arch-layer-desc">Policy engine, secrets, audit, compliance gates</span>
+        </div>
+        <div className="gain-arch-layer gain-arch-layer--workflow">
+          <span className="gain-arch-layer-title">Capability Runtime</span>
+          <span className="gain-arch-layer-desc">G.A.I.N LLM · G.A.I.N RAG · G.A.I.N Agents orchestration</span>
+        </div>
+        <div className="gain-arch-layer gain-arch-layer--context">
+          <span className="gain-arch-layer-title">Context Engine</span>
+          <span className="gain-arch-layer-desc">Retrieval orchestration at request time: see dedicated blueprint</span>
+        </div>
+        <div className="gain-arch-layer gain-arch-layer--services">
+          <span className="gain-arch-layer-title">Platform Services</span>
+          <span className="gain-arch-layer-desc">Tool registry, prompt templates, observability, evaluation</span>
+        </div>
+      </div>
+    </div>
+    <div className="gain-arch-feedback">↓ runs on runtime plane</div>
+    <div className="gain-arch-layer gain-arch-layer--infra">
+      <span className="gain-arch-layer-title">AI Runtime Plane</span>
+      <span className="gain-arch-layer-desc">Inference endpoints, GPU clusters, managed vector stores</span>
+    </div>
+  </div>
+</div>
+
+## Request path (control plane view)
+
+<div className="gain-section-lead">
+  How a single request moves through the stack: gateway, policy, context assembly, capability
+  pattern, model routing, and observability hooks.
+</div>
+
+<div className="gain-control-path">
+  <div className="gain-control-path__diagram">
+    <div className="gain-control-path__main">
+      <span className="gain-control-path__step gain-control-path__step--product">Application<br/>(Product)</span>
+      <span className="gain-control-path__arrow" aria-hidden="true">→</span>
+      <span className="gain-control-path__step gain-control-path__step--platform">AI Gateway</span>
+      <span className="gain-control-path__arrow" aria-hidden="true">→</span>
+      <span className="gain-control-path__step gain-control-path__step--platform">Intent Classifier</span>
+      <span className="gain-control-path__arrow" aria-hidden="true">→</span>
+      <span className="gain-control-path__step gain-control-path__step--platform">Policy Engine</span>
+      <span className="gain-control-path__arrow" aria-hidden="true">→</span>
+      <span className="gain-control-path__step gain-control-path__step--shared">Context Engine</span>
+      <span className="gain-control-path__arrow" aria-hidden="true">→</span>
+      <span className="gain-control-path__step gain-control-path__step--capability">Capability Pattern<br/>(LLM / RAG / Agent)</span>
+      <span className="gain-control-path__arrow" aria-hidden="true">→</span>
+      <span className="gain-control-path__step gain-control-path__step--platform">Model Router</span>
+      <span className="gain-control-path__arrow" aria-hidden="true">→</span>
+      <span className="gain-control-path__step gain-control-path__step--infra">Inference<br/>(Runtime)</span>
+    </div>
+    <div className="gain-control-path__branches">
+      <div className="gain-control-path__branch">
+        <span className="gain-control-path__branch-connector" aria-hidden="true">↗</span>
+        <span className="gain-control-path__step gain-control-path__step--platform">Tool Registry</span>
+        <span className="gain-control-path__branch-label">sidecar access</span>
+      </div>
+      <div className="gain-control-path__branch">
+        <span className="gain-control-path__branch-connector" aria-hidden="true">↗</span>
+        <span className="gain-control-path__step gain-control-path__step--obs">Observability</span>
+        <span className="gain-control-path__branch-label">spans every hop</span>
+      </div>
+      <div className="gain-control-path__branch">
+        <span className="gain-control-path__branch-connector" aria-hidden="true">↗</span>
+        <span className="gain-control-path__step gain-control-path__step--obs">Evaluation</span>
+        <span className="gain-control-path__branch-label">quality hooks</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+## Core components
+
+<Details className="gain-accordion" summary="AI Gateway: standard entrypoint">
+  Single front door for all AI traffic: human and system callers. Responsibilities:
+
+  - Authentication and authorization (integrate with enterprise IdP)
+  - Rate limiting and quota enforcement per tenant / use case
+  - Request/response schema validation and protocol translation (REST, gRPC, SSE)
+  - Correlation and trace ID propagation for observability
+  - Versioned public API surface: product teams never call model vendors directly
+
+  **Does not own:** business workflows, domain prompts, source-system integration.
+</Details>
+
+<Details className="gain-accordion" summary="Model abstraction layer: provider swapability">
+  Abstraction over OpenAI, Anthropic, Azure, Bedrock, and on-prem inference. Responsibilities:
+
+  - Unified invocation contract (prompt + tools + schema + metadata)
+  - Provider failover and circuit breaking
+  - Token accounting and cost attribution tags
+  - Model capability matrix (context window, tool support, streaming)
+
+  **Interface to runtime plane:** calls inference endpoints; never embeds vendor SDKs in application code.
+</Details>
+
+<Details className="gain-accordion" summary="Intent classifier: routing intelligence">
+  Classifies incoming requests before expensive inference. Responsibilities:
+
+  - Route to capability pattern (chat, RAG, agent, structured extraction)
+  - Detect out-of-scope or high-risk intents for policy escalation
+  - Select retrieval profile or agent profile for downstream orchestration
+
+  **TBD:** fine-tuned classifier vs. LLM-based routing vs. rules engine hybrid.
+</Details>
+
+<Details className="gain-accordion" summary="Policy engine: governance">
+  Deterministic enforcement layer: authorization is not prediction. Responsibilities:
+
+  - Data classification checks (PII, sensitive, regulated)
+  - Model allowlists / blocklists per use case
+  - Tool permission scopes and four-eyes approval hooks
+  - Prompt injection and exfiltration guardrails
+  - Audit event emission for every policy decision
+
+  **Shared with Security:** policy semantics; Platform owns runtime enforcement.
+</Details>
+
+<Details className="gain-accordion" summary="Routing engine: cost, latency, risk">
+  Selects model and inference path after policy clears. Decision inputs:
+
+  - Latency SLA, cost budget, quality tier
+  - Data residency and air-gap constraints
+  - Fallback chain when primary model degrades
+
+  **Does not own:** embeddings pipelines, catalog semantics (Data plane).
+</Details>
+
+<Details className="gain-accordion" summary="Prompt templates: standardized invocation">
+  Versioned prompt contracts: treated as platform APIs. Responsibilities:
+
+  - Platform-owned system prompts and output schemas
+  - Variable injection and safe templating
+  - A/B and regression hooks tied to evaluation framework
+
+  **Boundary:** business-specific prompt content stays in Application plane; platform provides shells and guardrails.
+</Details>
+
+<Details className="gain-accordion" summary="Tool registry: reusable enterprise tools">
+  Catalog of approved tools agents and workflows may invoke. Each tool entry includes:
+
+  - Typed input/output schema
+  - Permission scope and owning domain team
+  - Audit trail and rate limits
+  - Sandbox vs. production endpoints
+
+  See [Agent Flow Model](/blueprints/agent-flow-model) for execution semantics.
+</Details>
+
+<Details className="gain-accordion" summary="Observability: tracing, token cost, quality">
+  Cross-cutting telemetry for every control-plane hop. Capture five signals in the request path and
+  route to purpose-built tiers:
+
+  - **Structured logs** → log store (30 d): operational debugging
+  - **Metrics** → TSDB (13 mo): SLOs, token cost, latency percentiles
+  - **Sampled traces** → trace store (30 d): gateway → context → model → tools
+  - **Raw prompt/response** → restricted store (encrypted, 90 d): quality and drift analysis
+  - **Audit records** → audit log (immutable, 7 y): compliance replay
+
+  Redaction and sampling happen in the collector. See [G.A.I.N Observability](/frameworks/gain-observability).
+
+  **Spans all planes**: collectors live in platform; storage may sit on runtime infra.
+</Details>
+
+<Details className="gain-accordion" summary="Evaluation framework: benchmark and regression">
+  Continuous quality gate for prompts, models, and retrieval profiles. Responsibilities:
+
+  - Golden datasets per capability pattern
+  - Regression runs on model or index changes
+  - Grounding and citation accuracy checks for RAG
+  - Agent task success rates and policy violation counts
+
+  **Feeds Adaptive pillar:** evaluation results inform product KPIs and platform tuning.
+</Details>
+
+<Details className="gain-accordion" summary="Secrets integration: secure model credentials">
+  Centralized credential brokering: no raw API keys in application repos. Responsibilities:
+
+  - Vault integration for provider keys and service accounts
+  - Short-lived tokens injected at gateway boundary
+  - Rotation and break-glass procedures
+
+  **Runtime plane** hosts vault agents; **Platform** owns consumption contract.
+</Details>
+
+## Capability patterns (hosted on control plane)
+
+| Pattern | Blueprint | Purpose |
+| --- | --- | --- |
+| **G.A.I.N LLM** | [LLM Gateway](/blueprints/llm-gateway) | Governed model access, guardrails, caching |
+| **G.A.I.N RAG** | [RAG Architecture](/blueprints/rag-architecture) | Grounded Q&A and document intelligence |
+| **G.A.I.N Agents** | [Agent Flow Model](/blueprints/agent-flow-model) | Policy-governed tool use and multi-step tasks |
+
+## Related blueprints
+
+- [Context Engine](/blueprints/context-engine): retrieval orchestration; primary consumer of the data plane
+- [Data / Knowledge Plane](/blueprints/data-knowledge-plane): pipelines and catalogs that feed context
+- [AI Runtime Plane](/blueprints/runtime-plane): where models and vector stores execute
+- [G.A.I.N Architecture](/blueprints/gain-architecture): full-stack reference model

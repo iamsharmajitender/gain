@@ -1,0 +1,75 @@
+---
+title: LLM Integration Guide
+sidebar_label: LLM Integration Guide
+hide_title: true
+
+---
+
+import Details from '@theme/Details';
+
+<div className="gain-doc-header">
+  <h1 className="gain-doc-title">LLM Integration Guide</h1>
+  <div className="gain-doc-subtitle">Integrate LLMs into existing enterprise systems. APIs, gateways, caching, and fallbacks.</div>
+</div>
+
+## Design for Enterprise Integration
+
+<div className="gain-section-lead">
+  Integrating an LLM into an existing system is an architecture problem, not a API call. Gateways, caching, authorization, and fallback paths must be designed before the first production request.
+</div>
+
+<div className="gain-two-col">
+  <div>
+    <ul className="gain-checklist">
+      <li>API gateway layer</li>
+      <li>Authentication & authz</li>
+      <li>Response caching</li>
+      <li>Rate limiting</li>
+      <li>Fallback routing</li>
+    </ul>
+  </div>
+  <div className="gain-diagram-wrap">
+
+```mermaid
+flowchart TD
+  Client["Enterprise App"] --> Gateway["LLM Gateway"]
+  Gateway --> Auth["Auth & Rate Limit"]
+  Auth --> Cache["Semantic Cache"]
+  Cache --> Router["Model Router"]
+  Router --> Primary["Primary Model"]
+  Router --> Fallback["Fallback Model"]
+  Primary --> Guard["Output Guardrails"]
+  Fallback --> Guard
+  Guard --> Client
+
+  classDef client fill:#dbeafe,stroke:#93c5fd,color:#1e293b
+  classDef gateway fill:#ede9fe,stroke:#c4b5fd,color:#1e293b
+  classDef infra fill:#ffedd5,stroke:#fdba74,color:#1e293b
+  classDef model fill:#dcfce7,stroke:#86efac,color:#1e293b
+
+  class Client client
+  class Gateway,Auth,Cache,Router gateway
+  class Guard infra
+  class Primary,Fallback model
+```
+
+  </div>
+</div>
+
+## Key Practices
+
+<Details className="gain-accordion" summary="Never call models directly">
+  Route all LLM traffic through a gateway that handles auth, logging, caching, and routing. Direct model calls bypass every production safeguard.
+</Details>
+
+<Details className="gain-accordion" summary="Abstract model providers">
+  Build a provider-agnostic interface so you can swap models without rewriting application code. Vendor lock-in is a operational risk, not just a cost issue.
+</Details>
+
+<Details className="gain-accordion" summary="Cache aggressively, invalidate carefully">
+  Semantic caching reduces cost and latency dramatically. Define cache invalidation rules based on data freshness requirements, not arbitrary TTLs.
+</Details>
+
+<Details className="gain-accordion" summary="Plan degradation paths">
+  When the primary model is unavailable, route to fallbacks, cached responses, or human escalation. Users should never see a raw API error.
+</Details>

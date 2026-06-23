@@ -1,0 +1,183 @@
+---
+title: Context Engine
+sidebar_label: Context Engine
+hide_title: true
+---
+
+import Details from '@theme/Details';
+
+<div className="gain-doc-header">
+  <h1 className="gain-doc-title">Context Engine</h1>
+  <div className="gain-doc-subtitle">
+    Runtime context construction: the boundary where the data / knowledge plane meets control-plane
+    orchestration.
+  </div>
+</div>
+
+<div className="gain-section-lead">
+  Data feeds the Context Engine. <strong>not the router</strong>. The engine assembles the right
+  context for a given request: retrieved chunks, structured facts, user/session state, and governance
+  filters. It sits after policy and before model routing in the standard request path.
+</div>
+
+## Ownership split
+
+| Concern | AI Platform (Control) | Data Platform (Knowledge) |
+| --- | --- | --- |
+| Retrieval API and orchestration | ✓ | |
+| Query planning and context assembly | ✓ | |
+| Hybrid search invocation at runtime | ✓ | |
+| Embeddings pipelines and re-indexing | | ✓ |
+| Chunking strategy and index design | shared | shared |
+| Metadata catalog and lineage | | ✓ |
+| Data quality and freshness SLAs | | ✓ |
+| Governance tags (PII, classification) | enforce | define |
+| Vector store **hosting** | | Infra plane |
+| Vector store **schema / collections** | shared | shared |
+
+## Context Engine flow
+
+<div className="gain-diagram-wrap">
+
+```mermaid
+flowchart TD
+  Req["Request + Intent"] --> Policy["Policy Pre-check"]
+  Policy --> Plan["Context Plan"]
+  Plan --> Retrieve["Retrieval Orchestrator"]
+  Retrieve --> Hybrid["Hybrid Search<br/>(dense + sparse)"]
+  Hybrid --> Vector["Vector Store<br/>(Runtime / Infra)"]
+  Hybrid --> Catalog["Metadata Catalog<br/>(Data)"]
+  Retrieve --> Rerank["Reranker"]
+  Rerank --> Assemble["Context Assembly"]
+  Assemble --> Filter["Governance Filter"]
+  Filter --> Out["Context Package → Capability Pattern"]
+
+  classDef platform fill:#dbeafe,stroke:#93c5fd,color:#1e293b
+  classDef data fill:#ecfdf5,stroke:#6ee7b7,color:#1e293b
+  classDef infra fill:#f3f4f6,stroke:#d1d5db,color:#1e293b
+  classDef guard fill:#ffedd5,stroke:#fdba74,color:#1e293b
+
+  class Req,Policy,Plan,Retrieve,Rerank,Assemble platform
+  class Catalog data
+  class Vector infra
+  class Hybrid,Filter guard
+  class Out platform
+```
+
+</div>
+
+## Context package contract (draft)
+
+Every capability pattern (LLM, RAG, Agent) receives a **context package**: not raw retrieval dumps.
+
+| Field | Description |
+| --- | --- |
+| `sources[]` | Retrieved documents with scores, chunk IDs, and citation metadata |
+| `structured_facts[]` | Optional KG / SQL / API facts merged into context |
+| `session_state` | Working memory pointers for multi-turn flows |
+| `governance` | Applied filters, redactions, and classification labels |
+| `freshness` | Index version, pipeline run ID, max staleness timestamp |
+| `trace_id` | Links to observability and evaluation artifacts |
+
+**TBD:** protobuf/JSON schema publication and versioning policy.
+
+## Sub-components
+
+<Details className="gain-accordion" summary="Context planner">
+  Maps intent + use-case profile to a retrieval strategy. Examples:
+
+  - RAG profile: top-k hybrid, rerank depth, citation required
+  - Agent profile: tool-scoped document collections only
+  - Structured profile: SQL/KG lookup before vector fallback
+
+  Planner reads **catalog metadata** (Data) but executes on **platform** runtime.
+</Details>
+
+<Details className="gain-accordion" summary="Retrieval orchestrator">
+  Coordinates calls to vector stores, keyword indexes, and optional knowledge graphs. Responsibilities:
+
+  - Parallel retrieval fan-out and timeout budgets
+  - Collection routing based on tenant and data classification
+  - De-duplication across overlapping chunks
+
+  See [RAG Architecture](/blueprints/rag-architecture) for indexing and retrieval layer detail.
+</Details>
+
+<Details className="gain-accordion" summary="Reranker">
+  Cross-encoder or lightweight LLM reranking after first-stage retrieval. Platform-owned service;
+  models may run on runtime GPU pools. Highest-leverage quality lever after index design.
+</Details>
+
+<Details className="gain-accordion" summary="Context assembler">
+  Builds the final prompt-ready context window. Responsibilities:
+
+  - Token budget allocation across sources
+  - Citation ordering and structured delimiters
+  - Conflict resolution when sources disagree
+
+  **Grounded pillar:** assembly must preserve traceability to source IDs.
+</Details>
+
+<Details className="gain-accordion" summary="Governance filter">
+  Post-retrieval enforcement before context reaches the model. Applies:
+
+  - PII redaction and masking rules from Data governance tags
+  - Deny lists for collections or document classes
+  - Maximum sensitivity tier per use case
+
+  Works with [Policy Engine](/blueprints/control-plane): policy decides *if* retrieval may run;
+  governance filter decides *what* from results may pass through.
+</Details>
+
+## Data plane interface
+
+<div className="gain-diagram-wrap">
+
+```mermaid
+flowchart LR
+  subgraph Data["Data / Knowledge Plane"]
+    Pipe["Ingestion Pipelines"]
+    Embed["Embeddings Jobs"]
+    Cat["Metadata Catalog"]
+    Qual["Quality & Tags"]
+  end
+
+  subgraph Ctx["Context Engine (Platform)"]
+    Orch["Retrieval Orchestrator"]
+  end
+
+  subgraph Run["Runtime Plane"]
+    VDB["Vector Store"]
+    Obj["Object Storage"]
+  end
+
+  Pipe --> Embed --> VDB
+  Pipe --> Cat
+  Qual --> Cat
+  Cat --> Orch
+  VDB --> Orch
+  Obj --> Pipe
+
+  classDef data fill:#ecfdf5,stroke:#6ee7b7,color:#1e293b
+  classDef platform fill:#dbeafe,stroke:#93c5fd,color:#1e293b
+  classDef infra fill:#f3f4f6,stroke:#d1d5db,color:#1e293b
+
+  class Pipe,Embed,Cat,Qual data
+  class Orch platform
+  class VDB,Obj infra
+```
+
+</div>
+
+## Anti-patterns
+
+- Application teams calling vector DBs or catalog APIs directly: bypasses policy and observability
+- Data team owning request-time orchestration: blurs plane boundaries
+- Router choosing retrieval collections: routing decides *model*; Context Engine decides *knowledge*
+- Skipping citation metadata: breaks grounding validation and audit in regulated environments
+
+## Related blueprints
+
+- [AI Control Plane](/blueprints/control-plane): gateway, policy, and capability hosting
+- [Data / Knowledge Plane](/blueprints/data-knowledge-plane): upstream pipelines and catalog
+- [RAG Architecture](/blueprints/rag-architecture): indexing and retrieval layers in depth

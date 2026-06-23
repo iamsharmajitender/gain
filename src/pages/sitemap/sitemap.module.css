@@ -1,0 +1,113 @@
+.lead {
+  font-size: 1.0625rem;
+  color: var(--gain-text-muted);
+  margin-bottom: 2rem;
+  line-height: 1.6;
+}
+
+.flow {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 0.75rem;
+  margin: 1.5rem 0 2.5rem;
+  padding: 1.25rem;
+  background: var(--gain-sidebar-bg);
+  border: 1px solid var(--gain-border);
+  border-radius: 8px;
+}
+
+.flowStep {
+  text-align: center;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--gain-text);
+}
+
+.flowArrow {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .flow {
+    grid-template-columns: 1fr auto 1fr auto 1fr auto 1fr;
+    align-items: center;
+  }
+
+  .flowArrow {
+    display: block;
+    text-align: center;
+    color: var(--gain-text-muted);
+    font-size: 1.125rem;
+  }
+}
+
+.overview {
+  margin-bottom: 2.5rem;
+}
+
+.overviewTitle {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 0 0 1rem;
+}
+
+.overviewTableWrap {
+  overflow-x: auto;
+  border: 1px solid var(--gain-border);
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+[data-theme='dark'] .overviewTableWrap {
+  background: var(--ifm-background-surface-color);
+}
+
+.overviewTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9375rem;
+}
+
+.overviewTable th,
+.overviewTable td {
+  padding: 0.875rem 1.25rem;
+  text-align: left;
+  vertical-align: top;
+  border-bottom: 1px solid var(--gain-border);
+}
+
+.overviewTable th {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--gain-text-muted);
+  background: var(--gain-sidebar-bg);
+}
+
+.overviewTable tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.overviewTable td:first-child {
+  width: 11rem;
+  white-space: nowrap;
+}
+
+.overviewSectionLink {
+  font-weight: 600;
+  color: var(--gain-blue);
+  text-decoration: none;
+}
+
+.overviewSectionLink:hover {
+  color: var(--gain-blue-dark);
+  text-decoration: none;
+}
+
+.overviewNote {
+  margin: 1rem 0 0;
+  font-size: 0.9375rem;
+  color: var(--gain-text-muted);
+  line-height: 1.6;
+}

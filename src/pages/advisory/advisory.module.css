@@ -1,0 +1,86 @@
+.helpList {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  margin-bottom: 2rem;
+}
+
+.helpItem {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.helpIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 8px;
+  background: var(--gain-blue-light);
+  color: var(--gain-blue);
+  font-size: 1.125rem;
+  flex-shrink: 0;
+}
+
+.helpItem h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  margin: 0 0 0.25rem;
+}
+
+.helpItem p {
+  font-size: 0.9375rem;
+  color: var(--gain-text-muted);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.ctaBox {
+  margin-top: 2rem;
+  padding: 1.5rem;
+  background: var(--gain-blue-light);
+  border: 1px solid #bfdbfe;
+  border-radius: 8px;
+}
+
+.ctaBox p {
+  font-weight: 600;
+  margin: 0 0 0.75rem;
+}
+
+.ctaLink {
+  color: var(--gain-blue);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.ctaLink:hover {
+  color: var(--gain-blue-dark);
+  text-decoration: none;
+}
+
+.emailLink {
+  color: var(--gain-blue);
+  font-weight: 500;
+}
+
+.ctaButton {
+  display: inline-flex;
+  align-items: center;
+  margin-top: 1rem;
+  padding: 0.75rem 1.5rem;
+  background-color: var(--gain-blue);
+  color: #ffffff !important;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.9375rem;
+}
+
+.ctaButton:hover {
+  background-color: var(--gain-blue-dark);
+  color: #ffffff !important;
+  text-decoration: none;
+}

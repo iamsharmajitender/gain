@@ -1,0 +1,82 @@
+# ── Domain (Core Domains) ──
+# One per post: where the work sits in the practice model.
+
+strategy-architecture:
+  label: Strategy & Architecture
+  description: Roadmaps, reference models, and design authority for enterprise transformation.
+
+platforms-engineering:
+  label: Platforms & Engineering
+  description: Cloud-native, event-driven, and observable systems that scale.
+
+ai-intelligence:
+  label: AI & Intelligence
+  description: Governed agents, RAG, and production AI on enterprise foundations.
+
+governance-trust:
+  label: Governance & Trust
+  description: Policy, compliance, and operational resilience in regulated environments.
+
+# ── Type ──
+# One per post: how the piece reads.
+
+pov:
+  label: Perspective / Position
+  description: Contrarian takes and strong positioning for enterprise leaders.
+
+lrn:
+  label: Learner
+  description: 'Lessons distilled from real situations: what broke and what changed.'
+
+arch:
+  label: Architecture
+  description: 'Deep technical breakdowns: flow, layers, and design principles.'
+
+exp:
+  label: Explainer
+  description: Clear analogies and step-by-step breakdowns for complex concepts.
+
+# ── Framework ──
+
+gain:
+  label: G.A.I.N
+  description: 'Governed AI-Native Systems: the operating model behind the work.'
+
+# ── Topic ──
+# Optional cross-cutting themes: search and discovery.
+
+rag:
+  label: RAG
+  description: Retrieval-Augmented Generation
+
+agents:
+  label: Agents
+  description: Agent orchestration, tool use, and governed autonomy
+
+mcp:
+  label: MCP
+  description: Model Context Protocol and tool integration patterns
+
+evaluation:
+  label: Evaluation
+  description: Model and system evaluation, benchmarks, and quality gates
+
+observability:
+  label: Observability
+  description: Monitoring, tracing, and operational visibility for AI systems
+
+policy:
+  label: Policy
+  description: Policy engines, governance, and runtime enforcement
+
+llm:
+  label: LLM
+  description: Large Language Models
+
+hallucinations:
+  label: Hallucinations
+  description: Grounding, validation, and design patterns to reduce model hallucinations
+
+compliance:
+  label: Compliance
+  description: Regulatory, audit, and compliance requirements for AI systems

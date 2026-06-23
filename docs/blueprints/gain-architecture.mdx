@@ -1,0 +1,85 @@
+---
+title: G.A.I.N Architecture
+sidebar_label: G.A.I.N Architecture
+hide_title: true
+
+---
+
+import Details from '@theme/Details';
+
+<div className="gain-doc-header">
+  <h1 className="gain-doc-title">G.A.I.N Architecture</h1>
+  <div className="gain-doc-subtitle">A layered reference model for enterprise AI systems.</div>
+</div>
+
+## Reference Architecture
+
+<div className="gain-section-lead">
+  This reference architecture maps the G.A.I.N framework to concrete system layers: from user-facing ingress through the core intelligence layer, data foundations, and cloud infrastructure.
+</div>
+
+<div className="gain-arch-diagram">
+  <div className="gain-arch-layer gain-arch-layer--user">
+    <span>User / External Systems</span>
+  </div>
+  <div className="gain-arch-layer gain-arch-layer--gateway">
+    <span>API Gateway / Ingress</span>
+  </div>
+  <div className="gain-arch-core-row">
+    <div className="gain-arch-core">
+      <div className="gain-arch-core-label">G.A.I.N Core</div>
+      <div className="gain-arch-core-boxes">
+        <div className="gain-arch-box gain-arch-box--g">G</div>
+        <div className="gain-arch-box gain-arch-box--a">A</div>
+        <div className="gain-arch-box gain-arch-box--i">I</div>
+        <div className="gain-arch-box gain-arch-box--n">N</div>
+      </div>
+    </div>
+    <div className="gain-arch-side">
+      <span>Observability & Governance</span>
+    </div>
+  </div>
+  <div className="gain-arch-layer gain-arch-layer--data">
+    <span className="gain-arch-layer-title">Data & Context Layer</span>
+    <div className="gain-arch-tags">
+      <span>Vector DB</span>
+      <span>Knowledge Graph</span>
+      <span>DB</span>
+      <span>Files</span>
+    </div>
+  </div>
+  <div className="gain-arch-layer gain-arch-layer--infra">
+    <span className="gain-arch-layer-title">Infrastructure Layer</span>
+    <div className="gain-arch-tags">
+      <span>Cloud</span>
+      <span>Compute</span>
+      <span>Storage</span>
+      <span>Network</span>
+    </div>
+  </div>
+  <div className="gain-arch-feedback">
+    <span>↻ Feedback Loop</span>
+  </div>
+</div>
+
+## Key Layers
+
+<Details className="gain-accordion" summary="Ingress & Gateway">
+  The entry point for all user and system interactions. Handles authentication, rate limiting, request routing, and protocol translation before requests reach the G.A.I.N core.
+</Details>
+
+<Details className="gain-accordion" summary="G.A.I.N Core">
+  The intelligence layer where grounding, adaptation, reasoning, and native execution happen. This is where RAG pipelines, agent runtimes, and LLM gateways live.
+</Details>
+
+<Details className="gain-accordion" summary="Data & Context Layer">
+  Vector databases, knowledge graphs, relational stores, and file systems that provide the grounded context AI systems need. Data freshness and lineage are managed here.
+</Details>
+
+<Details className="gain-accordion" summary="Infrastructure Layer">
+  Cloud compute, storage, networking, and platform services that host the entire stack. Designed for elastic scaling and multi-region resilience.
+</Details>
+
+<Details className="gain-accordion" summary="Observability & Governance">
+  Spans all layers: capturing metrics, logs, traces, audit records, and policy enforcement. Not a layer you add later; it wraps the entire architecture.
+</Details>
