@@ -1,8 +1,11 @@
 ---
+sidebar_position: 30
 slug: gain-agents
 title: G.A.I.N Agents
 sidebar_label: G.A.I.N Agents
 hide_title: true
+description: An agent is a governed workflow with intelligence, not a free-running loop with tools.
+authors: [iamsharmajitender]
 tags:
   - ai-intelligence
   - gain
@@ -14,233 +17,328 @@ import Details from '@theme/Details';
 
 <div className="gain-doc-header">
   <h1 className="gain-doc-title">G.A.I.N Agents</h1>
-  <div className="gain-doc-subtitle">
-    How to build governed agents in enterprise environments: grounded, adaptive, intelligent, native
-    principles applied to agentic workflows.
+  <div className="gain-doc-subtitle" style={{marginTop: '-0.25rem', marginBottom: '1.75rem'}}>
+    Why governed agents work this way: principles, patterns, team boundaries.
   </div>
 </div>
 
-## Design for Governed Autonomy
+:::info[G.A.I.N Agents]
+**An agent is a governed workflow with intelligence, not a free-running loop with tools.**
 
-<div className="gain-section-lead">
-  Agents are not autonomous by default. They earn autonomy through policy boundaries, observable
-  execution, and structured feedback. G.A.I.N Agents treat the model as a planner inside a workflow:
-  intelligence proposes, policy permits, and platform infrastructure executes.
+Enterprise teams debate frameworks and prompt loops. G.A.I.N Agents reframes the question: what may the agent do, who permits each action, how does the workflow survive failure, and how is every step traced and rolled back from day one.
+:::
+
+An agent in production is a **workflow the model helps plan**, not an autonomous actor. The model proposes the next step; policy permits it; the platform executes and records it. Autonomy is earned through policy boundaries, durable state, and observable execution — not granted by a prompt.
+
+## How This Maps to G.A.I.N
+
+| G.A.I.N pillar | Where it lives | Who primarily owns it |
+| --- | --- | --- |
+| **G · Grounded** | Policy engine, tool permissions, human approvals, audit logs | AI Platform Team |
+| **A · Adaptive** | Orchestrator, state store, retries and compensation, feedback loops | AI Platform + Product / Domain Teams |
+| **I · Intelligent** | Planning, tool selection, multi-step reasoning | AI Platform Team |
+| **N · Native** | Agent runtime, queues and event bus, observability, quotas | Infrastructure / Cloud Team + AI Platform |
+
+---
+
+## Why Agents need G.A.I.N
+
+Most production agent failures are not reasoning failures. They are architecture failures:
+
+- The agent loop runs free, calling tools with no policy gate before side effects.
+- A failed tool call has no retry, compensation, or durable state, so the workflow dies mid-flight.
+- Authority lives in the prompt ("do not transfer funds") instead of in the policy engine.
+- Multi-step runs have no trace, so failures stay invisible until a customer escalates.
+
+Generic agent advice stops at "give the model tools and let it loop." **G.A.I.N Agents** maps the full execution domain: how plans are gated, how actions are authorized, how workflows persist and recover, and how every step is traced under audit, scale, and change.
+
+**Dominant pillars for this domain:** **G** (Grounded) and **I** (Intelligent).
+- Grounding is authority: what the agent may do, approve, or escalate before any tool runs.
+- Intelligent is where the model earns its place: planning ambiguous steps, not owning execution.
+
+### What G.A.I.N adds (not generic agent advice)
+
+| G.A.I.N claim | What it means for agents |
+| --- | --- |
+| **Intelligence in the call; truth in the system** | The model plans. The architecture owns the policy verdict, tool authority, durable state, and audit. |
+| **The model proposes; the system decides** | Planning and tool selection are model-assisted; every action passes a policy gate before it runs. |
+| **Grounding is a pipeline, not a prompt** | Tool permissions, approvals, and guardrails define what an agent may do — not prompt instructions. |
+| **Native is the feedback loop, not hosting** | Traces, task-success metrics, and human corrections close the loop into planning and policy. |
+
+---
+
+## Domain on one page
+
+**Two views, one domain.** Application teams need the execution path; platform teams need the shared agent stack. Same governed boundary, different questions.
+
+| View | Question | Audience |
+| --- | --- | --- |
+| **Execution path** | How does one goal safely become a completed, audited workflow? | App teams, feature architects |
+| **Platform stack** | How does the org operate agents as shared infrastructure? | Platform, SRE, FinOps, security |
+
+An agent is a **workflow with intelligence**, not a free-running loop. The orchestrator drives the flow; policy gates every tool call; state persists so workflows survive retries and handoffs.
+
+### Execution path
+
+<div className="gain-mermaid">
+
+```mermaid
+flowchart LR
+    subgraph path["Execution path"]
+        direction LR
+        U["User intent<br/>Goal · task"]
+        O["Orchestrator<br/>Plan · coordinate"]
+        G["Policy gate<br/>Allow · deny · escalate"]
+        T["Tool execution<br/>APIs · side effects"]
+        S["State store<br/>Context · retries"]
+        R["Output<br/>Result · handoff"]
+    end
+
+    U --> O --> G --> T --> S --> R
+    S -. "plan · act · observe" .-> O
+
+    classDef product fill:#dbeafe,stroke:#93c5fd,color:#1e293b,stroke-width:2px
+    classDef gate fill:#ffedd5,stroke:#fdba74,color:#1e293b,stroke-width:2px
+    classDef process fill:#ede9fe,stroke:#c4b5fd,color:#1e293b,stroke-width:2px
+    classDef data fill:#dcfce7,stroke:#86efac,color:#1e293b,stroke-width:2px
+
+    class U,R product
+    class G gate
+    class O,T process
+    class S data
+
+    style path fill:#f8fafc,stroke:#cbd5e1,color:#1e293b,stroke-width:1px
+
+    linkStyle 5 stroke:#94a3b8,stroke-width:2px,stroke-dasharray:5 5
+```
+
 </div>
 
-## Agent workflow
+<br/>
 
-<div className="gain-section-lead">
-  Agents are <strong>workflows with intelligence</strong>: not free-running loops. An orchestrator
-  drives the flow; policy gates every tool call; state persists across steps so workflows survive
-  retries and handoffs.
+- **Policy gates every tool:** the orchestrator plans; policy permits before anything executes.
+- **State carries the loop:** durable context survives retries, handoffs, and the plan → act → observe cycle.
+
+:::important[Ask before you ship]
+**How do agents recover?** **Where is the policy gate?** **How do workflows persist?**
+
+If any answer is "the model figures it out," the design is not ready for production.
+:::
+
+| Stage | Owns | Does not own |
+| --- | --- | --- |
+| **User intent** | Goal, task framing | Tool authority, execution |
+| **Orchestrator** | Plan, coordinate steps | Permission to act, business outcome |
+| **Policy gate** | Allow / deny / escalate verdict | Generating the plan |
+| **Tool execution** | Side-effecting actions via the registry | Deciding whether the action was allowed |
+| **State store** | Durable context, retries | Planning, policy verdict |
+| **Output** | Result, handoff | Letting unaudited actions change state |
+
+### Platform stack
+
+Every agent path crosses the same boundaries. Intelligence lives in planning and tool selection. Authority, durable state, and audit live in the system around it.
+
+The **control plane** is the single agent ingress: auth, policy, and orchestration before any tool runs. State persists asynchronously across steps; the platform layer keeps execution observable and measured.
+
+<div className="gain-mermaid">
+
+```mermaid
+flowchart LR
+    subgraph client["① Client"]
+        CL["App / User / Workflow"]
+    end
+
+    subgraph control["② Control"]
+        CT["Auth · Policy<br/>· Orchestrate"]
+    end
+
+    subgraph exec["③ Execution"]
+        EX["Tool registry · Run"]
+    end
+
+    subgraph state["④ State"]
+        ST["Store · Event bus<br/>· Memory"]
+    end
+
+    subgraph plat["⑤ Platform"]
+        PL["Trace · Eval<br/>· Feedback"]
+    end
+
+    CL --> CT --> EX --> PL
+    ST -. "persist · resume" .-> EX
+    PL -. "policy · plan tuning" .-> CT
+
+    classDef product fill:#dbeafe,stroke:#93c5fd,color:#1e293b,stroke-width:2px
+    classDef gate fill:#ffedd5,stroke:#fdba74,color:#1e293b,stroke-width:2px
+    classDef process fill:#ede9fe,stroke:#c4b5fd,color:#1e293b,stroke-width:2px
+    classDef data fill:#dcfce7,stroke:#86efac,color:#1e293b,stroke-width:2px
+    classDef audit fill:#f1f5f9,stroke:#94a3b8,color:#1e293b,stroke-width:2px
+
+    class CL product
+    class CT gate
+    class EX process
+    class ST data
+    class PL audit
+
+    style client fill:#f8fafc,stroke:#cbd5e1,color:#1e293b,stroke-width:1px
+    style control fill:#f8fafc,stroke:#cbd5e1,color:#1e293b,stroke-width:1px
+    style exec fill:#f8fafc,stroke:#cbd5e1,color:#1e293b,stroke-width:1px
+    style state fill:#f8fafc,stroke:#cbd5e1,color:#1e293b,stroke-width:1px
+    style plat fill:#f8fafc,stroke:#cbd5e1,color:#1e293b,stroke-width:1px
+
+    linkStyle 3,4 stroke:#94a3b8,stroke-width:2px,stroke-dasharray:5 5
+```
+
 </div>
 
-<div className="gain-llm-flow">
-  <div className="gain-llm-flow__diagram gain-llm-flow__diagram--wide">
-    <div className="gain-llm-flow__track gain-llm-flow__track--6">
-      <div className="gain-llm-flow__step gain-llm-flow__step--product">
-        <span className="gain-llm-flow__step-title">User intent</span>
-        <span className="gain-llm-flow__step-role">Goal · task</span>
-      </div>
+<br/>
 
-      <span className="gain-llm-flow__arrow" aria-hidden="true">→</span>
+| Layer | Owns | Does not own |
+| --- | --- | --- |
+| **Client** | Use-case orchestration, user session | Tool authority, runtime |
+| **Control** | Auth, policy, orchestration | Business logic inside the agent |
+| **Execution** | Tool registry, sandboxed runs | Policy verdict, business outcome |
+| **State** | Durable store, event bus, memory | Request-time policy |
+| **Platform** | Trace, eval, feedback into policy and planning | Post-hoc log spelunking |
 
-      <div className="gain-llm-flow__step gain-llm-flow__step--context">
-        <span className="gain-llm-flow__step-title">Orchestrator</span>
-        <span className="gain-llm-flow__step-role">Plan · coordinate</span>
-      </div>
+### Demo vs production (whole stack)
 
-      <span className="gain-llm-flow__arrow" aria-hidden="true">→</span>
+One decision guide for the full path. Pillar sections assume production defaults unless noted.
 
-      <div className="gain-llm-flow__step gain-llm-flow__step--guard">
-        <span className="gain-llm-flow__step-title">Policy gate</span>
-        <span className="gain-llm-flow__step-role">Allow · deny · escalate</span>
-      </div>
+| Layer | Demo default | Production default |
+| --- | --- | --- |
+| **Client** | Calls the model with tools inline | Calls the agent contract; no embedded tool credentials |
+| **Control** | Prompt says "be careful" | Policy engine: allow / deny / escalate before every tool |
+| **Execution** | Free-form function calling | Governed tool registry: typed schemas, scoped permissions, audit |
+| **State** | In-memory within one process | Durable state store, event bus, idempotent retries, compensation |
+| **Approval** | Model self-checks its own actions | Human approval for high-risk or irreversible actions |
+| **Platform** | Print statements | Per-step traces, task-success metrics, cost and concurrency quotas |
+| **Change** | Edit the prompt | Versioned agent profile + eval run + rollback tied to a change record |
 
-      <span className="gain-llm-flow__arrow" aria-hidden="true">→</span>
-
-      <div className="gain-llm-flow__step gain-llm-flow__step--retrieval">
-        <span className="gain-llm-flow__step-title">Tool execution</span>
-        <span className="gain-llm-flow__step-role">APIs · side effects</span>
-      </div>
-
-      <span className="gain-llm-flow__arrow" aria-hidden="true">→</span>
-
-      <div className="gain-llm-flow__step gain-llm-flow__step--store">
-        <span className="gain-llm-flow__step-title">State store</span>
-        <span className="gain-llm-flow__step-role">Context · retries</span>
-      </div>
-
-      <span className="gain-llm-flow__arrow" aria-hidden="true">→</span>
-
-      <div className="gain-llm-flow__step gain-llm-flow__step--product">
-        <span className="gain-llm-flow__step-title">Output</span>
-        <span className="gain-llm-flow__step-role">Result · handoff</span>
-      </div>
-    </div>
-
-    <div className="gain-llm-flow__branch gain-llm-flow__branch--6">
-      <div className="gain-llm-flow__branch-cell" aria-hidden="true"></div>
-      <div className="gain-llm-flow__branch-cell" aria-hidden="true"></div>
-      <div className="gain-llm-flow__branch-cell" aria-hidden="true"></div>
-      <div className="gain-llm-flow__branch-cell" aria-hidden="true"></div>
-      <div className="gain-llm-flow__branch-cell" aria-hidden="true"></div>
-      <div className="gain-llm-flow__branch-cell" aria-hidden="true"></div>
-      <div className="gain-llm-flow__feedback">
-        <span className="gain-llm-flow__feedback-connector" aria-hidden="true">↗</span>
-        <span className="gain-llm-flow__feedback-card">Observability · feedback</span>
-      </div>
-      <div className="gain-llm-flow__branch-cell" aria-hidden="true"></div>
-      <div className="gain-llm-flow__branch-cell" aria-hidden="true"></div>
-      <div className="gain-llm-flow__branch-cell" aria-hidden="true"></div>
-      <div className="gain-llm-flow__branch-cell" aria-hidden="true"></div>
-    </div>
-
-    <div className="gain-llm-flow__example">
-      <span className="gain-llm-flow__example-label">Example: booking agent</span>
-      <div className="gain-llm-flow__example-pipeline">
-        <span>Search</span>
-        <span className="gain-llm-flow__example-arrow" aria-hidden="true">›</span>
-        <span>Validate</span>
-        <span className="gain-llm-flow__example-arrow" aria-hidden="true">›</span>
-        <span>Reserve</span>
-        <span className="gain-llm-flow__example-arrow" aria-hidden="true">›</span>
-        <span>Notify</span>
-      </div>
-      <span className="gain-llm-flow__example-desc">
-        Each step is a tool call behind a policy gate; state carries the reservation context between steps.
-      </span>
-    </div>
-
-    <div className="gain-llm-flow__footer">
-      <div className="gain-llm-flow__callout gain-llm-flow__callout--gate">
-        <span className="gain-llm-flow__callout-icon" aria-hidden="true">⛨</span>
-        <span><strong>Policy gates every tool</strong>: the orchestrator plans; policy permits before anything executes</span>
-      </div>
-      <div className="gain-llm-flow__callout gain-llm-flow__callout--principle">
-        <span className="gain-llm-flow__callout-icon" aria-hidden="true">↻</span>
-        <span><strong>Workflows persist state</strong>: durable context survives retries, handoffs, and restarts</span>
-      </div>
-    </div>
-  </div>
-</div>
-
-Ask before you ship: **How do agents recover?** **How do workflows persist?** **How do tools chain?**
-If any answer is "the model figures it out," the design is not production-ready.
+---
 
 ## G.A.I.N applied to agentic systems
 
-<Details className="gain-accordion" summary="G · Grounded: What controls the agent?">
-  Grounded agent systems enforce authority at every action: the agent plans, but it does not own
-  permission to act. Policy, approvals, and audit are deterministic; reasoning is not.
+<Details summary="G · Grounded — what controls the agent">
+**Dominant pillar.** Grounding is not "a careful system prompt." It is the architecture that decides what an agent may do, from which tools, under which identity, and what requires approval before any side effect occurs.
 
-  **Components**
+**Components:** policy engine (allow / deny before every tool) · scoped tool permissions per agent profile and tenant · human approvals for high-risk or irreversible actions · guardrails (input / output filters, rate limits) · tamper-evident audit logs.
 
-  - Policy engine: allow/deny rules before every tool invocation
-  - Tool permissions: scoped access per agent profile, tenant, and use case
-  - Human approvals: four-eyes and escalation for high-risk or irreversible actions
-  - Guardrails: input/output filters, rate limits, and action boundaries
-  - Audit logs: tamper-evident record of every plan, tool call, and decision
+**Design questions:** Can the agent call this tool? Can it approve this action? Does it need escalation?
 
-  **Example:** Agent can retrieve account details but cannot authorize transfers.
+**Principle:** Agents do not own authority; the system grants it per action.
 
-  **Design questions**
-
-  - Can the agent call this tool?
-  - Can it approve this action?
-  - Does it need escalation?
-
-  **Principle:** Agents do not own authority.
+**Anti-patterns:** authority encoded in the prompt · unscoped tool access for every agent · irreversible actions with no approval gate · plans and tool calls that are not audited.
 </Details>
 
-<Details className="gain-accordion" summary="A · Adaptive: Recovery, persistence, and learning">
-  Adaptive agent systems survive failure and improve from execution. Workflows persist state, retry
-  safely, and feed observability data back into planning quality and policy tuning.
+<Details summary="A · Adaptive — recovery, persistence, and learning">
+Agents fail mid-flight: tools time out, services error, runs get interrupted. Adaptive architecture persists state, retries safely, and feeds execution signals back into planning and policy.
 
-  **Components**
+**Components:** orchestrator with explicit handoffs and timeouts · durable state store across steps, retries, and sessions · idempotent replays, compensating actions, dead-letter handling · feedback loops on task success, policy violations, and human corrections.
 
-  - Orchestrator: coordinates multi-step flows with explicit handoffs and timeouts
-  - Event bus: async tool results, notifications, and cross-service coordination
-  - State store: durable workflow context across steps, retries, and sessions
-  - Retry logic: idempotent replays, compensating actions, and dead-letter handling
-  - Feedback loops: task success rates, policy violations, and human corrections
+**Design questions:** How do agents recover from a failed tool call? How do workflows persist across restarts? What triggers rollback or human handoff?
 
-  **Design questions**
+**Principle:** Resilient agents are designed to fail safely and learn from it.
 
-  - How do agents recover from a failed tool call?
-  - How do workflows persist across restarts?
-  - What triggers a rollback or human handoff?
-
-  **Principle:** Resilient agents are designed to fail safely and learn from it.
+**Anti-patterns:** in-memory state lost on restart · retries without idempotency or compensation · ignoring traces until a customer escalates.
 </Details>
 
-<Details className="gain-accordion" summary="I · Intelligent: What reasoning is delegated?">
-  Intelligent agent systems delegate ambiguity to the model and certainty to code. The LLM plans the
-  next step; deterministic systems validate, execute, and record the outcome.
+<Details summary="I · Intelligent — what reasoning is delegated">
+**Co-dominant pillar.** The agent delegates ambiguity to the model and certainty to code. The LLM plans the next step; deterministic systems validate, execute, and record the outcome.
 
-  **Components**
+**Components:** planning (decompose goals into ordered steps and decision points) · tool selection from a governed registry · multi-step plan → act → observe loops · summarization of tool outputs into structured state.
 
-  - Planning: decompose goals into ordered tool calls and decision points
-  - Tool selection: choose the right API or capability from a governed registry
-  - Multi-step reasoning: iterate plan → act → observe until the task completes or policy blocks
-  - Summarization: condense tool outputs into structured state for the next step
+**Design questions:** What should the model decide? What must be deterministic? When does the loop stop?
 
-  **Example:** LLM plans the next tool call; the platform executes it only after policy clears.
+**Principle:** Intelligence plans; the system executes and decides.
 
-  **Design questions**
-
-  - What should the model decide?
-  - What should be deterministic?
-
-  **Principle:** Intelligence plans, systems execute.
+**Anti-patterns:** one mega-prompt looping without bounds · tool use without authorization boundaries · planning logic scattered with no shared trace or policy.
 </Details>
 
-<Details className="gain-accordion" summary="N · Native: Platform resilience">
-  Native agent systems run on infrastructure built for concurrent, long-running, observable
-  workflows. Scale, latency, and reliability are platform concerns, not agent-prompt concerns.
+<Details summary="N · Native — platform resilience">
+Native agent systems run on infrastructure built for concurrent, long-running, observable workflows. Scale, latency, and reliability are platform concerns, not agent-prompt concerns.
 
-  **Components**
+**Components:** elastic agent runtime and tool sidecars · async queues and event bus with backpressure · distributed traces with a span per tool call · per-tenant concurrency limits, token budgets, and cost controls.
 
-  - Kubernetes: elastic compute for agent runtimes and tool sidecars
-  - APIs and queues: async execution, backpressure, and decoupled tool chains
-  - Observability stack: distributed traces, spans per tool call, and SLO dashboards
-  - Rate limits and quotas: per-tenant concurrency, token budgets, and cost controls
+**Design questions:** How does the agent runtime scale under load? How is latency managed across multi-step workflows?
 
-  **Design questions**
+**Principle:** Agents need platform resilience; durability and observability are infrastructure, not prompts.
 
-  - How does the agent runtime scale under load?
-  - How is latency managed across multi-step workflows?
-
-  **Principle:** Agents need platform resilience.
+**Anti-patterns:** synchronous tool chains with no backpressure · observability of final outputs only · unbounded concurrency with no quota or budget cap.
 </Details>
+
+### Governed autonomy flow (dominant pillar diagram)
+
+<div className="gain-mermaid">
+
+```mermaid
+flowchart TB
+    subgraph reason["① Reasoning"]
+        GOAL["Goal / intent"]
+        PLAN["Plan next step"]
+    end
+
+    subgraph authority["② Authority"]
+        POL["Policy check"]
+        APP["Approval / escalate"]
+    end
+
+    subgraph execute["③ Execution"]
+        TOOL["Tool call"]
+        AUD["Record · audit"]
+    end
+
+    subgraph observe["④ State"]
+        ST["State update"]
+    end
+
+    GOAL --> PLAN --> POL
+    POL --> APP
+    POL --> TOOL --> AUD --> ST
+    ST -. "observe · iterate" .-> PLAN
+
+    classDef input fill:#dbeafe,stroke:#93c5fd,color:#1e293b,stroke-width:2px
+    classDef gatecls fill:#ffedd5,stroke:#fdba74,color:#1e293b,stroke-width:2px
+    classDef process fill:#ede9fe,stroke:#c4b5fd,color:#1e293b,stroke-width:2px
+    classDef audit fill:#f1f5f9,stroke:#94a3b8,color:#1e293b,stroke-width:2px
+
+    class GOAL input
+    class POL,APP gatecls
+    class PLAN,TOOL,ST process
+    class AUD audit
+
+    style reason fill:#f8fafc,stroke:#cbd5e1,color:#1e293b,stroke-width:1px
+    style authority fill:#f8fafc,stroke:#cbd5e1,color:#1e293b,stroke-width:1px
+    style execute fill:#f8fafc,stroke:#cbd5e1,color:#1e293b,stroke-width:1px
+    style observe fill:#f8fafc,stroke:#cbd5e1,color:#1e293b,stroke-width:1px
+
+    linkStyle 6 stroke:#94a3b8,stroke-width:2px,stroke-dasharray:5 5
+```
+
+</div>
+
+---
 
 ## Key patterns
 
-<Details className="gain-accordion" summary="ReAct loop">
-  Reason and act in structured cycles: the agent plans, selects tools, observes results, and
-  iterates until the task is complete or a policy boundary is reached.
+<Details summary="ReAct loop">
+Reason and act in structured cycles: the agent plans, selects tools, observes results, and iterates until the task is complete or a policy boundary is reached. Bound the loop with step limits and timeouts.
 </Details>
 
-<Details className="gain-accordion" summary="Tool registry">
-  Register tools with typed schemas, permission scopes, and audit trails. A governed tool registry
-  prevents agents from executing unbounded or untraceable actions.
+<Details summary="Tool registry">
+Register tools with typed schemas, permission scopes, and audit trails. A governed tool registry prevents agents from executing unbounded or untraceable actions.
 </Details>
 
-<Details className="gain-accordion" summary="Policy gates">
-  Enforce business rules, compliance constraints, and authorization checks before every agent action.
-  Policy gates are the difference between a demo and a production agent.
+<Details summary="Policy gates">
+Enforce business rules, compliance constraints, and authorization checks before every agent action. Policy gates are the difference between a demo and a production agent.
 </Details>
 
-<Details className="gain-accordion" summary="Agent memory">
-  Separate working memory, episodic history, and long-term knowledge stores. Memory architecture
-  determines whether agents maintain context or repeat mistakes.
+<Details summary="Agent memory">
+Separate working memory, episodic history, and long-term knowledge stores. Memory architecture determines whether agents maintain context or repeat mistakes.
 </Details>
 
-<Details className="gain-accordion" summary="Multi-agent coordination">
-  Orchestrate specialized agents with clear handoff protocols and shared state contracts.
-  Multi-agent systems require explicit coordination: implicit coordination fails at scale.
+<Details summary="Multi-agent coordination">
+Orchestrate specialized agents with clear handoff protocols and shared state contracts. Multi-agent systems require explicit coordination; implicit coordination fails at scale.
 </Details>
 
-For component-level diagrams, see [Blueprints → How to Model Agent Execution Flows](/blueprints/agent-flow-model). For
-implementation steps, see [Playbooks → How to Build Agentic Systems](/playbooks/agentic-systems-design).
+---

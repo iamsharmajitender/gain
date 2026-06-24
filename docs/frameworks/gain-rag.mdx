@@ -1,8 +1,11 @@
 ---
+sidebar_position: 20
 slug: gain-rag
 title: G.A.I.N RAG
 sidebar_label: G.A.I.N RAG
 hide_title: true
+description: RAG is a governed retrieval subsystem, not a database layer bolted onto a prompt.
+authors: [iamsharmajitender]
 tags:
   - ai-intelligence
   - gain
@@ -13,213 +16,319 @@ import Details from '@theme/Details';
 
 <div className="gain-doc-header">
   <h1 className="gain-doc-title">G.A.I.N RAG</h1>
-  <div className="gain-doc-subtitle">
-    How to build retrieval systems with enterprise trust: grounded, adaptive, intelligent, native
-    principles applied to production RAG.
+  <div className="gain-doc-subtitle" style={{marginTop: '-0.25rem', marginBottom: '1.75rem'}}>
+    Why governed retrieval works this way: principles, patterns, team boundaries.
   </div>
 </div>
 
-## Design for Grounded Retrieval
+:::info[G.A.I.N RAG]
+**RAG is a governed retrieval subsystem, not a database layer bolted onto a prompt.**
 
-<div className="gain-section-lead">
-  RAG is not a database layer. It is a runtime context construction system. G.A.I.N RAG treats
-  retrieval as a governed subsystem: policy-bound before it runs, validated before it reaches the
-  model, and fed by pipelines that keep knowledge fresh and trustworthy.
+Enterprise teams debate vector stores and chunk sizes. G.A.I.N RAG reframes the question: what may be retrieved, under which identity, validated how, fed by which pipelines, with what eval and rollback path from day one.
+:::
+
+RAG in production is **runtime context construction**, not a similarity search you paste into a prompt. Retrieval is one component in a governed system: policy-bound before it runs, validated before it reaches the model, and fed by pipelines that keep knowledge fresh, complete, and searchable at scale.
+
+## How This Maps to G.A.I.N
+
+| G.A.I.N pillar | Where it lives | Who primarily owns it |
+| --- | --- | --- |
+| **G · Grounded** | Access policy, document entitlements, classification filters at retrieval time | AI Platform + Data Platform |
+| **A · Adaptive** | Grounding validation, retrieval eval, feedback into chunking and reranking | AI Platform + Product / Domain Teams |
+| **I · Intelligent** | Query rewriting, reranking, summarization, synthesis | AI Platform Team |
+| **N · Native** | Vector stores, embedding pipelines, sync pipelines, search APIs | Infrastructure / Cloud Team + Data Platform |
+
+---
+
+## Why RAG needs G.A.I.N
+
+Most production RAG failures are not retrieval-quality failures. They are architecture failures:
+
+- Retrieval runs before policy, so restricted documents leak into the context window.
+- Stale indexes serve confidently wrong answers with no freshness signal.
+- No grounding validation, so the model hallucinates over thin or conflicting retrieval.
+- The vector store is chosen first; freshness, lineage, and entitlements become afterthoughts.
+
+Generic RAG advice stops at "chunk, embed, and search." **G.A.I.N RAG** maps the full retrieval domain: how policy gates context, how retrieval is assembled, how grounding is verified, and how pipelines keep knowledge trustworthy under audit, scale, and source change.
+
+**Dominant pillars for this domain:** **G** (Grounded) and **N** (Native).
+- Grounding is what may enter context, under which identity, and what is allowed to leave as a cited answer.
+- Native is the pipeline layer that determines whether retrieval is current, complete, and searchable.
+
+### What G.A.I.N adds (not generic RAG advice)
+
+| G.A.I.N claim | What it means for RAG |
+| --- | --- |
+| **Intelligence in the call; truth in the system** | The model interprets retrieved context. The architecture owns policy-bound retrieval, grounding validation, citations, and audit. |
+| **The model proposes; the system decides** | Query rewriting and ranking are model-assisted; what reaches the user is validated, not trusted. |
+| **Grounding is a pipeline, not a prompt** | Identity-scoped retrieval, classification filters, and grounding checks define what may enter and leave the boundary. |
+| **Native is the feedback loop, not hosting** | Retrieval eval, feedback, and re-indexing close the loop from production back into chunking and ranking. |
+
+---
+
+## Domain on one page
+
+**Two views, one domain.** Application teams need the request path; platform teams need the shared retrieval stack. Same governed boundary, different questions.
+
+| View | Question | Audience |
+| --- | --- | --- |
+| **Request path** | How does one query safely become a grounded answer? | App teams, feature architects |
+| **Platform stack** | How does the org operate retrieval as shared infrastructure? | Platform, data, SRE, security |
+
+Retrieval is a **subsystem**, not the system. Identity and policy gate what can be retrieved; validation gates what reaches the user. The LLM interprets context; it does not validate truth.
+
+### Request path
+
+<div className="gain-mermaid">
+
+```mermaid
+flowchart LR
+    subgraph path["Request path"]
+        direction LR
+        U["User<br/>Query · intent"]
+        P["Policy<br/>Identity · entitlements"]
+        R["Retrieval<br/>Search · rerank · assemble"]
+        V["Validation<br/>Grounding · citations"]
+        L["LLM<br/>Synthesize · respond"]
+    end
+
+    U --> P --> R --> V --> L
+    V -. "evaluation · feedback" .-> R
+
+    classDef product fill:#dbeafe,stroke:#93c5fd,color:#1e293b,stroke-width:2px
+    classDef gate fill:#ffedd5,stroke:#fdba74,color:#1e293b,stroke-width:2px
+    classDef process fill:#ede9fe,stroke:#c4b5fd,color:#1e293b,stroke-width:2px
+
+    class U product
+    class P,V gate
+    class R,L process
+
+    style path fill:#f8fafc,stroke:#cbd5e1,color:#1e293b,stroke-width:1px
+
+    linkStyle 4 stroke:#94a3b8,stroke-width:2px,stroke-dasharray:5 5
+```
+
+</div>
+<br/>
+
+- **Policy gates retrieval:** identity and entitlements bound what can enter context before search runs.
+- **Validation gates delivery:** grounding and citations are checked before the answer reaches the user.
+
+:::important[Ask before you ship]
+**Where does policy run?** **Where is grounding validated?**
+
+If policy runs after retrieval, or validation is skipped, the system will leak entitlements and hallucinate with confidence.
+:::
+
+| Stage | Owns | Does not own |
+| --- | --- | --- |
+| **User** | Query intent, user session | Retrieval policy, what enters context |
+| **Policy** | Identity, entitlements, classification verdict | Generating the answer |
+| **Retrieval** | Search, rerank, context assembly | Truth verification, business outcome |
+| **Validation** | Grounding checks, citation requirements | Generating the answer |
+| **LLM** | Synthesis of retrieved context | Validating truth, enforcing policy |
+
+### Platform stack
+
+Every retrieval path crosses the same boundaries. Intelligence lives in ranking and synthesis. Truth, policy, freshness, and audit live in the system around it.
+
+The **gateway** is the single retrieval ingress: auth, policy hooks, and classification before search runs. Pipelines feed the knowledge index asynchronously; the platform layer keeps retrieval observable and measured.
+
+<div className="gain-mermaid">
+
+```mermaid
+flowchart LR
+    subgraph client["① Client"]
+        CL["App / Agent / Workflow"]
+    end
+
+    subgraph gateway["② Gateway"]
+        GW["Auth · Policy · Classify"]
+    end
+
+    subgraph retrieval["③ Retrieval"]
+        RET["Search · Rerank<br/>· Assemble"]
+    end
+
+    subgraph knowledge["④ Knowledge"]
+        KN["Vector store · Index<br/>· Pipelines"]
+    end
+
+    subgraph plat["⑤ Platform"]
+        PL["Trace · Eval<br/>· Feedback"]
+    end
+
+    CL --> GW --> RET --> PL
+    KN -. "feeds index" .-> RET
+    PL -. "re-index · tuning" .-> KN
+
+    classDef product fill:#dbeafe,stroke:#93c5fd,color:#1e293b,stroke-width:2px
+    classDef gate fill:#ffedd5,stroke:#fdba74,color:#1e293b,stroke-width:2px
+    classDef process fill:#ede9fe,stroke:#c4b5fd,color:#1e293b,stroke-width:2px
+    classDef data fill:#dcfce7,stroke:#86efac,color:#1e293b,stroke-width:2px
+    classDef audit fill:#f1f5f9,stroke:#94a3b8,color:#1e293b,stroke-width:2px
+
+    class CL product
+    class GW gate
+    class RET process
+    class KN data
+    class PL audit
+
+    style client fill:#f8fafc,stroke:#cbd5e1,color:#1e293b,stroke-width:1px
+    style gateway fill:#f8fafc,stroke:#cbd5e1,color:#1e293b,stroke-width:1px
+    style retrieval fill:#f8fafc,stroke:#cbd5e1,color:#1e293b,stroke-width:1px
+    style knowledge fill:#f8fafc,stroke:#cbd5e1,color:#1e293b,stroke-width:1px
+    style plat fill:#f8fafc,stroke:#cbd5e1,color:#1e293b,stroke-width:1px
+
+    linkStyle 3,4 stroke:#94a3b8,stroke-width:2px,stroke-dasharray:5 5
+```
+
 </div>
 
-## Request flow
+<br/>
 
-<div className="gain-section-lead">
-  Retrieval is a <strong>subsystem</strong>, not the system. Identity and policy gate what can be
-  retrieved; validation gates what reaches the user: the LLM interprets context, it does not
-  validate truth.
-</div>
+| Layer | Owns | Does not own |
+| --- | --- | --- |
+| **Client** | Query orchestration, user session | Retrieval policy, index design |
+| **Gateway** | Auth, policy, classification at ingress | Ranking semantics, business logic |
+| **Retrieval** | Search, rerank, context assembly | Policy verdict, source of truth |
+| **Knowledge** | Vector store, index, embedding and sync pipelines | Request-time routing and policy |
+| **Platform** | Trace, retrieval eval, feedback into tuning | Post-hoc spreadsheet QA |
 
-<div className="gain-llm-flow">
-  <div className="gain-llm-flow__diagram gain-llm-flow__diagram--wide">
-    <div className="gain-llm-flow__track gain-llm-flow__track--6">
-      <div className="gain-llm-flow__step gain-llm-flow__step--product">
-        <span className="gain-llm-flow__step-title">User</span>
-        <span className="gain-llm-flow__step-role">Query · intent</span>
-      </div>
+### Demo vs production (whole stack)
 
-      <span className="gain-llm-flow__arrow" aria-hidden="true">→</span>
+One decision guide for the full path. Pillar sections assume production defaults unless noted.
 
-      <div className="gain-llm-flow__step gain-llm-flow__step--guard-lite">
-        <span className="gain-llm-flow__step-title">Identity</span>
-        <span className="gain-llm-flow__step-role">Principal · claims</span>
-      </div>
+| Layer | Demo default | Production default |
+| --- | --- | --- |
+| **Client** | Calls the vector DB / retrieval directly | Calls only the retrieval contract; no embedded index keys |
+| **Gateway** | None; retrieves whatever matches | Identity-scoped retrieval, classification filters at query time |
+| **Retrieval** | Top-k similarity only | Hybrid search, rerank, assemble within token budget |
+| **Knowledge** | One-off ingest, manual refresh | Scheduled / event pipelines, freshness SLAs, lineage |
+| **Validation** | Model output trusted as-is | Grounding check + citations required before delivery |
+| **Platform** | Eyeballing answers | Retrieval eval on golden sets, feedback capture, re-index triggers |
+| **Change** | Re-embed everything ad hoc | Versioned index, eval gate, retrieval-profile rollback tied to a change record |
 
-      <span className="gain-llm-flow__arrow" aria-hidden="true">→</span>
-
-      <div className="gain-llm-flow__step gain-llm-flow__step--guard-lite">
-        <span className="gain-llm-flow__step-title">Policy</span>
-        <span className="gain-llm-flow__step-role">Entitlements · classification</span>
-      </div>
-
-      <span className="gain-llm-flow__arrow" aria-hidden="true">→</span>
-
-      <div className="gain-llm-flow__step gain-llm-flow__step--retrieval">
-        <span className="gain-llm-flow__step-title">Retrieval</span>
-        <span className="gain-llm-flow__step-role">Search · rerank · assemble</span>
-      </div>
-
-      <span className="gain-llm-flow__arrow" aria-hidden="true">→</span>
-
-      <div className="gain-llm-flow__step gain-llm-flow__step--guard">
-        <span className="gain-llm-flow__step-title">Validation</span>
-        <span className="gain-llm-flow__step-role">Grounding · citations</span>
-      </div>
-
-      <span className="gain-llm-flow__arrow" aria-hidden="true">→</span>
-
-      <div className="gain-llm-flow__step gain-llm-flow__step--model">
-        <span className="gain-llm-flow__step-title">LLM</span>
-        <span className="gain-llm-flow__step-role">Synthesize · respond</span>
-      </div>
-    </div>
-
-    <div className="gain-llm-flow__branch gain-llm-flow__branch--6">
-      <div className="gain-llm-flow__branch-cell" aria-hidden="true"></div>
-      <div className="gain-llm-flow__branch-cell" aria-hidden="true"></div>
-      <div className="gain-llm-flow__branch-cell" aria-hidden="true"></div>
-      <div className="gain-llm-flow__branch-cell" aria-hidden="true"></div>
-      <div className="gain-llm-flow__branch-cell" aria-hidden="true"></div>
-      <div className="gain-llm-flow__branch-cell" aria-hidden="true"></div>
-      <div className="gain-llm-flow__branch-cell" aria-hidden="true"></div>
-      <div className="gain-llm-flow__branch-cell" aria-hidden="true"></div>
-      <div className="gain-llm-flow__feedback gain-llm-flow__feedback--col9">
-        <span className="gain-llm-flow__feedback-connector" aria-hidden="true">↗</span>
-        <span className="gain-llm-flow__feedback-card">Evaluation · feedback</span>
-      </div>
-      <div className="gain-llm-flow__branch-cell" aria-hidden="true"></div>
-      <div className="gain-llm-flow__branch-cell" aria-hidden="true"></div>
-    </div>
-
-    <div className="gain-llm-flow__footer">
-      <div className="gain-llm-flow__callout gain-llm-flow__callout--gate">
-        <span className="gain-llm-flow__callout-icon" aria-hidden="true">⛨</span>
-        <span><strong>Policy gates retrieval</strong>: identity and policy bound what can enter context before search runs</span>
-      </div>
-      <div className="gain-llm-flow__callout gain-llm-flow__callout--principle">
-        <span className="gain-llm-flow__callout-icon" aria-hidden="true">↻</span>
-        <span><strong>Retrieval is a subsystem</strong>: the LLM interprets context; validation verifies truth before delivery</span>
-      </div>
-    </div>
-  </div>
-</div>
-
-Ask before you ship: **Where does retrieval happen?** **Where is validation?** If policy runs after
-retrieval or validation is skipped, the system will leak entitlements and hallucinate with confidence.
+---
 
 ## G.A.I.N applied to RAG systems
 
-<Details className="gain-accordion" summary="G · Grounded: What can be retrieved?">
-  Grounded RAG systems enforce policy at retrieval time, not after the model has already seen
-  restricted content. What enters the context window must respect entitlements and classification.
+<Details summary="G · Grounded — what can be retrieved">
+**Dominant pillar.** Grounding is not "retrieve more documents." It is the architecture that decides what context the model receives, from which sources, under which identity, and what must never enter the window regardless of query.
 
-  **Components**
+**Components:** access policies (role, attribute, tenant) · document entitlements · data classification (PII, confidential, regulated) · query-time index scoping.
 
-  - Access policies: role, attribute, and tenant-scoped retrieval rules
-  - Document entitlements: per-source permissions tied to identity and use case
-  - Data classification: PII, confidential, and regulated tags that filter indexes at query time
+**Design questions:** What can this user retrieve? What must never enter context regardless of query?
 
-  **Example:** HR policy visible only to HR staff: enforced in the retrieval layer, not in the prompt.
+**Principle:** Retrieval must respect policy boundaries before search runs.
 
-  **Design questions**
-
-  - What can this user retrieve?
-  - What must never enter context regardless of query?
-
-  **Principle:** Retrieval must respect policy boundaries.
+**Anti-patterns:** retrieval before policy · classification enforced in the prompt · one shared index across tenants · context window used as a substitute for entitlement checks.
 </Details>
 
-<Details className="gain-accordion" summary="A · Adaptive: Learning from retrieval quality">
-  Adaptive RAG systems improve when retrieval misses, grounding fails, or users correct answers.
-  Validation and evaluation close the loop between indexed knowledge and production trust.
+<Details summary="A · Adaptive — learning from retrieval quality">
+RAG quality drifts: sources change, indexes go stale, and new queries miss. Adaptive architecture closes the loop from production back into chunking, reranking, and embeddings.
 
-  **Components**
+**Components:** grounding validation · retrieval eval (precision, recall, citation accuracy) on golden question sets · feedback capture (failed queries, thumbs-down, escalation) tied to traces · index and profile tuning driven by eval data.
 
-  - Grounding validation: verify generated answers are supported by retrieved chunks
-  - Retrieval evaluation: precision, recall, and citation accuracy on golden question sets
-  - Feedback capture: failed queries, thumbs-down, and escalation signals tied to traces
-  - Index and profile tuning: chunking, reranking, and embedding updates driven by eval data
+**Design questions:** How do we detect retrieval drift or stale indexes? What triggers re-indexing or a retrieval-profile rollback?
 
-  **Design questions**
+**Principle:** Production retrieval quality is measured, not assumed.
 
-  - How do we detect retrieval drift or stale indexes?
-  - What triggers re-indexing or a retrieval profile rollback?
-
-  **Principle:** Production retrieval quality is measured, not assumed.
+**Anti-patterns:** shipping index or chunking changes without an eval gate · trusting benchmark embedding scores over your own data · ignoring failed-query traces until escalation.
 </Details>
 
-<Details className="gain-accordion" summary="I · Intelligent: What the LLM does with context">
-  Intelligent RAG systems use the model to interpret and synthesize retrieved context: not to
-  invent facts the index does not contain. Ranking and rewriting are model-assisted; truth is
-  pipeline-verified.
+<Details summary="I · Intelligent — what the model does with context">
+The LLM interprets and synthesizes retrieved context; it does not invent facts the index does not contain. Rewriting and ranking are model-assisted; truth is pipeline-verified.
 
-  **Components**
+**Components:** query rewriting (expand, disambiguate, decompose) · context ranking (relevance, recency, authority) · summarization within token limits · cited, structured synthesis.
 
-  - Query rewriting: expand, disambiguate, and decompose user queries for better recall
-  - Context ranking: rerank chunks by relevance, recency, and authority before assembly
-  - Summarization: condense multiple sources into coherent context within token limits
-  - Synthesis: combine retrieved facts into a cited, structured response
+**Design questions:** How is context ranked and truncated? How is ambiguity handled when retrieval returns conflicting sources?
 
-  **Design questions**
+**Principle:** The model proposes; the system decides what is grounded enough to deliver.
 
-  - How is context ranked and truncated?
-  - How is ambiguity handled when retrieval returns conflicting sources?
-
-  **Principle:** LLMs interpret retrieval, not validate truth.
+**Anti-patterns:** dumping raw top-k into the prompt · letting the model invent citations · ranking logic scattered without shared eval or trace.
 </Details>
 
-<Details className="gain-accordion" summary="N · Native: Pipelines and platform infrastructure">
-  Native RAG systems depend on reliable data infrastructure. Vector stores and embedding pipelines
-  are not implementation details. They determine whether answers are current, complete, and
-  searchable at scale.
+<Details summary="N · Native — pipelines and platform infrastructure">
+**Co-dominant pillar.** Native RAG depends on reliable data infrastructure. Vector stores and embedding pipelines are not implementation details; they decide whether answers are current, complete, and searchable at scale.
 
-  **Components**
+**Components:** vector databases (hybrid search, metadata filtering, residency-aware hosting) · embedding pipelines (chunk, embed, index on schedule or event) · data sync pipelines with freshness SLAs and lineage · stable search APIs consumed at request time.
 
-  - Vector databases: hybrid search, metadata filtering, and residency-aware hosting
-  - Embedding pipelines: chunking, embedding, and index updates on a schedule or event trigger
-  - Data sync pipelines: ingest from source systems with freshness SLAs and lineage
-  - Search APIs: stable retrieval interfaces consumed by the Context Engine at request time
+**Design questions:** How fresh is the data? How is indexing maintained as sources change?
 
-  **Design questions**
+**Principle:** RAG reliability depends on data pipelines, not on the store alone.
 
-  - How fresh is the data?
-  - How is indexing maintained as sources change?
-
-  **Principle:** RAG reliability depends on data pipelines.
+**Anti-patterns:** manual re-index as the refresh strategy · no lineage or freshness SLA · an embedding pipeline coupled to a single application.
 </Details>
+
+### Grounded flow (dominant pillar diagram)
+
+<div className="gain-mermaid">
+
+```mermaid
+flowchart TB
+    subgraph ingress["① Ingress"]
+        ID["Identity / claims"]
+        Q["User query"]
+    end
+
+    subgraph gate["② Policy & filter"]
+        ENT["Entitlements"]
+        CLS["Classification filter"]
+    end
+
+    subgraph search["③ Retrieval"]
+        SR["Search · rerank"]
+        ASM["Context pack"]
+    end
+
+    subgraph deliver["④ Validation"]
+        GR["Grounding · citations"]
+        LLM["Model synthesis"]
+    end
+
+    ID --> ENT
+    Q --> ENT
+    ENT --> CLS --> SR --> ASM --> GR --> LLM
+
+    classDef input fill:#dbeafe,stroke:#93c5fd,color:#1e293b,stroke-width:2px
+    classDef gatecls fill:#ffedd5,stroke:#fdba74,color:#1e293b,stroke-width:2px
+    classDef process fill:#ede9fe,stroke:#c4b5fd,color:#1e293b,stroke-width:2px
+
+    class ID,Q input
+    class ENT,CLS,GR gatecls
+    class SR,ASM,LLM process
+
+    style ingress fill:#f8fafc,stroke:#cbd5e1,color:#1e293b,stroke-width:1px
+    style gate fill:#f8fafc,stroke:#cbd5e1,color:#1e293b,stroke-width:1px
+    style search fill:#f8fafc,stroke:#cbd5e1,color:#1e293b,stroke-width:1px
+    style deliver fill:#f8fafc,stroke:#cbd5e1,color:#1e293b,stroke-width:1px
+```
+
+</div>
+
+---
 
 ## Key patterns
 
-<Details className="gain-accordion" summary="Chunking strategy">
-  Split documents into semantically coherent chunks with overlap and metadata preservation. Chunk
-  size and boundary decisions directly impact retrieval precision and generation quality.
+<Details summary="Chunking strategy">
+Split documents into semantically coherent chunks with overlap and metadata preservation. Chunk size and boundary decisions directly impact retrieval precision and generation quality.
 </Details>
 
-<Details className="gain-accordion" summary="Embedding models">
-  Select embedding models aligned with your domain and retrieval task. Evaluate on your own data.
-  Benchmark scores rarely predict production retrieval quality.
+<Details summary="Embedding models">
+Select embedding models aligned with your domain and retrieval task. Evaluate on your own data — benchmark scores rarely predict production retrieval quality.
 </Details>
 
-<Details className="gain-accordion" summary="Vector stores">
-  Choose vector databases based on scale, filtering requirements, and hybrid search needs. Index
-  design and update strategies matter as much as the store itself.
+<Details summary="Hybrid retrieval">
+Combine dense (vector) and sparse (keyword) retrieval with metadata filtering. Hybrid search recovers exact-match and rare-term queries that pure similarity misses.
 </Details>
 
-<Details className="gain-accordion" summary="Reranking">
-  Apply cross-encoder or LLM-based reranking to improve precision after initial retrieval. Reranking
-  is often the highest-leverage quality improvement in a RAG pipeline.
+<Details summary="Reranking">
+Apply cross-encoder or LLM-based reranking to improve precision after initial retrieval. Reranking is often the highest-leverage quality improvement in a RAG pipeline.
 </Details>
 
-<Details className="gain-accordion" summary="Grounding validation">
-  Validate that generated responses are supported by retrieved context before delivery. Grounding
-  checks reduce hallucination and build user trust in production systems.
+<Details summary="Grounding validation">
+Validate that generated responses are supported by retrieved context before delivery. Grounding checks reduce hallucination and build user trust in production systems.
 </Details>
 
-For component-level diagrams, see [Blueprints → How to Model RAG Pipeline Layers](/blueprints/rag-architecture) and
-[How to Model Context Engine](/blueprints/context-engine). For implementation steps, see
-[Playbooks → How to Build Enterprise RAG](/playbooks/build-enterprise-rag).
+---
