@@ -89,26 +89,27 @@ flowchart LR
     subgraph path["Scoring path"]
         direction LR
         C["Change<br/>Model · prompt · index"]
-        P["Pipeline<br/>Same stages as prod"]
+        R["Retrieval<br/>Context · chunks"]
+        L["LLM<br/>Generation"]
         V["Validator<br/>Schema · grounding · policy"]
         S["Score<br/>Pass · fail · metrics"]
-        G["Gate<br/>Promote · rollback"]
+        GATE["Gate<br/>Promote · rollback"]
     end
 
-    C --> P --> V --> S --> G
-    G -. "feedback · golden sets" .-> P
+    C --> R --> L --> V --> S --> GATE
+    GATE -. "feedback · golden sets" .-> R
 
     classDef product fill:#dbeafe,stroke:#93c5fd,color:#1e293b,stroke-width:2px
     classDef gate fill:#ffedd5,stroke:#fdba74,color:#1e293b,stroke-width:2px
     classDef process fill:#ede9fe,stroke:#c4b5fd,color:#1e293b,stroke-width:2px
 
-    class C,G product
-    class V,G gate
-    class P,S process
+    class C product
+    class V,GATE gate
+    class R,L,S process
 
     style path fill:#f8fafc,stroke:#cbd5e1,color:#1e293b,stroke-width:1px
 
-    linkStyle 4 stroke:#94a3b8,stroke-width:2px,stroke-dasharray:5 5
+    linkStyle 5 stroke:#94a3b8,stroke-width:2px,stroke-dasharray:5 5
 ```
 
 </div>
@@ -127,7 +128,8 @@ If "good" is undefined or offline tests skip production stages, scores will not 
 | Stage | Owns | Does not own |
 | --- | --- | --- |
 | **Change** | Model, prompt, index, or agent profile version | Defining pass/fail without domain owners |
-| **Pipeline** | Reproduce production stages on golden inputs | Ad-hoc one-off scripts per team |
+| **Retrieval** | Replay retrieval on golden inputs | Ad-hoc one-off scripts per team |
+| **LLM** | Generation under the same config as production | Skipping inference when scoring output only |
 | **Validator** | Schema, grounding, policy checks in the scoring path | Generating the answer being scored |
 | **Score** | Metrics, rubrics, dimension breakdowns | Compliance sign-off by LLM judge alone |
 | **Gate** | Promote, block, or rollback tied to thresholds | Post-hoc quarterly review as the only gate |

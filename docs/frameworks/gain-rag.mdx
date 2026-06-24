@@ -155,15 +155,23 @@ flowchart LR
         RET["Search · Rerank<br/>· Assemble"]
     end
 
-    subgraph knowledge["④ Knowledge"]
+    subgraph validate["④ Validation"]
+        VAL["Grounding · citations"]
+    end
+
+    subgraph synthesize["⑤ Synthesis"]
+        SYN["LLM · respond"]
+    end
+
+    subgraph knowledge["⑥ Knowledge"]
         KN["Vector store · Index<br/>· Pipelines"]
     end
 
-    subgraph plat["⑤ Platform"]
+    subgraph plat["⑦ Platform"]
         PL["Trace · Eval<br/>· Feedback"]
     end
 
-    CL --> GW --> RET --> PL
+    CL --> GW --> RET --> VAL --> SYN --> PL
     KN -. "feeds index" .-> RET
     PL -. "re-index · tuning" .-> KN
 
@@ -174,14 +182,16 @@ flowchart LR
     classDef audit fill:#f1f5f9,stroke:#94a3b8,color:#1e293b,stroke-width:2px
 
     class CL product
-    class GW gate
-    class RET process
+    class GW,VAL gate
+    class RET,SYN process
     class KN data
     class PL audit
 
     style client fill:#f8fafc,stroke:#cbd5e1,color:#1e293b,stroke-width:1px
     style gateway fill:#f8fafc,stroke:#cbd5e1,color:#1e293b,stroke-width:1px
     style retrieval fill:#f8fafc,stroke:#cbd5e1,color:#1e293b,stroke-width:1px
+    style validate fill:#f8fafc,stroke:#cbd5e1,color:#1e293b,stroke-width:1px
+    style synthesize fill:#f8fafc,stroke:#cbd5e1,color:#1e293b,stroke-width:1px
     style knowledge fill:#f8fafc,stroke:#cbd5e1,color:#1e293b,stroke-width:1px
     style plat fill:#f8fafc,stroke:#cbd5e1,color:#1e293b,stroke-width:1px
 
@@ -197,6 +207,8 @@ flowchart LR
 | **Client** | Query orchestration, user session | Retrieval policy, index design |
 | **Gateway** | Auth, policy, classification at ingress | Ranking semantics, business logic |
 | **Retrieval** | Search, rerank, context assembly | Policy verdict, source of truth |
+| **Validation** | Grounding checks, citation requirements | Generating the answer |
+| **Synthesis** | LLM response from validated context | Validating truth, enforcing policy |
 | **Knowledge** | Vector store, index, embedding and sync pipelines | Request-time routing and policy |
 | **Platform** | Trace, retrieval eval, feedback into tuning | Post-hoc spreadsheet QA |
 
@@ -211,6 +223,7 @@ One decision guide for the full path. Pillar sections assume production defaults
 | **Retrieval** | Top-k similarity only | Hybrid search, rerank, assemble within token budget |
 | **Knowledge** | One-off ingest, manual refresh | Scheduled / event pipelines, freshness SLAs, lineage |
 | **Validation** | Model output trusted as-is | Grounding check + citations required before delivery |
+| **Synthesis** | Raw retrieval pasted into prompt | LLM synthesizes only after validation passes |
 | **Platform** | Eyeballing answers | Retrieval eval on golden sets, feedback capture, re-index triggers |
 | **Change** | Re-embed everything ad hoc | Versioned index, eval gate, retrieval-profile rollback tied to a change record |
 
