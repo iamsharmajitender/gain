@@ -1,8 +1,9 @@
 ---
 slug: control-plane
 title: How to Model AI Control Plane
-sidebar_label: How to Model AI Control Plane
-hide_title: true
+description: Component-level blueprint for governance, orchestration, and shared capability patterns.
+date: 2026-01-15
+authors: [iamsharmajitender]
 tags:
   - system-architecture
   - policy
@@ -208,7 +209,7 @@ import Details from '@theme/Details';
   - Audit trail and rate limits
   - Sandbox vs. production endpoints
 
-  See [How to Model Agent Flow](/blueprints/agent-flow-model) for execution semantics.
+  See [How to Model Agent Execution Flows](/blueprints/agent-flow-model) for execution semantics.
 </Details>
 
 <Details className="gain-accordion" summary="Observability: tracing, token cost, quality">
@@ -251,9 +252,9 @@ import Details from '@theme/Details';
 
 | Pattern | Blueprint | Purpose |
 | --- | --- | --- |
-| **G.A.I.N LLM** | [How to Model LLM Gateway](/blueprints/llm-gateway) | Governed model access, guardrails, caching |
-| **G.A.I.N RAG** | [How to Model RAG Architecture](/blueprints/rag-architecture) | Grounded Q&A and document intelligence |
-| **G.A.I.N Agents** | [How to Model Agent Flow](/blueprints/agent-flow-model) | Policy-governed tool use and multi-step tasks |
+| **G.A.I.N LLM** | [How to Model an LLM Gateway](/blueprints/llm-gateway) | Governed model access, guardrails, caching |
+| **G.A.I.N RAG** | [How to Model RAG Pipeline Layers](/blueprints/rag-architecture) | Grounded Q&A and document intelligence |
+| **G.A.I.N Agents** | [How to Model Agent Execution Flows](/blueprints/agent-flow-model) | Policy-governed tool use and multi-step tasks |
 
 ## Related blueprints
 

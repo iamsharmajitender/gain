@@ -2,8 +2,8 @@ import React, {type ReactNode} from 'react';
 import clsx from 'clsx';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import InsightsTagsNav from '@site/src/components/InsightsTagsNav';
-import PlaybooksTagsNav from '@site/src/components/PlaybooksTagsNav';
-import {isPlaybooksBlog} from '@site/src/utils/isPlaybooksBlog';
+import DepthDomainTagsNav from '@site/src/components/DepthDomainTagsNav';
+import {getDepthAssetBasePath} from '@site/src/utils/depthAssetBlog';
 import {
   PageMetadata,
   HtmlClassNameProvider,
@@ -34,14 +34,18 @@ function BlogListPageMetadata(props: Props): ReactNode {
 
 function BlogListPageContent(props: Props): ReactNode {
   const {metadata, items} = props;
-  const playbooks = isPlaybooksBlog(metadata.permalink);
+  const depthBasePath = getDepthAssetBasePath(metadata.permalink);
   return (
     <BlogLayout>
       <div className="gain-doc-header gain-insights-header">
         <h1 className="gain-doc-title">{metadata.blogTitle}</h1>
         <div className="gain-doc-subtitle">{metadata.blogDescription}</div>
       </div>
-      {playbooks ? <PlaybooksTagsNav /> : <InsightsTagsNav />}
+      {depthBasePath ? (
+        <DepthDomainTagsNav basePath={depthBasePath} items={items} />
+      ) : (
+        <InsightsTagsNav />
+      )}
       <div className="gain-insights-list">
         <BlogPostItems items={items} />
       </div>

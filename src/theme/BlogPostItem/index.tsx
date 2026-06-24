@@ -8,8 +8,10 @@ import BlogPostItemContent from '@theme/BlogPostItem/Content';
 import BlogPostItemFooter from '@theme/BlogPostItem/Footer';
 import type {Props} from '@theme/BlogPostItem';
 import {findTypeTag, TYPE_TAG_LABELS} from '@site/src/data/insightTags';
-import {findDomainTag, DOMAIN_TAG_SHORT_LABELS} from '@site/src/data/playbookTags';
-import {isPlaybooksBlog} from '@site/src/utils/isPlaybooksBlog';
+import {findDomainTag, DOMAIN_TAG_SHORT_LABELS} from '@site/src/data/depthDomainTags';
+import {isDepthAssetBlog} from '@site/src/utils/depthAssetBlog';
+
+const DRAFT_THUMBNAIL = '/img/draft.svg';
 
 function formatInsightDate(date: Date | string): string {
   return new Date(date)
@@ -23,20 +25,23 @@ function formatInsightDate(date: Date | string): string {
 }
 
 function BlogPostItemListView({className}: Pick<Props, 'className'>): ReactNode {
-  const {metadata, assets} = useBlogPost();
+  const {metadata, assets, frontMatter} = useBlogPost();
   const {title, description, permalink, date, tags} = metadata;
   const imageUrl = assets.image;
-  const playbooks = isPlaybooksBlog(permalink);
+  const depthAsset = isDepthAssetBlog(permalink);
   const typeTag = findTypeTag(tags);
   const domainTag = findDomainTag(tags);
-  const badgeLabel = playbooks
+  const badgeLabel = depthAsset
     ? domainTag
       ? DOMAIN_TAG_SHORT_LABELS[domainTag]
       : null
     : typeTag
       ? TYPE_TAG_LABELS[typeTag]
       : null;
-  const badgeClass = playbooks ? domainTag : typeTag;
+  const badgeClass = depthAsset ? domainTag : typeTag;
+  const thumbSrc =
+    imageUrl ??
+    (depthAsset || frontMatter.draft || frontMatter.wip ? DRAFT_THUMBNAIL : undefined);
 
   return (
     <BlogPostItemContainer className={clsx('gain-insight-card', className)}>
@@ -46,15 +51,15 @@ function BlogPostItemListView({className}: Pick<Props, 'className'>): ReactNode 
             <span
               className={clsx(
                 'gain-insight-card__type',
-                playbooks
+                depthAsset
                   ? `gain-insight-card__domain--${badgeClass}`
                   : `gain-insight-card__type--${badgeClass}`,
               )}>
               {badgeLabel}
             </span>
           )}
-          {imageUrl ? (
-            <img src={imageUrl} alt="" loading="lazy" />
+          {thumbSrc ? (
+            <img src={thumbSrc} alt="" loading="lazy" />
           ) : (
             <div className="gain-insight-card__thumb-placeholder" aria-hidden />
           )}
@@ -64,7 +69,7 @@ function BlogPostItemListView({className}: Pick<Props, 'className'>): ReactNode 
           {description && (
             <p className="gain-insight-card__desc">{description}</p>
           )}
-          {!playbooks && (
+          {!depthAsset && (
             <time
               className="gain-insight-card__date"
               dateTime={new Date(date).toISOString()}>
@@ -79,13 +84,13 @@ function BlogPostItemListView({className}: Pick<Props, 'className'>): ReactNode 
 
 export default function BlogPostItem({children, className}: Props): ReactNode {
   const {isBlogPostPage, metadata} = useBlogPost();
-  const playbooks = isPlaybooksBlog(metadata.permalink);
+  const depthAsset = isDepthAssetBlog(metadata.permalink);
 
   if (!isBlogPostPage) {
     return <BlogPostItemListView className={className} />;
   }
 
-  if (playbooks) {
+  if (depthAsset) {
     return (
       <BlogPostItemContainer className={className}>
         <BlogPostItemContent>{children}</BlogPostItemContent>

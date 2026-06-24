@@ -1,8 +1,9 @@
 ---
 slug: context-engine
 title: How to Model Context Engine
-sidebar_label: How to Model Context Engine
-hide_title: true
+description: Runtime context construction at the data / knowledge plane and control-plane boundary.
+date: 2026-01-15
+authors: [iamsharmajitender]
 tags:
   - ai-intelligence
   - rag
@@ -104,7 +105,7 @@ Every capability pattern (LLM, RAG, Agent) receives a **context package**: not r
   - Collection routing based on tenant and data classification
   - De-duplication across overlapping chunks
 
-  See [How to Model RAG Architecture](/blueprints/rag-architecture) for indexing and retrieval layer detail.
+  See [How to Model RAG Pipeline Layers](/blueprints/rag-architecture) for indexing and retrieval layer detail.
 </Details>
 
 <Details className="gain-accordion" summary="Reranker">
@@ -184,4 +185,4 @@ flowchart LR
 
 - [How to Model AI Control Plane](/blueprints/control-plane): gateway, policy, and capability hosting
 - [How to Model Data / Knowledge Plane](/blueprints/data-knowledge-plane): upstream pipelines and catalog
-- [How to Model RAG Architecture](/blueprints/rag-architecture): indexing and retrieval layers in depth
+- [How to Model RAG Pipeline Layers](/blueprints/rag-architecture): indexing and retrieval layers in depth
