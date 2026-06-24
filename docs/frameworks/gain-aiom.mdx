@@ -3,6 +3,7 @@ slug: gain-aiom
 title: Enterprise AI Operating Model
 sidebar_label: G.A.I.N AIOM
 hide_title: true
+description: Enterprise AI is an operating model, not a center of excellence with a GPU budget.
 tags:
   - system-architecture
   - gain
@@ -16,19 +17,22 @@ import Details from '@theme/Details';
     G.A.I.N AIOM 
     <span style={{ fontSize: '0.7em' }}>_Enterprise AI Operating Model (AIOM)_</span>
   </h1>
-  <div className="gain-doc-subtitle">
-    Who builds and runs what in enterprise AI. Team boundaries across application, control,
-    runtime, and data / knowledge planes.
+  <div className="gain-doc-subtitle" style={{marginTop: '-0.25rem', marginBottom: '1.75rem'}}>
+    How to assign who builds and runs what in enterprise AI: grounded, adaptive, intelligent, native
+    principles applied to team boundaries across application, control, runtime, and data / knowledge
+    planes.
   </div>
 </div>
 
-<div className="gain-section-lead">
-  Enterprise AI programs stall when ownership is fuzzy. This operating model assigns{' '}
-  <strong>who delivers each layer</strong> and <strong>where accountability sits</strong> in a large
-  org. Start with three core planes: application, control, and runtime. In large enterprises, add a
-  fourth <strong>data / knowledge plane</strong> when the data organization is mature enough to own
-  pipelines, embeddings, and catalog separately from AI platform orchestration.
-</div>
+:::info[G.A.I.N AIOM]
+**Enterprise AI is an operating model, not a center of excellence with a GPU budget.**
+
+Enterprise teams debate org charts and vendor platforms. G.A.I.N AIOM reframes the question: who owns the control plane, who owns runtime, who feeds context, who carries business outcomes — and where the boundary lines must not blur.
+:::
+
+This page covers **who** and **team boundaries**. For governed-AI **why** and **principles**, start at [G.A.I.N Overview](/frameworks). For capability patterns (gateway, RAG, agents), see the [domain frameworks](/frameworks) in this section.
+
+Enterprise AI in production is **planes with accountable owners**, not undifferentiated "AI teams" or vendor-led pilots. Each request crosses application, control, runtime, and knowledge layers; fragmentation starts when those layers share a team name but not a boundary. Start with three core planes — application, control, and runtime. In large enterprises, add a fourth **data / knowledge plane** when the data organization is mature enough to own pipelines, embeddings, and catalog separately from AI platform orchestration.
 
 ## How This Maps to G.A.I.N
 
@@ -39,9 +43,29 @@ import Details from '@theme/Details';
 | **I · Intelligent** | Routing, policy, agents, evaluation | AI Platform Team |
 | **N · Native** | Inference runtime, GPU clusters, scaling, storage | Infrastructure / Cloud Team |
 
-The **control plane** is where G.A.I.N is operationalized: governance, orchestration, and
-capability patterns such as G.A.I.N RAG, G.A.I.N Agents, G.A.I.N MCP, G.A.I.N Observability, G.A.I.N Evaluation, G.A.I.N Identity, and G.A.I.N LLM. For component-level
-diagrams, see [Blueprints](/blueprints).
+## Why Enterprise AI needs G.A.I.N AIOM
+
+Most enterprise AI programs stall for operating-model reasons, not model reasons:
+
+- Every product team embeds its own gateway, keys, and prompts.
+- Platform and data teams argue over who owns embeddings, catalogs, and context.
+- Infrastructure provisions GPUs while no one owns routing, policy, or eval at ingress.
+- Observability and cost show up in dashboards with no plane-level owner to act on them.
+
+Generic transformation advice stops at "stand up a center of excellence." **G.A.I.N AIOM** assigns **who delivers each layer**, **where accountability sits**, and **how requests cross planes** before anyone picks a model or ships a copilot.
+
+**Dominant pillars for this domain:** **I** (Intelligent) and **G** (Grounded).
+- Intelligent is who owns routing, policy, agents, and evaluation on the control plane.
+- Grounded is who owns pipelines, embeddings, catalogs, and what the system is allowed to know.
+
+### What G.A.I.N adds (not generic operating-model advice)
+
+| G.A.I.N claim | What it means for AIOM |
+| --- | --- |
+| **Planes beat projects** | Application, control, runtime, and data/knowledge are separate accountabilities — not one undifferentiated "AI team." |
+| **Control is not infrastructure** | Platform decides how AI is consumed; infrastructure runs where it executes. |
+| **Context is not orchestration** | Data feeds the Context Engine; the control plane routes, governs, and observes. |
+| **Adaptive lives in product** | Feedback loops and KPIs sit with domain teams; platform supplies shared pipes and gates. |
 
 ## The Planes
 
@@ -82,10 +106,28 @@ enterprise data is a first-class function: not a sub-team of platform engineerin
   </div>
 </div>
 
+<br/>
+
 Platform decides **how** AI is used. Infrastructure runs **where** AI executes.
 Data provides **what** AI knows. Product defines **why** AI exists.
 
+| Plane | Owns (one line) | G.A.I.N pillar | Typical team |
+| --- | --- | --- | --- |
+| **Application** | Business outcomes, UX, workflows | Adaptive | Product / Domain |
+| **Control** | How AI is consumed — gateway, policy, route | Intelligent | AI Platform |
+| **Runtime** | Where AI runs — GPUs, serving, scale | Native | Infrastructure / Cloud |
+| **Data / Knowledge** *(optional)* | What AI may know — pipelines, catalog, tags | Grounded | Data Platform |
+
 ## Who Owns What?
+
+| Team / plane | Owns | Does not own |
+| --- | --- | --- |
+| **AI Platform** · Control | Gateway, routing, policy, context orchestration at request time, eval, observability | Business-specific prompts, app UI, product workflows, GPU lifecycle, embeddings pipelines, catalog semantics |
+| **Infrastructure / Cloud** · Runtime | GPUs, serving stacks, vector DB infrastructure, networking, scaling, runtime isolation | Model routing, prompt standards, policy semantics, eval quality, pipeline design, governance tags |
+| **Data Platform** · Data / Knowledge | Pipelines, embeddings indexing, metadata catalog, data quality, governance tags | Context Engine orchestration at request time, routing, prompt templates, inference hosting, app UI |
+| **Product / Domain** · Application | Use cases, UX, workflows, domain agent behavior, KPIs | Direct model SDK integration, API keys, isolated prompt stacks, data pipelines, catalog and classification |
+
+Expanded checklists by team:
 
 <Details className="gain-accordion" summary="AI Platform Team. Control Plane">
   Platform owns **how AI is consumed**: not business logic.
@@ -148,79 +190,77 @@ Data provides **what** AI knows. Product defines **why** AI exists.
 
 ## Flow of a Request
 
-<div className="gain-section-lead">
-  A single request crosses four planes in sequence. The control plane is the densest stage: gateway,
-  policy, and context assembly happen before any model runs. Data feeds context asynchronously;
-  observability spans the full path.
+A single request crosses four planes in sequence. The control plane is the densest stage: gateway,
+policy, and context assembly happen before any model runs. Data feeds context asynchronously;
+observability spans the full path.
+
+<div className="gain-mermaid">
+
+```mermaid
+flowchart TB
+    REQ["User request<br/>Product · Use case · UX"]
+
+    subgraph control["Control plane · Platform"]
+        direction LR
+        GW["Gateway"] --> INT["Intent"] --> POL["Policy"] --> CTX["Context"] --> RTR["Router"]
+    end
+
+    INF["Runtime<br/>Infrastructure · Inference · Vector store"]
+    RES["Response<br/>Product · Workflow · KPIs"]
+
+    KNOW["Data plane<br/>Indexed knowledge · async"]
+    OBS["Observability<br/>Platform + SRE"]
+
+    REQ --> GW
+    RTR --> INF
+    INF --> RES
+    KNOW -. "feeds" .-> CTX
+    OBS -. "traces" .-> GW
+    OBS -. "traces" .-> INF
+    OBS -. "traces" .-> RES
+
+    classDef product fill:#dbeafe,stroke:#93c5fd,color:#1e293b,stroke-width:2px
+    classDef control fill:#ede9fe,stroke:#c4b5fd,color:#1e293b,stroke-width:2px
+    classDef runtime fill:#ffedd5,stroke:#fdba74,color:#1e293b,stroke-width:2px
+    classDef data fill:#dcfce7,stroke:#86efac,color:#1e293b,stroke-width:2px
+    classDef obs fill:#f1f5f9,stroke:#94a3b8,color:#1e293b,stroke-width:2px
+
+    class REQ,RES product
+    class GW,INT,POL,CTX,RTR control
+    class INF runtime
+    class KNOW data
+    class OBS obs
+
+    style control fill:#faf5ff,stroke:#e9d5ff,color:#1e293b,stroke-width:1px
+
+    linkStyle 7,8,9,10 stroke:#94a3b8,stroke-width:2px,stroke-dasharray:5 5
+```
+
 </div>
 
-<div className="gain-request-flow">
-  <div className="gain-request-flow__diagram">
-    <div className="gain-request-flow__track">
-      <div className="gain-request-flow__stage gain-request-flow__stage--product">
-        <span className="gain-request-flow__stage-title">User request</span>
-        <span className="gain-request-flow__stage-desc">Use case · UX</span>
-        <span className="gain-request-flow__owner">Product</span>
-      </div>
+<br/>
 
-      <span className="gain-request-flow__arrow" aria-hidden="true">→</span>
-
-      <div className="gain-request-flow__stage gain-request-flow__stage--control">
-        <span className="gain-request-flow__stage-title">Control plane</span>
-        <div className="gain-request-flow__pipeline">
-          <span>Gateway</span>
-          <span className="gain-request-flow__pipe-arrow" aria-hidden="true">›</span>
-          <span>Intent</span>
-          <span className="gain-request-flow__pipe-arrow" aria-hidden="true">›</span>
-          <span>Policy</span>
-          <span className="gain-request-flow__pipe-arrow" aria-hidden="true">›</span>
-          <span>Context</span>
-          <span className="gain-request-flow__pipe-arrow" aria-hidden="true">›</span>
-          <span>Router</span>
-        </div>
-        <span className="gain-request-flow__owner">Platform · Security · Data</span>
-      </div>
-
-      <span className="gain-request-flow__arrow" aria-hidden="true">→</span>
-
-      <div className="gain-request-flow__stage gain-request-flow__stage--runtime">
-        <span className="gain-request-flow__stage-title">Runtime</span>
-        <span className="gain-request-flow__stage-desc">Inference · Vector store</span>
-        <span className="gain-request-flow__owner">Infrastructure</span>
-      </div>
-
-      <span className="gain-request-flow__arrow" aria-hidden="true">→</span>
-
-      <div className="gain-request-flow__stage gain-request-flow__stage--product">
-        <span className="gain-request-flow__stage-title">Response</span>
-        <span className="gain-request-flow__stage-desc">Workflow · KPIs</span>
-        <span className="gain-request-flow__owner">Product</span>
-      </div>
-    </div>
-
-    <div className="gain-request-flow__support">
-      <div className="gain-request-flow__feed">
-        <span className="gain-request-flow__feed-arrow" aria-hidden="true">↗</span>
-        <span><strong>Data plane</strong> feeds indexed knowledge into Context</span>
-      </div>
-      <div className="gain-request-flow__obs">
-        <span className="gain-request-flow__obs-icon" aria-hidden="true">↻</span>
-        <span><strong>Observability</strong> traces every hop. Platform + SRE</span>
-      </div>
-    </div>
-  </div>
-</div>
+| Stage | Plane | Primary owner | Key actions |
+| --- | --- | --- | --- |
+| **User request** | Application | Product | Use case, UX |
+| **Gateway → Router** | Control | Platform | Policy, context assembly, route |
+| **Inference** | Runtime | Infrastructure | Model / vector execution |
+| **Response** | Application | Product | Workflow, KPIs |
+| **Knowledge feed** *(async)* | Data | Data Platform | Indexed context into Context Engine |
+| **Trace** *(cross-cutting)* | Control + SRE | Platform | Cost, quality, audit |
 
 ## Boundary Lines
 
-| Team | Should not own |
-| --- | --- |
-| **AI Platform team** | Business-specific prompts · App UI · Product workflows · Enterprise source systems · GPU hardware lifecycle · Embeddings pipelines and indexing logic · Metadata catalog and data quality rules |
-| **Infrastructure / Cloud team** | Model routing logic · Prompt standards · Policy semantics · AI evaluation quality · Data pipeline design · Catalog semantics and governance tags |
-| **Data Platform team** | Context Engine orchestration at request time · Model routing and policy decisions · Prompt templates and agent invocation · Inference hosting and GPU lifecycle · App UI and product workflows · Business-specific agent behavior |
-| **Product / Domain teams** | Direct model SDK integration · Vendor-specific implementations · Raw API keys · Isolated prompt stacks · Data pipelines and embeddings indexing · Metadata catalog and classification tags |
+When accountability blurs, fragmentation follows. Use the ownership matrix above as the default;
+this table diagnoses the most common crosses.
 
-Fragmentation starts when these lines blur.
+| When this blurs… | Typical symptom | Fix |
+| --- | --- | --- |
+| **Platform owns embeddings pipelines** | Router team also runs ETL and owns the catalog | Data owns index and catalog; Platform owns Context Engine orchestration |
+| **Product calls the model SDK directly** | API keys in repos, no shared policy or audit path | Mandate gateway as the single ingress for every AI consumption path |
+| **Infra writes routing rules** | Policy changes require cluster or serving deploys | Move routing and policy semantics to the control plane |
+| **Data owns request-time routing** | Context team blocks model swaps and eval gates | Platform owns gateway, route, and policy; Data feeds indexed knowledge only |
+| **Product owns isolated prompt stacks** | Duplicated governance, no eval regression path | Standardize via platform prompt templates and tool registry |
 
 ## Enterprise AI Operating Model
 
@@ -276,3 +316,55 @@ pipelines, catalogs, and governance at scale: typical in large banks and regulat
 pipelines, indexing, and catalog work without splitting accountability. The boundaries in this
 model still apply: only the team structure compresses.
 :::
+
+---
+
+## G.A.I.N applied to enterprise AI operating model
+
+<Details summary="G · Grounded — who owns business truth">
+**Co-dominant pillar.** Grounding in AIOM is not "feed more data to the model." It is who owns pipelines, catalogs, governance tags, and what gets indexed for the Context Engine before any request is routed.
+
+**Components:** embeddings pipelines · metadata catalog · data quality gates · classification tags (PII, sensitivity) · freshness SLAs for knowledge sources.
+
+**Design questions:** Who owns what enters the Context Engine? How is sensitive data excluded at source?
+
+**Principle:** Business truth lives in the data plane; orchestration consumes it, it does not recreate it.
+
+**Anti-patterns:** platform team building one-off ETL per use case · product teams indexing private data without catalog · data team owning routing decisions at request time.
+</Details>
+
+<Details summary="A · Adaptive — who owns business outcomes">
+Adaptive in AIOM is who owns KPIs, workflow evolution, and the signal that returns from production use cases into platform standards and council investment.
+
+**Components:** domain KPIs and ROI tracking · workflow iteration loops · production feedback into eval and routing priorities · council-level standards and investment gates.
+
+**Design questions:** Who acts when a use case degrades? How does product signal reach platform roadmaps?
+
+**Principle:** Business value is created in the application plane; platform enables it, not the reverse.
+
+**Anti-patterns:** platform dictating UX without domain input · pilots with no shared KPIs · frozen standards with no feedback from production.
+</Details>
+
+<Details summary="I · Intelligent — who owns the control plane">
+**Co-dominant pillar.** Intelligence in AIOM is not "hire ML engineers in every squad." It is a single accountable team for gateway, routing, policy, context orchestration at request time, and evaluation.
+
+**Components:** AI gateway · intent classifier · policy engine · routing engine · prompt templates · tool registry · eval framework · observability spine.
+
+**Design questions:** Is there one ingress for every AI consumption path? Who approves a new model route?
+
+**Principle:** The control plane decides how AI is consumed; nothing bypasses it.
+
+**Anti-patterns:** product teams calling model APIs directly · policy encoded in app-specific prompts · routing logic duplicated per squad.
+</Details>
+
+<Details summary="N · Native — who owns where AI runs">
+Native in AIOM is the runtime plane: GPUs, vector stores, networking, scaling — owned separately from orchestration semantics.
+
+**Components:** GPU clusters · model serving stacks · vector DB infrastructure · VPC and private links · autoscaling · runtime isolation and security hardening.
+
+**Design questions:** Can platform swap model hosts without rewriting apps? Who owns spend at the infrastructure layer?
+
+**Principle:** Infrastructure runs where AI executes; it does not decide how it is governed.
+
+**Anti-patterns:** platform team managing hardware lifecycle · infra team writing routing rules · cost ownership split with no attribution path.
+</Details>

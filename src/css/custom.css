@@ -567,6 +567,78 @@ details > p {
   line-height: 1.4;
 }
 
+/* ── G.A.I.N principle cards (frameworks overview) ── */
+.gain-principle-cards {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.25rem;
+  margin: 2rem 0;
+}
+
+.gain-principle-card {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1.5rem;
+  border-radius: 12px;
+  border: 1px solid var(--gain-border);
+  background: #ffffff;
+}
+
+[data-theme='dark'] .gain-principle-card {
+  background: var(--ifm-background-color);
+}
+
+.gain-principle-card__header {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.gain-principle-card__letter {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 50%;
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.gain-principle-card--g .gain-principle-card__letter { background: var(--gain-blue); }
+.gain-principle-card--a .gain-principle-card__letter { background: var(--gain-green); }
+.gain-principle-card--i .gain-principle-card__letter { background: var(--gain-purple); }
+.gain-principle-card--n .gain-principle-card__letter { background: var(--gain-orange); }
+
+.gain-principle-card__titles {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 0;
+}
+
+.gain-principle-card__name {
+  font-weight: 700;
+  font-size: 1.0625rem;
+  line-height: 1.3;
+}
+
+.gain-principle-card__focus {
+  font-size: 0.875rem;
+  color: var(--gain-text-muted);
+  line-height: 1.4;
+}
+
+.gain-principle-card__body {
+  margin: 0;
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  color: var(--ifm-font-color-base);
+}
+
 /* ── G.A.I.N cycle (frameworks overview) ── */
 .gain-cycle {
   margin: 2rem 0;
@@ -3845,6 +3917,10 @@ details > p {
 @media (max-width: 996px) {
   .gain-pillars {
     grid-template-columns: repeat(2, 1fr);
+  }
+
+  .gain-principle-cards {
+    grid-template-columns: 1fr;
   }
 
   .gain-home-system__grid {

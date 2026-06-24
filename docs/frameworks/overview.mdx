@@ -3,17 +3,18 @@ title: G.A.I.N
 sidebar_label: Overview
 hide_title: true
 slug: /
+description: Truth, control, and scale live in the system around the model — not inside it.
 tags:
   - system-architecture
   - gain
   - orchestration
 ---
 
-import Details from '@theme/Details';
-
 <div className="gain-doc-header">
   <h1 className="gain-doc-title">G.A.I.N</h1>
-  <div className="gain-doc-subtitle">Governed AI-Native Systems: an operating model for enterprise AI.</div>
+  <div className="gain-doc-subtitle" style={{marginTop: '-0.25rem', marginBottom: '1.75rem'}}>
+    Governed AI-Native Systems: an operating model for enterprise AI.
+  </div>
 </div>
 
 <div className="gain-letter-flow">
@@ -38,36 +39,28 @@ import Details from '@theme/Details';
   </div>
 </div>
 
-<div className="gain-pillars">
-  <div className="gain-pillar gain-pillar--g">
-    <span className="gain-pillar-letter">G</span>
-    <span className="gain-pillar-name">Grounded</span>
-    <span className="gain-pillar-desc">Truth, context and knowledge alignment.</span>
-  </div>
-  <div className="gain-pillar gain-pillar--a">
-    <span className="gain-pillar-letter">A</span>
-    <span className="gain-pillar-name">Adaptive</span>
-    <span className="gain-pillar-desc">Learning, feedback and continuous evolution.</span>
-  </div>
-  <div className="gain-pillar gain-pillar--i">
-    <span className="gain-pillar-letter">I</span>
-    <span className="gain-pillar-name">Intelligent</span>
-    <span className="gain-pillar-desc">Reasoning, agents and decision systems.</span>
-  </div>
-  <div className="gain-pillar gain-pillar--n">
-    <span className="gain-pillar-letter">N</span>
-    <span className="gain-pillar-name">Native</span>
-    <span className="gain-pillar-desc">Scalable, modular and future-ready design.</span>
-  </div>
-</div>
+:::info[G.A.I.N]
+**Truth, control, and scale live in the system around the model — not inside it.**
 
-<div className="gain-lead">
-  G.A.I.N is an operating framework for enterprise architecture, from cloud and platform modernization to governed agents and production AI in regulated environments. It ensures AI systems are not just powerful, but also reliable, adaptive, and built for the real world.
-</div>
+Enterprise teams debate models, vendors, and org charts. G.A.I.N reframes the question: what is grounded, what adapts from production, what reasoning is delegated, and what runs as governed platform infrastructure — with accountable owners from day one.
+:::
 
-<div className="gain-section-lead">
-  G.A.I.N is the <strong>how</strong>: principles that apply across every core domain: Strategy &amp; Architecture, Platforms &amp; Engineering, AI &amp; Intelligence, and Governance &amp; Trust.
-</div>
+G.A.I.N is an operating framework for enterprise architecture, from cloud and platform modernization to governed agents and production AI in regulated environments. It is the **how**: principles that apply across Strategy &amp; Architecture, Platforms &amp; Engineering, AI &amp; Intelligence, and Governance &amp; Trust — ensuring AI systems are not just powerful, but reliable, adaptive, and built for the real world.
+
+## Why G.A.I.N
+
+Most enterprise AI failures are not model failures. They are architecture and operating-model failures:
+
+- Pilots bypass the platform: embedded API keys, isolated prompts, no shared policy or audit path.
+- Product teams ship copilots while no one owns routing, eval, or cost at ingress.
+- Platform and data teams argue over context, embeddings, and catalogs with no plane-level boundary.
+- Observability and spend show up in dashboards months after architecture is frozen — with no owner to act.
+
+Generic AI advice stops at "pick a model" or "stand up a center of excellence." **G.A.I.N** maps the full production domain: how context enters, how decisions are governed, how feedback closes the loop, and who owns each layer before anyone ships to production.
+
+:::tip
+**Reading order:** [G.A.I.N AIOM](/frameworks/gain-aiom) defines who owns each plane; domain frameworks (LLM, RAG, Agents, …) apply G · A · I · N to specific capabilities.
+:::
 
 ## The Core Principles
 
@@ -75,93 +68,107 @@ import Details from '@theme/Details';
 AI systems are not intelligent components. They are governed systems operating inside enterprise constraints.
 </div>
 
-<Details className="gain-accordion" summary="Grounded, Truth, context and knowledge alignment">
-  Grounded systems anchor every response in verified context. They connect models to knowledge bases, enforce citation and traceability, and align outputs with organizational truth: reducing hallucination and building trust in production AI.
-</Details>
-
-<Details className="gain-accordion" summary="Adaptive, Learning, feedback and continuous evolution">
-  Adaptive systems learn from real-world usage. Feedback loops, evaluation pipelines, and human-in-the-loop workflows ensure models and agents improve over time rather than degrading silently in production.
-</Details>
-
-<Details className="gain-accordion" summary="Intelligent, Reasoning, agents and decision systems">
-  Intelligent systems go beyond simple prompts. They orchestrate agents, apply reasoning chains, and make structured decisions: turning LLMs into reliable components within larger decision architectures.
-</Details>
-
-<Details className="gain-accordion" summary="Native, Scalable, modular and future-ready design">
-  Native systems are built for the cloud from day one. Modular boundaries, observable pipelines, and platform-native patterns ensure AI capabilities scale with the business without becoming fragile monoliths.
-</Details>
-
-## How G.A.I.N Works Together
-
-<div className="gain-cycle">
-  <div className="gain-cycle__diagram">
-    <div className="gain-cycle__flow">
-      <div className="gain-cycle__node gain-cycle__node--source">
-        <span className="gain-cycle__node-title">Data &amp; Context</span>
-        <span className="gain-cycle__node-desc">Knowledge · signals · usage</span>
-      </div>
-
-      <span className="gain-cycle__arrow" aria-hidden="true">→</span>
-
-      <div className="gain-cycle__step gain-cycle__step--g">
-        <span className="gain-cycle__letter">G</span>
-        <span className="gain-cycle__name">Grounded</span>
-      </div>
-      <span className="gain-cycle__arrow" aria-hidden="true">→</span>
-      <div className="gain-cycle__step gain-cycle__step--a">
-        <span className="gain-cycle__letter">A</span>
-        <span className="gain-cycle__name">Adaptive</span>
-      </div>
-      <span className="gain-cycle__arrow" aria-hidden="true">→</span>
-      <div className="gain-cycle__step gain-cycle__step--i">
-        <span className="gain-cycle__letter">I</span>
-        <span className="gain-cycle__name">Intelligent</span>
-      </div>
-      <span className="gain-cycle__arrow" aria-hidden="true">→</span>
-      <div className="gain-cycle__step gain-cycle__step--n">
-        <span className="gain-cycle__letter">N</span>
-        <span className="gain-cycle__name">Native</span>
-      </div>
-
-      <span className="gain-cycle__arrow" aria-hidden="true">→</span>
-
-      <div className="gain-cycle__node gain-cycle__node--feedback">
-        <span className="gain-cycle__feedback-icon" aria-hidden="true">↻</span>
-        <span className="gain-cycle__node-title">Feedback Loop</span>
-        <span className="gain-cycle__node-desc">Eval · KPIs · learning</span>
+<div className="gain-principle-cards">
+  <div className="gain-principle-card gain-principle-card--g">
+    <div className="gain-principle-card__header">
+      <span className="gain-principle-card__letter">G</span>
+      <div className="gain-principle-card__titles">
+        <span className="gain-principle-card__name">Grounded</span>
+        <span className="gain-principle-card__focus">Truth, context and knowledge alignment</span>
       </div>
     </div>
+    <p className="gain-principle-card__body">
+      Grounded systems anchor every response in verified context. They connect models to knowledge bases, enforce citation and traceability, and align outputs with organizational truth: reducing hallucination and building trust in production AI.
+    </p>
+  </div>
 
-    <div className="gain-cycle__return" aria-hidden="true">
-      <span className="gain-cycle__return-line" />
-      <span className="gain-cycle__return-label">continuous improvement</span>
+  <div className="gain-principle-card gain-principle-card--a">
+    <div className="gain-principle-card__header">
+      <span className="gain-principle-card__letter">A</span>
+      <div className="gain-principle-card__titles">
+        <span className="gain-principle-card__name">Adaptive</span>
+        <span className="gain-principle-card__focus">Learning, feedback and continuous evolution</span>
+      </div>
     </div>
+    <p className="gain-principle-card__body">
+      Adaptive systems learn from real-world usage. Feedback loops, evaluation pipelines, and human-in-the-loop workflows ensure models and agents improve over time rather than degrading silently in production.
+    </p>
+  </div>
+
+  <div className="gain-principle-card gain-principle-card--i">
+    <div className="gain-principle-card__header">
+      <span className="gain-principle-card__letter">I</span>
+      <div className="gain-principle-card__titles">
+        <span className="gain-principle-card__name">Intelligent</span>
+        <span className="gain-principle-card__focus">Reasoning, agents and decision systems</span>
+      </div>
+    </div>
+    <p className="gain-principle-card__body">
+      Intelligent systems go beyond simple prompts. They orchestrate agents, apply reasoning chains, and make structured decisions: turning LLMs into reliable components within larger decision architectures.
+    </p>
+  </div>
+
+  <div className="gain-principle-card gain-principle-card--n">
+    <div className="gain-principle-card__header">
+      <span className="gain-principle-card__letter">N</span>
+      <div className="gain-principle-card__titles">
+        <span className="gain-principle-card__name">Native</span>
+        <span className="gain-principle-card__focus">Scalable, modular and future-ready design</span>
+      </div>
+    </div>
+    <p className="gain-principle-card__body">
+      Native systems are built for the cloud from day one. Modular boundaries, observable pipelines, and platform-native patterns ensure AI capabilities scale with the business without becoming fragile monoliths.
+    </p>
   </div>
 </div>
 
-Each pillar builds on the last: grounded context enables adaptive learning, which powers intelligent reasoning, all delivered through native, scalable architecture. The feedback loop closes the cycle: every interaction improves the system.
+## How G.A.I.N Works Together
 
-## What lives here
+<div className="gain-mermaid">
 
-<div className="gain-section-lead">
-  Two layers: the <strong>operating model</strong> ([G.A.I.N AIOM](/frameworks/gain-aiom): teams and
-  planes) and <strong>capability patterns</strong> (LLM, RAG, Agents, MCP, Observability, Evaluation, Identity). For how all handbook sections
-  fit together see the <a href="/sitemap">Sitemap</a>.
+```mermaid
+flowchart TB
+    SRC["Data & Context<br/>Knowledge · signals · usage"]
+
+    G["G · Grounded<br/>Truth, context and knowledge alignment"]
+    A["A · Adaptive<br/>Learning, feedback and evolution"]
+    I["I · Intelligent<br/>Reasoning, agents and decisions"]
+    N["N · Native<br/>Scalable, modular design"]
+
+    FB["Feedback Loop<br/>Eval · KPIs · learning"]
+
+    SRC --> G --> A --> I --> N --> FB
+    FB -. "continuous improvement" .-> SRC
+
+    classDef source fill:#f1f5f9,stroke:#94a3b8,color:#1e293b,stroke-width:2px
+    classDef grounded fill:#dbeafe,stroke:#3b82f6,color:#1e293b,stroke-width:2px
+    classDef adaptive fill:#dcfce7,stroke:#22c55e,color:#1e293b,stroke-width:2px
+    classDef intelligent fill:#ede9fe,stroke:#a855f7,color:#1e293b,stroke-width:2px
+    classDef native fill:#ffedd5,stroke:#f97316,color:#1e293b,stroke-width:2px
+    classDef feedback fill:#f1f5f9,stroke:#94a3b8,color:#1e293b,stroke-width:2px
+
+    class SRC source
+    class G grounded
+    class A adaptive
+    class I intelligent
+    class N native
+    class FB feedback
+
+    linkStyle 5 stroke:#94a3b8,stroke-width:2px,stroke-dasharray:5 5
+```
+
 </div>
 
-**Operating model**
+Each pillar builds on the last: grounded context enables adaptive learning, which powers intelligent reasoning, all delivered through native, scalable architecture. The feedback loop closes the cycle — every interaction improves the system.
 
-- **[G.A.I.N AIOM](/frameworks/gain-aiom)**: teams, planes, and delivery boundaries
+## What G.A.I.N Adds
 
-**Capability patterns**
+Not generic AI platform advice — cross-cutting claims that show up across every domain framework.
 
-- **G.A.I.N LLM**: model integration and production patterns
-- **G.A.I.N RAG**: retrieval and knowledge alignment patterns
-- **G.A.I.N Agents**: agent orchestration and governance
-- **G.A.I.N MCP**: governed Model Context Protocol integration
-- **G.A.I.N Observability**: telemetry, quality measurement, and audit trails
-- **G.A.I.N Evaluation**: validation pipelines, scoring, and release gates
-- **G.A.I.N Identity**: identity-aware context, entitlements, and access
-
-For component diagrams and pattern-to-blueprint mappings, see [Blueprints](/blueprints). For build
-guides see [Playbooks](/playbooks).
+| G.A.I.N claim | What it means |
+| --- | --- |
+| **Intelligence in the call; truth in the system** | Models generate. Architecture owns context, policy verdict, attribution, and audit. |
+| **The model proposes; the system decides** | Routing, abstention, tool access, and escalation are platform decisions — not prompt tricks. |
+| **Planes beat projects** | Application, control, runtime, and knowledge have separate owners — not one undifferentiated "AI team." |
+| **Grounding is a pipeline, not a prompt** | Identity-scoped context, governed sources, and output filters define what may enter and leave the boundary. |
+| **Native is the feedback loop, not hosting** | Trace, cost, eval, and routing feedback close the loop from production back into design. |

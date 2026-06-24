@@ -18,7 +18,6 @@ import Details from '@theme/Details';
   How to design enterprise-safe LLM applications: grounded, adaptive, intelligent, native principles applied to production model integration.
 </div>
 
-Part of **[G.A.I.N (Governed AI-Native Systems)](https://jitendersharma.dev/frameworks)**: the operating model for enterprise AI where truth, control, and scale live in the system around the model, not inside it.
 
 :::info[G.A.I.N LLM]
 **The LLM is a governed inference service, not a chat endpoint you paste into every workflow.**
@@ -27,6 +26,15 @@ Enterprise teams debate model brands. G.A.I.N LLM reframes the question: which m
 :::
 
 An LLM in production is a **frozen function wrapped in architecture**: not a chatbot endpoint. The model is one component in a governed system, bounded by policy, validated before it reaches business logic, and operated on platform infrastructure built to scale and control cost.
+
+## How This Maps to G.A.I.N
+
+| G.A.I.N pillar | Where it lives | Who primarily owns it |
+| --- | --- | --- |
+| **G · Grounded** | Context assembly, model registry, input and output filters, prompt contracts | AI Platform Team |
+| **A · Adaptive** | Eval suites, canary routing, production feedback into routing and prompts | AI Platform + Product / Domain Teams |
+| **I · Intelligent** | Gateway routing, abstention, capability matrix, governed tool registry | AI Platform Team |
+| **N · Native** | LLM gateway, inference runtime, trace, cost attribution, GPU clusters | Infrastructure / Cloud Team + AI Platform |
 
 ---
 
@@ -121,7 +129,7 @@ If the answer to the first is yes and the second is unclear, the design is not r
 
 Every production LLM path crosses the same boundaries. Intelligence lives in the model call. Truth, policy, cost attribution, and audit live in the system around it.
 
-The **gateway** (layer 2) is the single production ingress: auth, policy hooks, routing, and budget. Define it once here. Pillar sections below apply G · A · I · N to this stack without redefining the gateway. Deeper gateway modeling lives in the [LLM gateway blueprint](https://jitendersharma.dev/blueprints/llm-gateway).
+The **gateway** (layer 2) is the single production ingress: auth, policy hooks, routing, and budget. Define it once here. Pillar sections below apply G · A · I · N to this stack without redefining the gateway. Deeper gateway modeling lives in the [LLM gateway blueprint](/blueprints/llm-gateway).
 
 <div className="gain-mermaid">
 
@@ -293,7 +301,7 @@ Define prompts with structured inputs, output schemas, and failure modes. Prompt
 </Details>
 
 <Details summary="RAG integration">
-Combine LLM generation with retrieved context for grounded responses. See [G.A.I.N RAG](https://jitendersharma.dev/frameworks/gain-rag) for retrieval patterns.
+Combine LLM generation with retrieved context for grounded responses. See [G.A.I.N RAG](/frameworks/gain-rag) for retrieval patterns.
 </Details>
 
 <Details summary="Caching">
@@ -314,6 +322,6 @@ Adapt base models to domain-specific tasks with curated datasets and evaluation 
 
 | Asset | Role |
 | --- | --- |
-| [G.A.I.N core](https://jitendersharma.dev/frameworks) | Operating model spine |
-| [How to model LLM gateway](https://jitendersharma.dev/blueprints/llm-gateway) | Platform ingress, registry, shared ops (blueprint) |
-| [How to Integrate LLMs in Production](https://jitendersharma.dev/playbooks/llm-integration-guide) | How to build |
+| [G.A.I.N core](/frameworks) | Operating model spine |
+| [How to model LLM gateway](/blueprints/llm-gateway) | Platform ingress, registry, shared ops (blueprint) |
+| [How to Integrate LLMs in Production](/playbooks/llm-integration-guide) | How to build |
