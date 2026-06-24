@@ -1,9 +1,12 @@
 ---
+sidebar_position: 50
 slug: gain-observability
 title: G.A.I.N Observability
 sidebar_label: G.A.I.N Observability
 hide_title: true
 draft: true
+description: AI observability is capture architecture on the request path, not a dashboard you add after launch.
+authors: [iamsharmajitender]
 tags:
   - platforms-engineering
   - gain
@@ -14,30 +17,130 @@ import Details from '@theme/Details';
 
 <div className="gain-doc-header">
   <h1 className="gain-doc-title">G.A.I.N Observability</h1>
-  <div className="gain-doc-subtitle">
-    How to observe AI systems beyond logs: grounded, adaptive, intelligent, native principles
-    applied to production telemetry and quality measurement.
+  <div className="gain-doc-subtitle" style={{marginTop: '-0.25rem', marginBottom: '1.75rem'}}>
+    Why governed observability works this way: principles, patterns, team boundaries.
   </div>
 </div>
 
-## Design for AI Observability
+:::info[G.A.I.N Observability]
+**AI observability is capture architecture on the request path, not a dashboard you add after launch.**
 
-<div className="gain-section-lead">
-  AI observability is not a dashboard. It is capture, retention, and analysis architecture. Logs
-  alone cannot explain why an agent chose a tool, why a RAG answer hallucinated, or who approved a
-  policy exception. G.A.I.N Observability treats every AI request as an auditable, measurable event
-  on the path, not an afterthought stitched in later.
+Enterprise teams debate which APM vendor to buy. G.A.I.N Observability reframes the question: what signals are captured at each hop, where do they land, who consumes them, and how does telemetry feed eval and rollback from day one.
+:::
+
+Observability in production is **capture, retention, and routing architecture** — not a single dashboard. Logs alone cannot explain why an agent chose a tool, why a RAG answer hallucinated, or who approved a policy exception. Every AI request is an auditable, measurable event on the path.
+
+## How This Maps to G.A.I.N
+
+| G.A.I.N pillar | Where it lives | Who primarily owns it |
+| --- | --- | --- |
+| **G · Grounded** | Prompt lineage, policy violations, access history, decision trails, compliance events | Security + AI Platform |
+| **A · Adaptive** | Request-path instrumentation, eval hooks, drift detection, production sampling | AI Platform + Product / Domain Teams |
+| **I · Intelligent** | AI quality metrics — hallucination rate, reasoning quality, tool selection, confidence | AI Platform Team |
+| **N · Native** | Multi-store telemetry, OTel collector, retention tiers, SLO and cost attribution | Infrastructure / Cloud Team + AI Platform |
+
+---
+
+## Why Observability needs G.A.I.N
+
+Most production AI observability failures are not tooling failures. They are architecture failures:
+
+- Only final model output is logged — plan steps, retrieval, and tool calls are invisible.
+- Prompts and PII land in operational log stores with no redaction before persistence.
+- One database serves debugging, quality analysis, and regulator replay — and serves none well.
+- Quality degradation looks healthy in uptime dashboards until users escalate.
+
+Generic observability advice stops at "add OpenTelemetry." **G.A.I.N Observability** maps the full telemetry domain: what to capture at each hop, where signals land, which consumers ask which questions, and how production data feeds eval and incident response under retention and compliance constraints.
+
+**Dominant pillars for this domain:** **N** (Native) and **A** (Adaptive).
+- Native is multi-store infrastructure: five signals, five tiers, five retention policies — operational, quality, and compliance consumers each get the right store.
+- Adaptive is capture on the request path: instrumentation while context exists, feeding drift detection and eval pipelines.
+
+### What G.A.I.N adds (not generic observability advice)
+
+| G.A.I.N claim | What it means for observability |
+| --- | --- |
+| **Intelligence in the call; truth in the system** | Models generate. The architecture owns prompt lineage, policy events, traces, and audit records. |
+| **The model proposes; the system decides** | Quality metrics measure behavior traces — not just whether the final message reads well. |
+| **Grounding is a pipeline, not a prompt** | Retrieval spans, citation IDs, and validator outcomes are first-class signals — not post-hoc guesses. |
+| **Native is the feedback loop, not hosting** | Drift detection, eval sampling, and cost attribution close the loop from production back into routing and prompts. |
+
+---
+
+## Domain on one page
+
+**Two views, one domain.** Application teams need the instrumentation path; platform teams need the shared telemetry stack. Same capture boundary, different questions.
+
+| View | Question | Audience |
+| --- | --- | --- |
+| **Instrumentation path** | What is captured at each hop while context still exists? | App teams, feature architects |
+| **Platform stack** | How does the org route, retain, and consume AI telemetry? | Platform, SRE, FinOps, security |
+
+Observability follows **capture → store → consume**. Instrumentation lives in the request path; routing, sampling, and redaction happen in the collector; consumers ask different questions from different tiers.
+
+### Instrumentation path
+
+<br/>
+
+<div className="gain-mermaid">
+
+```mermaid
+flowchart LR
+    subgraph path["Instrumentation path"]
+        direction LR
+        Q["Request<br/>Query · goal"]
+        GW["Gateway<br/>Auth · policy"]
+        M["Model · retrieval<br/>Tools · validate"]
+        COL["Collector<br/>Route · sample · redact"]
+        OUT["Consumers<br/>Dash · SLO · drift · audit"]
+    end
+
+    Q --> GW --> M --> COL --> OUT
+    OUT -. "eval · alerts" .-> GW
+
+    classDef product fill:#dbeafe,stroke:#93c5fd,color:#1e293b,stroke-width:2px
+    classDef gate fill:#ffedd5,stroke:#fdba74,color:#1e293b,stroke-width:2px
+    classDef process fill:#ede9fe,stroke:#c4b5fd,color:#1e293b,stroke-width:2px
+    classDef audit fill:#f1f5f9,stroke:#94a3b8,color:#1e293b,stroke-width:2px
+
+    class Q product
+    class GW gate
+    class M process
+    class COL,OUT audit
+
+    style path fill:#f8fafc,stroke:#cbd5e1,color:#1e293b,stroke-width:1px
+
+    linkStyle 4 stroke:#94a3b8,stroke-width:2px,stroke-dasharray:5 5
+```
+
 </div>
 
-## Capture, store, consume
+<br/>
 
-<div className="gain-section-lead">
-  Read left to right: <strong>capture → store → consume</strong>. Five signals, five storage tiers,
-  five retention policies: and four consumers that ask different questions. Instrumentation lives
-  in the request path; routing, sampling, and redaction happen in the OTel collector.
-</div>
+- **Capture at the hop:** spans and audit events emit at gateway, policy, model, retrieval, tool, and response boundaries — while context still exists.
+- **Redaction before persistence:** log structure liberally; log content conservatively — lineage without exposing PII.
 
-<div className="gain-diagram-wrap">
+:::important[Ask before you ship]
+**Can you answer all four consumer questions from the right tier?** **Is redaction happening before persistence?**
+
+If prompts land unredacted in operational stores or traces lack retrieval and tool spans, debugging and compliance both fail.
+:::
+
+| Stage | Owns | Does not own |
+| --- | --- | --- |
+| **Request** | Correlation ID assignment, user/principal context | Long-term retention policy |
+| **Gateway** | Ingress spans, auth, rate limits, policy allow/deny events | Quality scoring |
+| **Model / retrieval / tools** | Token counts, latency, chunks, tool success/failure | Storing raw prompts in operational logs |
+| **Collector** | Route, sample, redact before write | Business logic |
+| **Consumers** | Dashboards, SLOs, drift detection, regulator replay | Capturing signals after the fact |
+
+### Platform stack
+
+Read left to right: **capture → store → consume**. Five signals, five storage tiers, five retention policies — and four consumers that ask different questions.
+
+<br/>
+
+<div className="gain-mermaid">
 
 ```mermaid
 flowchart LR
@@ -87,7 +190,7 @@ flowchart LR
     classDef metrics fill:#dcfce7,stroke:#86efac,color:#1e293b
     classDef traces fill:#ede9fe,stroke:#c4b5fd,color:#1e293b
     classDef raw fill:#fee2e2,stroke:#fca5a5,color:#1e293b
-    classDef audit fill:#f1f5f9,stroke:#94a3b8,color:#1e293b
+    classDef auditcls fill:#f1f5f9,stroke:#94a3b8,color:#1e293b
     classDef dash fill:#dbeafe,stroke:#93c5fd,color:#1e293b
     classDef slo fill:#fef3c7,stroke:#fcd34d,color:#1e293b
     classDef drift fill:#ede9fe,stroke:#c4b5fd,color:#1e293b
@@ -100,7 +203,7 @@ flowchart LR
     class tsdb metrics
     class tracestore traces
     class restricted raw
-    class audit audit
+    class audit auditcls
     class dash dash
     class slo slo
     class drift drift
@@ -113,6 +216,8 @@ flowchart LR
 
 </div>
 
+<br/>
+
 | Signal | Store | Retention | Primary consumer |
 | --- | --- | --- | --- |
 | **Structured logs** | Log store | 30 d | Operational dashboards |
@@ -121,135 +226,160 @@ flowchart LR
 | **Raw prompt/response** | Restricted store | encrypted, 90 d | Drift detector, quality analysis |
 | **Audit record** | Audit log | immutable, 7 y | Regulator replay |
 
-Ask before you ship: **Can you answer all four consumer questions from the right tier?** **Is
-redaction happening before persistence?**
+| Layer | Owns | Does not own |
+| --- | --- | --- |
+| **Capture** | Spans at gateway, model, retrieval, tool, response | Storing everything in one tier |
+| **Collector** | Route, sample, redact, fan-out to tiers | Retention policy definition alone |
+| **Storage** | Tier-appropriate retention and access controls | Real-time alerting logic |
+| **Consumers** | Dashboards, SLOs, drift, replay — each from the right tier | Post-hoc log spelunking as the primary workflow |
 
-## Request-path instrumentation
+### Demo vs production (whole stack)
 
-<div className="gain-section-lead">
-  Spans and audit events must be emitted at gateway, policy, model, tool, and response boundaries.
-  While context still exists. The collector fans those signals into the tiers above.
+One decision guide for the full path. Pillar sections assume production defaults unless noted.
+
+| Layer | Demo default | Production default |
+| --- | --- | --- |
+| **Capture** | Console logs or vendor chat dashboard | OTel SDK on every hop: gateway, retrieval, model, tools |
+| **Traces** | Final response only | Span per hop with correlation ID end to end |
+| **Raw content** | Full prompts in application logs | Redacted or tokenized; restricted encrypted store |
+| **Audit** | None | Immutable audit log with principal, policy events, lineage |
+| **Metrics** | Token count in a spreadsheet | TSDB with tenant, use case, model, cost attribution |
+| **Quality** | User complaints | Drift detector on traces + restricted store; eval sampling |
+| **SLOs** | Pod health only | p95 latency, error rate, grounding accuracy, cost per task |
+| **Change** | Debug after incident | Baseline comparison tied to change record and eval run |
+
+---
+
+## G.A.I.N applied to observability systems
+
+<Details summary="G · Grounded — what must be tracked">
+Grounded observability produces evidence — not just operational noise. What you capture must support audit, compliance, and forensic reconstruction of AI decisions.
+
+**Components:** prompt lineage (model, prompt version, template ID, context hash) · policy violations (deny events, escalations, overrides) · access history (who invoked which capability) · decision trails (plan steps, tool calls, validator outcomes) · compliance events (classification, residency, retention markers).
+
+**Design questions:** Can we prove what the model saw and produced? Can auditors replay a decision without re-running inference?
+
+**Principle:** Observability is part of auditability.
+
+**Anti-patterns:** logging final output only · prompts in operational log stores without redaction · no principal on audit records · traces that cannot reconstruct a multi-step agent run.
+</Details>
+
+<Details summary="A · Adaptive — where telemetry is captured">
+**Co-dominant pillar.** Adaptive observability instruments the live request path and feeds improvement loops. Signals captured late are signals lost — especially for streaming, multi-step agents, and RAG pipelines.
+
+**Components:** gateway spans (ingress, auth, correlation ID) · model spans (tokens, latency, provider, finish reason) · retrieval spans (query, chunks, rerank scores, citation IDs) · tool spans (redacted args, success/failure, retries) · eval hooks (sample production traffic into regression pipelines).
+
+**Design questions:** Where does each span start and end? What triggers an eval run or quality alert?
+
+**Principle:** Capture at the request path, not after the fact.
+
+**Anti-patterns:** batch export of logs hours later · no eval sampling from production · ignoring drift signals until escalation.
+</Details>
+
+<Details summary="I · Intelligent — what do we measure">
+Intelligent observability measures AI-specific quality — not just uptime and error rates. Probabilistic systems need probabilistic metrics with deterministic guardrails around them.
+
+**Components:** hallucination rate (grounding checks, citation accuracy) · reasoning quality (task success, plan coherence) · tool selection quality (correct tool, valid args, policy-respecting) · answer confidence (calibrated scores, abstention, human-escalation frequency).
+
+**Design questions:** Which quality metrics map to business risk? What threshold triggers human review or rollback?
+
+**Principle:** AI quality must be measurable.
+
+**Anti-patterns:** infra SLOs as the only health signal · fluency mistaken for correctness · no tool-selection metrics for agents.
+</Details>
+
+<Details summary="N · Native — where telemetry lands">
+**Dominant pillar.** Native observability is multi-store by design: five signals, five tiers, five retention policies. One database cannot serve operational, quality, and compliance consumers.
+
+**Components:** log store (structured logs, 30 d) · TSDB (metrics, 13 mo, SLO trends) · trace store (sampled traces, 30 d) · restricted store (raw prompt/response, encrypted, 90 d) · audit log (immutable, 7 y, regulator replay).
+
+**Design questions:** Which tier is immutable vs erasable? Where does redaction happen before persistence?
+
+**Principle:** AI observability is multi-store by design.
+
+**Anti-patterns:** one store for everything · no retention differentiation · cost metrics missing tenant and use-case tags.
+</Details>
+
+### Capture flow (dominant pillar diagram)
+
+<br/>
+
+<div className="gain-mermaid">
+
+```mermaid
+flowchart TB
+    subgraph hops["① Request hops"]
+        GW["Gateway"]
+        RET["Retrieval"]
+        LLM["Model"]
+        TOOL["Tools"]
+    end
+
+    subgraph collect["② Collect"]
+        OTEL["OTel collector<br/>sample · redact"]
+    end
+
+    subgraph tiers["③ Store"]
+        OPS["Ops tiers<br/>logs · metrics · traces"]
+        REST["Restricted · audit"]
+    end
+
+    subgraph use["④ Consume"]
+        DASH["Dashboards · SLO"]
+        QUAL["Drift · eval"]
+        REG["Regulator replay"]
+    end
+
+    GW --> OTEL
+    RET --> OTEL
+    LLM --> OTEL
+    TOOL --> OTEL
+    OTEL --> OPS --> DASH
+    OTEL --> REST --> QUAL
+    REST --> REG
+
+    classDef process fill:#ede9fe,stroke:#c4b5fd,color:#1e293b,stroke-width:2px
+    classDef gate fill:#ffedd5,stroke:#fdba74,color:#1e293b,stroke-width:2px
+    classDef data fill:#dcfce7,stroke:#86efac,color:#1e293b,stroke-width:2px
+    classDef audit fill:#f1f5f9,stroke:#94a3b8,color:#1e293b,stroke-width:2px
+
+    class GW,RET,LLM,TOOL process
+    class OTEL gate
+    class OPS,REST data
+    class DASH,QUAL,REG audit
+
+    style hops fill:#f8fafc,stroke:#cbd5e1,color:#1e293b,stroke-width:1px
+    style collect fill:#f8fafc,stroke:#cbd5e1,color:#1e293b,stroke-width:1px
+    style tiers fill:#f8fafc,stroke:#cbd5e1,color:#1e293b,stroke-width:1px
+    style use fill:#f8fafc,stroke:#cbd5e1,color:#1e293b,stroke-width:1px
+```
+
 </div>
 
-**Captured at each hop:** tokens, latency, retrieval quality, tool success/failure, policy
-allow/deny, prompt lineage, and correlation IDs tying spans to audit records.
+<br/>
 
-## G.A.I.N applied to observability
-
-<Details className="gain-accordion" summary="G · Grounded: What must be tracked?">
-  Grounded observability produces evidence: not just operational noise. What you capture must
-  support audit, compliance, and forensic reconstruction of AI decisions.
-
-  **Components**
-
-  - Prompt lineage: model, prompt version, template ID, and injected context hash
-  - Policy violations: deny events, escalation triggers, and override approvals
-  - Access history: who invoked which capability, tool, or data source
-  - Decision trails: plan steps, tool calls, and validator outcomes in order
-  - Compliance events: classification tags, residency, and retention markers
-
-  **Design questions**
-
-  - Can we prove what the model saw and produced?
-  - Can auditors replay a decision without re-running inference?
-
-  **Principle:** Observability is part of auditability.
-</Details>
-
-<Details className="gain-accordion" summary="A · Adaptive: Where telemetry is captured">
-  Adaptive observability instruments the live request path and feeds improvement loops. Signals
-  captured late are signals lost, especially for streaming, multi-step agents, and RAG pipelines.
-
-  **Components**
-
-  - Gateway spans: request ingress, auth, rate limits, and correlation ID assignment
-  - Model spans: token counts, latency percentiles, provider, and finish reason
-  - Retrieval spans: query, chunks returned, rerank scores, and citation IDs
-  - Tool spans: invocation args (redacted), success/failure, duration, and retry count
-  - Eval hooks: sample production traffic into golden-set regression pipelines
-
-  **Design questions**
-
-  - Where does each span start and end?
-  - What triggers an eval run or quality alert?
-
-  **Principle:** Capture at the request path, not after the fact.
-</Details>
-
-<Details className="gain-accordion" summary="I · Intelligent: What do we measure?">
-  Intelligent observability measures AI-specific quality: not just uptime and error rates.
-  Probabilistic systems need probabilistic metrics with deterministic guardrails around them.
-
-  **Components**
-
-  - Hallucination rate: grounding checks, citation accuracy, and unsupported-claim detection
-  - Reasoning quality: task success on eval sets, step coherence, and plan validity
-  - Tool selection quality: correct tool chosen, args valid, policy-respecting invocations
-  - Answer confidence: calibrated scores, abstention rates, and human-escalation frequency
-
-  **Design questions**
-
-  - Which quality metrics map to business risk?
-  - What threshold triggers human review or rollback?
-
-  **Principle:** AI quality must be measurable.
-</Details>
-
-<Details className="gain-accordion" summary="N · Native: Where telemetry lands">
-  Native observability is multi-store by design: five signals, five tiers, five retention policies.
-  One database cannot serve operational, quality, and compliance consumers.
-
-  **Components**
-
-  - Log store: structured logs, 30 d retention, operational debugging
-  - TSDB: metrics, 13 mo retention, SLO and year-over-year trends
-  - Trace store: sampled traces, 30 d retention, latency and causality
-  - Restricted store: raw prompt/response, encrypted, 90 d, drift and quality analysis
-  - Audit log: immutable audit records, 7 y retention, regulator replay
-
-  **Consumers**
-
-  - Dashboards: logs, metrics, traces (*what is happening now?*)
-  - SLO + burn-rate alerts: metrics (*are we burning error budget?*)
-  - Drift detector: traces + raw prompts (*is quality eroding?*)
-  - Regulator replay: audit log (*can we prove what we did?*)
-
-  **Design questions**
-
-  - Which tier is immutable vs erasable?
-  - Where does redaction happen before persistence?
-
-  **Principle:** AI observability is multi-store by design.
-</Details>
+---
 
 ## Key patterns
 
-<Details className="gain-accordion" summary="Correlation IDs everywhere">
-  Propagate a single trace ID from gateway ingress through model, retrieval, tools, and response.
-  Without it, debugging a failed agent run across ten hops is guesswork.
+<Details summary="Correlation IDs everywhere">
+Propagate a single trace ID from gateway ingress through model, retrieval, tools, and response. Without it, debugging a failed agent run across ten hops is guesswork.
 </Details>
 
-<Details className="gain-accordion" summary="Redaction by default">
-  Log structure and metadata liberally; log content conservatively. PII, prompts, and tool payloads
-  are redacted or tokenized: lineage is preserved without exposing sensitive data.
+<Details summary="Redaction by default">
+Log structure and metadata liberally; log content conservatively. PII, prompts, and tool payloads are redacted or tokenized — lineage is preserved without exposing sensitive data.
 </Details>
 
-<Details className="gain-accordion" summary="SLOs for AI, not just infra">
-  Define SLOs on p95 latency, error rate, grounding accuracy, and cost per successful task: not
-  only pod health. AI outages often look like quality degradation before they look like 500s.
+<Details summary="SLOs for AI, not just infra">
+Define SLOs on p95 latency, error rate, grounding accuracy, and cost per successful task — not only pod health. AI outages often look like quality degradation before they look like 500s.
 </Details>
 
-<Details className="gain-accordion" summary="Production sampling for eval">
-  Route a sampled fraction of live traffic through offline eval pipelines. Catch regressions from
-  prompt, model, or index changes before users report them.
+<Details summary="Production sampling for eval">
+Route a sampled fraction of live traffic through offline eval pipelines. Catch regressions from prompt, model, or index changes before users report them.
 </Details>
 
-<Details className="gain-accordion" summary="Cost attribution">
-  Tag every inference with tenant, use case, model, and capability pattern. Cost observability is
-  how platform teams stay credible with finance and product.
+<Details summary="Cost attribution">
+Tag every inference with tenant, use case, model, and capability pattern. Cost observability is how platform teams stay credible with finance and product.
 </Details>
 
-For component-level hooks, see [Blueprints → How to Model AI Control Plane](/blueprints/control-plane)
-(observability and evaluation framework). For implementation steps, see
-[Playbooks → How to Build AI Observability in Production](/playbooks/ai-observability). For the full architecture breakdown,
-see [Insights → AI Observability in Enterprise](/insights/ai-observability-in-enterprise).
+---

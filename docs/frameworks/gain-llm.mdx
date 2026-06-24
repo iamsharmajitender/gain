@@ -4,6 +4,7 @@ slug: gain-llm
 title: G.A.I.N LLM
 description: The LLM is a governed inference service, not a chat endpoint you paste into every workflow.
 authors: [iamsharmajitender]
+draft: true
 tags:
   - platforms-engineering
   - gain
@@ -77,6 +78,8 @@ LLMs should **augment** systems, not replace them. The model sits inside a pipel
 
 ### Application path
 
+<br/>
+
 <div className="gain-mermaid">
 
 ```mermaid
@@ -108,6 +111,8 @@ flowchart LR
 
 </div>
 
+<br/>
+
 - **Validation gate:** deterministic check before anything reaches business logic.
 - **Model augments:** the LLM is one step in the pipeline, not the only gate to an outcome.
 
@@ -130,6 +135,8 @@ If the answer to the first is yes and the second is unclear, the design is not r
 Every production LLM path crosses the same boundaries. Intelligence lives in the model call. Truth, policy, cost attribution, and audit live in the system around it.
 
 The **gateway** (layer 2) is the single production ingress: auth, policy hooks, routing, and budget. Define it once here. Pillar sections below apply G · A · I · N to this stack without redefining the gateway. Deeper gateway modeling lives in the [LLM gateway blueprint](/blueprints/llm-gateway).
+
+<br/>
 
 <div className="gain-mermaid">
 
@@ -178,6 +185,8 @@ flowchart LR
 ```
 
 </div>
+
+<br/>
 
 | Layer | Owns | Does not own |
 | --- | --- | --- |
@@ -254,6 +263,8 @@ The LLM does not decide which model to use, whether to answer, or which tool to 
 
 ### Grounded flow (dominant pillar diagram)
 
+<br/>
+
 <div className="gain-mermaid">
 
 ```mermaid
@@ -291,6 +302,8 @@ flowchart TB
 ```
 
 </div>
+
+<br/>
 
 ---
 

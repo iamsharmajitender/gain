@@ -4,6 +4,7 @@ slug: gain-rag
 title: G.A.I.N RAG
 sidebar_label: G.A.I.N RAG
 hide_title: true
+draft: true
 description: RAG is a governed retrieval subsystem, not a database layer bolted onto a prompt.
 authors: [iamsharmajitender]
 tags:
@@ -79,6 +80,8 @@ Retrieval is a **subsystem**, not the system. Identity and policy gate what can 
 
 ### Request path
 
+<br/>
+
 <div className="gain-mermaid">
 
 ```mermaid
@@ -133,6 +136,8 @@ If policy runs after retrieval, or validation is skipped, the system will leak e
 Every retrieval path crosses the same boundaries. Intelligence lives in ranking and synthesis. Truth, policy, freshness, and audit live in the system around it.
 
 The **gateway** is the single retrieval ingress: auth, policy hooks, and classification before search runs. Pipelines feed the knowledge index asynchronously; the platform layer keeps retrieval observable and measured.
+
+<br/>
 
 <div className="gain-mermaid">
 
@@ -263,6 +268,8 @@ The LLM interprets and synthesizes retrieved context; it does not invent facts t
 
 ### Grounded flow (dominant pillar diagram)
 
+<br/>
+
 <div className="gain-mermaid">
 
 ```mermaid
@@ -306,6 +313,8 @@ flowchart TB
 ```
 
 </div>
+
+<br/>
 
 ---
 
