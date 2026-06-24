@@ -43,6 +43,7 @@ const config: Config = {
           onInlineAuthors: 'warn',
           onUntruncatedBlogPosts: 'warn',
           routeBasePath: 'insights',
+          postsPerPage: 10,
         },
         theme: {
           customCss: './src/css/custom.css',
@@ -83,12 +84,22 @@ const config: Config = {
       },
     ],
     [
-      '@docusaurus/plugin-content-docs',
+      '@docusaurus/plugin-content-blog',
       {
         id: 'playbooks',
         path: 'docs/playbooks',
         routeBasePath: 'playbooks',
-        sidebarPath: './sidebarsPlaybooks.ts',
+        blogTitle: 'Playbooks',
+        blogDescription:
+          'Step-by-step guides for building production AI systems in enterprise environments.',
+        blogSidebarCount: 0,
+        postsPerPage: 20,
+        onInlineTags: 'warn',
+        onInlineAuthors: 'warn',
+        onUntruncatedBlogPosts: 'ignore',
+        feedOptions: {
+          type: null,
+        },
       },
     ],
     [
@@ -111,10 +122,10 @@ const config: Config = {
         language: ['en'],
         indexDocs: true,
         indexBlog: true,
-        docsRouteBasePath: ['frameworks', 'architecture', 'playbooks', 'blueprints'],
+        docsRouteBasePath: ['frameworks', 'architecture', 'blueprints'],
         docsPluginIdForPreferredVersion: 'frameworks',
-        blogRouteBasePath: 'insights',
-        blogDir: 'docs/insights',
+        blogRouteBasePath: ['insights', 'playbooks'],
+        blogDir: ['docs/insights', 'docs/playbooks'],
       },
     ],
   ],
@@ -147,24 +158,23 @@ const config: Config = {
         {
           type: 'doc',
           docId: 'overview',
+          docsPluginId: 'blueprints',
+          position: 'left',
+          label: 'Blueprints',
+        },
+        {
+          type: 'doc',
+          docId: 'overview',
           docsPluginId: 'architecture',
           position: 'left',
           label: 'Architecture',
         },
         {
-          type: 'doc',
-          docId: 'overview',
-          docsPluginId: 'playbooks',
-          position: 'left',
+          to: '/playbooks',
           label: 'Playbooks',
-        },
-        {
-          type: 'doc',
-          docId: 'overview',
-          docsPluginId: 'blueprints',
           position: 'left',
-          label: 'Blueprints',
         },
+
         {
           to: '/insights',
           label: 'Insights',
@@ -207,9 +217,9 @@ const config: Config = {
         {
           title: 'Explore',
           items: [
+            {label: 'Blueprints', to: '/blueprints'},
             {label: 'Architecture', to: '/architecture'},
             {label: 'Playbooks', to: '/playbooks'},
-            {label: 'Blueprints', to: '/blueprints'},
             {label: 'Insights', to: '/insights'},
           ],
         },

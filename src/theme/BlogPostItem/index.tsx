@@ -8,6 +8,8 @@ import BlogPostItemContent from '@theme/BlogPostItem/Content';
 import BlogPostItemFooter from '@theme/BlogPostItem/Footer';
 import type {Props} from '@theme/BlogPostItem';
 import {findTypeTag, TYPE_TAG_LABELS} from '@site/src/data/insightTags';
+import {findDomainTag, DOMAIN_TAG_SHORT_LABELS} from '@site/src/data/playbookTags';
+import {isPlaybooksBlog} from '@site/src/utils/isPlaybooksBlog';
 
 function formatInsightDate(date: Date | string): string {
   return new Date(date)
@@ -24,17 +26,31 @@ function BlogPostItemListView({className}: Pick<Props, 'className'>): ReactNode 
   const {metadata, assets} = useBlogPost();
   const {title, description, permalink, date, tags} = metadata;
   const imageUrl = assets.image;
+  const playbooks = isPlaybooksBlog(permalink);
   const typeTag = findTypeTag(tags);
-  const typeLabel = typeTag ? TYPE_TAG_LABELS[typeTag] : null;
+  const domainTag = findDomainTag(tags);
+  const badgeLabel = playbooks
+    ? domainTag
+      ? DOMAIN_TAG_SHORT_LABELS[domainTag]
+      : null
+    : typeTag
+      ? TYPE_TAG_LABELS[typeTag]
+      : null;
+  const badgeClass = playbooks ? domainTag : typeTag;
 
   return (
     <BlogPostItemContainer className={clsx('gain-insight-card', className)}>
       <Link to={permalink} className="gain-insight-card__link">
         <div className="gain-insight-card__thumb">
-          {typeLabel && (
+          {badgeLabel && badgeClass && (
             <span
-              className={clsx('gain-insight-card__type', `gain-insight-card__type--${typeTag}`)}>
-              {typeLabel}
+              className={clsx(
+                'gain-insight-card__type',
+                playbooks
+                  ? `gain-insight-card__domain--${badgeClass}`
+                  : `gain-insight-card__type--${badgeClass}`,
+              )}>
+              {badgeLabel}
             </span>
           )}
           {imageUrl ? (
@@ -48,11 +64,13 @@ function BlogPostItemListView({className}: Pick<Props, 'className'>): ReactNode 
           {description && (
             <p className="gain-insight-card__desc">{description}</p>
           )}
-          <time
-            className="gain-insight-card__date"
-            dateTime={new Date(date).toISOString()}>
-            {formatInsightDate(date)}
-          </time>
+          {!playbooks && (
+            <time
+              className="gain-insight-card__date"
+              dateTime={new Date(date).toISOString()}>
+              {formatInsightDate(date)}
+            </time>
+          )}
         </div>
       </Link>
     </BlogPostItemContainer>
@@ -60,10 +78,19 @@ function BlogPostItemListView({className}: Pick<Props, 'className'>): ReactNode 
 }
 
 export default function BlogPostItem({children, className}: Props): ReactNode {
-  const {isBlogPostPage} = useBlogPost();
+  const {isBlogPostPage, metadata} = useBlogPost();
+  const playbooks = isPlaybooksBlog(metadata.permalink);
 
   if (!isBlogPostPage) {
     return <BlogPostItemListView className={className} />;
+  }
+
+  if (playbooks) {
+    return (
+      <BlogPostItemContainer className={className}>
+        <BlogPostItemContent>{children}</BlogPostItemContent>
+      </BlogPostItemContainer>
+    );
   }
 
   return (

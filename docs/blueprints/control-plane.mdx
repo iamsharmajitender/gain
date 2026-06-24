@@ -1,13 +1,18 @@
 ---
-title: AI Control Plane
-sidebar_label: AI Control Plane
+slug: control-plane
+title: How to Model AI Control Plane
+sidebar_label: How to Model AI Control Plane
 hide_title: true
+tags:
+  - system-architecture
+  - policy
+  - orchestration
 ---
 
 import Details from '@theme/Details';
 
 <div className="gain-doc-header">
-  <h1 className="gain-doc-title">AI Control Plane</h1>
+  <h1 className="gain-doc-title">How to Model AI Control Plane</h1>
   <div className="gain-doc-subtitle">
     Component-level blueprint for the platform layer: where G.A.I.N is operationalized through
     governance, orchestration, and shared capability patterns.
@@ -203,7 +208,7 @@ import Details from '@theme/Details';
   - Audit trail and rate limits
   - Sandbox vs. production endpoints
 
-  See [Agent Flow Model](/blueprints/agent-flow-model) for execution semantics.
+  See [How to Model Agent Flow](/blueprints/agent-flow-model) for execution semantics.
 </Details>
 
 <Details className="gain-accordion" summary="Observability: tracing, token cost, quality">
@@ -246,13 +251,13 @@ import Details from '@theme/Details';
 
 | Pattern | Blueprint | Purpose |
 | --- | --- | --- |
-| **G.A.I.N LLM** | [LLM Gateway](/blueprints/llm-gateway) | Governed model access, guardrails, caching |
-| **G.A.I.N RAG** | [RAG Architecture](/blueprints/rag-architecture) | Grounded Q&A and document intelligence |
-| **G.A.I.N Agents** | [Agent Flow Model](/blueprints/agent-flow-model) | Policy-governed tool use and multi-step tasks |
+| **G.A.I.N LLM** | [How to Model LLM Gateway](/blueprints/llm-gateway) | Governed model access, guardrails, caching |
+| **G.A.I.N RAG** | [How to Model RAG Architecture](/blueprints/rag-architecture) | Grounded Q&A and document intelligence |
+| **G.A.I.N Agents** | [How to Model Agent Flow](/blueprints/agent-flow-model) | Policy-governed tool use and multi-step tasks |
 
 ## Related blueprints
 
-- [Context Engine](/blueprints/context-engine): retrieval orchestration; primary consumer of the data plane
-- [Data / Knowledge Plane](/blueprints/data-knowledge-plane): pipelines and catalogs that feed context
-- [AI Runtime Plane](/blueprints/runtime-plane): where models and vector stores execute
-- [G.A.I.N Architecture](/blueprints/gain-architecture): full-stack reference model
+- [How to Model Context Engine](/blueprints/context-engine): retrieval orchestration; primary consumer of the data plane
+- [How to Model Data / Knowledge Plane](/blueprints/data-knowledge-plane): pipelines and catalogs that feed context
+- [How to Model AI Runtime Plane](/blueprints/runtime-plane): where models and vector stores execute
+- [How to Model G.A.I.N Architecture](/blueprints/gain-architecture): full-stack reference model

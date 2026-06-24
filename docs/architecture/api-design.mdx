@@ -1,7 +1,11 @@
 ---
-title: API Design
-sidebar_label: API Design
+slug: api-design
+title: How to Architect robust API Design
+sidebar_label: How to Architect Robust API Design
 hide_title: true
+tags:
+  - platforms-engineering
+  - integration
 ---
 
 import Details from '@theme/Details';
@@ -93,7 +97,7 @@ flowchart TD
 </Details>
 
 <Details className="gain-accordion" summary="Security & rate limiting">
-  Authenticate at the edge (OAuth2 / OIDC, scoped tokens), authorize per resource, and enforce per-consumer rate limits and quotas. Validate every input against the schema and never trust client-supplied identity. See [Governance &amp; Security](/architecture/governance-security) for the platform-level controls.
+  Authenticate at the edge (OAuth2 / OIDC, scoped tokens), authorize per resource, and enforce per-consumer rate limits and quotas. Validate every input against the schema and never trust client-supplied identity.
 </Details>
 
 ## API Governance at Scale

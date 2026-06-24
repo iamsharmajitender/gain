@@ -1,7 +1,7 @@
 ---
 slug: policy-governed-agent-runtime
 title: Policy-Governed Agent Runtime
-description: Agents propose tool calls. Governance decides whether they run. An architecture breakdown of runtime trust boundaries for production agent systems in regulated industries.
+description: Proposal is not permission. Agents propose tool calls; governance decides whether they run. An architecture breakdown of runtime trust boundaries for production agent systems in regulated industries.
 image: ./policy-governed-agent-runtime.png
 tags:
     - governance-trust
@@ -19,12 +19,12 @@ authors: [iamsharmajitender]
 
 # Policy-Governed Agent Runtime
 
-Enterprise teams, especially in **banking and other regulated industries**, are connecting agents to operational tools: payment rails, core banking APIs, KYC workflows, trade settlement. Most production designs still leave undefined where **token**, **identity**, and **policy** state live during execution. Prompt-based guardrails are not sufficient for governed production until the organization can state, for every tool call: what the model receives, what the application retains, and which component authorizes execution, and produce an audit trail a compliance officer or regulator can replay.
+Enterprise teams, especially in **banking and other regulated industries**, are connecting agents to operational tools: payment rails, core banking APIs, KYC workflows, trade settlement. Most production designs still leave undefined where **token**, **identity**, and **policy** state live during execution. The failure mode is not "the model misbehaved." It is "we cannot prove who authorized what, with which policy, before money moved."
 
 This is an **architecture breakdown** of runtime trust boundaries. The LLM operates on conversation and tool schemas only. The Identity Provider owns claims. The Policy Engine (PDP) returns verdicts. The Policy Enforcement Point (PEP) gates every tool invocation and forwards only what policy allows.
 
 :::tip[THE CLAIM]
-An agent **proposes** tool calls. Governance **decides** whether they run. Policy in the prompt or the weights is not enforcement: it's a suggestion the model may ignore.
+**Proposal is not permission.** An agent **proposes** tool calls. Governance **decides** whether they run. Policy in the prompt or the weights is not enforcement: it's a suggestion the model may ignore.
 
 In a Policy-Governed Agent Runtime (PGAR), the token and policies stay out of the LLM. The model proposes. The PEP enforces. The PDP decides. Governance lives on the execution path, not in the system message: the same separation banks already enforce between a teller's screen and the authorization engine behind a wire transfer.
 :::
@@ -33,32 +33,34 @@ In a Policy-Governed Agent Runtime (PGAR), the token and policies stay out of th
 
 ## The whole system on one page
 
-- **API Gateway**: receives the request, validates the token via the Identity Provider
-- **Agentic App**: holds the session and token; **never** sends either to the LLM
-- **LLM**: gets conversation + tool schemas only; proposes a tool call
-- **PEP + PDP**: app forwards the proposal; PDP returns a verdict
-- **Payment Hub**: PEP calls downstream only on **Allow**
+Five trust boundaries. Token and policy never cross the LLM boundary (③).
+
+- **① Ingress** (API Gateway + Identity Provider): receives the request, validates the token, issues claims
+- **② Agentic App**: holds the session and token; **never** sends either to the LLM
+- **③ LLM**: gets conversation + tool schemas only; proposes a tool call
+- **④ Policy layer** (PEP + PDP): receives the proposal + token; PDP returns a verdict
+- **⑤ Downstream** (Payment Hub): PEP calls only on **Allow**; service re-authorizes
 
 ```mermaid
 flowchart TB
     U["User<br/>'send wire to Acme' + token"]
 
-    subgraph ingress["Ingress"]
+    subgraph ingress["① Ingress"]
         direction TB
         GW["API Gateway"]
         IdP["Identity Provider"]
-        GW --> IdP
+        GW -->|"validate token"| IdP
     end
 
-    subgraph agentic["Agentic App: token stays here"]
+    subgraph agentic["② Agentic App: token stays here"]
         App["Session + orchestration"]
     end
 
-    subgraph llm_zone["LLM. No credentials"]
+    subgraph llm_zone["③ LLM · no credentials"]
         M["Plan + propose<br/>tool calls"]
     end
 
-    subgraph policy["Policy Layer: rules stay here"]
+    subgraph policy["④ Policy layer"]
         direction LR
         PEP["Policy Enforcement Point<br/>(PEP)"]
         PDP["Policy Engine<br/>(PDP)"]
@@ -66,9 +68,9 @@ flowchart TB
     end
 
     StepUp["Supervisor<br/>four-eyes approval"]
-    SVC["Payment Hub<br/>re-authorize & execute"]
+    SVC["⑤ Payment Hub<br/>re-authorize & execute"]
 
-    U --> GW
+    U -->|"request + token"| GW
     IdP -->|"claims: roles, emts, limits"| App
 
     App -->|"messages + schemas only"| M
@@ -101,15 +103,11 @@ flowchart TB
     style policy fill:#fef2f2,stroke:#fca5a5,color:#1e293b
 ```
 
-Read it top to bottom: **user → gateway → identity → agentic app → LLM proposes → PEP asks PDP → service executes**. Most agent security stops at the Agentic App boundary and never builds a real PEP + PDP or service-side re-auth. The rest of this piece walks that path: why prompt guardrails fail, then one request traced end to end with the contracts underneath.
-
-:::tip[READ THE PATH]
-**User → Gateway → IdP → Agentic App → LLM proposes → PEP asks PDP → Payment Hub executes.** Token and policy never cross the LLM boundary. Every tool call gets a verdict before it touches downstream.
-:::
+Read it across those five boundaries: **ingress → agentic app → LLM proposes → PEP asks PDP → downstream executes**. Most agent security stops at ② and never builds a real ④ or ⑤ re-auth. The rest of this piece walks that path: why prompt guardrails and per-API auth fail, then one wire request traced end to end with the contracts underneath.
 
 ## Why prompt guardrails aren't authorization
 
-Most production agents today are **prompt-governed**: rules in the system message, hope in the middle, tools at the end. That works until someone asks a regulator, a security team, or a compliance officer to explain *why* an agent initiated a $47,500 wire without four-eyes approval, or released a payment to a beneficiary that failed sanctions screening.
+**Proposal is not permission.** Most production agents today are **prompt-governed**: rules in the system message, hope in the middle, tools at the end. That works until someone asks a regulator, a security team, or a compliance officer to explain *why* an agent initiated a $47,500 wire without four-eyes approval, or released a payment to a beneficiary that failed sanctions screening.
 
 | | Prompt-based guardrails | PGAR |
 |---|---|---|
@@ -126,6 +124,12 @@ In banking terms: prompt guardrails are like posting "do not exceed transaction 
 :::important[AUTHORIZATION ≠ PROMPTING]
 Prompt guardrails shape behavior: tone, format, abstention. They are **not** a substitute for authorization. PGAR owns the layer guardrails were never built to hold.
 :::
+
+### Why per-API authorization isn't enough
+
+*We already authorize every REST call. Isn't that enough?*
+
+In microservices, deterministic code calls authorized APIs. Agents insert a **probabilistic orchestrator**: the LLM proposes tool calls (what, in what order, with what arguments) before any request leaves the runtime. Per-API auth decides whether `POST /wires` may run; it does not govern whether the **agent should have proposed** that wire for $47,500 without four-eyes attestation, or whether a multi-step chain (`lookup` → `validate` → `initiate`) satisfies compound policy across amount limits, sanctions context, and approval state. API access logs show that a call succeeded; they do not record **which policy version allowed the proposal before side effects**. PGAR does not replace downstream re-auth: Payment Hub still checks the token. The PEP governs the **proposal mile** between model output and API invocation, and writes the verdict chain examiners expect.
 
 ### Prediction vs. truth on the execution path
 
@@ -148,7 +152,9 @@ This is the same thesis as ["Hallucination" is a design problem](./hallucination
 :::
 
 
-## Corporate wire: one request through five gates
+## Corporate wire: one request through five boundaries
+
+The overview diagram shows five trust boundaries; the sequence below walks every hop inside them.
 
 User says: *"Send $47,500 to Acme Supplies for invoice INV-8842: use our operating account."* The LLM sees three tool schemas. `lookup_beneficiary`, `validate_payment`, `initiate_wire`. With no authority attached. This request exercises all three: **lookup** the payee, **validate** the payment (limits, sanctions, cut-off), **initiate** the wire. The PDP watches three risk triggers the model never sees: **amount above auto-approval limit** (STEP-UP), **scope or entitlement violation** (DENY), and **sanctions or high-risk corridor hit** (DENY or STEP-UP).
 
@@ -236,9 +242,7 @@ sequenceDiagram
     App-->>U: Wire sent: confirmation WIR-9f2c
 ```
 
-:::tip[STEP-UP IS A PDP VERDICT]
-The model was never wrong for proposing $47,500: it was never given the $25,000 auto-approval limit. **Step-up** is a PDP verdict, not a model feature: the PEP surfaces it, the Agentic App owns the four-eyes approval UX, and only a subsequent **Allow** lets the PEP forward to the Payment Hub. The PEP wasn't correcting the model; it was enforcing a verdict on an action the LLM has no business authorizing. That approval attestation is what lands in the compliance archive: who authorized the exception, against which policy version, before a single dollar moved.
-:::
+**Step-up is a PDP verdict, not a model feature.** The model was never wrong for proposing $47,500: it was never given the $25,000 auto-approval limit. The PEP surfaces STEP-UP, the Agentic App owns four-eyes approval UX, and only a subsequent **Allow** reaches the Payment Hub. That attestation is what lands in the compliance archive: who authorized the exception, against which policy version, before a single dollar moved.
 
 ### When the PDP says DENY
 
@@ -248,11 +252,9 @@ The sequence above walks STEP-UP. The same architecture handles the case regulat
 
 ## From diagram to contracts
 
-The sequence diagram is the story. These payloads are the contracts each hop implements.
+If you can answer examiner questions from PEP/PDP logs alone, you have PGAR. If you need the chat transcript, you don't. The sequence diagram is the story; these payloads are the contracts that make the verdict chain replayable.
 
-:::tip[THE PDP CONTRACT]
 Every PDP evaluation uses the same four-field shape: **who** (subject), **what** (action), **on what** (resource), **under what conditions** (context).
-:::
 
 ### 1. Token and claims stay in the Agentic App
 
@@ -372,9 +374,7 @@ After step-up, the same request returns with `context.approval` set to `{ "type"
 
 ### 4. Policy rules: three verdicts, no fourth option
 
-:::tip[THREE VERDICTS ONLY]
-The PDP runs one policy surface. Three outcomes: **ALLOW**, **DENY**, **STEP_UP**. No "the model said it was fine."
-:::
+The PDP runs one policy surface. Three outcomes only: **ALLOW**, **DENY**, **STEP_UP**. No "the model said it was fine."
 
 ```json
 {
@@ -476,14 +476,10 @@ In a bank, that conversation happens with model-risk management, second-line com
 |"Logging is a nice-to-have"| Which PEP/PDP decisions are immutable audit events vs. sampled debug traces |
 |"One team owns the agent"| Who owns the gateway, identity, policy, and service boundaries: four different stakeholders, often four different lines of defense in a regulated firm |
 
-This also connects to the rest of the stack:
-
-:::tip[HOW PGAR FITS THE STACK]
-- **Frozen model, external control**: intelligence in the LLM, control in the PEP + PDP. PGAR is the control surface for *actions*.
-- **Truth outside the model**: the generator proposes; the PDP decides. Same split, applied to tool calls.
-- **Observable, auditable runs**: every PEP/PDP verdict is an audit-grade event, not a sampled trace.
-:::
+PGAR is the control surface for *actions* in a governed agent stack: intelligence stays in the LLM, control in the PEP + PDP, and every verdict is an audit-grade event, not a sampled trace.
 
 :::tip[TAKEAWAY]
-**The LLM proposes. The Agentic App holds the token. The PDP decides. The PEP enforces. Downstream services re-authorize.** That is PGAR. Governance as architecture, not as a paragraph in the system prompt.
+**Proposal is not permission.** The LLM proposes. The Agentic App holds the token. The PDP decides. The PEP enforces. Downstream services re-authorize. That is PGAR: governance as architecture, not as a paragraph in the system prompt.
+
+If the Agentic App can reach downstream without the PEP, you have a demo, not governed production.
 :::

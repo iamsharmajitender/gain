@@ -1,4 +1,5 @@
 import type {ReactNode} from 'react';
+import clsx from 'clsx';
 import Link from '@docusaurus/Link';
 import type {SitemapSection} from '@site/src/data/sitemap';
 import styles from './sitemapSection.module.css';
@@ -24,9 +25,11 @@ export default function SitemapSectionBlock({
         {section.links.map((link) => (
           <li key={link.label}>
             {link.href ? (
-              <Link to={link.href}>{link.label}</Link>
+              <Link to={link.href} className={styles.linkCard}>
+                {link.label}
+              </Link>
             ) : (
-              <span className={styles.draftLink}>
+              <span className={clsx(styles.linkCard, styles.draftLink)}>
                 {link.label}
                 {link.draft && <span className={styles.draftBadge}>Draft</span>}
               </span>

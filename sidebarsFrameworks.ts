@@ -17,6 +17,7 @@ const sidebars: SidebarsConfig = {
         'gain-observability',
         'gain-evaluation',
         'gain-identity',
+        'gain-prompt',
       ],
     },
   ],

@@ -1,13 +1,17 @@
 ---
-title: Context Engine
-sidebar_label: Context Engine
+slug: context-engine
+title: How to Model Context Engine
+sidebar_label: How to Model Context Engine
 hide_title: true
+tags:
+  - ai-intelligence
+  - rag
 ---
 
 import Details from '@theme/Details';
 
 <div className="gain-doc-header">
-  <h1 className="gain-doc-title">Context Engine</h1>
+  <h1 className="gain-doc-title">How to Model Context Engine</h1>
   <div className="gain-doc-subtitle">
     Runtime context construction: the boundary where the data / knowledge plane meets control-plane
     orchestration.
@@ -100,7 +104,7 @@ Every capability pattern (LLM, RAG, Agent) receives a **context package**: not r
   - Collection routing based on tenant and data classification
   - De-duplication across overlapping chunks
 
-  See [RAG Architecture](/blueprints/rag-architecture) for indexing and retrieval layer detail.
+  See [How to Model RAG Architecture](/blueprints/rag-architecture) for indexing and retrieval layer detail.
 </Details>
 
 <Details className="gain-accordion" summary="Reranker">
@@ -125,7 +129,7 @@ Every capability pattern (LLM, RAG, Agent) receives a **context package**: not r
   - Deny lists for collections or document classes
   - Maximum sensitivity tier per use case
 
-  Works with [Policy Engine](/blueprints/control-plane): policy decides *if* retrieval may run;
+  Works with [How to Model AI Control Plane](/blueprints/control-plane): policy decides *if* retrieval may run;
   governance filter decides *what* from results may pass through.
 </Details>
 
@@ -178,6 +182,6 @@ flowchart LR
 
 ## Related blueprints
 
-- [AI Control Plane](/blueprints/control-plane): gateway, policy, and capability hosting
-- [Data / Knowledge Plane](/blueprints/data-knowledge-plane): upstream pipelines and catalog
-- [RAG Architecture](/blueprints/rag-architecture): indexing and retrieval layers in depth
+- [How to Model AI Control Plane](/blueprints/control-plane): gateway, policy, and capability hosting
+- [How to Model Data / Knowledge Plane](/blueprints/data-knowledge-plane): upstream pipelines and catalog
+- [How to Model RAG Architecture](/blueprints/rag-architecture): indexing and retrieval layers in depth

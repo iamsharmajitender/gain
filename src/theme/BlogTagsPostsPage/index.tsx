@@ -7,12 +7,14 @@ import {
 } from '@docusaurus/theme-common';
 import {useBlogTagsPostsPageTitle} from '@docusaurus/theme-common/internal';
 import BlogLayout from '@theme/BlogLayout';
-import BlogListPaginator from '@theme/BlogListPaginator';
 import SearchMetadata from '@theme/SearchMetadata';
 import type {Props} from '@theme/BlogTagsPostsPage';
 import BlogPostItems from '@theme/BlogPostItems';
 import Unlisted from '@theme/ContentVisibility/Unlisted';
 import InsightsTagsNav from '@site/src/components/InsightsTagsNav';
+import PlaybooksTagsNav from '@site/src/components/PlaybooksTagsNav';
+import {isPlaybooksBlog} from '@site/src/utils/isPlaybooksBlog';
+import InsightsBlogPaginator from '@site/src/components/InsightsBlogPaginator';
 
 function BlogTagsPostsPageMetadata({tag}: Props): ReactNode {
   const title = useBlogTagsPostsPageTitle(tag);
@@ -30,6 +32,7 @@ function BlogTagsPostsPageContent({
   sidebar,
   listMetadata,
 }: Props): ReactNode {
+  const playbooks = isPlaybooksBlog(tag.permalink);
   return (
     <BlogLayout sidebar={sidebar}>
       {tag.unlisted && <Unlisted />}
@@ -39,11 +42,11 @@ function BlogTagsPostsPageContent({
           <div className="gain-doc-subtitle">{tag.description}</div>
         )}
       </div>
-      <InsightsTagsNav />
+      {playbooks ? <PlaybooksTagsNav /> : <InsightsTagsNav />}
       <div className="gain-insights-list">
         <BlogPostItems items={items} />
       </div>
-      <BlogListPaginator metadata={listMetadata} />
+      <InsightsBlogPaginator metadata={listMetadata} />
     </BlogLayout>
   );
 }

@@ -2,17 +2,19 @@ import React, {type ReactNode} from 'react';
 import clsx from 'clsx';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import InsightsTagsNav from '@site/src/components/InsightsTagsNav';
+import PlaybooksTagsNav from '@site/src/components/PlaybooksTagsNav';
+import {isPlaybooksBlog} from '@site/src/utils/isPlaybooksBlog';
 import {
   PageMetadata,
   HtmlClassNameProvider,
   ThemeClassNames,
 } from '@docusaurus/theme-common';
 import BlogLayout from '@theme/BlogLayout';
-import BlogListPaginator from '@theme/BlogListPaginator';
 import SearchMetadata from '@theme/SearchMetadata';
 import type {Props} from '@theme/BlogListPage';
 import BlogPostItems from '@theme/BlogPostItems';
 import BlogListPageStructuredData from '@theme/BlogListPage/StructuredData';
+import InsightsBlogPaginator from '@site/src/components/InsightsBlogPaginator';
 
 function BlogListPageMetadata(props: Props): ReactNode {
   const {metadata} = props;
@@ -32,17 +34,18 @@ function BlogListPageMetadata(props: Props): ReactNode {
 
 function BlogListPageContent(props: Props): ReactNode {
   const {metadata, items} = props;
+  const playbooks = isPlaybooksBlog(metadata.permalink);
   return (
     <BlogLayout>
       <div className="gain-doc-header gain-insights-header">
         <h1 className="gain-doc-title">{metadata.blogTitle}</h1>
         <div className="gain-doc-subtitle">{metadata.blogDescription}</div>
       </div>
-      <InsightsTagsNav />
+      {playbooks ? <PlaybooksTagsNav /> : <InsightsTagsNav />}
       <div className="gain-insights-list">
         <BlogPostItems items={items} />
       </div>
-      <BlogListPaginator metadata={metadata} />
+      <InsightsBlogPaginator metadata={metadata} />
     </BlogLayout>
   );
 }

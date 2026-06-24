@@ -1,8 +1,12 @@
 ---
+slug: ai-observability
 title: AI Observability
-sidebar_label: AI Observability
-hide_title: true
-
+description: Five signals, five storage tiers, five retention policies — and four consumers that read them.
+date: 2026-01-15
+authors: [iamsharmajitender]
+tags:
+  - platforms-engineering
+  - observability
 ---
 
 import Details from '@theme/Details';
@@ -22,92 +26,83 @@ import Details from '@theme/Details';
   <strong>capture → store → consume</strong>.
 </div>
 
-<div className="gain-obs-pipeline">
-  <div className="gain-obs-pipeline__diagram">
-    <div className="gain-obs-pipeline__entry">
-      <span className="gain-obs-pipeline__node gain-obs-pipeline__node--query">Query</span>
-      <span className="gain-obs-pipeline__arrow" aria-hidden="true">→</span>
-      <span className="gain-obs-pipeline__node gain-obs-pipeline__node--app">Agentic app / RAG service / OTel SDK</span>
-      <span className="gain-obs-pipeline__arrow" aria-hidden="true">→</span>
-      <span className="gain-obs-pipeline__node gain-obs-pipeline__node--collector">OTel Collector</span>
-    </div>
+<div className="gain-diagram-wrap">
 
-    <div className="gain-obs-pipeline__headers">
-      <span className="gain-obs-pipeline__header">Capture (in the request path)</span>
-      <span></span>
-      <span className="gain-obs-pipeline__header">Storage tiers</span>
-      <span></span>
-      <span className="gain-obs-pipeline__header">Consumers</span>
-    </div>
+```mermaid
+flowchart LR
+    q["Query"] --> app["Agentic app / RAG service / OTel SDK"]
 
-    <div className="gain-obs-pipeline__row">
-      <span className="gain-obs-pipeline__signal gain-obs-pipeline__signal--logs">logs</span>
-      <span className="gain-obs-pipeline__row-arrow" aria-hidden="true">→</span>
-      <span className="gain-obs-pipeline__store gain-obs-pipeline__store--logs">
-        <span className="gain-obs-pipeline__store-name">Log Store</span>
-        <span className="gain-obs-pipeline__store-retention">structured logs · 30 d</span>
-      </span>
-      <span className="gain-obs-pipeline__row-arrow" aria-hidden="true">→</span>
-      <span className="gain-obs-pipeline__consumers">
-        <span className="gain-obs-pipeline__consumer gain-obs-pipeline__consumer--dash">Dashboards</span>
-      </span>
-    </div>
+    subgraph capture["Capture (in the request path)"]
+        app --> |logs| col["OTel Collector<br/>route · sample · redact"]
+        app --> |metrics| col
+        app --> |traces| col
+        app --> |"raw prompt/response"| col
+        app --> |"audit record"| col
+    end
 
-    <div className="gain-obs-pipeline__row">
-      <span className="gain-obs-pipeline__signal gain-obs-pipeline__signal--metrics">metrics</span>
-      <span className="gain-obs-pipeline__row-arrow" aria-hidden="true">→</span>
-      <span className="gain-obs-pipeline__store gain-obs-pipeline__store--metrics">
-        <span className="gain-obs-pipeline__store-name">TSDB</span>
-        <span className="gain-obs-pipeline__store-retention">metrics · 13 m</span>
-      </span>
-      <span className="gain-obs-pipeline__row-arrow" aria-hidden="true">→</span>
-      <span className="gain-obs-pipeline__consumers">
-        <span className="gain-obs-pipeline__consumer gain-obs-pipeline__consumer--dash">Dashboards</span>
-        <span className="gain-obs-pipeline__consumer gain-obs-pipeline__consumer--slo">SLO + burn-rate alerts</span>
-      </span>
-    </div>
+    subgraph storage["Storage tiers"]
+        logstore[("Log Store")]
+        tsdb[("TSDB")]
+        tracestore[("Trace Store")]
+        restricted[("Restricted Store")]
+        audit[("Audit Log")]
+    end
 
-    <div className="gain-obs-pipeline__row">
-      <span className="gain-obs-pipeline__signal gain-obs-pipeline__signal--traces">traces</span>
-      <span className="gain-obs-pipeline__row-arrow" aria-hidden="true">→</span>
-      <span className="gain-obs-pipeline__store gain-obs-pipeline__store--traces">
-        <span className="gain-obs-pipeline__store-name">Trace Store</span>
-        <span className="gain-obs-pipeline__store-retention">sampled traces · 30 d</span>
-      </span>
-      <span className="gain-obs-pipeline__row-arrow" aria-hidden="true">→</span>
-      <span className="gain-obs-pipeline__consumers">
-        <span className="gain-obs-pipeline__consumer gain-obs-pipeline__consumer--dash">Dashboards</span>
-        <span className="gain-obs-pipeline__consumer gain-obs-pipeline__consumer--drift">Drift detector</span>
-      </span>
-    </div>
+    col --> |"structured logs · 30 d"| logstore
+    col --> |"metrics · 13 m"| tsdb
+    col --> |"sampled traces · 30 d"| tracestore
+    col --> |"encrypted · 90 d"| restricted
+    col --> |"immutable · 7 y"| audit
 
-    <div className="gain-obs-pipeline__row">
-      <span className="gain-obs-pipeline__signal gain-obs-pipeline__signal--raw">raw prompt/response</span>
-      <span className="gain-obs-pipeline__row-arrow" aria-hidden="true">→</span>
-      <span className="gain-obs-pipeline__store gain-obs-pipeline__store--raw">
-        <span className="gain-obs-pipeline__store-name">Restricted Store</span>
-        <span className="gain-obs-pipeline__store-retention">encrypted · 90 d</span>
-      </span>
-      <span className="gain-obs-pipeline__row-arrow" aria-hidden="true">→</span>
-      <span className="gain-obs-pipeline__consumers">
-        <span className="gain-obs-pipeline__consumer gain-obs-pipeline__consumer--drift">Drift detector</span>
-      </span>
-    </div>
+    subgraph consume["Consumers"]
+        dash[("Dashboards")]
+        slo[("SLO + burn-rate alerts")]
+        drift[("Drift detector")]
+        replay[("Regulator replay")]
+    end
 
-    <div className="gain-obs-pipeline__row">
-      <span className="gain-obs-pipeline__signal gain-obs-pipeline__signal--audit">audit record</span>
-      <span className="gain-obs-pipeline__row-arrow" aria-hidden="true">→</span>
-      <span className="gain-obs-pipeline__store gain-obs-pipeline__store--audit">
-        <span className="gain-obs-pipeline__store-name">Audit Log</span>
-        <span className="gain-obs-pipeline__store-retention">immutable · 7 y</span>
-      </span>
-      <span className="gain-obs-pipeline__row-arrow" aria-hidden="true">→</span>
-      <span className="gain-obs-pipeline__consumers">
-        <span className="gain-obs-pipeline__consumer gain-obs-pipeline__consumer--replay">Regulator replay</span>
-      </span>
-    </div>
-  </div>
+    logstore --> dash
+    tsdb --> dash
+    tsdb --> slo
+    tracestore --> dash
+    tracestore --> drift
+    restricted --> drift
+    audit --> replay
+
+    classDef query fill:#dbeafe,stroke:#93c5fd,color:#1e293b
+    classDef entry fill:#ede9fe,stroke:#c4b5fd,color:#1e293b
+    classDef collector fill:#ffedd5,stroke:#fdba74,color:#1e293b
+    classDef logs fill:#dbeafe,stroke:#93c5fd,color:#1e293b
+    classDef metrics fill:#dcfce7,stroke:#86efac,color:#1e293b
+    classDef traces fill:#ede9fe,stroke:#c4b5fd,color:#1e293b
+    classDef raw fill:#fee2e2,stroke:#fca5a5,color:#1e293b
+    classDef audit fill:#f1f5f9,stroke:#94a3b8,color:#1e293b
+    classDef dash fill:#dbeafe,stroke:#93c5fd,color:#1e293b
+    classDef slo fill:#fef3c7,stroke:#fcd34d,color:#1e293b
+    classDef drift fill:#ede9fe,stroke:#c4b5fd,color:#1e293b
+    classDef replay fill:#f1f5f9,stroke:#94a3b8,color:#1e293b
+
+    class q query
+    class app entry
+    class col collector
+    class logstore logs
+    class tsdb metrics
+    class tracestore traces
+    class restricted raw
+    class audit audit
+    class dash dash
+    class slo slo
+    class drift drift
+    class replay replay
+
+    style capture fill:#eff6ff,stroke:#93c5fd,color:#1e293b
+    style storage fill:#f0fdf4,stroke:#86efac,color:#1e293b
+    style consume fill:#fefce8,stroke:#fcd34d,color:#1e293b
+```
+
 </div>
+
+<br/>
 
 | Signal | Store | Retention | Consumer |
 | --- | --- | --- | --- |

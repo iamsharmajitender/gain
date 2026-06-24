@@ -1,7 +1,12 @@
 ---
+slug: gain-observability
 title: G.A.I.N Observability
 sidebar_label: G.A.I.N Observability
 hide_title: true
+tags:
+  - platforms-engineering
+  - gain
+  - observability
 ---
 
 import Details from '@theme/Details';
@@ -31,91 +36,80 @@ import Details from '@theme/Details';
   in the request path; routing, sampling, and redaction happen in the OTel collector.
 </div>
 
-<div className="gain-obs-pipeline">
-  <div className="gain-obs-pipeline__diagram">
-    <div className="gain-obs-pipeline__main">
-      <div className="gain-obs-pipeline__zone gain-obs-pipeline__zone--capture">
-        <span className="gain-obs-pipeline__zone-title">Capture (in the request path)</span>
-        <div className="gain-obs-pipeline__entry gain-obs-pipeline__entry--in-zone">
-          <span className="gain-obs-pipeline__node gain-obs-pipeline__node--query">Query</span>
-          <span className="gain-obs-pipeline__arrow" aria-hidden="true">→</span>
-          <span className="gain-obs-pipeline__node gain-obs-pipeline__node--app">Agentic app / RAG service / OTel SDK</span>
-          <span className="gain-obs-pipeline__arrow" aria-hidden="true">→</span>
-          <span className="gain-obs-pipeline__node gain-obs-pipeline__node--collector">OTel Collector</span>
-        </div>
-        <div className="gain-obs-pipeline__lane-list">
-          <span className="gain-obs-pipeline__signal gain-obs-pipeline__signal--logs">logs</span>
-          <span className="gain-obs-pipeline__signal gain-obs-pipeline__signal--metrics">metrics</span>
-          <span className="gain-obs-pipeline__signal gain-obs-pipeline__signal--traces">traces</span>
-          <span className="gain-obs-pipeline__signal gain-obs-pipeline__signal--raw">raw prompt/response</span>
-          <span className="gain-obs-pipeline__signal gain-obs-pipeline__signal--audit">audit record</span>
-        </div>
-      </div>
+<div className="gain-diagram-wrap">
 
-      <div className="gain-obs-pipeline__flow-arrows" aria-hidden="true">
-        <span>→</span><span>→</span><span>→</span><span>→</span><span>→</span>
-      </div>
+```mermaid
+flowchart LR
+    q["Query"] --> app["Agentic app / RAG service / OTel SDK"]
 
-      <div className="gain-obs-pipeline__zone gain-obs-pipeline__zone--storage">
-        <span className="gain-obs-pipeline__zone-title">Storage tiers</span>
-        <div className="gain-obs-pipeline__zone-aligner">
-          <div className="gain-obs-pipeline__zone-spacer" aria-hidden="true"></div>
-          <div className="gain-obs-pipeline__lane-list">
-          <span className="gain-obs-pipeline__store gain-obs-pipeline__store--logs">
-            <span className="gain-obs-pipeline__store-name">Log Store</span>
-            <span className="gain-obs-pipeline__store-retention">structured logs · 30 d</span>
-          </span>
-          <span className="gain-obs-pipeline__store gain-obs-pipeline__store--metrics">
-            <span className="gain-obs-pipeline__store-name">TSDB</span>
-            <span className="gain-obs-pipeline__store-retention">metrics · 13 m</span>
-          </span>
-          <span className="gain-obs-pipeline__store gain-obs-pipeline__store--traces">
-            <span className="gain-obs-pipeline__store-name">Trace Store</span>
-            <span className="gain-obs-pipeline__store-retention">sampled traces · 30 d</span>
-          </span>
-          <span className="gain-obs-pipeline__store gain-obs-pipeline__store--raw">
-            <span className="gain-obs-pipeline__store-name">Restricted Store</span>
-            <span className="gain-obs-pipeline__store-retention">encrypted · 90 d</span>
-          </span>
-          <span className="gain-obs-pipeline__store gain-obs-pipeline__store--audit">
-            <span className="gain-obs-pipeline__store-name">Audit Log</span>
-            <span className="gain-obs-pipeline__store-retention">immutable · 7 y</span>
-          </span>
-        </div>
-        </div>
-      </div>
+    subgraph capture["Capture (in the request path)"]
+        app --> |logs| col["OTel Collector<br/>route · sample · redact"]
+        app --> |metrics| col
+        app --> |traces| col
+        app --> |"raw prompt/response"| col
+        app --> |"audit record"| col
+    end
 
-      <div className="gain-obs-pipeline__flow-arrows" aria-hidden="true">
-        <span>→</span><span>→</span><span>→</span><span>→</span><span>→</span>
-      </div>
+    subgraph storage["Storage tiers"]
+        logstore[("Log Store")]
+        tsdb[("TSDB")]
+        tracestore[("Trace Store")]
+        restricted[("Restricted Store")]
+        audit[("Audit Log")]
+    end
 
-      <div className="gain-obs-pipeline__zone gain-obs-pipeline__zone--consume">
-        <span className="gain-obs-pipeline__zone-title">Consumers</span>
-        <div className="gain-obs-pipeline__zone-aligner">
-          <div className="gain-obs-pipeline__zone-spacer" aria-hidden="true"></div>
-          <div className="gain-obs-pipeline__lane-list">
-          <span className="gain-obs-pipeline__consumers">
-            <span className="gain-obs-pipeline__consumer gain-obs-pipeline__consumer--dash">Dashboards</span>
-          </span>
-          <span className="gain-obs-pipeline__consumers">
-            <span className="gain-obs-pipeline__consumer gain-obs-pipeline__consumer--dash">Dashboards</span>
-            <span className="gain-obs-pipeline__consumer gain-obs-pipeline__consumer--slo">SLO + burn-rate alerts</span>
-          </span>
-          <span className="gain-obs-pipeline__consumers">
-            <span className="gain-obs-pipeline__consumer gain-obs-pipeline__consumer--dash">Dashboards</span>
-            <span className="gain-obs-pipeline__consumer gain-obs-pipeline__consumer--drift">Drift detector</span>
-          </span>
-          <span className="gain-obs-pipeline__consumers">
-            <span className="gain-obs-pipeline__consumer gain-obs-pipeline__consumer--drift">Drift detector</span>
-          </span>
-          <span className="gain-obs-pipeline__consumers">
-            <span className="gain-obs-pipeline__consumer gain-obs-pipeline__consumer--replay">Regulator replay</span>
-          </span>
-        </div>
-        </div>
-      </div>
-    </div>
-  </div>
+    col --> |"structured logs · 30 d"| logstore
+    col --> |"metrics · 13 m"| tsdb
+    col --> |"sampled traces · 30 d"| tracestore
+    col --> |"encrypted · 90 d"| restricted
+    col --> |"immutable · 7 y"| audit
+
+    subgraph consume["Consumers"]
+        dash[("Dashboards")]
+        slo[("SLO + burn-rate alerts")]
+        drift[("Drift detector")]
+        replay[("Regulator replay")]
+    end
+
+    logstore --> dash
+    tsdb --> dash
+    tsdb --> slo
+    tracestore --> dash
+    tracestore --> drift
+    restricted --> drift
+    audit --> replay
+
+    classDef query fill:#dbeafe,stroke:#93c5fd,color:#1e293b
+    classDef entry fill:#ede9fe,stroke:#c4b5fd,color:#1e293b
+    classDef collector fill:#ffedd5,stroke:#fdba74,color:#1e293b
+    classDef logs fill:#dbeafe,stroke:#93c5fd,color:#1e293b
+    classDef metrics fill:#dcfce7,stroke:#86efac,color:#1e293b
+    classDef traces fill:#ede9fe,stroke:#c4b5fd,color:#1e293b
+    classDef raw fill:#fee2e2,stroke:#fca5a5,color:#1e293b
+    classDef audit fill:#f1f5f9,stroke:#94a3b8,color:#1e293b
+    classDef dash fill:#dbeafe,stroke:#93c5fd,color:#1e293b
+    classDef slo fill:#fef3c7,stroke:#fcd34d,color:#1e293b
+    classDef drift fill:#ede9fe,stroke:#c4b5fd,color:#1e293b
+    classDef replay fill:#f1f5f9,stroke:#94a3b8,color:#1e293b
+
+    class q query
+    class app entry
+    class col collector
+    class logstore logs
+    class tsdb metrics
+    class tracestore traces
+    class restricted raw
+    class audit audit
+    class dash dash
+    class slo slo
+    class drift drift
+    class replay replay
+
+    style capture fill:#eff6ff,stroke:#93c5fd,color:#1e293b
+    style storage fill:#f0fdf4,stroke:#86efac,color:#1e293b
+    style consume fill:#fefce8,stroke:#fcd34d,color:#1e293b
+```
+
 </div>
 
 | Signal | Store | Retention | Primary consumer |
@@ -254,7 +248,7 @@ allow/deny, prompt lineage, and correlation IDs tying spans to audit records.
   how platform teams stay credible with finance and product.
 </Details>
 
-For component-level hooks, see [Blueprints → AI Control Plane](/blueprints/control-plane)
+For component-level hooks, see [Blueprints → How to Model AI Control Plane](/blueprints/control-plane)
 (observability and evaluation framework). For implementation steps, see
 [Playbooks → AI Observability](/playbooks/ai-observability). For the full architecture breakdown,
 see [Insights → AI Observability in Enterprise](/insights/ai-observability-in-enterprise).

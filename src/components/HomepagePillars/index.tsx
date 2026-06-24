@@ -7,7 +7,7 @@ const pillars = [
     icon: '⬡',
     title: 'Strategy & Architecture',
     description: 'Roadmaps, reference models, and design authority for enterprise transformation.',
-    tag: 'strategy-architecture',
+    tag: 'system-architecture',
     color: 'blue',
   },
   {

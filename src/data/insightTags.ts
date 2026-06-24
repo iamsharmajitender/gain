@@ -39,7 +39,7 @@ export const INSIGHT_TAG_GROUPS: TagGroup[] = [
     id: 'domain',
     heading: 'Domain',
     tags: [
-      {id: 'strategy-architecture', label: 'Strategy & Architecture', to: tagTo('strategy-architecture')},
+      {id: 'system-architecture', label: 'Strategy & Architecture', to: tagTo('system-architecture')},
       {id: 'platforms-engineering', label: 'Platforms & Engineering', to: tagTo('platforms-engineering')},
       {id: 'ai-intelligence', label: 'AI & Intelligence', to: tagTo('ai-intelligence')},
       {id: 'governance-trust', label: 'Governance & Trust', to: tagTo('governance-trust')},

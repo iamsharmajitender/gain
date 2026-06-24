@@ -1,206 +1,319 @@
 ---
+sidebar_position: 10
+slug: gain-llm
 title: G.A.I.N LLM
-sidebar_label: G.A.I.N LLM
-hide_title: true
+description: The LLM is a governed inference service, not a chat endpoint you paste into every workflow.
+authors: [iamsharmajitender]
+tags:
+  - platforms-engineering
+  - gain
+  - llm
 ---
 
 import Details from '@theme/Details';
 
-<div className="gain-doc-header">
-  <h1 className="gain-doc-title">G.A.I.N LLM</h1>
-  <div className="gain-doc-subtitle">
-    How to design enterprise-safe LLM applications: grounded, adaptive, intelligent, native principles
-    applied to production model integration.
-  </div>
+# G.A.I.N LLM
+
+<div className="gain-doc-subtitle" style={{marginTop: '-0.25rem', marginBottom: '1.75rem'}}>
+  How to design enterprise-safe LLM applications: grounded, adaptive, intelligent, native principles applied to production model integration.
 </div>
 
-## Design for Enterprise-Safe LLMs
+Part of **[G.A.I.N (Governed AI-Native Systems)](https://jitendersharma.dev/frameworks)**: the operating model for enterprise AI where truth, control, and scale live in the system around the model, not inside it.
 
-<div className="gain-section-lead">
-  An LLM in production is a frozen function wrapped in architecture: not a chatbot endpoint. G.A.I.N
-  LLM treats the model as one component in a governed system: bounded by policy, validated before it
-  reaches business logic, and operated on platform infrastructure built to scale and control cost.
+:::info[G.A.I.N LLM]
+**The LLM is a governed inference service, not a chat endpoint you paste into every workflow.**
+
+Enterprise teams debate model brands. G.A.I.N LLM reframes the question: which model, for which task, under which policy, at what cost, with what observability and rollback path from day one.
+:::
+
+An LLM in production is a **frozen function wrapped in architecture**: not a chatbot endpoint. The model is one component in a governed system, bounded by policy, validated before it reaches business logic, and operated on platform infrastructure built to scale and control cost.
+
+---
+
+## Why LLM needs G.A.I.N
+
+Most production LLM failures are not model failures. They are architecture failures:
+
+- A chat completion API becomes the integration boundary for regulated workflows.
+- Prompt text substitutes for policy enforcement.
+- Model swaps ship without eval gates or rollback.
+- Cost and latency show up in finance dashboards months after architecture is frozen.
+
+Generic LLM advice stops at "pick a model and call the API." **G.A.I.N LLM** maps the full production domain: how context enters, how routing decides, how feedback closes the loop, and how the platform survives audit, scale, and model change.
+
+**Dominant pillars for this domain:** **G** (Grounded) and **N** (Native). 
+- Grounding is what the model is allowed to see and say. 
+- Native is how inference runs as a governed platform service.
+
+### What G.A.I.N adds (not generic LLM platform advice)
+
+| G.A.I.N claim | What it means for LLM |
+| --- | --- |
+| **Intelligence in the call; truth in the system** | The model generates. The architecture owns context assembly, policy verdict, attribution, and audit. |
+| **The model proposes; the system decides** | Routing, abstention, tool access, and escalation are not prompt tricks. They are platform decisions before and after inference. |
+| **Grounding is a pipeline, not a prompt** | Identity-scoped context packs, registry-approved models, and output filters define what may enter and leave the boundary. |
+| **Native is the feedback loop, not hosting** | Trace, cost, eval, and routing feedback close the loop from production back into the path below. |
+
+---
+
+## Domain on one page
+
+**Two views, one domain.** Application teams need the request path; platform teams need the shared stack. Same production boundary, different questions.
+
+| View | Question | Audience |
+| --- | --- | --- |
+| **Application path** | How does one request safely reach a business outcome? | App teams, feature architects |
+| **Platform stack** | How does the org operate LLM as shared infrastructure? | Platform, SRE, FinOps, security |
+
+LLMs should **augment** systems, not replace them. The model sits inside a pipeline; never as the only gate between a user and a business outcome.
+
+### Application path
+
+<div className="gain-mermaid">
+
+```mermaid
+flowchart LR
+    subgraph path["Application path"]
+        direction LR
+        A["Application<br/>User · UX"]
+        C["Context builder<br/>Prompt · retrieval"]
+        L["LLM<br/>Inference"]
+        V["Validator<br/>Schema · policy · grounding"]
+        B["Business system<br/>Outcome · workflow"]
+    end
+
+    A --> C --> L --> V --> B
+    V -. "evaluation · feedback" .-> C
+
+    classDef product fill:#dbeafe,stroke:#93c5fd,color:#1e293b,stroke-width:2px
+    classDef process fill:#ede9fe,stroke:#c4b5fd,color:#1e293b,stroke-width:2px
+    classDef gate fill:#ffedd5,stroke:#fdba74,color:#1e293b,stroke-width:2px
+
+    class A,B product
+    class C,L process
+    class V gate
+
+    style path fill:#f8fafc,stroke:#cbd5e1,color:#1e293b,stroke-width:1px
+
+    linkStyle 4 stroke:#94a3b8,stroke-width:2px,stroke-dasharray:5 5
+```
+
 </div>
 
-## Request flow
+- **Validation gate:** deterministic check before anything reaches business logic.
+- **Model augments:** the LLM is one step in the pipeline, not the only gate to an outcome.
 
-<div className="gain-section-lead">
-  LLMs should <strong>augment</strong> systems, not replace them. The model sits inside a pipeline; never as the only gate between a user and a business outcome.
+:::important[Ask before you ship]
+**Is the LLM on the critical path?** **Where does validation happen?**
+
+If the answer to the first is yes and the second is unclear, the design is not ready for production.
+:::
+
+| Stage | Owns | Does not own |
+| --- | --- | --- |
+| **Application** | Use-case orchestration, user session | Model choice, policy verdict, raw model output to users |
+| **Context builder** | Prompt contracts, retrieval, session context | Ad-hoc secrets, unaudited context assembly |
+| **LLM** | Inference for ambiguous steps | Policy enforcement, business outcome |
+| **Validator** | Schema, policy, grounding checks | Generating the answer |
+| **Business system** | Workflow outcome, records, escalation | Letting unvalidated model text drive state changes |
+
+### Platform stack
+
+Every production LLM path crosses the same boundaries. Intelligence lives in the model call. Truth, policy, cost attribution, and audit live in the system around it.
+
+The **gateway** (layer 2) is the single production ingress: auth, policy hooks, routing, and budget. Define it once here. Pillar sections below apply G · A · I · N to this stack without redefining the gateway. Deeper gateway modeling lives in the [LLM gateway blueprint](https://jitendersharma.dev/blueprints/llm-gateway).
+
+<div className="gain-mermaid">
+
+```mermaid
+flowchart LR
+    subgraph client["① Client"]
+        CL["App / Agent / Workflow"]
+    end
+
+    subgraph gateway["② Gateway"]
+        GW["Auth · Policy · Route · Budget"]
+    end
+
+    subgraph pool["③ Model pool"]
+        MP["Approved models<br/>per use case"]
+    end
+
+    subgraph infer["④ Inference"]
+        INF["Context pack · Generate<br/>· Filter"]
+    end
+
+    subgraph plat["⑤ Platform"]
+        PL["Trace · Cost · Eval<br/>· Feedback"]
+    end
+
+    CL --> GW --> MP --> INF --> PL
+    PL -. "routing feedback" .-> GW
+
+    classDef product fill:#dbeafe,stroke:#93c5fd,color:#1e293b,stroke-width:2px
+    classDef gate fill:#ffedd5,stroke:#fdba74,color:#1e293b,stroke-width:2px
+    classDef process fill:#ede9fe,stroke:#c4b5fd,color:#1e293b,stroke-width:2px
+    classDef audit fill:#f1f5f9,stroke:#94a3b8,color:#1e293b,stroke-width:2px
+
+    class CL product
+    class GW gate
+    class MP,INF process
+    class PL audit
+
+    style client fill:#f8fafc,stroke:#cbd5e1,color:#1e293b,stroke-width:1px
+    style gateway fill:#f8fafc,stroke:#cbd5e1,color:#1e293b,stroke-width:1px
+    style pool fill:#f8fafc,stroke:#cbd5e1,color:#1e293b,stroke-width:1px
+    style infer fill:#f8fafc,stroke:#cbd5e1,color:#1e293b,stroke-width:1px
+    style plat fill:#f8fafc,stroke:#cbd5e1,color:#1e293b,stroke-width:1px
+
+    linkStyle 4 stroke:#94a3b8,stroke-width:2px,stroke-dasharray:5 5
+```
+
 </div>
 
-<div className="gain-llm-flow">
-  <div className="gain-llm-flow__diagram">
-    <div className="gain-llm-flow__track">
-      <div className="gain-llm-flow__step gain-llm-flow__step--product">
-        <span className="gain-llm-flow__step-title">Application</span>
-        <span className="gain-llm-flow__step-role">User · UX</span>
-      </div>
+| Layer | Owns | Does not own |
+| --- | --- | --- |
+| **Client** | Use-case orchestration, user session | Model choice, policy verdict |
+| **Gateway** | Auth, routing, budget, policy hooks | Business logic inside the model |
+| **Model pool** | Approved models, capability matrix | Ad-hoc endpoint per team |
+| **Inference** | Context assembly, generation, output filter | Compliance sign-off in a prompt |
+| **Platform** | Trace, cost, eval, feedback into routing | Post-hoc spreadsheet reconciliation |
 
-      <span className="gain-llm-flow__arrow" aria-hidden="true">→</span>
+### Demo vs production (whole stack)
 
-      <div className="gain-llm-flow__step gain-llm-flow__step--context">
-        <span className="gain-llm-flow__step-title">Context Builder</span>
-        <span className="gain-llm-flow__step-role">Prompt · retrieval</span>
-      </div>
+One decision guide for the full path. Pillar sections assume production defaults unless noted.
 
-      <span className="gain-llm-flow__arrow" aria-hidden="true">→</span>
+| Layer | Demo default | Production default |
+| --- | --- | --- |
+| **Client** | Calls vendor chat API directly | Calls only the gateway contract; no embedded API keys |
+| **Gateway** | Skipped or API key in application config | Single ingress: auth, policy, route table, budget caps |
+| **Model pool** | One latest model for everything | Registry: approved models per use case, data class, region |
+| **Inference** | Ad-hoc prompt and context in client code | Identity-scoped context pack, versioned templates, output filter, abstention |
+| **Platform** | Console logs or vendor dashboard | Request trace end to end, cost per tenant/use case, eval gates, feedback into routing |
+| **Change** | Swap model URL | Canary route + eval run + rollback tied to change record |
 
-      <div className="gain-llm-flow__step gain-llm-flow__step--model">
-        <span className="gain-llm-flow__step-title">LLM</span>
-        <span className="gain-llm-flow__step-role">Inference</span>
-      </div>
-
-      <span className="gain-llm-flow__arrow" aria-hidden="true">→</span>
-
-      <div className="gain-llm-flow__step gain-llm-flow__step--guard">
-        <span className="gain-llm-flow__step-title">Validator</span>
-        <span className="gain-llm-flow__step-role">Schema · policy · grounding</span>
-      </div>
-
-      <span className="gain-llm-flow__arrow" aria-hidden="true">→</span>
-
-      <div className="gain-llm-flow__step gain-llm-flow__step--product">
-        <span className="gain-llm-flow__step-title">Business System</span>
-        <span className="gain-llm-flow__step-role">Outcome · workflow</span>
-      </div>
-    </div>
-
-    <div className="gain-llm-flow__branch">
-      <div className="gain-llm-flow__branch-cell" aria-hidden="true"></div>
-      <div className="gain-llm-flow__branch-cell" aria-hidden="true"></div>
-      <div className="gain-llm-flow__branch-cell" aria-hidden="true"></div>
-      <div className="gain-llm-flow__branch-cell" aria-hidden="true"></div>
-      <div className="gain-llm-flow__branch-cell" aria-hidden="true"></div>
-      <div className="gain-llm-flow__branch-cell" aria-hidden="true"></div>
-      <div className="gain-llm-flow__feedback">
-        <span className="gain-llm-flow__feedback-connector" aria-hidden="true">↗</span>
-        <span className="gain-llm-flow__feedback-card">Evaluation · feedback</span>
-      </div>
-      <div className="gain-llm-flow__branch-cell" aria-hidden="true"></div>
-      <div className="gain-llm-flow__branch-cell" aria-hidden="true"></div>
-    </div>
-
-    <div className="gain-llm-flow__footer">
-      <div className="gain-llm-flow__callout gain-llm-flow__callout--gate">
-        <span className="gain-llm-flow__callout-icon" aria-hidden="true">⛨</span>
-        <span><strong>Validation gate</strong>: deterministic check before anything reaches business logic</span>
-      </div>
-      <div className="gain-llm-flow__callout gain-llm-flow__callout--principle">
-        <span className="gain-llm-flow__callout-icon" aria-hidden="true">↻</span>
-        <span><strong>Model augments</strong>: the LLM is one step in the pipeline, not the only gate to an outcome</span>
-      </div>
-    </div>
-  </div>
-</div>
-
-Ask before you ship: **Is the LLM on the critical path?** **Where does validation happen?** If the
-answer to the first is yes and the second is unclear, the design is not ready for production.
+---
 
 ## G.A.I.N applied to LLM systems
 
-<Details className="gain-accordion" summary="G · Grounded: Controls around model behavior">
-  Grounded LLM systems enforce operational boundaries around what a model can see, generate, and
-  expose. Governance is not a compliance checkbox. It is how enterprise trust is earned.
+<Details summary="G · Grounded — controls around model behavior">
+**Dominant pillar.** Grounding is not "better prompts." It is the architecture that decides what context the model receives, from which sources, under which identity, and what outputs are allowed to leave the inference boundary.
 
-  **Components**
+**Components:** model registry · governed context pipeline · input and output filters · versioned prompt and context templates tied to eval baselines.
 
-  - Prompt policies: versioned contracts for system and user prompts
-  - Input redaction: strip or mask PII and sensitive data before inference
-  - Output filters: block policy violations, hallucinated facts, and unsafe content
-  - Risk scoring: classify requests and responses by sensitivity and exposure
+**Design questions:** What can be generated? What must be blocked?
 
-  **Design questions**
+**Principle:** Model freedom needs operational boundaries.
 
-  - What can be generated?
-  - What must be blocked?
-
-  **Principle:** Model freedom needs operational boundaries.
+**Anti-patterns:** vendor chat endpoint as integration boundary · model swaps without architecture · per-squad model and prompt sprawl · context window as substitute for retrieval and abstention.
 </Details>
 
-<Details className="gain-accordion" summary="A · Adaptive: Learning from production">
-  Adaptive LLM systems improve from real usage: not from hope. Validation, evaluation, and feedback
-  loops close the gap between demo quality and production reliability.
+<Details summary="A · Adaptive — learning from production">
+LLM behavior drifts: models update, traffic mixes shift, new use cases piggyback on old routes. Adaptive architecture closes the loop from the platform layer back into routing, prompts, and approval gates.
 
-  **Components**
+**Components:** per-use-case eval suites · canary routing · production feedback into the route table · change records tied to eval run IDs.
 
-  - Output validators: schema checks, grounding verification, business-rule gates
-  - Quality evaluation: golden datasets, regression runs, human review queues
-  - Feedback capture: thumbs, corrections, escalation signals tied to traces
-  - Prompt and model tuning: A/B tests and version rollouts driven by eval data
+**Design questions:** How do we know when quality degrades? What triggers rollback or human handoff?
 
-  **Design questions**
+**Principle:** Production feedback is the only benchmark that matters.
 
-  - How do we know when quality degrades?
-  - What triggers a rollback or human handoff?
-
-  **Principle:** Production feedback is the only benchmark that matters.
+**Anti-patterns:** A/B testing without shared metrics · fine-tuning to fix routing or context assembly · ignoring traces until escalation.
 </Details>
 
-<Details className="gain-accordion" summary="I · Intelligent: Core model capabilities">
-  Intelligent LLM systems apply model capabilities where ambiguity exists: and deterministic logic
-  everywhere else. Not every problem needs a probabilistic answer.
+<Details summary="I · Intelligent — where the model earns its place">
+The LLM does not decide which model to use, whether to answer, or which tool to invoke. The **router** does. Use intelligence where ambiguity exists; use code where certainty is required.
 
-  **Components**
+**Components:** task-aware routing · abstention as a first-class outcome · capability matrix · governed tool registry.
 
-  - Reasoning: multi-step inference for complex queries
-  - Classification: intent detection, routing, sentiment, risk tiering
-  - Summarization: condense documents and conversations with citation
-  - Tool planning: structured selection of APIs and enterprise tools
+**Design questions:** Which tasks are probabilistic? Which need deterministic support alongside the model?
 
-  **Design questions**
+**Principle:** The model proposes; the system decides.
 
-  - Which tasks are probabilistic?
-  - Which need deterministic support alongside the model?
-
-  **Principle:** Use intelligence where ambiguity exists; use code where certainty is required.
+**Anti-patterns:** one mega-model for every task · tool use without authorization boundaries · routing logic scattered without shared trace or policy.
 </Details>
 
-<Details className="gain-accordion" summary="N · Native: Platform and infrastructure">
-  Native LLM systems are built for scale from day one. Gateways, GPU pools, caching, and cost controls
-  are not optimizations. They are architecture.
+<Details summary="N · Native — platform and infrastructure">
+**Co-dominant pillar.** Native is the platform layer made operational: observable, attributable, multi-region, and survivable under load.
 
-  **Components**
+**Components:** end-to-end trace · cost attribution per tenant and use case · caching with policy-aware invalidation · multi-region residency enforced at ingress.
 
-  - Model gateways: single entrypoint, provider abstraction, auth and quotas
-  - GPU infrastructure: inference clusters, autoscaling, residency zones
-  - Response caching: semantic and exact-match caches for latency and cost
-  - Rate limits and cost controls: per-tenant budgets, token accounting, spend alerts
+**Design questions:** How do we scale under load? How do we control spend without throttling the business?
 
-  **Design questions**
+**Principle:** LLM systems are infrastructure-heavy systems; Native is the feedback loop, not just hosting.
 
-  - How do we scale under load?
-  - How do we control spend without throttling the business?
-
-  **Principle:** LLM systems are infrastructure-heavy systems.
+**Anti-patterns:** API keys in every service · observability of outputs only · scaling replicas without backpressure or budget caps.
 </Details>
+
+### Grounded flow (dominant pillar diagram)
+
+<div className="gain-mermaid">
+
+```mermaid
+flowchart TB
+    subgraph ingress["① Ingress"]
+        ID["Identity / claims"]
+        CTX["Context sources"]
+    end
+
+    subgraph assemble["② Context assembly"]
+        FIL["Input filters"]
+        PACK["Context pack"]
+    end
+
+    subgraph infer["③ Inference"]
+        LLM["Model call"]
+        OUT["Output filter"]
+    end
+
+    ID --> FIL
+    CTX --> FIL
+    FIL --> PACK --> LLM --> OUT
+
+    classDef input fill:#dbeafe,stroke:#93c5fd,color:#1e293b,stroke-width:2px
+    classDef gate fill:#ffedd5,stroke:#fdba74,color:#1e293b,stroke-width:2px
+    classDef process fill:#ede9fe,stroke:#c4b5fd,color:#1e293b,stroke-width:2px
+
+    class ID,CTX input
+    class FIL,OUT gate
+    class PACK,LLM process
+
+    style ingress fill:#f8fafc,stroke:#cbd5e1,color:#1e293b,stroke-width:1px
+    style assemble fill:#f8fafc,stroke:#cbd5e1,color:#1e293b,stroke-width:1px
+    style infer fill:#f8fafc,stroke:#cbd5e1,color:#1e293b,stroke-width:1px
+```
+
+</div>
+
+---
 
 ## Key patterns
 
-<Details className="gain-accordion" summary="Prompt contracts">
-  Define prompts with structured inputs, output schemas, and failure modes. Prompts are API
-  interfaces: version them, test them, and treat changes as breaking changes.
+<Details summary="Prompt contracts">
+Define prompts with structured inputs, output schemas, and failure modes. Prompts are API interfaces: version them, test them, and treat changes as breaking changes.
 </Details>
 
-<Details className="gain-accordion" summary="Fine-tuning">
-  Adapt base models to domain-specific tasks with curated datasets and evaluation benchmarks.
-  Fine-tuning delivers the highest ROI when retrieval and prompting have reached their limits.
+<Details summary="RAG integration">
+Combine LLM generation with retrieved context for grounded responses. See [G.A.I.N RAG](https://jitendersharma.dev/frameworks/gain-rag) for retrieval patterns.
 </Details>
 
-<Details className="gain-accordion" summary="RAG integration">
-  Combine LLM generation with retrieved context for grounded responses. See
-  [G.A.I.N RAG](/frameworks/gain-rag) for retrieval patterns and
-  [LLM Gateway](/blueprints/llm-gateway) for the component blueprint.
+<Details summary="Caching">
+Cache semantically similar requests to reduce latency and cost. Balance hit rates against response freshness: stale cached answers erode trust faster than slow ones.
 </Details>
 
-<Details className="gain-accordion" summary="Caching">
-  Cache semantically similar requests to reduce latency and cost. Balance hit rates against response
-  freshness: stale cached answers erode trust faster than slow ones.
+<Details summary="Fallback strategies">
+Route to alternative models, cached responses, or human escalation when primary inference fails. Fallback architecture prevents a single model outage from becoming a business outage.
 </Details>
 
-<Details className="gain-accordion" summary="Fallback strategies">
-  Route to alternative models, cached responses, or human escalation when primary inference fails.
-  Fallback architecture prevents a single model outage from becoming a business outage.
+<Details summary="Fine-tuning">
+Adapt base models to domain-specific tasks with curated datasets and evaluation benchmarks. Highest ROI when retrieval and prompting have reached their limits, not when routing or context assembly is broken.
 </Details>
 
-For component-level diagrams and gateway design, see [Blueprints → LLM Gateway](/blueprints/llm-gateway).
-For implementation steps, see [Playbooks → LLM Integration Guide](/playbooks/llm-integration-guide).
+---
+
+## Related depth
+
+| Asset | Role |
+| --- | --- |
+| [G.A.I.N core](https://jitendersharma.dev/frameworks) | Operating model spine |
+| [How to model LLM gateway](https://jitendersharma.dev/blueprints/llm-gateway) | Platform ingress, registry, shared ops (blueprint) |
+| [LLM Integration Guide](https://jitendersharma.dev/playbooks/llm-integration-guide) | How to build |

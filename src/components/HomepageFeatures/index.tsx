@@ -26,7 +26,7 @@ const FeatureList: FeatureItem[] = [
   {
     title: 'AI Systems',
     image: 'img/ai-systems.png',
-    // to: '/insights/tags/ai-systems',
+    to: '/insights/tags/ai-intelligence',
     description: (
       <>
       LLMs, RAG, and agentic AI systems in production.
@@ -36,7 +36,7 @@ const FeatureList: FeatureItem[] = [
   {
     title: 'Platform, Integration & Governance',
     image: 'img/platform-integration-governance.png',
-    // to: '/insights/tags/platform-integration-governance',
+    to: '/insights/tags/platforms-engineering',
     description: (
       <>
       Integration, governance, security, observability, and reliability at scale.

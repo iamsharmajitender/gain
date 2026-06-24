@@ -1,7 +1,7 @@
 # ── Domain (Core Domains) ──
 # One per post: where the work sits in the practice model.
 
-strategy-architecture:
+system-architecture:
   label: Strategy & Architecture
   description: Roadmaps, reference models, and design authority for enterprise transformation.
 
@@ -80,3 +80,35 @@ hallucinations:
 compliance:
   label: Compliance
   description: Regulatory, audit, and compliance requirements for AI systems
+
+prompt:
+  label: Prompt
+  description: Prompting as context architecture — design, budgeting, and grounding inputs
+
+identity:
+  label: Identity
+  description: Auth, access control, and identity boundaries for LLM and agent systems
+
+memory:
+  label: Memory
+  description: Agent memory patterns — short-term, long-term, episodic, and session state
+
+orchestration:
+  label: Orchestration
+  description: Wiring LLM, RAG, agents, policy, and downstream systems end to end
+
+data:
+  label: Data
+  description: Data pipelines for AI — ingestion, transformation, embedding, and feature stores
+
+fine-tuning:
+  label: Fine-tuning
+  description: Model adaptation, FT vs RAG tradeoffs, and when fine-tuning is needed
+
+integration:
+  label: Integration
+  description: Connecting AI to legacy cores, APIs, and event-driven platforms
+
+cost:
+  label: Cost
+  description: Token economics, routing, latency budgets, and LLM spend at scale

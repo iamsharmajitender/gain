@@ -1,0 +1,22 @@
+.footer {
+  margin-top: 2.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--gain-border);
+}
+
+.summary {
+  margin: 0 0 0.35rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--gain-text);
+}
+
+.pageIndicator {
+  margin: 0 0 1rem;
+  font-size: 0.8125rem;
+  color: var(--gain-text-muted);
+}
+
+.nav {
+  margin-top: 0.5rem;
+}

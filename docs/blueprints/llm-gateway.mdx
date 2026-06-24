@@ -1,13 +1,19 @@
 ---
-title: LLM Gateway
-sidebar_label: LLM Gateway
+slug: llm-gateway
+title: How to Model LLM Gateway
+sidebar_label: How to Model LLM Gateway
 hide_title: true
+tags:
+  - platforms-engineering
+  - llm
+  - policy
+  - cost
 ---
 
 import Details from '@theme/Details';
 
 <div className="gain-doc-header">
-  <h1 className="gain-doc-title">LLM Gateway</h1>
+  <h1 className="gain-doc-title">How to Model LLM Gateway</h1>
   <div className="gain-doc-subtitle">
     G.A.I.N LLM capability pattern: governed model access from gateway through guardrails, caching,
     and evaluation on the control plane.
@@ -73,7 +79,7 @@ flowchart TD
   - Streaming, timeout, and retry semantics
   - Token usage capture for cost attribution
 
-  See [AI Control Plane](/blueprints/control-plane) for full platform context.
+  See [How to Model AI Control Plane](/blueprints/control-plane) for full platform context.
 </Details>
 
 <Details className="gain-accordion" summary="Prompt contract enforcement">
@@ -122,8 +128,8 @@ flowchart TD
 <Details className="gain-accordion" summary="RAG and tool hooks">
   LLM Gateway invokes sibling capability patterns when intent requires:
 
-  - **RAG:** delegate to Context Engine before generation: [RAG Architecture](/blueprints/rag-architecture)
-  - **Agents:** hand off to agent runtime: [Agent Flow Model](/blueprints/agent-flow-model)
+  - **RAG:** delegate to Context Engine before generation: [How to Model RAG Architecture](/blueprints/rag-architecture)
+  - **Agents:** hand off to agent runtime: [How to Model Agent Flow](/blueprints/agent-flow-model)
   - **Tools:** function-calling through Tool Registry with policy scopes
 
   Gateway orchestrates **which pattern** runs; it is not a monolithic chatbot.
@@ -161,7 +167,7 @@ flowchart TD
 
 ## Related blueprints
 
-- [AI Control Plane](/blueprints/control-plane): hosting context for all platform components
-- [Context Engine](/blueprints/context-engine): when LLM calls require grounded context
-- [AI Runtime Plane](/blueprints/runtime-plane): inference endpoints and GPU pools
-- [RAG Architecture](/blueprints/rag-architecture): retrieval-before-generation path
+- [How to Model AI Control Plane](/blueprints/control-plane): hosting context for all platform components
+- [How to Model Context Engine](/blueprints/context-engine): when LLM calls require grounded context
+- [How to Model AI Runtime Plane](/blueprints/runtime-plane): inference endpoints and GPU pools
+- [How to Model RAG Architecture](/blueprints/rag-architecture): retrieval-before-generation path
