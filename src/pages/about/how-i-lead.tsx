@@ -1,4 +1,4 @@
 import type {ReactNode} from 'react';
-import {AboutHowILeadRedirect} from './redirects';
+import {AboutHowILeadRedirect} from './_redirects';
 
 export default AboutHowILeadRedirect;

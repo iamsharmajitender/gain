@@ -1,4 +1,4 @@
 import type {ReactNode} from 'react';
-import {AboutIndustriesRedirect} from './redirects';
+import {AboutIndustriesRedirect} from './_redirects';
 
 export default AboutIndustriesRedirect;

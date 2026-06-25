@@ -15,3 +15,51 @@ ai-intelligence:
 governance-trust:
   label: Governance & Trust
   description: Policy, compliance, and operational resilience in regulated environments.
+
+# Content-type tags — one per insight article.
+
+pov:
+  label: Point of View
+  description: Leadership perspectives and architectural convictions — where to intervene, what to prioritise, and why the default narrative is wrong.
+
+arch:
+  label: Architecture
+  description: 'Deep technical breakdowns: flow, layers, and design principles.'
+
+lrn:
+  label: Learner
+  description: 'Lessons distilled from real situations: what broke and what changed.'
+
+exp:
+  label: Explainer
+  description: Clear analogies and step-by-step breakdowns for complex concepts.
+
+# Framework and topic tags.
+
+gain:
+  label: G.A.I.N
+  description: Articles grounded in the G.A.I.N operating framework for enterprise architecture and governed AI.
+
+agents:
+  label: Agents
+  description: Autonomous and semi-autonomous systems — workflows, tool use, orchestration, and enterprise readiness.
+
+observability:
+  label: Observability
+  description: Telemetry, tracing, and operational visibility for AI and platform systems in production.
+
+policy:
+  label: Policy
+  description: Enforcement boundaries, guardrails, and where policy lives in the AI stack.
+
+llm:
+  label: LLM
+  description: Large language models — inference, cost, latency, prompting, and production tradeoffs.
+
+hallucinations:
+  label: Hallucinations
+  description: Grounding, validation, and system design for trustworthy model outputs.
+
+compliance:
+  label: Compliance
+  description: Regulatory patterns, audit readiness, and production controls in governed environments.

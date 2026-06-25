@@ -2,6 +2,7 @@ import {themes as prismThemes} from 'prism-react-renderer';
 import type {Config} from '@docusaurus/types';
 import type * as Preset from '@docusaurus/preset-classic';
 import clearCacheBeforeStartPlugin from './plugins/clearCacheBeforeStart';
+import {getFooterFrameworkLinks} from './docusaurus.footer';
 
 const config: Config = {
   title: 'Jitender Sharma',
@@ -218,16 +219,7 @@ const config: Config = {
       links: [
         {
           title: 'G.A.I.N',
-          items: [
-            {label: 'AIOM', to: '/frameworks'},
-            {label: 'LLM', to: '/frameworks/gain-llm'},
-            {label: 'RAG', to: '/frameworks/gain-rag'},
-            {label: 'Agents', to: '/frameworks/gain-agents'},
-            {label: 'MCP', to: '/frameworks/gain-mcp'},
-            {label: 'Observability', to: '/frameworks/gain-observability'},
-            {label: 'Evaluation', to: '/frameworks/gain-evaluation'},
-            {label: 'Identity', to: '/frameworks/gain-identity'},
-          ],
+          items: getFooterFrameworkLinks(),
         },
         {
           title: 'Explore',

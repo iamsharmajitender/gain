@@ -1,4 +1,4 @@
 import type {ReactNode} from 'react';
-import {SitemapFrameworksRedirect} from './redirects';
+import {SitemapFrameworksRedirect} from './_redirects';
 
 export default SitemapFrameworksRedirect;

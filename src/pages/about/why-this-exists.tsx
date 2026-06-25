@@ -1,4 +1,4 @@
 import type {ReactNode} from 'react';
-import {AboutWhyThisExistsRedirect} from './redirects';
+import {AboutWhyThisExistsRedirect} from './_redirects';
 
 export default AboutWhyThisExistsRedirect;

@@ -1,4 +1,4 @@
 import type {ReactNode} from 'react';
-import {AboutCredentialsRedirect} from './redirects';
+import {AboutCredentialsRedirect} from './_redirects';
 
 export default AboutCredentialsRedirect;

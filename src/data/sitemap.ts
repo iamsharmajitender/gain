@@ -1,3 +1,11 @@
+import {
+  FRAMEWORK_SITEMAP_ITEMS,
+  frameworkHref,
+  insightTagHref,
+} from '@site/src/data/publishedRoutes';
+import type {DomainTagId} from '@site/src/data/depthDomainTags';
+import {DOMAIN_TAG_LABELS} from '@site/src/data/depthDomainTags';
+
 export type SitemapLink = {
   label: string;
   href?: string;
@@ -13,6 +21,33 @@ export type SitemapSection = {
   links: SitemapLink[];
 };
 
+function frameworkSitemapLinks(): SitemapLink[] {
+  return [
+    {label: 'Overview', href: '/frameworks'},
+    ...FRAMEWORK_SITEMAP_ITEMS.map((item) => {
+      const href = frameworkHref(item.slug);
+      return href ? {label: item.label, href} : {label: item.label, draft: true};
+    }),
+  ];
+}
+
+const INSIGHT_DOMAIN_TAGS: DomainTagId[] = [
+  'system-architecture',
+  'ai-intelligence',
+  'platforms-engineering',
+  'governance-trust',
+];
+
+function insightSitemapLinks(): SitemapLink[] {
+  return [
+    {label: 'All posts', href: '/insights'},
+    ...INSIGHT_DOMAIN_TAGS.map((tagId) => ({
+      label: DOMAIN_TAG_LABELS[tagId],
+      href: insightTagHref(tagId),
+    })),
+  ];
+}
+
 export const handbookSections: SitemapSection[] = [
   {
     id: 'frameworks',
@@ -21,18 +56,7 @@ export const handbookSections: SitemapSection[] = [
     description:
       'Governed AI-Native Systems: principles, capability patterns, and team boundaries. The operating model for enterprise AI: grounded context, adaptive learning, intelligent reasoning, and native scalable design.',
     href: '/frameworks',
-    links: [
-      {label: 'Overview', href: '/frameworks'},
-      {label: 'G.A.I.N AIOM', href: '/frameworks/gain-aiom'},
-      {label: 'G.A.I.N LLM', href: '/frameworks/gain-llm'},
-      {label: 'G.A.I.N RAG', href: '/frameworks/gain-rag'},
-      {label: 'G.A.I.N Agents', href: '/frameworks/gain-agents'},
-      {label: 'G.A.I.N MCP', href: '/frameworks/gain-mcp'},
-      {label: 'G.A.I.N Observability', href: '/frameworks/gain-observability'},
-      {label: 'G.A.I.N Evaluation', href: '/frameworks/gain-evaluation'},
-      {label: 'G.A.I.N Identity', href: '/frameworks/gain-identity'},
-      {label: 'G.A.I.N Prompt', draft: true},
-    ],
+    links: frameworkSitemapLinks(),
   },
   {
     id: 'blueprints',
@@ -106,13 +130,7 @@ export const handbookSections: SitemapSection[] = [
     description:
       'Essays, architecture breakdowns, and leadership perspectives on enterprise AI, platforms, and transformation. Published thinking rather than reference documentation.',
     href: '/insights',
-    links: [
-      {label: 'All posts', href: '/insights'},
-      {label: 'Strategy & Architecture', href: '/insights/tags/system-architecture'},
-      {label: 'AI & Intelligence', href: '/insights/tags/ai-intelligence'},
-      {label: 'Platforms & Engineering', href: '/insights/tags/platforms-engineering'},
-      {label: 'Governance & Trust', href: '/insights/tags/governance-trust'},
-    ],
+    links: insightSitemapLinks(),
   },
 ];
 

@@ -3,6 +3,7 @@ import {
   DOMAIN_TAG_LABELS,
   DOMAIN_TAG_SHORT_LABELS,
 } from '@site/src/data/depthDomainTags';
+import {depthTagHref, insightTagHref} from '@site/src/data/publishedRoutes';
 
 export type DomainCoverageArea = {
   title: string;
@@ -47,28 +48,28 @@ function defaultSiteSections(
       description:
         overrides?.blueprints ??
         `Structural reference models and diagrams tagged ${label}.`,
-      href: `/blueprints/tags/${tagId}`,
+      href: depthTagHref('/blueprints', tagId),
     },
     {
       label: 'Architecture',
       description:
         overrides?.architecture ??
         `Platform patterns and foundations tagged ${label}.`,
-      href: `/architecture/tags/${tagId}`,
+      href: depthTagHref('/architecture', tagId),
     },
     {
       label: 'Playbooks',
       description:
         overrides?.playbooks ??
         `Staged build guides and delivery paths tagged ${label}.`,
-      href: `/playbooks/tags/${tagId}`,
+      href: depthTagHref('/playbooks', tagId),
     },
     {
       label: 'Insights',
       description:
         overrides?.insights ??
         `Essays, explainers, and field lessons tagged ${label}.`,
-      href: `/insights/tags/${tagId}`,
+      href: insightTagHref(tagId),
     },
   ];
 }

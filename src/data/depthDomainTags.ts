@@ -1,4 +1,5 @@
 import type {TagGroup} from '@site/src/data/insightTags';
+import {depthTagHref} from '@site/src/data/publishedRoutes';
 
 export const DOMAIN_TAG_IDS = [
   'system-architecture',
@@ -25,8 +26,8 @@ export const DOMAIN_TAG_SHORT_LABELS: Record<DomainTagId, string> = {
   'governance-trust': 'GOV',
 };
 
-function depthTagTo(basePath: DepthAssetBasePath, id: string): string {
-  return `${basePath}/tags/${id}`;
+function depthTagTo(basePath: DepthAssetBasePath, id: DomainTagId): string {
+  return depthTagHref(basePath, id);
 }
 
 export function getDepthDomainTagGroup(basePath: DepthAssetBasePath): TagGroup {

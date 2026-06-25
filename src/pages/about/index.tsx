@@ -4,7 +4,7 @@ import TabItem from '@theme/TabItem';
 import AboutPageLayout from '@site/src/components/AboutPageLayout';
 import {backgroundEntries} from '@site/src/data/aboutProfile';
 import {aboutTabs, type AboutTabId} from '@site/src/data/sectionNav';
-import CredentialsTab from './credentials-tab';
+import CredentialsTab from './_credentials-tab';
 import styles from './about.module.css';
 
 function PhilosophyTab(): ReactNode {
