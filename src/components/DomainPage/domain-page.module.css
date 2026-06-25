@@ -1,0 +1,135 @@
+.tabBox {
+  padding: 1.5rem;
+  background: #ffffff;
+  border: 1px solid var(--gain-border);
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+}
+
+[data-theme='dark'] .tabBox {
+  background: var(--ifm-background-surface-color);
+}
+
+.tabBox h2.tabBoxTitle {
+  font-size: 1.375rem;
+  font-weight: 700;
+  margin: 0 0 1.25rem;
+}
+
+.tabBox > :last-child {
+  margin-bottom: 0;
+}
+
+.lead {
+  color: var(--gain-text-muted);
+  margin: 0 0 1.25rem;
+}
+
+.coverageList {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.coverageItem h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  margin: 0 0 0.25rem;
+}
+
+.coverageItem p {
+  font-size: 0.9375rem;
+  color: var(--gain-text-muted);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.exploreIntro {
+  margin: 0 0 1.25rem;
+  color: var(--gain-text-muted);
+  line-height: 1.6;
+}
+
+.exploreGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.exploreTile {
+  display: flex;
+  flex-direction: column;
+  padding: 1.25rem;
+  border: 1px solid var(--gain-border);
+  border-radius: 8px;
+  background: var(--gain-sidebar-bg);
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.exploreTile:hover {
+  border-color: var(--gain-blue);
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
+  text-decoration: none;
+  color: inherit;
+}
+
+[data-theme='dark'] .exploreTile:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.exploreTileTitle {
+  font-size: 1rem;
+  font-weight: 700;
+  margin: 0 0 0.5rem;
+  color: var(--gain-text);
+}
+
+.exploreTileDesc {
+  flex: 1;
+  font-size: 0.875rem;
+  color: var(--gain-text-muted);
+  margin: 0 0 0.875rem;
+  line-height: 1.5;
+}
+
+.exploreTileLink {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--gain-blue);
+}
+
+.exploreTile:hover .exploreTileLink {
+  color: var(--gain-blue-dark);
+}
+
+@media (max-width: 640px) {
+  .exploreGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.ctaBox {
+  margin-top: 0.5rem;
+  padding: 1.5rem;
+  background: var(--gain-blue-light);
+  border: 1px solid #bfdbfe;
+  border-radius: 8px;
+}
+
+.ctaBox p {
+  font-weight: 600;
+  margin: 0 0 0.75rem;
+}
+
+.ctaLink {
+  color: var(--gain-blue);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.ctaLink:hover {
+  color: var(--gain-blue-dark);
+  text-decoration: none;
+}

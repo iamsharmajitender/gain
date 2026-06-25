@@ -14,9 +14,9 @@ type FeatureItem = {
 
 const FeatureList: FeatureItem[] = [
   {
-    title: 'System Architecture',
+    title: 'Strategy & Architecture',
     image: 'img/system-architecture.png',
-    to: '/insights/tags/system-architecture',
+    to: '/strategy-architecture',
     description: (
       <>
       Distributed systems, cloud platforms, microservices, and enterprise-scale design.
@@ -24,9 +24,9 @@ const FeatureList: FeatureItem[] = [
     ),
   },
   {
-    title: 'AI Systems',
+    title: 'AI & Intelligence',
     image: 'img/ai-systems.png',
-    to: '/insights/tags/ai-intelligence',
+    to: '/ai-intelligence',
     description: (
       <>
       LLMs, RAG, and agentic AI systems in production.
@@ -34,9 +34,9 @@ const FeatureList: FeatureItem[] = [
     ),
   },
   {
-    title: 'Platform, Integration & Governance',
+    title: 'Platforms & Engineering',
     image: 'img/platform-integration-governance.png',
-    to: '/insights/tags/platforms-engineering',
+    to: '/platforms-engineering',
     description: (
       <>
       Integration, governance, security, observability, and reliability at scale.

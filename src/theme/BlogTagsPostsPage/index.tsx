@@ -43,11 +43,7 @@ function BlogTagsPostsPageContent({
         )}
       </div>
       {depthBasePath ? (
-        <DepthDomainTagsNav
-          basePath={depthBasePath}
-          items={items}
-          activeTagId={tag.permalink.split('/').pop()}
-        />
+        <DepthDomainTagsNav basePath={depthBasePath} />
       ) : (
         <InsightsTagsNav />
       )}

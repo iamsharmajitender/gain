@@ -71,7 +71,6 @@ const config: Config = {
         id: 'frameworks',
         path: 'docs/frameworks',
         routeBasePath: 'frameworks',
-        sidebarPath: './sidebarsFrameworks.ts',
       },
     ],
     [
@@ -85,7 +84,7 @@ const config: Config = {
           'Durable systems notes for platform engineering patterns beneath and around G.A.I.N AI systems: resilience, coupling, contracts, and operational trust.',
         blogSidebarCount: 0,
         postsPerPage: 20,
-        onInlineTags: 'warn',
+        onInlineTags: 'ignore',
         onInlineAuthors: 'warn',
         onUntruncatedBlogPosts: 'ignore',
         feedOptions: {
@@ -104,7 +103,7 @@ const config: Config = {
           'Step-by-step guides for building production AI systems in enterprise environments.',
         blogSidebarCount: 0,
         postsPerPage: 20,
-        onInlineTags: 'warn',
+        onInlineTags: 'ignore',
         onInlineAuthors: 'warn',
         onUntruncatedBlogPosts: 'ignore',
         feedOptions: {
@@ -123,7 +122,7 @@ const config: Config = {
           'Visual reference models that map G.A.I.N principles to concrete system layers, planes, and capability patterns.',
         blogSidebarCount: 0,
         postsPerPage: 20,
-        onInlineTags: 'warn',
+        onInlineTags: 'ignore',
         onInlineAuthors: 'warn',
         onUntruncatedBlogPosts: 'ignore',
         feedOptions: {

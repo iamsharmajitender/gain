@@ -1,6 +1,7 @@
 import type {ReactNode} from 'react';
 import clsx from 'clsx';
 import Link from '@docusaurus/Link';
+import {DOMAIN_PAGE_PATHS} from '@site/src/data/domainPages';
 
 const pillars = [
   {
@@ -49,7 +50,7 @@ export default function HomepagePillars(): ReactNode {
           {pillars.map((pillar) => (
             <Link
               key={pillar.title}
-              to={`/insights/tags/${pillar.tag}`}
+              to={DOMAIN_PAGE_PATHS[pillar.tag]}
               className={clsx('gain-home-pillar', `gain-home-pillar--${pillar.color}`)}>
               <div className="gain-home-pillar__icon">{pillar.icon}</div>
               <h3>{pillar.title}</h3>

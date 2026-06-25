@@ -1,8 +1,33 @@
+.tabBox {
+  padding: 1.5rem;
+  background: #ffffff;
+  border: 1px solid var(--gain-border);
+  border-radius: 8px;
+}
+
+[data-theme='dark'] .tabBox {
+  background: var(--ifm-background-surface-color);
+}
+
+.tabBox h2.tabBoxTitle {
+  font-size: 1.375rem;
+  font-weight: 700;
+  margin: 0 0 1.25rem;
+}
+
+.tabBox > :last-child {
+  margin-bottom: 0;
+}
+
+.tabBox ul {
+  margin-bottom: 0;
+}
+
 .helpList {
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
-  margin-bottom: 2rem;
+  margin-bottom: 0;
 }
 
 .helpItem {
@@ -83,4 +108,9 @@
   background-color: var(--gain-blue-dark);
   color: #ffffff !important;
   text-decoration: none;
+}
+
+.advisoryTabs :global(.tabs__item) {
+  font-size: 0.875rem;
+  font-weight: 600;
 }

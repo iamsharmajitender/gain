@@ -13,9 +13,10 @@ type SectionPageLayoutProps = {
   title: string;
   subtitle: string;
   sectionLabel: string;
-  navItems: SectionNavItem[];
-  activeHref: string;
+  navItems?: SectionNavItem[];
+  activeHref?: string;
   profileImage?: {src: string; alt: string};
+  hideNav?: boolean;
   children: ReactNode;
 };
 
@@ -27,11 +28,48 @@ export default function SectionPageLayout({
   title,
   subtitle,
   sectionLabel,
-  navItems,
-  activeHref,
+  navItems = [],
+  activeHref = '',
   profileImage,
+  hideNav = false,
   children,
 }: SectionPageLayoutProps): ReactNode {
+  const header = (
+    <div className={clsx('gain-doc-header', hideNav && 'gain-insights-header')}>
+      <h1 className="gain-doc-title">{title}</h1>
+      <div className={clsx('gain-doc-intro', profileImage && styles.docIntroWithPhoto)}>
+        {profileImage ? (
+          <img
+            className="gain-doc-photo"
+            src={profileImage.src}
+            alt={profileImage.alt}
+            width={80}
+            height={80}
+            loading="eager"
+          />
+        ) : null}
+        <p className="gain-doc-subtitle">{subtitle}</p>
+      </div>
+    </div>
+  );
+
+  const body = <div className={styles.content}>{children}</div>;
+
+  if (hideNav) {
+    return (
+      <Layout title={title}>
+        <div className="gain-insights-page">
+          <div className="gain-insights-page__inner">
+            <main className="gain-insights-page__main">
+              {header}
+              {body}
+            </main>
+          </div>
+        </div>
+      </Layout>
+    );
+  }
+
   return (
     <Layout title={title}>
       <div className={styles.page}>
@@ -68,23 +106,8 @@ export default function SectionPageLayout({
           </nav>
         </aside>
         <main className={styles.main}>
-          <div className="gain-doc-header">
-            <h1 className="gain-doc-title">{title}</h1>
-            <div className={clsx('gain-doc-intro', profileImage && styles.docIntroWithPhoto)}>
-              {profileImage ? (
-                <img
-                  className="gain-doc-photo"
-                  src={profileImage.src}
-                  alt={profileImage.alt}
-                  width={80}
-                  height={80}
-                  loading="eager"
-                />
-              ) : null}
-              <p className="gain-doc-subtitle">{subtitle}</p>
-            </div>
-          </div>
-          <div className={styles.content}>{children}</div>
+          {header}
+          {body}
         </main>
       </div>
     </Layout>

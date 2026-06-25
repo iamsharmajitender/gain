@@ -42,7 +42,7 @@ function BlogListPageContent(props: Props): ReactNode {
         <div className="gain-doc-subtitle">{metadata.blogDescription}</div>
       </div>
       {depthBasePath ? (
-        <DepthDomainTagsNav basePath={depthBasePath} items={items} />
+        <DepthDomainTagsNav basePath={depthBasePath} />
       ) : (
         <InsightsTagsNav />
       )}

@@ -3756,6 +3756,32 @@ details > p {
   font-size: 1rem;
 }
 
+/* Section tab pages (Advisory, About, Sitemap): flush tabs and panels with page header */
+.gain-insights-page__main .theme-tabs-container {
+  --ifm-tabs-padding-horizontal: 0;
+  padding-inline: 0;
+  margin-inline: 0;
+}
+
+.gain-insights-page__main .theme-tabs-container > .tabs {
+  padding-inline-start: 0;
+  margin-inline-start: 0;
+}
+
+.gain-insights-page__main .theme-tabs-container .tabs__item:not(:first-child) {
+  padding-inline-start: 1rem;
+}
+
+.gain-insights-page__main .theme-tabs-container > .margin-top--md,
+.gain-insights-page__main .theme-tabs-container [role='tabpanel'] {
+  padding-inline: 0;
+  margin-inline: 0;
+}
+
+.gain-insights-page__main .theme-tabs-container [role='tabpanel'] > :first-child {
+  margin-top: 0;
+}
+
 .gain-insights-list {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));

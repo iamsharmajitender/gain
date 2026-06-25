@@ -6,33 +6,57 @@ export const aboutSubtitle =
 export const advisorySubtitle =
   'Advisory for enterprise architecture, platform modernization, and governed AI.';
 
-export const aboutNav: SectionNavItem[] = [
-  {label: 'Philosophy', href: '/about'},
-  {label: 'How I Lead', href: '/about/how-i-lead'},
-  {label: 'What I Build', href: '/about/what-i-build'},
-  {label: 'Industries', href: '/about/industries'},
-  {label: 'Background', href: '/about/background'},
-  {label: 'Credentials', href: '/about/credentials'},
-  {label: 'Why This Exists', href: '/about/why-this-exists'},
-];
+export const aboutTabs = [
+  {id: 'philosophy', label: 'Philosophy'},
+  {id: 'how-i-lead', label: 'How I Lead'},
+  {id: 'what-i-build', label: 'What I Build'},
+  {id: 'industries', label: 'Industries'},
+  {id: 'background', label: 'Background'},
+  {id: 'credentials', label: 'Credentials'},
+  {id: 'why-this-exists', label: 'Why This Exists'},
+] as const;
 
-export const advisoryNav: SectionNavItem[] = [
-  {label: 'Services', href: '/advisory'},
-  {label: 'Approach', href: '/advisory/approach'},
-  {label: 'Case Studies', href: '/advisory/case-studies'},
-  {label: 'Engagement', href: '/advisory/engagement'},
-  {label: 'Contact', href: '/advisory/contact'},
-];
+export type AboutTabId = (typeof aboutTabs)[number]['id'];
+
+/** @deprecated About uses in-page tabs; use `/about?tab=<id>` instead. */
+export const aboutNav: SectionNavItem[] = aboutTabs.map((tab) => ({
+  label: tab.label,
+  href: tab.id === 'philosophy' ? '/about' : `/about?tab=${tab.id}`,
+}));
+
+export const advisoryTabs = [
+  {id: 'services', label: 'Services'},
+  {id: 'approach', label: 'Approach'},
+  {id: 'case-studies', label: 'Case Studies'},
+  {id: 'engagement', label: 'Engagement'},
+  {id: 'contact', label: 'Contact'},
+] as const;
+
+export type AdvisoryTabId = (typeof advisoryTabs)[number]['id'];
+
+/** @deprecated Advisory uses in-page tabs; use `/advisory?tab=<id>` instead. */
+export const advisoryNav: SectionNavItem[] = advisoryTabs.map((tab) => ({
+  label: tab.label,
+  href: tab.id === 'services' ? '/advisory' : `/advisory?tab=${tab.id}`,
+}));
 
 export const sitemapSubtitle =
   'How the handbook is organized: what each section covers and where to start.';
 
-export const sitemapNav: SectionNavItem[] = [
-  {label: 'Overview', href: '/sitemap'},
-  {label: 'G.A.I.N Framework', href: '/sitemap/frameworks'},
-  {label: 'Blueprints', href: '/sitemap/blueprints'},
-  {label: 'Architecture', href: '/sitemap/architecture'},
-  {label: 'Playbooks', href: '/sitemap/playbooks'},
-  {label: 'Insights', href: '/sitemap/insights'},
-  {label: 'About & Advisory', href: '/sitemap/site'},
-];
+export const sitemapTabs = [
+  {id: 'overview', label: 'Overview'},
+  {id: 'frameworks', label: 'G.A.I.N Framework'},
+  {id: 'blueprints', label: 'Blueprints'},
+  {id: 'architecture', label: 'Architecture'},
+  {id: 'playbooks', label: 'Playbooks'},
+  {id: 'insights', label: 'Insights'},
+  {id: 'site', label: 'About & Advisory'},
+] as const;
+
+export type SitemapTabId = (typeof sitemapTabs)[number]['id'];
+
+/** @deprecated Sitemap uses in-page tabs; use `/sitemap?tab=<id>` instead. */
+export const sitemapNav: SectionNavItem[] = sitemapTabs.map((tab) => ({
+  label: tab.label,
+  href: tab.id === 'overview' ? '/sitemap' : `/sitemap?tab=${tab.id}`,
+}));

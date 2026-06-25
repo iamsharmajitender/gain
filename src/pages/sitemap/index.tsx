@@ -1,22 +1,24 @@
 import type {ReactNode} from 'react';
 import Link from '@docusaurus/Link';
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
 import SectionPageLayout from '@site/src/components/SectionPageLayout';
-import {handbookSections, sitemapPageHref} from '@site/src/data/sitemap';
-import {sitemapNav, sitemapSubtitle} from '@site/src/data/sectionNav';
+import SitemapSectionBlock from '@site/src/components/SitemapSection';
+import {
+  getHandbookSection,
+  getSiteSection,
+  handbookSections,
+  sitemapPageHref,
+} from '@site/src/data/sitemap';
+import {sitemapSubtitle, sitemapTabs, type SitemapTabId} from '@site/src/data/sectionNav';
 import styles from './sitemap.module.css';
 
-export default function Sitemap(): ReactNode {
+function OverviewTab(): ReactNode {
   return (
-    <SectionPageLayout
-      title="Sitemap"
-      subtitle={sitemapSubtitle}
-      sectionLabel="Handbook"
-      navItems={sitemapNav}
-      activeHref="/sitemap"
-    >
+    <>
       <p className={styles.lead}>
-        One place to see how the handbook fits together: what each section is for, where to start,
-        and how the pieces connect.
+        One place to see how the handbook fits together: what each section is for, where to start, and
+        how the pieces connect.
       </p>
 
       <section className={styles.overview} aria-labelledby="handbook-overview">
@@ -44,7 +46,7 @@ export default function Sitemap(): ReactNode {
               ))}
               <tr>
                 <td>
-                  <Link to="/sitemap/site" className={styles.overviewSectionLink}>
+                  <Link to="/sitemap?tab=site" className={styles.overviewSectionLink}>
                     About &amp; Advisory
                   </Link>
                 </td>
@@ -75,6 +77,38 @@ export default function Sitemap(): ReactNode {
         </div>
         <div className={styles.flowStep}>Architecture: platform foundations</div>
       </div>
+    </>
+  );
+}
+
+const sitemapTabContent: Record<SitemapTabId, () => ReactNode> = {
+  overview: OverviewTab,
+  frameworks: () => <SitemapSectionBlock section={getHandbookSection('frameworks')} />,
+  blueprints: () => <SitemapSectionBlock section={getHandbookSection('blueprints')} />,
+  architecture: () => <SitemapSectionBlock section={getHandbookSection('architecture')} />,
+  playbooks: () => <SitemapSectionBlock section={getHandbookSection('playbooks')} />,
+  insights: () => <SitemapSectionBlock section={getHandbookSection('insights')} />,
+  site: () => <SitemapSectionBlock section={getSiteSection('site')} />,
+};
+
+export default function Sitemap(): ReactNode {
+  return (
+    <SectionPageLayout
+      title="Sitemap"
+      subtitle={sitemapSubtitle}
+      sectionLabel="Handbook"
+      hideNav
+    >
+      <Tabs queryString="tab" defaultValue="overview" className={styles.sitemapTabs}>
+        {sitemapTabs.map((tab) => {
+          const TabContent = sitemapTabContent[tab.id];
+          return (
+            <TabItem key={tab.id} value={tab.id} label={tab.label}>
+              <TabContent />
+            </TabItem>
+          );
+        })}
+      </Tabs>
     </SectionPageLayout>
   );
 }

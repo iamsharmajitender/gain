@@ -111,3 +111,8 @@
   color: var(--gain-text-muted);
   line-height: 1.6;
 }
+
+.sitemapTabs :global(.tabs__item) {
+  font-size: 0.875rem;
+  font-weight: 600;
+}

@@ -126,15 +126,15 @@ export const siteSections: SitemapSection[] = [
     href: '/about',
     links: [
       {label: 'About', href: '/about'},
-      {label: 'How I Lead', href: '/about/how-i-lead'},
-      {label: 'What I Build', href: '/about/what-i-build'},
-      {label: 'Industries', href: '/about/industries'},
-      {label: 'Background', href: '/about/background'},
-      {label: 'Credentials', href: '/about/credentials'},
-      {label: 'Why This Exists', href: '/about/why-this-exists'},
+      {label: 'How I Lead', href: '/about?tab=how-i-lead'},
+      {label: 'What I Build', href: '/about?tab=what-i-build'},
+      {label: 'Industries', href: '/about?tab=industries'},
+      {label: 'Background', href: '/about?tab=background'},
+      {label: 'Credentials', href: '/about?tab=credentials'},
+      {label: 'Why This Exists', href: '/about?tab=why-this-exists'},
       {label: 'Advisory', href: '/advisory'},
-      {label: 'Approach', href: '/advisory/approach'},
-      {label: 'Contact', href: '/advisory/contact'},
+      {label: 'Approach', href: '/advisory?tab=approach'},
+      {label: 'Contact', href: '/advisory?tab=contact'},
     ],
   },
 ];
@@ -156,5 +156,8 @@ export function getSiteSection(id: string): SitemapSection {
 }
 
 export function sitemapPageHref(sectionId: string): string {
-  return sectionId === 'site' ? '/sitemap/site' : `/sitemap/${sectionId}`;
+  if (sectionId === 'site') {
+    return '/sitemap?tab=site';
+  }
+  return `/sitemap?tab=${sectionId}`;
 }
