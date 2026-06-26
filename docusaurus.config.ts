@@ -74,63 +74,6 @@ const config: Config = {
         routeBasePath: 'frameworks',
       },
     ],
-    [
-      '@docusaurus/plugin-content-blog',
-      {
-        id: 'architecture',
-        path: 'docs/architecture',
-        routeBasePath: 'architecture',
-        blogTitle: 'Architecture',
-        blogDescription:
-          'Durable systems notes for platform engineering patterns beneath and around G.A.I.N AI systems: resilience, coupling, contracts, and operational trust.',
-        blogSidebarCount: 0,
-        postsPerPage: 20,
-        onInlineTags: 'ignore',
-        onInlineAuthors: 'warn',
-        onUntruncatedBlogPosts: 'ignore',
-        feedOptions: {
-          type: null,
-        },
-      },
-    ],
-    [
-      '@docusaurus/plugin-content-blog',
-      {
-        id: 'playbooks',
-        path: 'docs/playbooks',
-        routeBasePath: 'playbooks',
-        blogTitle: 'Playbooks',
-        blogDescription:
-          'Step-by-step guides for building production AI systems in enterprise environments.',
-        blogSidebarCount: 0,
-        postsPerPage: 20,
-        onInlineTags: 'ignore',
-        onInlineAuthors: 'warn',
-        onUntruncatedBlogPosts: 'ignore',
-        feedOptions: {
-          type: null,
-        },
-      },
-    ],
-    [
-      '@docusaurus/plugin-content-blog',
-      {
-        id: 'blueprints',
-        path: 'docs/blueprints',
-        routeBasePath: 'blueprints',
-        blogTitle: 'Blueprints',
-        blogDescription:
-          'Visual reference models that map G.A.I.N principles to concrete system layers, planes, and capability patterns.',
-        blogSidebarCount: 0,
-        postsPerPage: 20,
-        onInlineTags: 'ignore',
-        onInlineAuthors: 'warn',
-        onUntruncatedBlogPosts: 'ignore',
-        feedOptions: {
-          type: null,
-        },
-      },
-    ],
   ],
 
   themes: [
@@ -144,8 +87,8 @@ const config: Config = {
         indexBlog: true,
         docsRouteBasePath: ['frameworks'],
         docsPluginIdForPreferredVersion: 'frameworks',
-        blogRouteBasePath: ['insights', 'playbooks', 'architecture', 'blueprints'],
-        blogDir: ['docs/insights', 'docs/playbooks', 'docs/architecture', 'docs/blueprints'],
+        blogRouteBasePath: ['insights'],
+        blogDir: ['docs/insights'],
       },
     ],
   ],
@@ -175,22 +118,6 @@ const config: Config = {
           position: 'left',
           label: 'G.A.I.N',
         },
-        {
-          to: '/blueprints',
-          label: 'Blueprints',
-          position: 'left',
-        },
-        {
-          to: '/architecture',
-          label: 'Architecture',
-          position: 'left',
-        },
-        {
-          to: '/playbooks',
-          label: 'Playbooks',
-          position: 'left',
-        },
-
         {
           to: '/insights',
           label: 'Insights',
@@ -224,9 +151,6 @@ const config: Config = {
         {
           title: 'Explore',
           items: [
-            {label: 'Blueprints', to: '/blueprints'},
-            {label: 'Architecture', to: '/architecture'},
-            {label: 'Playbooks', to: '/playbooks'},
             {label: 'Insights', to: '/insights'},
           ],
         },

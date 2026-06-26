@@ -15,18 +15,6 @@ export function SitemapFrameworksRedirect(): ReactNode {
   return <SitemapTabRedirect tab="frameworks" />;
 }
 
-export function SitemapBlueprintsRedirect(): ReactNode {
-  return <SitemapTabRedirect tab="blueprints" />;
-}
-
-export function SitemapArchitectureRedirect(): ReactNode {
-  return <SitemapTabRedirect tab="architecture" />;
-}
-
-export function SitemapPlaybooksRedirect(): ReactNode {
-  return <SitemapTabRedirect tab="playbooks" />;
-}
-
 export function SitemapInsightsRedirect(): ReactNode {
   return <SitemapTabRedirect tab="insights" />;
 }

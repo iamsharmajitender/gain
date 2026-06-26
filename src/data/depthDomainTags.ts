@@ -1,6 +1,3 @@
-import type {TagGroup} from '@site/src/data/insightTags';
-import {depthTagHref} from '@site/src/data/publishedRoutes';
-
 export const DOMAIN_TAG_IDS = [
   'system-architecture',
   'platforms-engineering',
@@ -9,8 +6,6 @@ export const DOMAIN_TAG_IDS = [
 ] as const;
 
 export type DomainTagId = (typeof DOMAIN_TAG_IDS)[number];
-
-export type DepthAssetBasePath = '/playbooks' | '/architecture' | '/blueprints';
 
 export const DOMAIN_TAG_LABELS: Record<DomainTagId, string> = {
   'system-architecture': 'Strategy & Architecture',
@@ -25,40 +20,6 @@ export const DOMAIN_TAG_SHORT_LABELS: Record<DomainTagId, string> = {
   'ai-intelligence': 'AI',
   'governance-trust': 'GOV',
 };
-
-function depthTagTo(basePath: DepthAssetBasePath, id: DomainTagId): string {
-  return depthTagHref(basePath, id);
-}
-
-export function getDepthDomainTagGroup(basePath: DepthAssetBasePath): TagGroup {
-  return {
-    id: 'domain',
-    heading: 'Domain',
-    tags: [
-      {id: 'all', label: 'All', to: basePath},
-      {
-        id: 'system-architecture',
-        label: DOMAIN_TAG_LABELS['system-architecture'],
-        to: depthTagTo(basePath, 'system-architecture'),
-      },
-      {
-        id: 'platforms-engineering',
-        label: DOMAIN_TAG_LABELS['platforms-engineering'],
-        to: depthTagTo(basePath, 'platforms-engineering'),
-      },
-      {
-        id: 'ai-intelligence',
-        label: DOMAIN_TAG_LABELS['ai-intelligence'],
-        to: depthTagTo(basePath, 'ai-intelligence'),
-      },
-      {
-        id: 'governance-trust',
-        label: DOMAIN_TAG_LABELS['governance-trust'],
-        to: depthTagTo(basePath, 'governance-trust'),
-      },
-    ],
-  };
-}
 
 export type BlogTagRef = string | {label: string; permalink: string};
 

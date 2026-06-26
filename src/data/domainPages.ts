@@ -3,7 +3,7 @@ import {
   DOMAIN_TAG_LABELS,
   DOMAIN_TAG_SHORT_LABELS,
 } from '@site/src/data/depthDomainTags';
-import {depthTagHref, insightTagHref} from '@site/src/data/publishedRoutes';
+import {insightTagHref} from '@site/src/data/publishedRoutes';
 
 export type DomainCoverageArea = {
   title: string;
@@ -26,7 +26,7 @@ export type DomainPageConfig = {
   meaningParagraphs: string[];
   coverageAreas: DomainCoverageArea[];
   frameworkHighlight?: string;
-  siteSectionOverrides?: Partial<Record<'framework' | 'blueprints' | 'architecture' | 'playbooks' | 'insights', string>>;
+  siteSectionOverrides?: Partial<Record<'framework' | 'insights', string>>;
   ctaText: string;
 };
 
@@ -44,25 +44,11 @@ function defaultSiteSections(
   const label = DOMAIN_TAG_LABELS[tagId];
   return [
     {
-      label: 'Blueprints',
+      label: 'G.A.I.N Framework',
       description:
-        overrides?.blueprints ??
-        `Structural reference models and diagrams tagged ${label}.`,
-      href: depthTagHref('/blueprints', tagId),
-    },
-    {
-      label: 'Architecture',
-      description:
-        overrides?.architecture ??
-        `Platform patterns and foundations tagged ${label}.`,
-      href: depthTagHref('/architecture', tagId),
-    },
-    {
-      label: 'Playbooks',
-      description:
-        overrides?.playbooks ??
-        `Staged build guides and delivery paths tagged ${label}.`,
-      href: depthTagHref('/playbooks', tagId),
+        overrides?.framework ??
+        `Principles, capability patterns, and team boundaries tagged ${label}.`,
+      href: '/frameworks',
     },
     {
       label: 'Insights',
@@ -118,10 +104,8 @@ export const domainPages: Record<DomainTagId, DomainPageConfig> = {
       },
     ],
     siteSectionOverrides: {
-      blueprints:
-        'Structural reference models — control planes, domain boundaries, maturity, rollout scorecards.',
-      architecture: 'Platform foundations and full-stack patterns that strategy depends on.',
-      playbooks: 'Staged build paths where strategy meets delivery — e.g. banking AI platform design.',
+      framework:
+        'Principles, target states, and capability boundaries that turn strategy into durable architecture.',
       insights: 'Perspectives, explainers, and architecture breakdowns tagged Strategy & Architecture.',
     },
     ctaText:
@@ -171,9 +155,6 @@ export const domainPages: Record<DomainTagId, DomainPageConfig> = {
     ],
     siteSectionOverrides: {
       framework: 'Platform stack views in G.A.I.N AIOM — how capability layers map to runnable infrastructure.',
-      blueprints: 'Runtime plane, LLM gateway, event-driven AI, latency and cost models.',
-      architecture: 'Distributed systems, API design, event-driven architecture, LLM production patterns.',
-      playbooks: 'LLM integration, data pipelines, AI observability, and platform build guides.',
     },
     ctaText:
       'Modernising platforms or standing up shared AI runtime capability? This is where I help teams align engineering with architecture intent.',
@@ -222,9 +203,6 @@ export const domainPages: Record<DomainTagId, DomainPageConfig> = {
     ],
     siteSectionOverrides: {
       framework: 'G.A.I.N LLM, RAG, Prompt, Agents, and MCP — domain ownership and key patterns.',
-      blueprints: 'RAG architecture, agent flows, context engine, memory model, MCP tool registry.',
-      architecture: 'Enterprise RAG, governed agents, hallucination guardrails, MCP integration.',
-      playbooks: 'Build enterprise RAG, agentic systems design, verification layer, governed MCP setup.',
       insights: 'Technical breakdowns and leadership perspectives on production AI.',
     },
     ctaText:
@@ -274,9 +252,6 @@ export const domainPages: Record<DomainTagId, DomainPageConfig> = {
     ],
     siteSectionOverrides: {
       framework: 'G.A.I.N Identity, Evaluation, and Observability — governance as system design.',
-      blueprints: 'Policy enforcement, audit trails, compliance maps, access-controlled RAG, rollout gates.',
-      architecture: 'Policy boundaries, governed agent systems, AI observability architecture.',
-      playbooks: 'Access-controlled RAG, verification layer, and governed delivery patterns.',
       insights: 'Compliance, policy, and trust themes in enterprise AI adoption.',
     },
     ctaText:

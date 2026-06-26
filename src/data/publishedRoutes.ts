@@ -1,14 +1,9 @@
-import type {DomainTagId, DepthAssetBasePath} from '@site/src/data/depthDomainTags';
+import type {DomainTagId} from '@site/src/data/depthDomainTags';
 import {
-  publishedDepthTags as publishedDepthTagsRaw,
   publishedFrameworkSlugs,
   publishedInsightTags as publishedInsightTagsRaw,
 } from './publishedRoutes.generated';
 
-const publishedDepthTags = publishedDepthTagsRaw as Record<
-  DepthAssetBasePath,
-  readonly DomainTagId[]
->;
 const publishedInsightTags = publishedInsightTagsRaw as readonly DomainTagId[];
 
 export type FrameworkNavItem = {
@@ -58,18 +53,6 @@ export function getPublishedFrameworkFooterItems(): {label: string; to: string}[
       to: frameworkPath(item.slug),
     }),
   );
-}
-
-export function isDepthTagPublished(
-  basePath: DepthAssetBasePath,
-  tagId: DomainTagId,
-): boolean {
-  return publishedDepthTags[basePath].includes(tagId);
-}
-
-/** Tag page when published posts exist; otherwise the section index. */
-export function depthTagHref(basePath: DepthAssetBasePath, tagId: DomainTagId): string {
-  return isDepthTagPublished(basePath, tagId) ? `${basePath}/tags/${tagId}` : basePath;
 }
 
 export function insightTagHref(tagId: DomainTagId): string {

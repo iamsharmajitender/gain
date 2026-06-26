@@ -66,9 +66,6 @@ npm install
 | Path | Purpose |
 | --- | --- |
 | `docs/frameworks/` | G.A.I.N framework docs (`/frameworks`) |
-| `docs/architecture/` | Platform architecture reference (`/architecture`) |
-| `docs/playbooks/` | Implementation guides (`/playbooks`) |
-| `docs/blueprints/` | Reference diagrams (`/blueprints`) |
 | `docs/insights/` | Insights blog posts (`/insights`) |
 | `src/pages/` | About, Advisory, Sitemap, homepage |
 | `static/CNAME` | Custom domain (`jitendersharma.dev`) |

@@ -12,8 +12,6 @@ import type {Props} from '@theme/BlogTagsPostsPage';
 import BlogPostItems from '@theme/BlogPostItems';
 import Unlisted from '@theme/ContentVisibility/Unlisted';
 import InsightsTagsNav from '@site/src/components/InsightsTagsNav';
-import DepthDomainTagsNav from '@site/src/components/DepthDomainTagsNav';
-import {getDepthAssetBasePath} from '@site/src/utils/depthAssetBlog';
 import InsightsBlogPaginator from '@site/src/components/InsightsBlogPaginator';
 
 function BlogTagsPostsPageMetadata({tag}: Props): ReactNode {
@@ -32,7 +30,6 @@ function BlogTagsPostsPageContent({
   sidebar,
   listMetadata,
 }: Props): ReactNode {
-  const depthBasePath = getDepthAssetBasePath(tag.permalink);
   return (
     <BlogLayout sidebar={sidebar}>
       {tag.unlisted && <Unlisted />}
@@ -42,11 +39,7 @@ function BlogTagsPostsPageContent({
           <div className="gain-doc-subtitle">{tag.description}</div>
         )}
       </div>
-      {depthBasePath ? (
-        <DepthDomainTagsNav basePath={depthBasePath} />
-      ) : (
-        <InsightsTagsNav />
-      )}
+      <InsightsTagsNav />
       <div className="gain-insights-list">
         <BlogPostItems items={items} />
       </div>

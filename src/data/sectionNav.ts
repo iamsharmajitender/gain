@@ -46,9 +46,6 @@ export const sitemapSubtitle =
 export const sitemapTabs = [
   {id: 'overview', label: 'Overview'},
   {id: 'frameworks', label: 'G.A.I.N Framework'},
-  {id: 'blueprints', label: 'Blueprints'},
-  {id: 'architecture', label: 'Architecture'},
-  {id: 'playbooks', label: 'Playbooks'},
   {id: 'insights', label: 'Insights'},
   {id: 'site', label: 'About & Advisory'},
 ] as const;

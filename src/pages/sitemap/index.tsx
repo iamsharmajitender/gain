@@ -56,9 +56,8 @@ function OverviewTab(): ReactNode {
           </table>
         </div>
         <p className={styles.overviewNote}>
-          <strong>Rule of thumb:</strong> principles and ownership → Framework · G.A.I.N AI diagrams
-          → Blueprints · platform patterns (APIs, events, distributed design) → Architecture ·
-          staged build paths → Playbooks · essays and field lessons → Insights.
+          <strong>Rule of thumb:</strong> principles and ownership → Framework · essays and field
+          lessons → Insights.
         </p>
       </section>
 
@@ -67,15 +66,7 @@ function OverviewTab(): ReactNode {
         <div className={styles.flowArrow} aria-hidden="true">
           →
         </div>
-        <div className={styles.flowStep}>Blueprints: what it looks like</div>
-        <div className={styles.flowArrow} aria-hidden="true">
-          →
-        </div>
-        <div className={styles.flowStep}>Playbooks: how to build</div>
-        <div className={styles.flowArrow} aria-hidden="true">
-          ↔
-        </div>
-        <div className={styles.flowStep}>Architecture: platform foundations</div>
+        <div className={styles.flowStep}>Insights: narrative thinking</div>
       </div>
     </>
   );
@@ -84,9 +75,6 @@ function OverviewTab(): ReactNode {
 const sitemapTabContent: Record<SitemapTabId, () => ReactNode> = {
   overview: OverviewTab,
   frameworks: () => <SitemapSectionBlock section={getHandbookSection('frameworks')} />,
-  blueprints: () => <SitemapSectionBlock section={getHandbookSection('blueprints')} />,
-  architecture: () => <SitemapSectionBlock section={getHandbookSection('architecture')} />,
-  playbooks: () => <SitemapSectionBlock section={getHandbookSection('playbooks')} />,
   insights: () => <SitemapSectionBlock section={getHandbookSection('insights')} />,
   site: () => <SitemapSectionBlock section={getSiteSection('site')} />,
 };
