@@ -41,7 +41,7 @@ export const advisoryNav: SectionNavItem[] = advisoryTabs.map((tab) => ({
 }));
 
 export const sitemapSubtitle =
-  'How the handbook is organized: what each section covers and where to start.';
+  'How the site is organized: what each section covers and where to start.';
 
 export const sitemapTabs = [
   {id: 'overview', label: 'Overview'},

@@ -1,6 +1,6 @@
-# architects-handbook
+# gain
 
-Personal site and handbook for [jitendersharma.dev](https://jitendersharma.dev): built with [Docusaurus 3](https://docusaurus.io/).
+Personal site and library for [jitendersharma.dev](https://jitendersharma.dev).
 
 **Source:** `main` branch · **Live site:** `gh-pages` branch (GitHub Pages)
 
@@ -8,7 +8,7 @@ Personal site and handbook for [jitendersharma.dev](https://jitendersharma.dev):
 
 - Node.js **20+** (`package.json` engines)
 - npm
-- Git remote: `git@github.com:iamsharmajitender/architects-handbook.git`
+- Git remote: `git@github.com:iamsharmajitender/gain.git`
 - SSH access to GitHub (for `npm run deploy`)
 
 ## Install
@@ -19,7 +19,7 @@ npm install
 
 ## Local development
 
-Start the dev server (default: [http://localhost:3000](http://localhost:3000)):
+Start the dev server (default: [http://localhost:3002](http://localhost:3002)):
 
 ```bash
 npm start
@@ -99,7 +99,7 @@ Config (`docusaurus.config.ts`):
 
 - `url`: `https://jitendersharma.dev`
 - `organizationName`: `iamsharmajitender`
-- `projectName`: `architects-handbook`
+- `projectName`: `gain`
 - `deploymentBranch`: `gh-pages`
 
 `static/CNAME` contains `jitendersharma.dev` and is copied into the build output on deploy.
@@ -123,7 +123,7 @@ The live site at [https://jitendersharma.dev](https://jitendersharma.dev) update
 
 ### If deploy fails
 
-- **SSH:** Ensure `git@github.com:iamsharmajitender/architects-handbook.git` works (`ssh -T git@github.com`).
+- **SSH:** Ensure `git@github.com:iamsharmajitender/gain.git` works (`ssh -T git@github.com`).
 - **Broken links:** `onBrokenLinks: 'throw'`: fix broken internal links before build/deploy succeeds.
 - **Uncommitted changes:** Commit or stash changes on `main` before deploy; Docusaurus deploy expects a clean state for the source branch.
 
@@ -136,7 +136,7 @@ One-time / infra checklist:
 2. **Custom domain:** `jitendersharma.dev` (should match `static/CNAME`).
 3. **DNS** at your domain registrar (typical GitHub Pages setup):
    - **A records** for apex `@` → GitHub Pages IPs, **or**
-   - **CNAME** `www` → `iamsharmajitender.github.io` (if using `www`)
+   - **CNAME** `www` → `jitendersharma.dev` (if using `www`)
    - See [GitHub: managing a custom domain](https://docs.github.com/en/pages/configuring-a-custom-domain-for-your-github-pages-site/managing-a-custom-domain-for-your-github-pages-site).
 4. Enable **Enforce HTTPS** in GitHub Pages settings once DNS has propagated.
 

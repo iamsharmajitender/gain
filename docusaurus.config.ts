@@ -14,7 +14,7 @@ const config: Config = {
   baseUrl: '/',
 
   organizationName: 'iamsharmajitender',
-  projectName: 'architects-handbook',
+  projectName: 'gain',
   deploymentBranch: 'gh-pages',
 
   onBrokenLinks: 'throw',
