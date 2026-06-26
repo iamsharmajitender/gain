@@ -2,14 +2,28 @@ import {
   FRAMEWORK_SITEMAP_ITEMS,
   frameworkHref,
   insightTagHref,
+  insightTypeTagHref,
 } from '@site/src/data/publishedRoutes';
 import type {DomainTagId} from '@site/src/data/depthDomainTags';
 import {DOMAIN_TAG_LABELS} from '@site/src/data/depthDomainTags';
+import {
+  TYPE_TAG_DESCRIPTIONS,
+  TYPE_TAG_FULL_LABELS,
+  TYPE_TAG_IDS,
+  type TypeTagId,
+} from '@site/src/data/insightTags';
 
 export type SitemapLink = {
   label: string;
   href?: string;
   draft?: boolean;
+  description?: string;
+};
+
+export type SitemapLinkGroup = {
+  heading: string;
+  description?: string;
+  links: SitemapLink[];
 };
 
 export type SitemapSection = {
@@ -19,6 +33,8 @@ export type SitemapSection = {
   description: string;
   href: string;
   links: SitemapLink[];
+  featuredLink?: SitemapLink;
+  linkGroups?: SitemapLinkGroup[];
 };
 
 function frameworkSitemapLinks(): SitemapLink[] {
@@ -38,14 +54,22 @@ const INSIGHT_DOMAIN_TAGS: DomainTagId[] = [
   'governance-trust',
 ];
 
-function insightSitemapLinks(): SitemapLink[] {
-  return [
-    {label: 'All posts', href: '/insights'},
-    ...INSIGHT_DOMAIN_TAGS.map((tagId) => ({
-      label: DOMAIN_TAG_LABELS[tagId],
-      href: insightTagHref(tagId),
-    })),
-  ];
+function insightDomainSitemapLinks(): SitemapLink[] {
+  return INSIGHT_DOMAIN_TAGS.map((tagId) => ({
+    label: DOMAIN_TAG_LABELS[tagId],
+    href: insightTagHref(tagId),
+  }));
+}
+
+function insightToneSitemapLinks(): SitemapLink[] {
+  return TYPE_TAG_IDS.map((tagId: TypeTagId) => {
+    const href = insightTypeTagHref(tagId);
+    return {
+      label: TYPE_TAG_FULL_LABELS[tagId],
+      description: TYPE_TAG_DESCRIPTIONS[tagId],
+      ...(href ? {href} : {draft: true}),
+    };
+  });
 }
 
 export const handbookSections: SitemapSection[] = [
@@ -65,7 +89,24 @@ export const handbookSections: SitemapSection[] = [
     description:
       'Essays, architecture breakdowns, and leadership perspectives on enterprise AI, platforms, and transformation. Published thinking rather than reference documentation.',
     href: '/insights',
-    links: insightSitemapLinks(),
+    links: [],
+    featuredLink: {
+      label: 'All insights',
+      href: '/insights',
+      description: 'Every published essay, architecture breakdown, and field lesson.',
+    },
+    linkGroups: [
+      {
+        heading: 'Domain',
+        description: 'Core domain pillars — shared across blueprints, architecture, and playbooks.',
+        links: insightDomainSitemapLinks(),
+      },
+      {
+        heading: 'Tone & Voice',
+        description: 'Content-type tags — one per insight article.',
+        links: insightToneSitemapLinks(),
+      },
+    ],
   },
 ];
 

@@ -10,6 +10,7 @@ import {
   handbookSections,
   sitemapPageHref,
 } from '@site/src/data/sitemap';
+import {InsightsSitemapTab} from '@site/src/pages/sitemap/insights';
 import {sitemapSubtitle, sitemapTabs, type SitemapTabId} from '@site/src/data/sectionNav';
 import styles from './sitemap.module.css';
 
@@ -75,7 +76,7 @@ function OverviewTab(): ReactNode {
 const sitemapTabContent: Record<SitemapTabId, () => ReactNode> = {
   overview: OverviewTab,
   frameworks: () => <SitemapSectionBlock section={getHandbookSection('frameworks')} />,
-  insights: () => <SitemapSectionBlock section={getHandbookSection('insights')} />,
+  insights: InsightsSitemapTab,
   site: () => <SitemapSectionBlock section={getSiteSection('site')} />,
 };
 

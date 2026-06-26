@@ -1,10 +1,13 @@
 import type {DomainTagId} from '@site/src/data/depthDomainTags';
+import type {TypeTagId} from '@site/src/data/insightTags';
 import {
   publishedFrameworkSlugs,
   publishedInsightTags as publishedInsightTagsRaw,
+  publishedInsightTypeTags as publishedInsightTypeTagsRaw,
 } from './publishedRoutes.generated';
 
 const publishedInsightTags = publishedInsightTagsRaw as readonly DomainTagId[];
+const publishedInsightTypeTags = publishedInsightTypeTagsRaw as readonly TypeTagId[];
 
 export type FrameworkNavItem = {
   label: string;
@@ -57,4 +60,8 @@ export function getPublishedFrameworkFooterItems(): {label: string; to: string}[
 
 export function insightTagHref(tagId: DomainTagId): string {
   return publishedInsightTags.includes(tagId) ? `/insights/tags/${tagId}` : '/insights';
+}
+
+export function insightTypeTagHref(tagId: TypeTagId): string | undefined {
+  return publishedInsightTypeTags.includes(tagId) ? `/insights/tags/${tagId}` : undefined;
 }

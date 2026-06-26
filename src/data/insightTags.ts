@@ -23,6 +23,21 @@ export const TYPE_TAG_LABELS: Record<TypeTagId, string> = {
   exp: 'EXP',
 };
 
+/** Full labels and descriptions from docs/insights/tags.yml (content-type tags). */
+export const TYPE_TAG_FULL_LABELS: Record<TypeTagId, string> = {
+  pov: 'Point of View',
+  arch: 'Architecture',
+  lrn: 'Learner',
+  exp: 'Explainer',
+};
+
+export const TYPE_TAG_DESCRIPTIONS: Record<TypeTagId, string> = {
+  pov: 'Leadership perspectives and architectural convictions — where to intervene, what to prioritise, and why the default narrative is wrong.',
+  arch: 'Deep technical breakdowns: flow, layers, and design principles.',
+  lrn: 'Lessons distilled from real situations: what broke and what changed.',
+  exp: 'Clear analogies and step-by-step breakdowns for complex concepts.',
+};
+
 export const TYPE_TAG_COLORS: Record<TypeTagId, string> = {
   pov: 'purple',
   arch: 'blue',
