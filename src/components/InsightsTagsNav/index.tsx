@@ -3,6 +3,9 @@ import clsx from 'clsx';
 import Link from '@docusaurus/Link';
 import {useLocation} from '@docusaurus/router';
 import {INSIGHT_TAG_GROUPS, type TagGroupId} from '@site/src/data/insightTags';
+import {publishedInsightTypeTags} from '@site/src/data/publishedRoutes.generated';
+
+const publishedTypeTagSet = new Set(publishedInsightTypeTags);
 
 function isActive(pathname: string, to: string): boolean {
   return pathname === to || pathname === `${to}/`;
@@ -45,12 +48,16 @@ export default function InsightsTagsNav(): ReactNode {
     return null;
   }
 
+  const visibleTypeTags = typeTagGroup.tags.filter(
+    (tag) => tag.id === 'all' || publishedTypeTagSet.has(tag.id),
+  );
+
   return (
     <div className="gain-insights-tags-nav">
       <TagGroupRow
         heading={typeTagGroup.heading}
         groupId={typeTagGroup.id}
-        tags={typeTagGroup.tags}
+        tags={visibleTypeTags}
       />
     </div>
   );

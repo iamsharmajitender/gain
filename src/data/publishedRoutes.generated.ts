@@ -19,3 +19,9 @@ export const publishedInsightTags = [
   "platforms-engineering",
   "system-architecture"
 ] as const;
+
+export const publishedInsightTypeTags = [
+  "pov",
+  "arch",
+  "exp"
+] as const;

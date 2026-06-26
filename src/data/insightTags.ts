@@ -69,6 +69,7 @@ export const INSIGHT_TAG_GROUPS: TagGroup[] = [
       {id: 'observability', label: 'Observability', to: tagTo('observability')},
       {id: 'policy', label: 'Policy', to: tagTo('policy')},
       {id: 'llm', label: 'LLM', to: tagTo('llm')},
+      {id: 'rag', label: 'RAG', to: tagTo('rag')},
       {id: 'hallucinations', label: 'Hallucinations', to: tagTo('hallucinations')},
       {id: 'compliance', label: 'Compliance', to: tagTo('compliance')},
     ],

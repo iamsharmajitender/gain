@@ -56,6 +56,10 @@ llm:
   label: LLM
   description: Large language models — inference, cost, latency, prompting, and production tradeoffs.
 
+rag:
+  label: RAG
+  description: Retrieval-augmented generation — context construction, grounding, ranking, and production pipelines.
+
 hallucinations:
   label: Hallucinations
   description: Grounding, validation, and system design for trustworthy model outputs.
