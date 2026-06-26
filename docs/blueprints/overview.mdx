@@ -1,0 +1,73 @@
+---
+title: Blueprints
+sidebar_label: Overview
+hide_title: true
+slug: /
+---
+
+<div className="gain-doc-header">
+  <h1 className="gain-doc-title">Blueprints</h1>
+  <div className="gain-doc-subtitle">How-to modeling guides and architecture diagrams for enterprise AI systems.</div>
+</div>
+
+<div className="gain-section-lead">
+  Visual blueprints that map G.A.I.N principles to concrete system layers: from operating-model
+  planes and capability patterns to memory, decision-making, and the full enterprise reference
+  architecture. Derived from the [G.A.I.N AIOM](/frameworks/gain-aiom).
+</div>
+
+## Framework to blueprint map
+
+<div className="gain-section-lead">
+  Framework content maps to blueprints in <strong>two ways</strong>: do not mix them.{' '}
+  [G.A.I.N AIOM](/frameworks/gain-aiom) is the <strong>operating model</strong> (teams and planes).{' '}
+  <strong>G.A.I.N LLM, RAG, and Agents</strong> are <strong>capability patterns</strong>{' '}
+  operationalized on those planes.
+</div>
+
+### Operating model → planes
+
+From [G.A.I.N AIOM](/frameworks/gain-aiom): who owns what, expressed as plane architecture:
+
+| AIOM plane | Blueprint |
+| --- | --- |
+| Control plane | [How to Model AI Control Plane](/blueprints/control-plane), [How to Model Context Engine](/blueprints/context-engine) |
+| Runtime plane | [How to Model AI Runtime Plane](/blueprints/runtime-plane) |
+| Data / knowledge plane | [How to Model Data / Knowledge Plane](/blueprints/data-knowledge-plane) |
+| Full stack view | [How to Model G.A.I.N Architecture](/blueprints/gain-architecture) |
+
+### Capability patterns → blueprints
+
+Each pattern is cross-cutting: start with one blueprint, then read related pages:
+
+| Capability pattern | Start with | Also see |
+| --- | --- | --- |
+| G.A.I.N LLM | [How to Model LLM Gateway](/blueprints/llm-gateway) | [How to Model AI Control Plane](/blueprints/control-plane), [How to Model AI Runtime Plane](/blueprints/runtime-plane), [How to Model Decision-Making](/blueprints/decision-model) |
+| G.A.I.N RAG | [How to Model RAG Architecture](/blueprints/rag-architecture) | [How to Model Context Engine](/blueprints/context-engine), [How to Model Data / Knowledge Plane](/blueprints/data-knowledge-plane), [How to Model Memory](/blueprints/memory-model) |
+| G.A.I.N Agents | [How to Model Agent Flow](/blueprints/agent-flow-model) | [How to Model AI Control Plane](/blueprints/control-plane), [How to Model Decision-Making](/blueprints/decision-model), [How to Model Memory](/blueprints/memory-model) |
+
+## Operating model planes
+
+Component-level architecture for each plane: who builds what and how they connect.
+
+- **How to Model AI Control Plane**: gateway, policy, routing, tools, observability, evaluation
+- **How to Model Context Engine**: retrieval orchestration; data plane → control plane boundary
+- **How to Model Data / Knowledge Plane**: pipelines, embeddings, catalogs, governance tags
+- **How to Model AI Runtime Plane**: GPU clusters, model serving, vector stores, networking
+
+## Capability patterns
+
+G.A.I.N patterns operationalized on the control plane.
+
+- **How to Model LLM Gateway**: G.A.I.N LLM: governed model access, guardrails, caching
+- **How to Model RAG Architecture**: G.A.I.N RAG: indexing, retrieval, reranking, generation
+- **How to Model Agent Flow**: G.A.I.N Agents: planning, tools, policy-governed execution
+
+## Reference models
+
+- **How to Model G.A.I.N Architecture**: layered reference model from ingress through intelligence, data, and cloud
+- **How to Model Memory**: short-term, long-term, and episodic memory for agents and conversational systems
+- **How to Model Decision-Making**: reasoning chains, policy gates, and human-in-the-loop workflows
+
+For implementation guides see [Playbooks](/playbooks). For platform foundations (APIs, distributed
+systems) see [Architecture](/architecture). For published perspectives see [Insights → Strategy & Architecture](/insights/tags/strategy-architecture) and [AI & Intelligence](/insights/tags/ai-intelligence).

@@ -1,7 +1,9 @@
 ---
+sidebar_position: 30
 slug: rag-architecture
 title: How to Model RAG Pipeline Layers
-description: Reference architecture for indexing, retrieval, reranking, and generation layers.
+description: "Reference model for production RAG as five planes: knowledge, retrieval, inference, optimization, and control: what each owns, how runtime flows through them, and the trade-offs at each boundary."
+image: ./img/rag-architecture.png
 date: 2026-01-15
 authors: [iamsharmajitender]
 tags:
@@ -9,69 +11,324 @@ tags:
   - rag
 ---
 
-import Details from '@theme/Details';
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
 
 <div className="gain-doc-header">
   <h1 className="gain-doc-title">How to Model RAG Pipeline Layers</h1>
-  <div className="gain-doc-subtitle">Reference architecture for indexing, retrieval, reranking, and generation layers.</div>
+  <div className="gain-doc-subtitle">
+    Reference model for production RAG as five planes: knowledge, retrieval, inference,
+    optimization, and control: what each owns, how runtime flows through them, and the trade-offs
+    at each boundary.
+  </div>
 </div>
 
-## RAG System Layers
+![How to Model RAG Pipeline Layers](./img/rag-architecture.png)
+
+
+:::tip
+<div className="gain-section-lead">
+  Production RAG is a layered distributed system, not a vector store with a prompt attached. Model it
+  as five planes: a build-time <strong>Knowledge</strong> plane, a query-time{' '}
+  <strong>Retrieval</strong> plane, an <strong>Inference</strong> plane that reasons, an{' '}
+  <strong>Optimization</strong> plane that learns, and a <strong>Control</strong> plane that governs.
+  Use this blueprint in a design review to place responsibilities, trace the runtime path, and choose
+  the architecture for your precision, latency, and trust constraints.
+</div>
+:::
+
+<!-- truncate -->
+
+## Why layer RAG
 
 <div className="gain-section-lead">
-  A production RAG system is four distinct layers: indexing, retrieval, reranking, and generation: each with its own scaling characteristics, failure modes, and optimization levers.
+  The fastest demo in AI is "retrieve top-k chunks, paste into a prompt, return the answer." It also
+  fails first in production, because that single step quietly carries five different responsibilities
+  and degrades on all of them at once.
 </div>
+
+At scale the cracks are predictable:
+
+- **Freshness.** A one-off ingest script goes stale the moment a source changes. Without a build-time pipeline, the corpus drifts from reality and no one can say when.
+- **Trust.** Retrieval with no identity boundary leaks across tenants. Generation with no abstention path turns thin evidence into fluent, confident wrong answers.
+- **Latency.** Recall, reranking, and multi-hop reasoning each add milliseconds. Collapsed into one step, you cannot tune the budget where it matters.
+- **Cost.** Embedding the whole corpus on every change, or packing oversized context on every call, burns money that layering lets you control.
+
+Layering is the response. Each plane owns one responsibility, fails in an isolated and observable way, and emits a signal you can evaluate and audit. The motivation is not elegance. It is the ability to scale a knowledge system without losing freshness, trust, latency, or cost control.
+
+## Mental model
+
+Stop thinking "vector database." Think four cooperating subsystems behind one request: three on the request path, one looping quality back into them.
 
 <div className="gain-two-col">
   <div>
-    <ul className="gain-checklist">
-      <li>Document ingestion</li>
-      <li>Vector indexing</li>
-      <li>Hybrid retrieval</li>
-      <li>Cross-encoder reranking</li>
-      <li>Grounded generation</li>
+    <ul>
+      <li><strong>Knowledge system</strong> — curates, transforms, and stores what the organization knows. Build-time, asynchronous, versioned.</li>
+      <li><strong>Retrieval engine</strong> — finds the right evidence for one query, scoped to one principal. Query-time, latency-bound.</li>
+      <li><strong>Reasoning engine</strong> — synthesizes an answer from a bounded context pack. Stateless per call; fluency without grounding is the risk.</li>
+      <li><strong>Feedback system</strong> — observes outcomes and feeds quality back into the other three. Continuous; the only reason the system improves.</li>
     </ul>
   </div>
   <div className="gain-diagram-wrap">
 
 ```mermaid
-flowchart TD
-  Docs["Documents"] --> Index["Indexing Layer"]
-  Index --> VectorDB["Vector Store"]
-  Query["User Query"] --> Retrieve["Retrieval Layer"]
-  VectorDB --> Retrieve
-  Retrieve --> Rerank["Reranking Layer"]
-  Rerank --> Generate["Generation Layer"]
-  Generate --> Answer["Grounded Answer"]
+flowchart TB
+    K["Knowledge<br/>system"]
+    R["Retrieval<br/>engine"]
+    RE["Reasoning<br/>engine"]
+    FB["Feedback<br/>system"]
 
-  classDef source fill:#dbeafe,stroke:#93c5fd,color:#1e293b
-  classDef index fill:#ede9fe,stroke:#c4b5fd,color:#1e293b
-  classDef retrieve fill:#ffedd5,stroke:#fdba74,color:#1e293b
-  classDef output fill:#dcfce7,stroke:#86efac,color:#1e293b
+    K --> R --> RE
+    RE ==> FB
+    FB -.->|improves| K
+    FB -.->|improves| R
+    FB -.->|improves| RE
 
-  class Docs,Query source
-  class Index,VectorDB index
-  class Retrieve,Rerank,Generate retrieve
-  class Answer output
+    classDef build fill:#dbeafe,stroke:#60a5fa,color:#1e293b
+    classDef query fill:#ede9fe,stroke:#a78bfa,color:#1e293b
+    classDef reason fill:#dcfce7,stroke:#4ade80,color:#1e293b
+    classDef loop fill:#fefce8,stroke:#fbbf24,color:#1e293b
+
+    class K build
+    class R query
+    class RE reason
+    class FB loop
 ```
 
   </div>
 </div>
 
-## Key Patterns
+The core idea: **RAG is a layered distributed system.** Every property you expect from distributed systems applies here too: independent failure domains, observability per layer, versioning for rollback, and trust boundaries enforced in code, not in hope.
 
-<Details className="gain-accordion" summary="Indexing Layer">
-  Chunk, embed, and store documents with metadata preservation. Index design determines the ceiling on retrieval quality: no reranker can fix a bad index.
-</Details>
+## Layer model
 
-<Details className="gain-accordion" summary="Retrieval Layer">
-  Combine dense vector search with sparse keyword matching for hybrid retrieval. Pure semantic search misses exact matches; pure keyword search misses paraphrases.
-</Details>
+<div className="gain-two-col">
+  <div>
+    <ul className="gain-checklist">
+      <li>Knowledge plane (build time)</li>
+      <li>Retrieval plane (query time)</li>
+      <li>Inference plane</li>
+      <li>Optimization plane</li>
+      <li>Control plane</li>
+    </ul>
+  </div>
+  <div className="gain-diagram-wrap">
 
-<Details className="gain-accordion" summary="Reranking Layer">
-  Apply cross-encoder models to reorder retrieved candidates by relevance. Reranking is typically the highest-ROI quality improvement in a RAG pipeline.
-</Details>
+```mermaid
+flowchart TB
+    subgraph kp["Knowledge plane · build time"]
+        direction LR
+        ING["Ingestion"] --> TR["Transformation"] --> EMB["Embeddings"] --> STO["Storage"]
+    end
 
-<Details className="gain-accordion" summary="Generation Layer">
-  Pass reranked context to the LLM with structured prompts and output validation. Generation quality depends entirely on retrieval quality upstream.
-</Details>
+    subgraph rp["Retrieval plane · query time"]
+        direction LR
+        QU["Query<br/>understanding"] --> RET["Retrieval"] --> CA["Context<br/>assembly"]
+    end
+
+    subgraph ip["Inference plane"]
+        REA["Reasoning"]
+    end
+
+    subgraph op["Optimization plane · learns"]
+        direction LR
+        EVAL["Evaluation"] --> FB["Feedback"]
+    end
+
+    subgraph cp["Control plane · governs"]
+        GOV["Governance"]
+    end
+
+    STO ==>|index| QU
+    CA ==>|context pack| REA
+
+    op -.->|tunes| kp
+    op -.->|tunes| rp
+    op -.->|tunes| ip
+    cp -.->|gates| kp
+    cp -.->|gates| rp
+    cp -.->|gates| ip
+
+    classDef input fill:#dbeafe,stroke:#60a5fa,color:#1e293b
+    classDef process fill:#ede9fe,stroke:#a78bfa,color:#1e293b
+    classDef gate fill:#ffedd5,stroke:#fb923c,color:#1e293b
+    classDef output fill:#dcfce7,stroke:#4ade80,color:#1e293b
+    classDef audit fill:#e2e8f0,stroke:#94a3b8,color:#1e293b
+
+    class ING,TR input
+    class EMB,STO,QU,RET,CA,REA process
+    class EVAL,FB gate
+    class GOV audit
+
+    style kp fill:#f8fafc,stroke:#cbd5e1,color:#0f172a
+    style rp fill:#f8fafc,stroke:#cbd5e1,color:#0f172a
+    style ip fill:#f8fafc,stroke:#cbd5e1,color:#0f172a
+    style op fill:#fefce8,stroke:#fde68a,color:#0f172a
+    style cp fill:#f1f5f9,stroke:#cbd5e1,color:#0f172a
+```
+
+  </div>
+</div>
+
+Read it top to bottom for the request path (knowledge feeds retrieval feeds inference), and read the dotted edges as cross-cutting: optimization and control attach to every plane, they are not a final step.
+
+## The five planes
+
+Each plane owns one responsibility. The tabs below drill into stages only when you need them: the one-line **takeaway** on each tab is enough for a design review.
+
+<Tabs groupId="rag-plane">
+
+<TabItem value="knowledge" label="Knowledge" default>
+
+**Build-time pipeline.** Decides how knowledge becomes searchable; its failures are invisible until query time. *Takeaway: treat the index as versioned infrastructure: every re-embed is an eval-gated, reversible deploy.*
+
+| Stage | Owns | Skipping it causes |
+| --- | --- | --- |
+| **Ingestion** | Source connectors, parsing, dedupe, source versioning | Stale corpus, lost provenance, no freshness SLA |
+| **Transformation** | Chunking strategy, metadata extraction, normalization | Garbage chunks, no filter keys, broken structure |
+| **Representation** | Embedding model choice, embedding versioning | No rollback on a bad re-embed, silent drift |
+| **Storage** | Vector index, lexical index, hybrid layout | No hybrid recall, no versioned rollback primitive |
+
+</TabItem>
+
+<TabItem value="retrieval" label="Retrieval">
+
+**Query-time evidence assembly.** Turns a question and an identity into a bounded, ranked context pack. *Takeaway: identity is enforced here, before ranking spends compute: never patched in after generation.*
+
+| Stage | Owns | Skipping it causes |
+| --- | --- | --- |
+| **Query understanding** | Rewrite, expansion, intent and entity extraction | Literal matching, missed evidence, poor recall |
+| **Search orchestration** | Hybrid (lexical + vector) search, ACL filter, top-k | Cross-tenant leakage, low precision candidates |
+| **Reranking** | Cross-encoder scoring, score thresholds | Top-k blobs instead of the actually relevant set |
+| **Context construction** | Token budget, dedupe, ordering, attribution | Bloated cost, lost citations, truncated evidence |
+
+</TabItem>
+
+<TabItem value="inference" label="Inference">
+
+**Reasoning over retrieved context.** Synthesizes the answer, and is where fluency must be held to evidence. *Takeaway: citation and abstention are outcomes the system enforces, not behaviors you wish into a prompt.*
+
+| Stage | Owns | Skipping it causes |
+| --- | --- | --- |
+| **Prompt orchestration** | System prompt, context injection, versioned templates | Unreproducible behavior, prompt drift |
+| **Tool calls** | Function calling, retrieval-augmented actions | Static answers where the task needs live data or action |
+| **Multi-hop reasoning** | Iterative retrieve-reason loops, planning | Shallow answers on questions that need decomposition |
+| **Structured outputs** | Schema-constrained generation, citation binding | Free text that downstream systems cannot consume |
+
+</TabItem>
+
+<TabItem value="optimization" label="Optimization">
+
+**Continuous improvement.** Why a deployed system gets better instead of decaying. *Takeaway: wire evaluation in from day one: a layer you cannot measure is a layer you cannot improve.*
+
+| Stage | Owns | Skipping it causes |
+| --- | --- | --- |
+| **Evaluation** | Offline and online quality metrics, eval gates | No definition of "good," regressions ship silently |
+| **Feedback loops** | Implicit and explicit signal capture, labeling | No data to improve retrieval or ranking |
+| **Failure analysis** | Error clustering, root-cause by layer | Symptoms patched at the prompt, never the cause |
+| **Adaptive tuning** | Reranker, chunking, and prompt iteration | Frozen quality while the corpus and queries move |
+
+</TabItem>
+
+<TabItem value="control" label="Control">
+
+**Operational governance.** What makes the system safe to run in a regulated enterprise. *Takeaway: governance attaches at storage, retrieval, and output, not only the model call: if you cannot replay a request under its policy, you do not have production RAG.*
+
+| Stage | Owns | Skipping it causes |
+| --- | --- | --- |
+| **Security** | Encryption, secret handling, tenant isolation | Data exposure, failed security review |
+| **Access control** | Per-principal ACLs enforced at retrieval | Cross-tenant leakage, unprovable scoping |
+| **Auditability** | Replayable logs of who retrieved what under which policy | No incident archaeology, failed audit |
+| **Policy enforcement** | Freshness rules, content and usage policy | Stale or non-compliant answers shipped |
+| **Guardrails** | Input and output validation, abstention routing | Free generation on thin or unsafe evidence |
+
+</TabItem>
+
+</Tabs>
+
+## Choosing the path
+
+The planes are fixed. The components inside them are choices. Three decisions cover most of the architecture.
+
+<div className="gain-diagram-wrap">
+
+```mermaid
+flowchart TB
+    D1{"Is the data structured?"}
+    D1 -->|Yes| D1a["Use metadata filters"]
+    D1 -->|No| D1b["Use semantic chunking"]
+
+    D2{"Need high precision?"}
+    D2 -->|Yes| D2a["Add reranking"]
+    D2 -->|No| D2b["Direct retrieval"]
+
+    D3{"Need relationships?"}
+    D3 -->|Yes| D3a["Add graph retrieval"]
+    D3 -->|No| D3b["Vector-only retrieval"]
+
+    classDef gate fill:#ffedd5,stroke:#fdba74,color:#1e293b
+    classDef output fill:#dcfce7,stroke:#86efac,color:#1e293b
+
+    class D1,D2,D3 gate
+    class D1a,D1b,D2a,D2b,D3a,D3b output
+```
+
+</div>
+
+Each branch is an architecture commitment, not a tuning knob. Structure decides how you chunk and filter, precision decides whether you pay for reranking, and relationship needs decide whether vectors alone are enough.
+
+## Runtime execution
+
+The layer model shows structure. This shows what happens on a single request.
+
+<div className="gain-diagram-wrap">
+
+```mermaid
+flowchart TB
+    UQ["User query"]
+    QR["Query rewrite"]
+    HR["Hybrid retrieval"]
+    RR["Reranking"]
+    CP["Context packing"]
+    GEN["LLM generation"]
+    VAL["Validation"]
+    RESP["Response"]
+
+    UQ --> QR --> HR --> RR --> CP --> GEN --> VAL --> RESP
+
+    classDef input fill:#dbeafe,stroke:#93c5fd,color:#1e293b
+    classDef process fill:#ede9fe,stroke:#c4b5fd,color:#1e293b
+    classDef gate fill:#ffedd5,stroke:#fdba74,color:#1e293b
+    classDef output fill:#dcfce7,stroke:#86efac,color:#1e293b
+
+    class UQ input
+    class QR,HR,RR,CP,GEN process
+    class VAL gate
+    class RESP output
+```
+
+</div>
+
+The flow crosses three planes: rewrite through packing live in retrieval, generation in inference, and validation is the control-plane gate that decides whether the response ships or the system abstains.
+
+## Design trade-offs
+
+Layering does not remove the hard choices. It locates them. These are the decisions that turn the model into a concrete architecture.
+
+| Trade-off | Choice | Default in regulated environments |
+| --- | --- | --- |
+| **Chunk size** | Small (precision) vs large (context) | Structure-aware chunks over fixed token windows |
+| **Embedding cost** | Re-embed everything vs incremental | Versioned, incremental re-embed with eval gate |
+| **Recall vs latency** | Wider candidate set vs faster response | Hybrid recall, then rerank inside the latency budget |
+| **Hybrid vs graph** | Vector + lexical vs relationship traversal | Hybrid by default, graph only when relationships are core |
+| **Static vs dynamic retrieval** | One pass vs iterative multi-hop | Single pass, escalate to multi-hop on low confidence |
+
+Each row is a boundary you set deliberately, then evaluate. The plane model tells you where the decision lives. The trade-off table tells you which way to lean when truth, cost, and latency pull against each other.
+
+## Related assets
+
+- [How to Model Data / Knowledge Plane](/blueprints/data-knowledge-plane): upstream knowledge supply chain that feeds retrieval
+- [How to Model AI Control Plane](/blueprints/control-plane): governance and policy enforcement across planes
+- [RAG is not a database](/insights/rag-is-not-a-database): RAG as runtime context construction, not storage
+- [G.A.I.N RAG](/frameworks/gain-rag): RAG through the G.A.I.N operating model
+- [How to build enterprise RAG](/playbooks/build-enterprise-rag): step-by-step implementation
