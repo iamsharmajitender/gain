@@ -411,6 +411,22 @@ details > p {
   margin-bottom: 2.5rem;
 }
 
+.gain-back-link {
+  display: inline-flex;
+  align-items: center;
+  margin-bottom: 1rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--gain-text-muted);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.gain-back-link:hover {
+  color: var(--gain-blue);
+  text-decoration: none;
+}
+
 .gain-doc-title {
   font-size: 2.75rem;
   font-weight: 700;

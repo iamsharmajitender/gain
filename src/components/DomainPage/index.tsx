@@ -5,6 +5,7 @@ import {
   type DomainPageConfig,
   getDomainSiteSections,
 } from '@site/src/data/domainPages';
+import {backToInsights} from '@site/src/data/contextualBackLinks';
 import styles from './domain-page.module.css';
 
 type DomainPageProps = {
@@ -34,6 +35,7 @@ export default function DomainPage({config}: DomainPageProps): ReactNode {
       subtitle={config.subtitle}
       sectionLabel="Domains"
       hideNav
+      backLink={backToInsights}
     >
       <div className={styles.tabBox}>
         <h2 className={styles.tabBoxTitle}>What this means here</h2>

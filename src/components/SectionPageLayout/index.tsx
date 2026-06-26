@@ -2,6 +2,8 @@ import type {ReactNode} from 'react';
 import clsx from 'clsx';
 import Link from '@docusaurus/Link';
 import Layout from '@theme/Layout';
+import type {ContextualBackLinkConfig} from '@site/src/data/contextualBackLinks';
+import ContextualBackLink from '@site/src/components/ContextualBackLink';
 import styles from './styles.module.css';
 
 export type SectionNavItem = {
@@ -17,6 +19,7 @@ type SectionPageLayoutProps = {
   activeHref?: string;
   profileImage?: {src: string; alt: string};
   hideNav?: boolean;
+  backLink?: ContextualBackLinkConfig;
   children: ReactNode;
 };
 
@@ -32,10 +35,12 @@ export default function SectionPageLayout({
   activeHref = '',
   profileImage,
   hideNav = false,
+  backLink,
   children,
 }: SectionPageLayoutProps): ReactNode {
   const header = (
     <div className={clsx('gain-doc-header', hideNav && 'gain-insights-header')}>
+      {backLink ? <ContextualBackLink {...backLink} /> : null}
       <h1 className="gain-doc-title">{title}</h1>
       <div className={clsx('gain-doc-intro', profileImage && styles.docIntroWithPhoto)}>
         {profileImage ? (

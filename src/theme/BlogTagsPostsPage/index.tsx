@@ -11,6 +11,8 @@ import SearchMetadata from '@theme/SearchMetadata';
 import type {Props} from '@theme/BlogTagsPostsPage';
 import BlogPostItems from '@theme/BlogPostItems';
 import Unlisted from '@theme/ContentVisibility/Unlisted';
+import ContextualBackLink from '@site/src/components/ContextualBackLink';
+import {backToInsights} from '@site/src/data/contextualBackLinks';
 import InsightsTagsNav from '@site/src/components/InsightsTagsNav';
 import InsightsBlogPaginator from '@site/src/components/InsightsBlogPaginator';
 
@@ -33,6 +35,7 @@ function BlogTagsPostsPageContent({
   return (
     <BlogLayout sidebar={sidebar}>
       {tag.unlisted && <Unlisted />}
+      <ContextualBackLink {...backToInsights} />
       <div className="gain-doc-header gain-insights-header">
         <h1 className="gain-doc-title">{tag.label}</h1>
         {tag.description && (
