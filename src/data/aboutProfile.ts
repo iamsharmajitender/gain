@@ -342,3 +342,8 @@ export const credentials: Credential[] = [
 export const linkedInProfileUrl = 'https://linkedin.com/in/iamsharmajitender';
 
 export const profilePhotoUrl = '/img/jitender-sharma-profile.jpg';
+
+export const profileName = 'Jitender Sharma';
+
+export const profileHeroBio =
+  'Melbourne-based advisor and technical leader with 18+ years across banking, aviation, and critical infrastructure in Australia, the UAE, and India.';

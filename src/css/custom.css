@@ -3147,6 +3147,64 @@ details > p {
   z-index: 1;
 }
 
+.gain-hero__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(220px, 280px);
+  gap: 3rem;
+  align-items: start;
+}
+
+.gain-hero__main {
+  min-width: 0;
+}
+
+.gain-hero__profile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 1.5rem 1.25rem;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+}
+
+.gain-hero__photo {
+  width: 8rem;
+  height: 8rem;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+}
+
+.gain-hero__profile-name {
+  margin: 1rem 0 0.5rem;
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.gain-hero__profile-bio {
+  margin: 0 0 1rem;
+  font-size: 0.9375rem;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.gain-hero__profile-link {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.8);
+  text-decoration: none;
+}
+
+.gain-hero__profile-link:hover {
+  color: #ffffff;
+  text-decoration: underline;
+}
+
 .gain-hero__title {
   font-size: 3rem;
   font-weight: 700;
@@ -4014,6 +4072,16 @@ details > p {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .gain-hero__grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .gain-hero__profile {
+    max-width: 360px;
+    margin: 0 auto;
+  }
+
   .gain-hero__title {
     font-size: 2.25rem;
   }
@@ -4144,5 +4212,10 @@ details > p {
 
   .gain-hero__subtitle {
     font-size: 1.0625rem;
+  }
+
+  .gain-hero__photo {
+    width: 6.5rem;
+    height: 6.5rem;
   }
 }
