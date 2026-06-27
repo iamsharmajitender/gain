@@ -2,6 +2,7 @@ import {themes as prismThemes} from 'prism-react-renderer';
 import type {Config} from '@docusaurus/types';
 import type * as Preset from '@docusaurus/preset-classic';
 import clearCacheBeforeStartPlugin from './plugins/clearCacheBeforeStart';
+import rehypeWrapTables from './plugins/rehypeWrapTables.mjs';
 import {getFooterFrameworkLinks} from './docusaurus.footer';
 
 const config: Config = {
@@ -45,6 +46,7 @@ const config: Config = {
           onUntruncatedBlogPosts: 'warn',
           routeBasePath: 'insights',
           postsPerPage: 10,
+          rehypePlugins: [rehypeWrapTables],
         },
         theme: {
           customCss: './src/css/custom.css',
@@ -72,6 +74,7 @@ const config: Config = {
         id: 'frameworks',
         path: 'docs/frameworks',
         routeBasePath: 'frameworks',
+        rehypePlugins: [rehypeWrapTables],
       },
     ],
   ],

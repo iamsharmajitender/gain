@@ -26,8 +26,8 @@ function OverviewTab(): ReactNode {
         <h2 id="handbook-overview" className={styles.overviewTitle}>
           How the handbook fits together
         </h2>
-        <div className={styles.overviewTableWrap}>
-          <table className={styles.overviewTable}>
+        <div className="gain-table-wrap overview-table-wrap">
+          <table>
             <thead>
               <tr>
                 <th scope="col">Section</th>
