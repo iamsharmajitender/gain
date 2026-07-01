@@ -18,6 +18,8 @@ const config: Config = {
   projectName: 'gain',
   deploymentBranch: 'gh-pages',
 
+  clientModules: [require.resolve('./src/clientModules/diagramZoom.ts')],
+
   onBrokenLinks: 'throw',
 
   i18n: {
@@ -61,6 +63,7 @@ const config: Config = {
       '@docusaurus/plugin-client-redirects',
       {
         createRedirects(existingPath) {
+      
           if (existingPath.startsWith('/insights')) {
             return [existingPath.replace(/^\/insights/, '/blogs')];
           }
@@ -77,6 +80,26 @@ const config: Config = {
         rehypePlugins: [rehypeWrapTables],
       },
     ],
+    [
+      '@docusaurus/plugin-content-docs',
+      {
+        id: 'blueprints',
+        path: 'docs/blueprints',
+        routeBasePath: 'blueprints',
+        sidebarPath: './sidebarsBlueprints.ts',
+        rehypePlugins: [rehypeWrapTables],
+      },
+    ],
+    [
+      '@docusaurus/plugin-content-docs',
+      {
+        id: 'playbooks',
+        path: 'docs/playbooks',
+        routeBasePath: 'playbooks',
+        sidebarPath: './sidebarsPlaybooks.ts',
+        rehypePlugins: [rehypeWrapTables],
+      },
+    ],
   ],
 
   themes: [
@@ -88,7 +111,7 @@ const config: Config = {
         language: ['en'],
         indexDocs: true,
         indexBlog: true,
-        docsRouteBasePath: ['frameworks'],
+        docsRouteBasePath: ['frameworks', 'blueprints', 'playbooks'],
         docsPluginIdForPreferredVersion: 'frameworks',
         blogRouteBasePath: ['insights'],
         blogDir: ['docs/insights'],
@@ -122,6 +145,21 @@ const config: Config = {
           label: 'G.A.I.N',
         },
         {
+          type: 'doc',
+          docId: 'overview',
+          docsPluginId: 'blueprints',
+          position: 'left',
+          label: 'Blueprints',
+        },
+        {
+          type: 'doc',
+          docId: 'overview',
+          docsPluginId: 'playbooks',
+          position: 'left',
+          label: 'Playbooks',
+        },
+
+        {
           to: '/insights',
           label: 'Insights',
           position: 'left',
@@ -154,6 +192,8 @@ const config: Config = {
         {
           title: 'Explore',
           items: [
+            {label: 'Blueprints', to: '/blueprints'},
+            {label: 'Playbooks', to: '/playbooks'},
             {label: 'Insights', to: '/insights'},
           ],
         },

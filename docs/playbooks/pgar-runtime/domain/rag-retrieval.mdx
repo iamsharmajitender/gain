@@ -1,0 +1,303 @@
+---
+title: "Domain: RAG Retrieval"
+sidebar_label: ③ RAG retrieval
+description: Retrieval as a PEP-gated tool, context pack logging, validation handoff, and PGAR applied to RAG.
+tags:
+  - governance-trust
+  - arch
+  - gain
+  - agents
+  - policy
+  - rag
+---
+
+# Domain: RAG Retrieval
+
+[Blueprint](/blueprints/pgar-blueprint) · [← Manifest lifecycle](/playbooks/pgar-runtime/domain/manifest-lifecycle) · **RAG retrieval**
+
+Retrieval is not a database query. It is a **governed action** that assembles a context pack for one inference call. In agentic RAG, `retrieve_documents` is a tool proposal like any other.
+
+:::tip[THE CLAIM]
+**Retrieval is not permission. The agentic app initiates validation after the context pack returns. RAG executes search; the app orchestrates what reaches the model.**
+:::
+
+<!-- truncate -->
+
+## PGAR + RAG path
+
+1. LLM proposes `retrieve_documents(corpus, query)`
+2. Agentic app → PEP → PDP (SARAC with corpus as resource)
+3. On ALLOW → retrieval gateway runs (ACL, rerank, pack)
+4. Context pack → **agentic app** (logged with policy version)
+5. App initiates **validation** (grounding, scope, abstention)
+6. On pass → app forwards validated pack to LLM for synthesis
+
+Deep read: [PGAR with RAG](/insights/retrieval-is-a-governed-action). **Implementation detail:** [Worked example below](#worked-example-one-request-step-by-step).
+
+## SARAC for retrieval
+
+| Field | RAG mapping |
+| --- | --- |
+| **subject** | doc_entitlements, tenant, roles |
+| **action** | `retrieve_documents` |
+| **resource** | corpus or collection id |
+| **context** | query, classification ceiling |
+
+## Two gates (do not merge)
+
+| Gate | When | Owner |
+| --- | --- | --- |
+| **Policy (PGAR)** | Before search | PEP + PDP |
+| **Validation** | Before synthesis | App-initiated service |
+
+## Worked example: one request, step by step {#worked-example-one-request-step-by-step}
+
+Overview and diagram: [PGAR with RAG § one request](/insights/retrieval-is-a-governed-action#one-request-traced-end-to-end). This section is the **implementation walkthrough**: payloads, SARAC, audit fields, and branches.
+
+**User question:** *"What's our wire limit for corporate clients in the EU?"*
+
+### Setup (before the question)
+
+**Claims** (from IdP, held in agentic app session):
+
+```json
+{
+  "sub": "officer-123",
+  "roles": ["corporate_banking_officer"],
+  "doc_entitlements": ["policy-engine:read"],
+  "tenant": "bank-eu"
+}
+```
+
+`policy-engine:read` means this principal may search the **`policy-engine` corpus** only. It does not merge corpora; each retrieval proposal targets one corpus and PDP checks the matching entitlement.
+
+**Tool manifest:** version `2026.07.1`, held by agentic app. This walkthrough uses the **RAG tool subset**; manifest shape and enforcement hops are defined in [Tool registry § full manifest](/playbooks/pgar-runtime/domain/tool-registry#full-manifest-example) and [§ one proposal](/playbooks/pgar-runtime/domain/tool-registry#worked-example-one-proposal).
+
+| Tool | Used in this walkthrough |
+| --- | --- |
+| `retrieve_documents` | Yes (proposed by LLM) |
+| `list_corpora` | In manifest; optional follow-up |
+| `get_document_metadata` | In manifest; optional follow-up |
+
+For this walkthrough the LLM proposes **`retrieve_documents`** only. Other tools remain available for later turns; each proposal gets its own PEP/PDP check.
+
+**Corpora (logical scopes):**
+
+| Corpus id | Contents | This officer |
+| --- | --- | --- |
+| `policy-engine` | Regulatory / policy docs | `policy-engine:read` |
+| `hr-policies` | HR handbook | No entitlement |
+
+Corpus ids may map to separate collections in one vector store, metadata partitions in one index, or separate indexes. PGAR scopes by **corpus + entitlement**, not by physical DB layout.
+
+### ① Ingress
+
+**Components:** API Gateway → IdP → Agentic app
+
+1. User sends message + bearer token.
+2. Gateway validates token; IdP returns claims.
+3. Gateway forwards request + token + claims to agentic app.
+4. App opens session (`session_id`), stores token and claims, assigns `request_id`.
+
+**Crosses LLM boundary:** Nothing yet.
+
+**Trace:** `request_id`, `sub`, `token_exp`
+
+Boundary playbook: [Ingress](/playbooks/pgar-runtime/boundary/ingress)
+
+### ② Agentic app (first LLM call)
+
+**Components:** Agentic app → LLM
+
+1. App builds LLM request: messages + tool schemas **only**.
+2. No token, roles, `doc_entitlements`, or policy text.
+
+```json
+{
+  "messages": [
+    { "role": "user", "content": "What's our wire limit for corporate clients in the EU?" }
+  ],
+  "tools": [
+    {
+      "name": "retrieve_documents",
+      "parameters": { "corpus": "string", "query": "string" }
+    },
+    {
+      "name": "list_corpora",
+      "parameters": {}
+    },
+    {
+      "name": "get_document_metadata",
+      "parameters": { "doc_id": "string" }
+    }
+  ]
+}
+```
+
+The app derives the `tools` array from the manifest (see [Tool registry § manifest → LLM](/playbooks/pgar-runtime/domain/tool-registry#manifest--llm--pep)). Same three names; no `pdp_action`, `risk_tier`, or entitlements in the LLM payload.
+
+**Trace:** `session_id`, `llm_payload_hash`
+
+Boundary playbook: [Agentic app](/playbooks/pgar-runtime/boundary/agentic-app)
+
+### ③ LLM proposes
+
+**Components:** LLM → Agentic app
+
+1. LLM returns a **proposal**, not an executed search:
+
+```json
+{
+  "tool": "retrieve_documents",
+  "arguments": {
+    "corpus": "policy-engine",
+    "query": "wire limits corporate clients EU"
+  }
+}
+```
+
+2. App verifies tool is in manifest and args match JSON schema.
+
+**Important:** `corpus` here is a **search scope hint**, not evidence. The model does not receive document chunks yet.
+
+Boundary playbook: [LLM proposal](/playbooks/pgar-runtime/boundary/llm-proposal)
+
+### ④ PEP → PDP (policy gate)
+
+**Components:** Agentic app → PEP → PDP → PEP
+
+1. App calls PEP with `proposal + token + claims`.
+2. PEP maps to SARAC and calls PDP:
+
+| Field | Value |
+| --- | --- |
+| **subject** | `officer-123`, roles, `doc_entitlements: ["policy-engine:read"]` |
+| **action** | `retrieve_documents` |
+| **resource** | `{ "type": "corpus", "id": "policy-engine" }` |
+| **context** | `{ "query": "wire limits corporate clients EU", "classification_ceiling": "internal" }` |
+
+3. PDP checks: entitlement for `policy-engine`, tenant, classification rules.
+4. PDP returns **`ALLOW`**, policy version `pgar.retrieval.corpus/v2`.
+5. PEP writes audit **before** any search:
+
+```json
+{
+  "audit_id": "aud-7c1a",
+  "verdict": "ALLOW",
+  "policy_version": "pgar.retrieval.corpus/v2",
+  "resource": "policy-engine",
+  "downstream_called": false
+}
+```
+
+**DENY branch:** If `doc_entitlements` lacked `policy-engine:read`, PDP returns **DENY**, PEP logs, app refuses. No retrieval, no context pack, no synthesis from search.
+
+Boundary playbook: [PEP + PDP](/playbooks/pgar-runtime/boundary/pep-pdp)
+
+### ⑤ Retrieval executes (ALLOW only)
+
+**Components:** PEP → Retrieval gateway → Agentic app
+
+1. PEP forwards authorized request to retrieval gateway (scoped identity, not LLM).
+2. Gateway searches **`policy-engine` corpus only**:
+   - Hybrid search
+   - ACL filter (drop chunks/documents officer cannot see)
+   - Rerank
+   - Pack to token budget with source ids and scores
+3. Example context pack returned to **agentic app**:
+
+```json
+{
+  "context_pack_id": "pack-9f2e",
+  "corpus": "policy-engine",
+  "chunks": [
+    {
+      "doc_id": "policy-wire-limits-v3",
+      "text": "EU corporate wire limit: EUR 50,000 per day...",
+      "score": 0.91
+    },
+    {
+      "doc_id": "policy-wire-limits-v3",
+      "text": "Tier-2 clients require additional approval above EUR 25,000...",
+      "score": 0.87
+    }
+  ],
+  "policy_version": "pgar.retrieval.corpus/v2"
+}
+```
+
+4. App logs pack: sources, scores, `ranker_version`, `policy_version`, `pack_token_count`.
+
+If a candidate were `CONFIDENTIAL` and the officer lacked clearance, **ACL at gateway drops it** before packing. Reranker never sees disallowed chunks.
+
+Boundary playbook: [Downstream](/playbooks/pgar-runtime/boundary/downstream) (return path to app)
+
+### ⑥ Validation (app-initiated)
+
+**Components:** Agentic app → Validation service → Agentic app
+
+RAG executes search; the **agentic app initiates** validation. Retrieval does not auto-validate.
+
+1. App sends context pack + original question to validation.
+2. Checks: sufficiency, scope violations (expect 0), abstention if evidence thin, attribution mapping.
+3. Result: `validation_passed: true`.
+
+If validation fails: abstain or escalate. Do not forward raw pack to LLM for a confident answer.
+
+### ⑦ Synthesis (second LLM call)
+
+**Components:** Agentic app → LLM → Agentic app → User
+
+1. App sends **validated context pack** + user question to LLM (still no token or entitlements).
+2. LLM synthesizes from pack with citations.
+3. Optional post-synthesis check: claims match cited chunks.
+4. App delivers grounded response to user.
+
+**Trace:** `validation_passed`, `cited_doc_ids`, `response_id`
+
+### End-to-end hops
+
+```text
+User → ① Gateway/IdP → ② App → ③ LLM (propose)
+  → ② App → ④ PEP/PDP (ALLOW + audit)
+  → ⑤ Retrieval gateway (pack) → ② App (log)
+  → ⑥ Validation (pass) → ③ LLM (synthesize) → ② App → User
+```
+
+### Examiner replay (without chat transcript)
+
+| Question | Artifact |
+| --- | --- |
+| Who? | `sub: officer-123` in audit + session |
+| What was proposed? | `retrieve_documents` on `policy-engine` |
+| Which policy decided? | `pgar.retrieval.corpus/v2` |
+| Verdict before search? | `ALLOW` in `aud-7c1a` |
+| What did the model see? | `pack-9f2e` chunk list + scores |
+| What was delivered? | Answer citing `policy-wire-limits-v3` |
+
+See [Audit & replay](/playbooks/pgar-runtime/foundation/audit-and-replay).
+
+### Multi-corpus note
+
+If claims were `["policy-engine:read", "hr-policies:read"]`, the officer may search **either** corpus when proposed, but each call still targets **one corpus**. Wire limits → `policy-engine`. Leave policy → `hr-policies`. Proposing `legal-contracts` without entitlement → **DENY at step ④**.
+
+## Failure classes
+
+- **ACL in prompt:** "don't retrieve HR docs" instead of PDP
+- **Post-search filter:** top-k returned then filtered (leak in logs)
+- **Skip validation:** raw pack to LLM
+- **Direct index access:** app bypasses PEP for "read-only" search
+
+## Context pack audit record
+
+Log: `sources`, `scores`, `ranker_version`, `policy_version`, `pep_verdict`, `pack_token_count`.
+
+## Eval overlap
+
+[Eval plane Context](/playbooks/eval-engineering/plane-context): recall@k, scope violations, abstention.
+
+## Trace fields
+
+`retrieve_proposal`, `corpus`, `pep_verdict`, `context_pack_id`, `scope_violations`, `validation_passed`
+
+See: [G.A.I.N RAG](/frameworks/gain-rag) · [RAG Is Not a Database](/insights/rag-is-not-a-database)

@@ -17,18 +17,26 @@ authors: [iamsharmajitender]
 
 # RAG Is Not a Database
 
+*Runtime context construction for the right principal, on this request, with replay.*
+
 A team ships RAG, passes the demo, and three weeks later a user retrieves a document they were never allowed to see. The vector store did its job. The architecture was never there to stop it.
 
-I see the same root cause every time: teams ask which vector database to buy before they have defined what "retrieval" means in their system. That question assumes RAG is a data layer: ingest documents, embed them, query at runtime, paste chunks into a prompt. Storage solved, problem solved.
+I see the same root cause every time: teams ask which vector database to buy before they have defined what "retrieval" means in their system. In practice that looks like: Pinecone or pgvector chosen in week one, data engineering owns ingest, product owns the chatbot, and **`similarity_search(k=5)`** ships from the notebook as "production RAG." Nobody owns **query-time governance**.
 
-It is not. A vector index is one component in a **context construction pipeline** that runs on every user request. Identity, freshness, ranking, abstention, and attribution all decide whether the model answers from evidence or invents from fluency. The database does not do that work. The architecture around it does.
+That question assumes RAG is a data layer: ingest documents, embed them, query at runtime, paste chunks into a prompt. Storage solved, problem solved.
 
-This is an **architecture breakdown** of what RAG actually is in production.
+It is not. The vector index is a **candidate store**. The **application owns truth** at query time: who may see which chunks, which survive ranking, and whether the model may answer at all. In audit, RAG is not "search." It is **evidence assembly with identity and replay**.
+
+This is an **architecture breakdown** of what RAG actually is in production. For principles, see [G.A.I.N RAG](/frameworks/gain-rag).
+
+:::info[Related]
+**Foundation insight.** When agents propose `retrieve_*` tools, continue to [Retrieval Is a Governed Action](/insights/retrieval-is-a-governed-action) for PEP/PDP enforcement on that path.
+:::
 
 :::tip[THE CLAIM]
 **RAG is not a database. It is runtime context construction:** a governed pipeline that assembles the right evidence, for the right principal, at query time, before inference begins.
 
-Treating RAG as storage leads teams to optimize embedding models and chunk sizes while skipping the layers that decide whether the answer is grounded: who may see which documents, which chunks survive ranking, and what happens when retrieval returns nothing worth citing.
+Buying a vector DB answers **where chunks live**, not **who may see them or when the model may answer**. Treating RAG as storage leads teams to optimize embedding models and chunk sizes while skipping the layers that decide whether the answer is grounded.
 :::
 
 <!-- truncate -->
@@ -47,8 +55,8 @@ Production RAG does not look like that. At query time the system must:
 
 None of those steps live inside the vector store. The store holds vectors and metadata. The **pipeline** owns truth boundaries.
 
-| Database mental model | RAG as context construction |
-| --- | --- |
+| | Database mental model | RAG as context construction |
+| --- | --- | --- |
 | **Primary job** | Persist and return stored records | Assemble governed evidence for one inference call |
 | **Success metric** | Query latency, index size | Grounded answer with attributable sources |
 | **Identity** | Often ignored until audit | Scoped retrieval per principal from day one |
@@ -58,35 +66,54 @@ None of those steps live inside the vector store. The store holds vectors and me
 
 The gap shows up in regulated environments first. An auditor does not ask which vector DB you picked. They ask: **who retrieved what, under which policy, and what did the model see?** A database answer does not satisfy that question. A pipeline with identity-scoped retrieval, ranked context packs, and structured attribution does.
 
+### Two failure modes (do not conflate them)
+
+A database mindset treats both as "bad query results." A pipeline mindset treats them as **different design problems**:
+
+| Failure | What happened | System response |
+| --- | --- | --- |
+| **Empty retrieval** | Nothing worth citing | **Abstain**; do not let the model guess |
+| **Wrong retrieval** | Something plausible, not true | **Ranking, thresholds, attribution**; cite or refuse |
+
+Symptoms in production map cleanly: **leakage** when identity never bound retrieval; **confident wrong cites** when cosine similarity passed but ranking did not; **no replay story** when you have index stats and chat logs but not the assembled context pack. Same root cause: the pipeline was never designed, only the index.
+
 ## What actually runs at query time
 
 RAG is not "fetch top-k chunks." It is a short-lived assembly line that produces a **context pack**: the bounded input the model is allowed to reason over.
 
 ```mermaid
-flowchart LR
+flowchart TD
     subgraph query["① Query ingress"]
+        direction TB
         Q["User question"]
         ID["Identity / claims"]
     end
 
     subgraph retrieve["② Retrieval"]
+        direction TB
         HY["Hybrid search"]
         FIL["Metadata + ACL filter"]
     end
 
     subgraph rank["③ Rank & pack"]
+        direction TB
         RR["Re-rank"]
         PACK["Context pack + budget"]
     end
 
     subgraph infer["④ Inference"]
+        direction TB
         LLM["LLM"]
         OUT["Cite or abstain"]
     end
 
     Q --> HY
     ID --> FIL
-    HY --> FIL --> RR --> PACK --> LLM --> OUT
+    HY --> FIL
+    FIL --> RR
+    RR --> PACK
+    PACK --> LLM
+    LLM --> OUT
 
     classDef input fill:#dbeafe,stroke:#93c5fd,color:#1e293b
     classDef process fill:#ede9fe,stroke:#c4b5fd,color:#1e293b
@@ -112,7 +139,7 @@ Four boundaries, one request:
 Truth is the outcome of the full pipeline: scoped retrieval, ranked evidence, attributed context, and an explicit decision to answer or abstain. Optimizing the index without designing these layers is how teams ship fluent wrong answers at scale.
 :::
 
-### Demo vs production
+## Demo vs production
 
 | Layer | Demo default | Production default |
 | --- | --- | --- |
@@ -125,18 +152,6 @@ Truth is the outcome of the full pipeline: scoped retrieval, ranked evidence, at
 
 The demo path works in a notebook. The production path is what survives the first compliance review.
 
-## What this looks like when it breaks
-
-Teams living in the database mental model do not announce it. They ship features that look like RAG until production traffic arrives. Three symptoms show up first:
-
-- **Leakage.** A user retrieves chunks from documents their role should never see. The vector store returned a valid result. The pipeline never bound retrieval to identity.
-- **Confident wrong cites.** The model answers with footnotes — and the sources do not support the claim. Cosine similarity passed; ranking and score thresholds never ran.
-- **No replay story.** An auditor asks what the model saw on March 12. The team has index stats and prompt logs, not the assembled context pack.
-
-Two failure modes get conflated: **empty retrieval** (nothing worth citing) and **wrong retrieval** (something plausible, not true). The first needs abstention. The second needs ranking, eval, and attribution. A database framing treats both as "bad query results." A pipeline framing treats them as distinct design problems.
-
-Indexing is not where RAG quality is won. Teams spend months on chunking and embedding, then ship vector top-k at query time. Offline work is necessary. Scoped, ranked, attributable retrieval at query time is what production runs on.
-
 ## The procurement reframe
 
 Wrong question: "Which vector database?" Right questions:
@@ -147,11 +162,9 @@ Wrong question: "Which vector database?" Right questions:
 
 Freshness and scope answer to the pipeline too. Stale embeddings, document versions, who-may-see-what-today, sources spread across CRM, tickets, and policy engines: none of that lives in one datastore. Which is the whole point.
 
-## Where I actually land
+Context construction is necessary. In **agentic RAG** it is also a **governed action**: the model or orchestrator proposes a search; policy decides whether it runs and which corpus may enter context. That is where [Retrieval Is a Governed Action](/insights/retrieval-is-a-governed-action) picks up — this insight defines the pipeline; PGAR defines enforcement when agents propose `retrieve_*` tools.
 
-I'm not saying vector stores don't matter, or that chunking is optional. You need storage. You need indexing. The mistake is stopping there.
-
-The teams that ship trustworthy RAG treat the index as **input to a pipeline**, not the product. They design identity binding, ranking thresholds, context-pack logging, and abstention before they debate embedding dimensions. Those are the layers an auditor, a regulator, and a customer who acted on a wrong answer will actually hold you to.
+Vector stores matter. Chunking matters. The mistake is stopping there. Trustworthy teams treat the index as **input to a pipeline**, not the product. They design identity binding, ranking thresholds, context-pack logging, and abstention before they debate embedding dimensions.
 
 Stop asking "which vector database?" Start asking **"what assembles evidence for this principal, on this request, and what do we do when that assembly fails?"**
 

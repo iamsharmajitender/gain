@@ -1,0 +1,68 @@
+---
+slug: further-reading
+title: "Further Reading (External): PGAR Runtime"
+sidebar_label: Further reading
+description: Curated third-party resources on PDP/PEP, OAuth, policy engines, and agent authorization, mapped to the PGAR playbook series.
+tags:
+  - governance-trust
+  - arch
+  - gain
+  - agents
+  - policy
+---
+
+# Further reading (external)
+
+Curated **third-party** writing on policy enforcement, authorization, and agent runtimes, complementary to the [PGAR Blueprint](/blueprints/pgar-blueprint) series.
+
+:::tip[HOW TO USE THIS PAGE]
+Start with **Policy engines & PEP/PDP**, then jump to the section matching what you are building.
+:::
+
+<!-- truncate -->
+
+## Policy engines & PEP/PDP
+
+| Resource | Why read it |
+| --- | --- |
+| [Open Policy Agent (OPA)](https://www.openpolicyagent.org/docs/latest/) | Rego policies, decoupled PDP, JSON decision API |
+| [Amazon Cedar](https://www.cedarpolicy.com/) | Authorization policy language, entity-based access |
+| [Auth0 FGA / Zanzibar models](https://fga.dev/) | Relationship-based access for fine-grained entitlements |
+| [NIST ABAC guide (SP 800-162)](https://csrc.nist.gov/publications/detail/sp/800-162/final) | Attribute-based access control vocabulary |
+
+## Identity & token boundaries
+
+| Resource | Why read it |
+| --- | --- |
+| [OAuth 2.0 RFC 6749](https://datatracker.ietf.org/doc/html/rfc6749) | Token flows, client vs resource owner |
+| [OpenID Connect Core](https://openid.net/specs/openid-connect-core-1_0.html) | ID tokens, claims, session binding |
+| [RFC 8693 Token Exchange](https://datatracker.ietf.org/doc/html/rfc8693) | Delegation patterns for agent acting-on-behalf-of |
+
+## Agents & tool authorization
+
+| Resource | Why read it |
+| --- | --- |
+| [Model Context Protocol spec](https://modelcontextprotocol.io/) | Tool surface conventions (still need PEP for side effects) |
+| [OWASP LLM Top 10](https://owasp.org/www-project-top-10-for-large-language-model-applications/) | Injection, excessive agency, supply chain |
+
+## On this site
+
+| Topic | Page |
+| --- | --- |
+| Executive PGAR | [Policy-Governed Agent Runtime](/insights/policy-governed-agent-runtime) |
+| PGAR + RAG | [PGAR with RAG](/insights/retrieval-is-a-governed-action) |
+| Eval Action plane | [Eval plane Action](/playbooks/eval-engineering/plane-action) |
+| Agent principles | [G.A.I.N Agents](/frameworks/gain-agents) |
+
+## Series map
+
+| Playbook | External anchor |
+| --- | --- |
+| [Policy contracts](/playbooks/pgar-runtime/foundation/policy-contracts) | OPA input JSON shape |
+| [PEP enforcement](/playbooks/pgar-runtime/foundation/pep-enforcement) | XACML PEP/PDP separation |
+| [PDP surfaces](/playbooks/pgar-runtime/foundation/pdp-policy-surfaces) | Cedar / Rego policy modules |
+| [Step-up](/playbooks/pgar-runtime/foundation/step-up-and-attestation) | OAuth step-up / MFA patterns |
+| [Audit & replay](/playbooks/pgar-runtime/foundation/audit-and-replay) | Immutable audit log design |
+| [Domain: RAG](/playbooks/pgar-runtime/domain/rag-retrieval) | [RAG Is Not a Database](/insights/rag-is-not-a-database) |
+
+[← PGAR Blueprint](/blueprints/pgar-blueprint) · [Policy-Governed Agent Runtime](/insights/policy-governed-agent-runtime)

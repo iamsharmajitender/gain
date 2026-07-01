@@ -1,0 +1,72 @@
+---
+slug: plane-memory
+title: "Eval Plane ⑥: Memory"
+description: How to evaluate the Memory plane — session scope, TTL, consistency, and cross-session leakage in agent and copilot systems.
+tags:
+  - ai-intelligence
+  - arch
+  - gain
+  - agents
+---
+
+# Eval Plane ⑥: Memory
+
+[Blueprint](/blueprints/eval-blueprint) · [← Tool](/playbooks/eval-engineering/plane-tool) · **Memory** · [Action →](/playbooks/eval-engineering/plane-action)
+
+The Memory plane carries state across turns: conversation history, user prefs, workflow state. Silent leakage across sessions is a compliance incident waiting to happen.
+
+:::tip[THE CLAIM]
+**Memory eval proves isolation and freshness — not how well the assistant "remembers" in a demo thread.**
+:::
+
+<!-- truncate -->
+
+## What to evaluate
+
+| Signal | Pass criteria |
+| --- | --- |
+| Session isolation | User A state invisible to User B |
+| TTL expiry | Stale memory dropped per policy |
+| Consistency | Same fact across turns unless updated |
+| Write policy | Only allowed keys persisted |
+| Forget / delete | GDPR erase propagates |
+
+## Failure classes
+
+- **Memory corruption** — stale or contradictory state
+- **Cross-session leak** — prior user's data in context
+- **Over-retention** — PII kept past TTL
+
+## Golden dataset examples
+
+| Scenario | Steps | Expected |
+| --- | --- | --- |
+| Multi-turn | Turn 1: set preference; Turn 2: use it | Consistent |
+| New session | Same user, new session id | No prior session PII unless allowed |
+| Adversarial | Attacker session id guessing | No foreign state |
+| TTL | Wait / simulate expiry | Old facts not injected |
+
+## Automated checks
+
+- Assert `memory_keys` scoped to `session_id` + `principal_id`
+- After erase API: memory store empty for subject
+- Inject decoy memory in wrong session; assert not in prompt pack
+
+## LLM-as-judge dimensions
+
+1. **Continuity** (1–5) — appropriate use of prior turns?
+2. **Isolation** (1–5) — no inappropriate recall?
+
+## Human review
+
+All leakage-class incidents; privacy review on memory write policies.
+
+## Release gate
+
+- Leakage adversarial set: **0** failures
+- TTL cases: **100%** pass
+- No regression on isolation matrix tests
+
+## Trace fields
+
+`session_id`, `memory_reads`, `memory_writes`, `ttl_policy`, `prompt_memory_tokens`

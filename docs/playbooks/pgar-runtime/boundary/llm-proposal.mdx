@@ -1,0 +1,61 @@
+---
+title: "PGAR Boundary ③: LLM Proposal"
+sidebar_label: ③ LLM proposal
+description: Tool schemas only, proposal-not-permission, and keeping authority out of the model boundary.
+tags:
+  - governance-trust
+  - arch
+  - gain
+  - agents
+  - policy
+  - llm
+---
+
+# PGAR Boundary ③: LLM Proposal
+
+[Blueprint](/blueprints/pgar-blueprint) · [← Agentic app](/playbooks/pgar-runtime/boundary/agentic-app) · **LLM proposal** · [PEP + PDP →](/playbooks/pgar-runtime/boundary/pep-pdp)
+
+The LLM operates on conversation and tool schemas. It **proposes** tool calls. It does not **permit** them.
+
+:::tip[THE CLAIM]
+**The LLM boundary is proposal-only. Authority, tokens, and policy text stop at the agentic app adapter.**
+:::
+
+<!-- truncate -->
+
+## Appropriate LLM work
+
+| Task | Why prediction is fine |
+| --- | --- |
+| Parse user intent | Language understanding |
+| Select tool sequence | Planning |
+| Draft user-facing explanation | Fluency |
+| Propose `retrieve_documents` args | Search strategy |
+
+## Inappropriate LLM work (belongs in PDP)
+
+| Task | Owner |
+| --- | --- |
+| "Is this wire allowed?" | PDP |
+| "May this principal see corpus X?" | PDP |
+| "Does amount exceed limit?" | PDP |
+| "Record approval for audit" | PEP |
+
+## Tool manifest
+
+Only tools in the manifest appear in the LLM schema. Unknown proposals are rejected by the agentic app before PEP.
+
+See [Domain: tool registry](/playbooks/pgar-runtime/domain/tool-registry).
+
+## Failure classes
+
+- **Policy in system prompt:** limits as instructions instead of PDP
+- **Credential injection:** env vars visible to model runtime
+- **Unbounded tools:** dynamic schema includes admin operations
+- **Proposal = execution:** framework auto-runs tools without PEP
+
+## Trace fields
+
+`model_id`, `tools_in_schema`, `proposal`, `proposal_in_manifest`, `llm_payload_hash`
+
+See: [Token & session boundary](/playbooks/pgar-runtime/foundation/token-and-session-boundary) · [Boundary overview](/playbooks/pgar-runtime/boundary)

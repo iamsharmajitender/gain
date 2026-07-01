@@ -1,0 +1,57 @@
+---
+title: "PGAR Boundary ⑤: Downstream"
+sidebar_label: ⑤ Downstream
+description: Re-authorization, side-effect execution, and returning results to the agentic app, not the LLM directly.
+tags:
+  - governance-trust
+  - arch
+  - gain
+  - agents
+  - policy
+---
+
+# PGAR Boundary ⑤: Downstream
+
+[Blueprint](/blueprints/pgar-blueprint) · [← PEP + PDP](/playbooks/pgar-runtime/boundary/pep-pdp) · **Downstream** · [Tool registry →](/playbooks/pgar-runtime/domain/tool-registry)
+
+Downstream services (payment hub, retrieval gateway, CRM APIs) execute **only on PEP ALLOW**. They re-authorize the token. Results return to the agentic app.
+
+:::tip[THE CLAIM]
+**PGAR does not replace downstream re-auth. It governs the proposal mile; ensures nothing reaches downstream without ALLOW logged first.**
+:::
+
+<!-- truncate -->
+
+## Double authorization
+
+| Layer | Question |
+| --- | --- |
+| **PEP + PDP** | Should this agent proposal run for this principal? |
+| **Downstream** | Does this token still permit this operation on this resource? |
+
+Both must pass. PGAR without downstream re-auth is half a control.
+
+## Return path
+
+```
+Downstream → PEP (optional audit of execution) → Agentic app → (validation) → LLM
+```
+
+Results do not go directly to the LLM. The app sanitizes, logs, and decides what the model may see.
+
+## Failure classes
+
+- **Trust PEP only:** downstream skips token check
+- **Result to LLM raw:** PII or auth headers in tool result
+- **No idempotency:** retry after timeout doubles payment
+- **Orphan execution:** downstream runs without matching audit id
+
+## Idempotency
+
+High-risk tools require idempotency keys in proposal context. PEP forwards key to downstream; replays safe.
+
+## Trace fields
+
+`downstream_service`, `downstream_request_id`, `downstream_status`, `idempotency_key`, `return_to_app_ts`
+
+See: [Audit & replay](/playbooks/pgar-runtime/foundation/audit-and-replay) · [Domain: tool registry](/playbooks/pgar-runtime/domain/tool-registry) · [Boundary overview](/playbooks/pgar-runtime/boundary)

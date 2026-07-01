@@ -12,6 +12,15 @@ const posts: {
   to: string;
 }[] = [
   {
+    title: 'PGAR with RAG',
+    date: 'Jul 10, 2026',
+    readTime: 10,
+    description:
+      'Retrieval is not a database query; it is a governed action. How PGAR applies when context construction must be scoped, auditable, and enforced before inference.',
+    typeTag: 'arch',
+    to: '/insights/retrieval-is-a-governed-action',
+  },
+  {
     title: 'Policy-Governed Agent Runtime',
     date: 'Jun 25, 2026',
     readTime: 12,

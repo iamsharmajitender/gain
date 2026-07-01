@@ -1,0 +1,98 @@
+---
+title: "Token & Session Boundary"
+sidebar_label: ② Token & session
+description: What stays in the agentic app, what the LLM sees, and the PGAR test for credential isolation.
+tags:
+  - governance-trust
+  - arch
+  - gain
+  - agents
+  - policy
+---
+
+# Token & Session Boundary
+
+[Blueprint](/blueprints/pgar-blueprint) · [← Policy contracts](/playbooks/pgar-runtime/foundation/policy-contracts) · **Token & session** · [PEP enforcement →](/playbooks/pgar-runtime/foundation/pep-enforcement)
+
+The bearer token and claims live in the **agentic app session**. They attach to every Agentic App → PEP → downstream call. They **never** cross the LLM boundary.
+
+:::tip[THE CLAIM]
+**If roles, entitlements, or tokens appear in the LLM payload, you have prompt governance, not PGAR.**
+:::
+
+<!-- truncate -->
+
+## What the agentic app holds
+
+```json
+{
+  "session_id": "sess-8f2a",
+  "token": "eyJhbGciOiJSUzI1NiIs...",
+  "claims": {
+    "sub": "officer-123",
+    "roles": ["corporate_banking_officer"],
+    "emts": { "payments.lookup": true },
+    "limits": { "wire.auto_approved": 25000 }
+  }
+}
+```
+
+:::note[About `claims` (and `limits` in particular)]
+`sub` and `roles` align with common OIDC/JWT practice. `emts` is **entitlements** shorthand in this series (production systems often use OAuth scopes, app roles, or custom IdP claims instead).
+
+**Numeric limits in the token are less universal.** In banking they usually live in:
+
+- A **limits engine** or core banking service
+- **PDP context** assembled at decision time (the PEP enriches SARAC before calling the PDP)
+- **Risk or policy stores**, not the IdP
+
+Some teams put custom numeric claims in tokens via Keycloak or Azure mappers for simple cases. Many architects **avoid** limits in JWTs because they change often, are hard to revoke quickly, and bloat the token.
+
+So `limits: { "wire.auto_approved": 25000 }` in this example means **policy-relevant attributes the PDP may use**, not "every bank embeds wire caps in OIDC." The agentic app session may hold them after ingress, or the PEP may fetch them at enforcement time and pass them in SARAC **context**. Either way, they stay out of the LLM payload.
+
+See [Policy contracts](/playbooks/pgar-runtime/foundation/policy-contracts) for how subject and context map to SARAC.
+:::
+
+## What the LLM sees
+
+```json
+{
+  "messages": [{ "role": "user", "content": "Send wire to Acme for INV-8842" }],
+  "tools": [
+    { "name": "lookup_beneficiary", "parameters": { "payee_name": "string" } },
+    { "name": "initiate_wire", "parameters": { "amount": "number" } }
+  ]
+}
+```
+
+No `Authorization` header. No roles. No limits. No policy text.
+
+## The PGAR test (automate this)
+
+| Check | Pass criteria |
+| --- | --- |
+| LLM request scan | Zero token patterns, zero `roles`/`emts`/`limits` keys |
+| Tool result hygiene | Downstream secrets stripped before model sees results |
+| Session binding | Every PEP call uses same `sub` as ingress token |
+| Env injection | No credentials in model env or system prompt |
+
+## Failure classes
+
+- **Token in context:** model prompt includes bearer token or API key
+- **Entitlements in system prompt:** "you may not exceed $25k" instead of PDP
+- **Session bleed:** concurrent users share orchestration state
+- **Claim staleness:** long agent loop uses expired token without refresh
+
+## Implementation checklist
+
+1. Ingress validates token once; agentic app stores session reference
+2. LLM adapter strips all auth fields before API call
+3. PEP receives `proposal + token + claims` from app only
+4. Tool results sanitized (no raw downstream auth headers)
+5. Token refresh on TTL boundary for multi-step flows
+
+## Trace fields
+
+`session_id`, `sub`, `token_iat`, `token_exp`, `llm_payload_hash`, `credential_leak_scan`
+
+See: [Boundary: Agentic app](/playbooks/pgar-runtime/boundary/agentic-app) · [Boundary: LLM proposal](/playbooks/pgar-runtime/boundary/llm-proposal)

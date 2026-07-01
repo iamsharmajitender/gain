@@ -1,0 +1,100 @@
+---
+slug: human-review
+title: "Human Review: Manual Eval That Calibrates the System"
+description: Playbooks for human evaluation in production AI — sampling strategy, rubrics, adjudication, and how manual scores anchor automated and LLM-as-judge gates.
+tags:
+  - ai-intelligence
+  - arch
+  - gain
+---
+
+# Human Review: Manual Eval That Calibrates the System
+
+Human review does not scale to every request. It **anchors truth** for everything that does. Without a human-labeled calibration set, LLM-as-judge drifts, automated checks miss nuance, and leadership gets a false sense of precision.
+
+Part of the [Eval Framework Blueprint](/blueprints/eval-blueprint) series.
+
+:::tip[THE CLAIM]
+**Humans own rubric definition, calibration, high-risk adjudication, and audit samples — not every passing PR.**
+:::
+
+<!-- truncate -->
+
+## Three human review queues
+
+| Queue | Trigger | Volume | Output |
+| --- | --- | --- | --- |
+| **Calibration** | Weekly sample from golden + prod | 50–200 cases/week | Judge tuning, rubric drift alerts |
+| **High-risk** | `risk_tier: high` or policy-adjacent | 100% of cases | Pass/fail for release |
+| **Audit** | Regulator-ready random sample | Monthly batch | Signed review record |
+
+## Reviewer workflow
+
+1. **Blind to model version** when scoring quality (avoid brand bias)
+2. **See full trace** across planes — not final answer only
+3. **Score per rubric dimension** (1–5 anchored scale)
+4. **Tag failure class** if any dimension ≤ 2
+5. **Add notes** for dataset enrichment
+
+## Anchored rubric template (1–5)
+
+Use the same anchors across planes; plane playbooks add dimension-specific criteria.
+
+| Score | Meaning |
+| --- | --- |
+| **5** | Fully meets criteria; no material issues |
+| **4** | Meets criteria; minor issues that do not affect trust |
+| **3** | Partial; user might be misled or task incomplete |
+| **2** | Significant failure; wrong, unsafe, or ungrounded |
+| **1** | Critical failure; harm, policy violation, or fabrication |
+
+**Gate rule:** Any dimension at **≤ 2** on a high-risk case → fail. Median &lt; 4 on representative sample → investigate before release.
+
+## Dimensions by concern (pick 3–5 per use case)
+
+| Dimension | Humans score best when |
+| --- | --- |
+| **Grounding** | Subtle misquotes, wrong doc, missing citation |
+| **Policy fit** | Gray-area compliance, tone in regulated contexts |
+| **Task completion** | Multi-step workflows, partial answers |
+| **Clarity** | Jargon, ambiguous next steps |
+| **Trust** | Overconfidence, missing uncertainty |
+
+## Calibration protocol (LLM-as-judge alignment)
+
+1. Humans score **calibration split** (see [Golden Datasets](/playbooks/eval-engineering/golden-datasets))
+2. Run judge on same cases blind
+3. Measure Cohen's κ per dimension; target **κ ≥ 0.7**
+4. If below threshold: revise rubric anchors or judge prompt — not the holdout set
+5. Re-run monthly; alert on κ drift
+
+## What humans should not do
+
+- Score every CI run (use judge + automation)
+- Approve without trace visibility
+- Change golden expected outputs during review to match model (log model failure instead)
+- Single reviewer on high-risk cases (require 2-of-3 or expert sign-off)
+
+## Review UI requirements
+
+- Side-by-side: input, retrieved chunks, tool calls, policy verdicts, output
+- Plane timeline (same order as production)
+- One-click: "promote to golden dataset" with failure class pre-filled
+- Immutable review record: reviewer, timestamp, rubric version, scores
+
+## Sampling from production
+
+See [Online & Dynamic Eval](/playbooks/eval-engineering/online-dynamic) for sampling rates, shadow scoring, and drift alerts.
+
+| Stream | Rate | Filter |
+| --- | --- | --- |
+| Random | 0.5–2% | Stratify by use case |
+| Low judge confidence | 100% | Judge score borderline (e.g. 3±0.5) |
+| User thumbs-down | 100% | Already signal |
+| Policy near-miss | 100% | PEP returned STEP-UP or DENY |
+
+## Next in series
+
+- [LLM-as-Judge](/playbooks/eval-engineering/llm-as-judge) — scale what humans define
+- [Golden Datasets](/playbooks/eval-engineering/golden-datasets) — case library design
+- Plane playbooks: [Context](/playbooks/eval-engineering/plane-context) · [Action](/playbooks/eval-engineering/plane-action)

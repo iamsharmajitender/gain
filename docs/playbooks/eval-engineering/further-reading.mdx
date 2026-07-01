@@ -1,0 +1,124 @@
+---
+slug: further-reading
+title: "Further Reading (External): Eval Engineering"
+description: Curated third-party articles, guides, and tool docs on LLM and agent evaluation — mapped to the Eval Framework Blueprint series.
+tags:
+  - ai-intelligence
+  - arch
+  - gain
+  - observability
+  - llm
+  - agents
+---
+
+# Further reading (external)
+
+Curated **third-party** writing on LLM and agent evaluation — complementary to the [Eval Framework Blueprint](/blueprints/eval-blueprint) series. These are by other practitioners, not this site.
+
+:::tip[HOW TO USE THIS PAGE]
+Start with **Start here** for the full picture, then jump to the section that matches what you are building. The **Series map** at the bottom ties each external resource to a page in this series.
+:::
+
+<!-- truncate -->
+
+## Start here
+
+| Resource | Author / source | Why read it |
+| --- | --- | --- |
+| [LLM Evaluation Framework for RAG and AI Agents](https://www.fluence.network/blog/llm-evaluation-framework/) | Fluence | Operating-model view: golden sets, human + judge, RAG + agents, gates, prod monitoring, regression loop |
+| [A complete guide to RAG evaluation](https://www.evidentlyai.com/llm-guide/rag-evaluation) | Evidently AI | Dev vs stress vs prod vs regression; retrieval vs generation; synthetic data; monitoring |
+| [Evals Skills for Coding Agents](https://hamel.dev/blog/posts/evals-skills/) | Hamel Husain | Product evals from 50+ companies: error analysis, judge design, calibration, RAG split, synthetic data |
+| [hamelsmu/evals-skills](https://github.com/hamelsmu/evals-skills) | Hamel (open source) | Actionable skills: `eval-audit`, `error-analysis`, `validate-evaluator`, `evaluate-rag`, synthetic generation |
+
+Hamel's broader eval writing: [hamel.dev](https://hamel.dev).
+
+## Production pipelines & CI gates
+
+| Resource | Why read it |
+| --- | --- |
+| [LLM Evaluation in Production (every deploy)](https://aloknecessary.github.io/blogs/llm-evaluation-in-production/) | Deep CI walkthrough: golden set, RAGAS, faithfulness/relevance, GitHub Actions gate |
+| [LLM Evals: Build a Production Regression Suite](https://www.metacto.com/blogs/llm-evals-regression-suite-production) | Golden dataset + scorers + runner + required CI gate; tiered scores, override rules |
+| [LLM regression testing](https://coverge.ai/blog/llm-regression-testing) | Grow golden sets from production failures; baseline comparison vs absolute thresholds |
+| [How to Build an LLM Evaluation Pipeline for CI/CD](https://bigthings.cloud/how-to-build-an-llm-evaluation-pipeline-for-ci-cd) | PR vs staging vs nightly tiers; deterministic + model-based scoring |
+| [Building a Production LLM Evaluation Harness in Pytest](https://dev.to/velsof/building-a-production-llm-evaluation-harness-in-pytest-cost-bounded-flake-aware-ci-gated-26pc) | Flake-aware multi-sample scoring, cost caps, regression vs baseline |
+| [LLM CI/CD](https://engineersofai.com/docs/ai-engineering/llmops/llm-ci-cd) | Judge gates + golden regression + canary; runnable harness patterns |
+
+## Agents (Tool, Action, multi-step)
+
+| Resource | Why read it |
+| --- | --- |
+| [12-metric framework from 100+ deployments](https://towardsdatascience.com/building-an-evaluation-harness-for-production-ai-agents-a-12-metric-framework-from-100-deployments/) | Retrieval + generation + tool selection, execution, multi-step coherence + prod cost/latency |
+| [Production-Ready LLM Agents: Offline Evaluation](https://towardsdatascience.com/production-ready-llm-agents-a-comprehensive-framework-for-offline-evaluation/) | Routing, judge, RAG pillars; CI + governance for agent offline eval |
+| [Policy-Governed Agent Runtime](/insights/policy-governed-agent-runtime) | On this site — deterministic Action plane (PEP/PDP) alongside agent eval |
+
+## LLM-as-judge & human calibration
+
+| Resource | Why read it |
+| --- | --- |
+| [How to Calibrate an LLM Judge](https://ai-tldr.dev/learn/evaluation-safety/llm-as-judge/calibrating-llm-judge/) | Gold set → agreement → inspect disagreements → rubric fixes; Cohen's κ; common judge biases |
+| [LLM as a Judge in Production (2026 playbook)](https://alatirok.com/llm-as-a-judge-production-playbook/) | Position bias, factuality vs tone, when judge is inappropriate, κ targets |
+| [Calibrate LLM-as-Judge with Human Corrections](https://www.langchain.com/resources/llm-as-a-judge) | Human corrections → few-shot calibration → track agreement (LangSmith Align Evals) |
+| [Efficient Inference for Noisy LLM-as-a-Judge](https://arxiv.org/html/2601.05420v1) | Academic: debiasing judge noise, PPI-style estimators when judge is imperfect |
+| [rusty-llm-jury](https://github.com/udapy/rusty-llm-jury) | TPR/TNR + Rogan–Gladen correction for true pass rate when judge is noisy |
+
+## RAG: retrieval vs generation (Data vs Context)
+
+| Resource | Why read it |
+| --- | --- |
+| [Evidently RAG guide](https://www.evidentlyai.com/llm-guide/rag-evaluation) | Best single external piece on splitting retrieval and generation |
+| [Alok's production eval post](https://aloknecessary.github.io/blogs/llm-evaluation-in-production/) | Explicit rule: retrieval metrics vs generation metrics on different schedules |
+| [evaluate-rag skill](https://github.com/hamelsmu/evals-skills/tree/main/skills/evaluate-rag) | Short, opinionated RAG eval workflow (Hamel) |
+
+## Online / dynamic eval & drift
+
+| Resource | Why read it |
+| --- | --- |
+| [Fluence framework](https://www.fluence.network/blog/llm-evaluation-framework/) | Prod monitoring feeding golden sets |
+| [Evidently RAG guide — production monitoring](https://www.evidentlyai.com/llm-guide/rag-evaluation) | Reference-free metrics on live queries |
+| [12-metric TDS article](https://towardsdatascience.com/building-an-evaluation-harness-for-production-ai-agents-a-12-metric-framework-from-100-deployments/) | Cost, P99, production health alongside quality |
+
+## Synthetic data & golden sets
+
+| Resource | Why read it |
+| --- | --- |
+| [generate-synthetic-data skill](https://github.com/hamelsmu/evals-skills/tree/main/skills/generate-synthetic-data) | Dimension-based tuples; human review before gating (Hamel) |
+| [Evidently RAG guide](https://www.evidentlyai.com/llm-guide/rag-evaluation) | Synthetic test sets for dev and adversarial stages |
+| [Coverge regression testing](https://coverge.ai/blog/llm-regression-testing) | Coverage-driven curation + incident → golden case |
+
+## Tool docs (implementation)
+
+Useful once you know what to measure:
+
+| Tool | Docs | Fits these planes |
+| --- | --- | --- |
+| [RAGAS](https://docs.ragas.io/) | Faithfulness, context precision/recall, answer relevance | Context, Reasoning, Outcome |
+| [DeepEval](https://docs.confident-ai.com/) | Pytest-style evals, CI-friendly | All planes via custom metrics |
+| [LangSmith](https://docs.smith.langchain.com/) | Traces, datasets, online eval, human review | Harness, online, human |
+| [Langfuse](https://langfuse.com/docs) | Traces, datasets, scoring, production monitoring | Harness, online, human |
+| [Promptfoo](https://www.promptfoo.dev/docs/intro) | PR evals, pairwise comparisons | CI gate, pairwise eval |
+
+## Suggested reading order (external only)
+
+1. **Fluence** or **Evidently RAG** — full picture
+2. **Hamel evals-skills** blog + skim GitHub skills
+3. **Alok production eval** or **metacto regression suite** — CI wiring
+4. **TDS 12-metric** or **offline agents** — if you ship agents
+5. **AI/TLDR judge calibration** — before trusting judge in gates
+
+## Series map
+
+| This series | Strongest external complement |
+| --- | --- |
+| [Eval Engineering (executive)](/insights/eval-engineering) | [Fluence framework](https://www.fluence.network/blog/llm-evaluation-framework/) |
+| [Eval Framework Blueprint](/blueprints/eval-blueprint) | [Hamel eval-audit skill](https://github.com/hamelsmu/evals-skills/tree/main/skills/eval-audit) + [metacto regression suite](https://www.metacto.com/blogs/llm-evals-regression-suite-production) |
+| [Golden Datasets](/playbooks/eval-engineering/golden-datasets) | [Coverge](https://coverge.ai/blog/llm-regression-testing) + [bigthings.cloud pipeline](https://bigthings.cloud/how-to-build-an-llm-evaluation-pipeline-for-ci-cd) |
+| [Human Review](/playbooks/eval-engineering/human-review) | [LangChain human corrections](https://www.langchain.com/resources/llm-as-a-judge) + [AI/TLDR calibration](https://ai-tldr.dev/learn/evaluation-safety/llm-as-judge/calibrating-llm-judge/) |
+| [LLM-as-Judge](/playbooks/eval-engineering/llm-as-judge) | [Alatirok playbook](https://alatirok.com/llm-as-a-judge-production-playbook/) + [validate-evaluator skill](https://github.com/hamelsmu/evals-skills/tree/main/skills/validate-evaluator) |
+| [Online & Dynamic Eval](/playbooks/eval-engineering/online-dynamic) | [Evidently prod monitoring](https://www.evidentlyai.com/llm-guide/rag-evaluation) + [TDS production metrics](https://towardsdatascience.com/building-an-evaluation-harness-for-production-ai-agents-a-12-metric-framework-from-100-deployments/) |
+| [Synthetic Generation](/playbooks/eval-engineering/synthetic-generation) | [generate-synthetic-data skill](https://github.com/hamelsmu/evals-skills/tree/main/skills/generate-synthetic-data) |
+| [Context](/playbooks/eval-engineering/plane-context) / [Data](/playbooks/eval-engineering/plane-data) | [Evidently RAG guide](https://www.evidentlyai.com/llm-guide/rag-evaluation) |
+| [Action](/playbooks/eval-engineering/plane-action) / [Tool](/playbooks/eval-engineering/plane-tool) | [TDS 12-metric](https://towardsdatascience.com/building-an-evaluation-harness-for-production-ai-agents-a-12-metric-framework-from-100-deployments/) + [Policy-Governed Agent Runtime](/insights/policy-governed-agent-runtime) |
+
+---
+
+[← Eval Framework Blueprint](/blueprints/eval-blueprint) · [Eval Engineering (executive)](/insights/eval-engineering)

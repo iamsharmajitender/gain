@@ -1,0 +1,132 @@
+---
+slug: golden-datasets
+title: "Golden Datasets: Building Eval Data That Predicts Production"
+description: How to design, version, and maintain golden datasets for plane-aware evaluation — representative tasks, edge cases, adversarial cases, and production replays.
+tags:
+  - ai-intelligence
+  - arch
+  - gain
+  - observability
+---
+
+# Golden Datasets: Building Eval Data That Predicts Production
+
+A golden dataset is the **institutional memory** of what "good" looks like for your AI system. Without it, every eval conversation devolves into anecdotes. With a bad one, you optimize for the demo and fail in production.
+
+Part of the [Eval Framework Blueprint](/blueprints/eval-blueprint) series.
+
+:::tip[THE CLAIM]
+**Golden datasets are versioned, plane-tagged, risk-tiered case libraries — not a one-time export of happy-path prompts.**
+:::
+
+<!-- truncate -->
+
+## Five dataset layers (build all five)
+
+| Layer | Purpose | Minimum size (per use case) |
+| --- | --- | --- |
+| **Representative** | Real user tasks | 50+ cases from prod sampling or domain workshops |
+| **Edge** | Boundaries, ambiguity, multi-step | 20+ cases |
+| **Adversarial** | Injection, misuse, policy bypass | 15+ cases |
+| **Incident replay** | Every production failure | 1 case per incident, permanent |
+| **Regression** | Locked baselines after each gate | Snapshot per release |
+
+## Case schema
+
+```json
+{
+  "id": "ctx-001",
+  "version": "2026.07.1",
+  "plane": ["context", "outcome"],
+  "scenario": "representative",
+  "risk_tier": "medium",
+  "input": {
+    "message": "What is our wire limit for tier-2 customers?",
+    "principal": { "role": "advisor", "segment": "tier-2" }
+  },
+  "trace_fixture": "s3://eval-fixtures/ctx-001-trace.json",
+  "expected": {
+    "must_cite": ["policy-wire-limits-v3"],
+    "must_not_cite": ["internal-draft-2024"],
+    "abstain_if_missing_evidence": true
+  },
+  "rubric_dims": ["grounding", "scope", "completeness"],
+  "automated": {
+    "citation_required": true,
+    "max_latency_ms": 8000
+  },
+  "failure_class": null,
+  "owner": "product-banking",
+  "source": "production_replay"
+}
+```
+
+## Plane tagging
+
+Tag every case with **which planes it exercises**. One case often spans multiple planes — that is correct. The harness scores each plane independently from the same replay.
+
+| Tag | When to include |
+| --- | --- |
+| `input` | Injection, malformed input, PII |
+| `data` | Stale source, wrong catalog version |
+| `context` | Retrieval scope, ranking, abstention |
+| `reasoning` | Multi-hop logic, tool selection |
+| `tool` | API args, error handling |
+| `memory` | Cross-turn state, session bleed |
+| `action` | Policy, authorization, side effects |
+| `outcome` | End-user task completion |
+
+## How to populate each layer
+
+### Representative tasks
+- Sample production traffic (redacted, consented) into a review queue
+- Domain experts label: task type, success criteria, risk tier
+- Promote to golden set after human confirms expected behavior
+
+### Edge cases
+- Workshop with support and compliance: "what almost went wrong?"
+- Boundary values: empty retrieval, max context, concurrent tools, timeout paths
+
+### Adversarial cases
+- Prompt injection in user and retrieved content
+- Tool argument manipulation
+- Requests for out-of-scope data
+- Jailbreak patterns relevant to your domain (not generic internet lists)
+
+### Incident replay
+- **SLA: incident → golden case within 7 days**
+- Store full trace fixture, not just final Q&A
+- Tag `failure_class` from taxonomy in [eval-strategy](/insights/eval-engineering)
+
+## Versioning and change control
+
+- Dataset version bumps on **any** case add/edit/remove
+- CI runs eval against `dataset@version` + `system@build`
+- Store `(dataset_version, system_version, scores)` for audit replay
+- Never edit a case in place after it gates a release — append a new case or supersede with `replaces: "ctx-001"`
+
+## Splitting datasets for judge calibration
+
+| Split | Use |
+| --- | --- |
+| **Calibration (15%)** | Tune LLM-as-judge against human scores |
+| **Holdout (15%)** | Final judge validation — never tune on this |
+| **Gate (70%)** | CI/CD release gate |
+
+## Anti-patterns
+
+| Anti-pattern | Why it fails |
+| --- | --- |
+| Single "accuracy" label per case | Hides which plane broke |
+| Copy-paste from public benchmarks | Domain and policy mismatch |
+| No adversarial layer | Production surprises are guaranteed |
+| Stale dataset (>90 days, no replay) | Drift makes scores meaningless |
+| Editing cases to make CI green | You are lying to the gate |
+
+## Next in series
+
+- [Synthetic Generation](/playbooks/eval-engineering/synthetic-generation) — scale edge & adversarial layers
+- [Online & Dynamic Eval](/playbooks/eval-engineering/online-dynamic) — production sampling & drift
+- [Human Review](/playbooks/eval-engineering/human-review) — score cases humans own
+- [LLM-as-Judge](/playbooks/eval-engineering/llm-as-judge) — scale scoring with calibration
+- [Eval Framework Blueprint](/blueprints/eval-blueprint) — full architecture

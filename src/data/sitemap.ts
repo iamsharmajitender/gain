@@ -83,6 +83,32 @@ export const handbookSections: SitemapSection[] = [
     links: frameworkSitemapLinks(),
   },
   {
+    id: 'blueprints',
+    title: 'Blueprints',
+    question: 'Reference designs: full operating models for a capability',
+    description:
+      'End-to-end reference architectures — how a capability fits together before you open the playbooks.',
+    href: '/blueprints',
+    links: [
+      {label: 'Overview', href: '/blueprints'},
+      {label: 'Eval Blueprint', href: '/blueprints/eval-blueprint', draft: true},
+      {label: 'PGAR Blueprint', href: '/blueprints/pgar-blueprint', draft: true},
+    ],
+  },
+  {
+    id: 'playbooks',
+    title: 'Playbooks',
+    question: 'Operational guides: gates, schemas, and plane recipes',
+    description:
+      'Implementation playbooks paired with blueprints — eval engineering, golden datasets, plane evals, and more.',
+    href: '/playbooks',
+    links: [
+      {label: 'Overview', href: '/playbooks'},
+      {label: 'Eval Engineering', href: '/playbooks/eval-engineering/golden-datasets', draft: true},
+      {label: 'PGAR Runtime', href: '/playbooks/pgar-runtime', draft: true},
+    ],
+  },
+  {
     id: 'insights',
     title: 'Insights',
     question: 'Narrative thinking: essays and field lessons',

@@ -1,5 +1,5 @@
 ---
-slug: eval-strategy
+slug: eval-engineering
 title: "Eval Engineering: The Control System for Trustworthy AI"
 description: Testing tells you the AI ran. Evals tell you it behaved. For non-deterministic systems, evaluation is the control system that turns AI risk into a managed, measurable, board-defensible discipline.
 tags:
@@ -131,6 +131,16 @@ Each plane introduces its own failure mode — invisible if you only score the f
 | **Memory** | Carries state | Stale or cross-session leakage |
 | **Action** | Executes the decision | Unauthorized or unsafe action |
 | **Outcome** | Delivers to the user | Fluent answer that fails the job |
+
+:::note[Why Data ≠ Context]
+Teams often merge these into one "RAG eval." That hides who owns the fix.
+
+**Data** asks: is the corpus correct, current, entitled, and indexed? (pipelines, catalogs, embeddings — mostly async)
+
+**Context** asks: for *this request*, did we retrieve, rank, filter, and pack the right evidence? (query-time retrieval — per inference)
+
+Same bad answer, different root cause: stale policy in the index is a **Data** failure; the right doc ranked fifth is a **Context** failure. Eval them separately so gates can read "data green, context red." See [Data plane](/playbooks/eval-engineering/plane-data) and [Context plane](/playbooks/eval-engineering/plane-context).
+:::
 
 A correct-looking answer built on the wrong document is a **retrieval failure**. A polished answer attached to an unsafe action is a **policy failure**. Score only the final string and you will ship both. The leadership implication is simple: **demand evaluation at every surface**, not one quality score at the end — because that is where the liability actually lives.
 
@@ -353,3 +363,20 @@ In non-deterministic systems, evals are not testing. **They are the control syst
 
 If no part of your architecture owns the question *"did this behave correctly under uncertainty?"*, then nothing does — and production will answer it for you, on its own timeline, at its own price. Eval engineering is how you take that answer back.
 :::
+
+## Build the framework (implementation series)
+
+Ready to implement? This article is the executive case. The **Eval Framework Blueprint** series covers plane-by-plane evals across **offline CI and online production**, with golden datasets, synthetic generation, replay, human review, and LLM-as-judge.
+
+**Start here:** [Eval Framework Blueprint](/blueprints/eval-blueprint)
+
+| Guide | Topic |
+| --- | --- |
+| [Golden Datasets](/playbooks/eval-engineering/golden-datasets) | Curated cases, versioning, splits |
+| [Synthetic Generation](/playbooks/eval-engineering/synthetic-generation) | Edge & adversarial coverage at scale |
+| [Online & Dynamic Eval](/playbooks/eval-engineering/online-dynamic) | Live sampling, shadow, canary, drift |
+| [Human Review](/playbooks/eval-engineering/human-review) | Manual eval, rubrics, calibration |
+| [LLM-as-Judge](/playbooks/eval-engineering/llm-as-judge) | Scaled scoring, pairwise comparison |
+| [① Input](/playbooks/eval-engineering/plane-input) · [② Data](/playbooks/eval-engineering/plane-data) · [③ Context](/playbooks/eval-engineering/plane-context) · [④ Reasoning](/playbooks/eval-engineering/plane-reasoning) | Ingress & intelligence planes |
+| [⑤ Tool](/playbooks/eval-engineering/plane-tool) · [⑥ Memory](/playbooks/eval-engineering/plane-memory) · [⑦ Action](/playbooks/eval-engineering/plane-action) · [⑧ Outcome](/playbooks/eval-engineering/plane-outcome) | Execution & delivery planes |
+| [Further reading (external)](/playbooks/eval-engineering/further-reading) | Curated third-party articles & tool docs |

@@ -1,0 +1,80 @@
+---
+slug: plane-context
+title: "Eval Plane ③: Context"
+description: How to evaluate the Context plane — retrieval precision, ranking, scope, packing, and abstention when evidence is thin.
+tags:
+  - ai-intelligence
+  - arch
+  - gain
+  - rag
+---
+
+# Eval Plane ③: Context
+
+[Blueprint](/blueprints/eval-blueprint) · [← Data](/playbooks/eval-engineering/plane-data) · **Context** · [Reasoning →](/playbooks/eval-engineering/plane-reasoning)
+
+The Context plane assembles evidence at query time: retrieve, rank, filter, pack, and abstain. It answers **what reached the model for this call** — not whether the corpus behind it is healthy.
+
+This is not the Data plane. Data owns freshness, lineage, ACL at ingest, and index correctness. Context owns whether *this user*, *this question*, got the right chunks in the pack. A scope leak can be a Data indexing bug or a Context filter bug — separate evals tell you which. Stale corpus is Data; wrong recall@k on a fresh index is Context. See [Data plane eval ←](/playbooks/eval-engineering/plane-data) and [RAG Is Not a Database](/insights/rag-is-not-a-database).
+
+:::tip[THE CLAIM]
+**Context eval measures whether the right evidence reached the model — not whether the final answer sounds right.**
+:::
+
+<!-- truncate -->
+
+## What to evaluate
+
+| Metric | Definition |
+| --- | --- |
+| **Recall@k** | Required doc in top-k |
+| **Precision@k** | Share of top-k that is relevant |
+| **Scope violations** | Out-of-policy chunks in pack |
+| **Abstention** | No answer when evidence below threshold |
+| **Attribution** | Cited chunks support claims |
+
+## Failure classes
+
+- **Retrieval failure** — wrong or missing evidence
+- **Over-retrieval** — noise drowns signal
+- **Scope leak** — cross-tenant or cross-role chunk
+
+## Golden dataset examples
+
+| Scenario | Expected |
+| --- | --- |
+| Representative | `must_retrieve: [policy-42]` |
+| Edge | Zero relevant docs → abstain |
+| Adversarial | Injected instruction in retrieved PDF → filtered |
+| Incident replay | Wrong chunk ranked first → fixed ranking |
+
+## Automated checks
+
+```python
+assert set(required_doc_ids) <= set(retrieved_ids[:k])
+assert len(scope_violations) == 0
+if expect_abstain:
+    assert response.abstained
+```
+
+## LLM-as-judge dimensions
+
+1. **Relevance** (1–5) — chunks address the question?
+2. **Sufficiency** (1–5) — enough to answer without guessing?
+3. **Scope** (1–5) — only entitled, on-topic material?
+
+## Human review
+
+Score attribution on high-risk cases: does each claim map to a cited chunk?
+
+## Release gate
+
+- Recall@k on golden set ≥ **baseline**
+- Scope adversarial: **0** leaks
+- Abstention cases: no confident answer without evidence
+
+## Trace fields
+
+`retrieved_chunks`, `scores`, `ranker_version`, `pack_token_count`, `abstention_reason`
+
+See also: [RAG Is Not a Database](/insights/rag-is-not-a-database) · [PGAR with RAG](/insights/retrieval-is-a-governed-action)

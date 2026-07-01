@@ -1,0 +1,71 @@
+---
+slug: plane-reasoning
+title: "Eval Plane ④: Reasoning"
+description: How to evaluate the Reasoning plane — faithfulness to context, conclusion quality, tool selection, and multi-step logic.
+tags:
+  - ai-intelligence
+  - arch
+  - gain
+  - llm
+---
+
+# Eval Plane ④: Reasoning
+
+[Blueprint](/blueprints/eval-blueprint) · [← Context](/playbooks/eval-engineering/plane-context) · **Reasoning** · [Tool →](/playbooks/eval-engineering/plane-tool)
+
+The Reasoning plane is where the model plans, synthesizes, and decides next steps. Context can be perfect and reasoning can still fail.
+
+:::tip[THE CLAIM]
+**Reasoning eval separates faithfulness (stays on evidence) from correctness (draws the right conclusion).**
+:::
+
+<!-- truncate -->
+
+## What to evaluate
+
+| Dimension | Automated | Judge | Human |
+| --- | --- | --- | --- |
+| Faithfulness to context | Claim ↔ chunk overlap | ✓ | High-risk |
+| Logical consistency | — | ✓ | ✓ |
+| Tool selection | Match expected tool | ✓ | Edge cases |
+| Uncertainty expression | — | ✓ | ✓ |
+| Hallucination | Citation required | ✓ | ✓ |
+
+## Failure classes
+
+- **Reasoning failure** — right evidence, wrong conclusion
+- **Hallucination** — claim without support
+- **Overconfidence** — no uncertainty when evidence thin
+
+## Golden dataset examples
+
+| Scenario | Fixture | Expected |
+| --- | --- | --- |
+| Multi-hop | Two docs needed | Both used in rationale |
+| Distractor | Similar wrong doc in pack | Ignored |
+| Abstain | Thin evidence | "Cannot determine from sources" |
+| Tool choice | "Check balance" | `get_balance` not `transfer` |
+
+## Automated checks
+
+- Every factual sentence has citation metadata
+- `planned_tool` ∈ allowed_manifest
+- Contradiction detector vs retrieved text (optional NLI model)
+
+## LLM-as-judge rubric (core)
+
+1. **Faithfulness** — claims supported by provided chunks only
+2. **Correctness** — conclusion matches domain expert answer
+3. **Calibration** — uncertainty when appropriate
+
+Use chain-of-thought in judge **internally**; store rationale JSON only.
+
+## Release gate
+
+- Faithfulness ≥ **4.0** avg on golden set (judge)
+- Hallucination cases: **0** critical (human adjudicated)
+- Tool-selection accuracy ≥ baseline on tool-heavy subset
+
+## Trace fields
+
+`model_id`, `prompt_version`, `reasoning_trace` (if exposed), `planned_tools`, `citations`

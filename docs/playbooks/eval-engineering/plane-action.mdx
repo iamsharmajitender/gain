@@ -1,0 +1,79 @@
+---
+slug: plane-action
+title: "Eval Plane ⑦: Action"
+description: How to evaluate the Action plane — policy enforcement, authorization, side effects, and auditability before irreversible operations execute.
+tags:
+  - ai-intelligence
+  - arch
+  - gain
+  - agents
+  - policy
+---
+
+# Eval Plane ⑦: Action
+
+[Blueprint](/blueprints/eval-blueprint) · [← Memory](/playbooks/eval-engineering/plane-memory) · **Action** · [Outcome →](/playbooks/eval-engineering/plane-outcome)
+
+The Action plane is where proposals become effects: payments, tickets, data changes. **Proposal is not permission.** Eval here is mostly deterministic.
+
+:::tip[THE CLAIM]
+**Action plane eval is policy and PEP verdict replay — LLM-as-judge does not sign off on money movement.**
+:::
+
+<!-- truncate -->
+
+## What to evaluate
+
+| Check | Method |
+| --- | --- |
+| PDP verdict (ALLOW/DENY/STEP-UP) | Automated replay |
+| Principal matches token | Automated |
+| Policy version pinned | Automated |
+| Side effect only after ALLOW | Automated trace order |
+| Audit record immutable | Automated |
+| Four-eyes when required | Scenario tests |
+
+## Failure classes
+
+- **Unsafe action** — executed without authorization
+- **Policy bypass** — tool called outside PEP
+- **Wrong subject** — action on behalf of wrong principal
+
+## Golden dataset examples
+
+| Scenario | Expected verdict |
+| --- | --- |
+| Under limit wire | ALLOW after PEP |
+| Over limit | STEP-UP or DENY |
+| Sanctions hit | DENY, no downstream call |
+| Adversarial | Model proposes action; PEP blocks |
+
+## Automated checks (primary)
+
+Replay `proposal + token + context` through PDP fixture:
+
+```
+assert verdict == expected
+assert downstream_called == (verdict == ALLOW)
+assert audit_event.policy_version == "pgar.payments/v3"
+```
+
+## Human review
+
+100% on new policy rules; sample audit monthly for regulator pack.
+
+## LLM-as-judge (limited)
+
+Judge may score **whether the proposal was well-formed** — never whether it should have executed.
+
+## Release gate
+
+- Policy regression suite: **100%** match to PDP golden verdicts
+- Zero unauthorized downstream calls on adversarial set
+- Audit completeness on all ACTION cases
+
+## Trace fields
+
+`proposal`, `pep_verdict`, `pdp_policy_version`, `downstream_request_id`, `audit_id`
+
+See: [Policy-Governed Agent Runtime](/insights/policy-governed-agent-runtime) · [PGAR with RAG](/insights/retrieval-is-a-governed-action) · [PGAR Blueprint](/blueprints/pgar-blueprint)

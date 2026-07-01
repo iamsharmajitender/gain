@@ -1,0 +1,79 @@
+---
+title: "Audit & Replay"
+sidebar_label: ⑥ Audit & replay
+description: Immutable verdict logs, examiner questions, and replaying authorization without chat transcripts.
+tags:
+  - governance-trust
+  - arch
+  - gain
+  - agents
+  - policy
+  - compliance
+---
+
+# Audit & Replay
+
+[Blueprint](/blueprints/pgar-blueprint) · [← Step-up](/playbooks/pgar-runtime/foundation/step-up-and-attestation) · **Audit & replay** · [Policy scenarios →](/playbooks/pgar-runtime/assurance/policy-test-scenarios)
+
+If you can answer examiner questions from PEP/PDP logs alone, you have PGAR. If you need the chat transcript, you do not.
+
+:::tip[THE CLAIM]
+**Audit is a verdict chain with policy version, immutable, written before side effects, redacted for retention.**
+:::
+
+<!-- truncate -->
+
+## What examiners ask
+
+- **Which policy version decided?** Every log carries `pgar.payments.wire/v3`, not "the system prompt from Tuesday."
+- **Was execution blocked until attestation?** Proof STEP_UP fired and ALLOW came only after four-eyes.
+- **Can you replay without model logs?** Subject, action, resource, context, verdict, before side effects.
+
+## Minimum audit record
+
+```json
+{
+  "audit_id": "aud-7c3e",
+  "ts": "2026-07-10T14:22:01Z",
+  "subject_sub": "officer-123",
+  "action": "initiate_wire",
+  "resource": { "beneficiary_id": "bene-acme-441" },
+  "context_redacted": { "amount": 47500, "sanctions_status": "clear" },
+  "policy_version": "pgar.payments.wire/v3",
+  "verdict": "STEP_UP",
+  "reason_code": "wire_above_auto_approved",
+  "downstream_called": false
+}
+```
+
+## RAG extension: context pack log
+
+For retrieval paths, also log the assembled context pack (sources, scores, policy version). Answers *"what did the model see on March 12?"*
+
+See [RAG retrieval](/playbooks/pgar-runtime/domain/rag-retrieval).
+
+## Failure classes
+
+- **Chat as audit:** only conversation history, no PEP record
+- **Post-hoc narrative:** log written after downstream success
+- **Missing policy version:** cannot prove which rules applied
+- **PII in immutable log:** retention violation
+
+## Replay tooling
+
+1. Ingest audit id or (subject, time range, action)
+2. Reconstruct SARAC from stored fields
+3. Re-run PDP against same policy version (regression) or current (what-if)
+4. Compare verdict and downstream_called flag
+
+## Release gate
+
+- Audit completeness on ACTION cases: **100%**
+- Policy version present: **100%**
+- Verdict-before-downstream ordering: **100%** on trace replay
+
+## Trace fields
+
+`audit_id`, `policy_version`, `verdict`, `reason_code`, `downstream_called`, `context_pack_id` (RAG)
+
+See: [PEP enforcement](/playbooks/pgar-runtime/foundation/pep-enforcement) · [Eval plane Action](/playbooks/eval-engineering/plane-action)

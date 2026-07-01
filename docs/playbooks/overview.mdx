@@ -1,0 +1,29 @@
+---
+title: Playbooks
+sidebar_label: Overview
+slug: /
+description: Operational guides — gates, schemas, checklists, and plane-specific recipes.
+---
+
+# Playbooks
+
+How to implement — paired with [Blueprints](/blueprints) for reference designs.
+
+## Eval engineering
+
+The eval engineering playbook series (golden datasets, plane playbooks, judge calibration, and more) is in **draft** — visible in local dev, not yet published to production.
+
+Start with [G.A.I.N Evaluation](/frameworks/gain-evaluation) for principles; the full blueprint and playbooks link from [Eval Blueprint](/blueprints/eval-blueprint).
+
+## PGAR runtime
+
+Four playbook groups for [Policy-Governed Agent Runtime](/insights/policy-governed-agent-runtime). Start at the [PGAR Runtime overview](/playbooks/pgar-runtime).
+
+| Group | Start here | Covers |
+| --- | --- | --- |
+| **Foundation** | [Overview](/playbooks/pgar-runtime/foundation) | SARAC, token custody, PEP/PDP, step-up, audit |
+| **Assurance** | [Policy test scenarios](/playbooks/pgar-runtime/assurance/policy-test-scenarios) | CI authorization cases, adversarial bypass |
+| **Boundary** | [Overview](/playbooks/pgar-runtime/boundary) | Five trust boundaries in request order |
+| **Domain** | [Tool registry](/playbooks/pgar-runtime/domain/tool-registry) | Tools, manifests, RAG retrieval |
+
+Also see [PGAR Blueprint](/blueprints/pgar-blueprint) for the reference design. Bridge reading: [PGAR with RAG](/insights/retrieval-is-a-governed-action). Eval overlap: [Action plane](/playbooks/eval-engineering/plane-action) and [Tool plane](/playbooks/eval-engineering/plane-tool).

@@ -428,6 +428,42 @@ button.gain-sidebar__link {
   white-space: nowrap;
 }
 
+/* Three-column comparison tables (e.g. database vs RAG) */
+.gain-table-wrap.gain-table-compare {
+  width: 100%;
+}
+
+.gain-table-wrap.gain-table-compare table {
+  width: 100%;
+  min-width: 100%;
+  table-layout: fixed;
+}
+
+.gain-table-wrap.gain-table-compare thead th:first-child {
+  width: 14%;
+}
+
+.gain-table-wrap.gain-table-compare thead th:nth-child(2),
+.gain-table-wrap.gain-table-compare thead th:nth-child(3) {
+  width: 43%;
+}
+
+.gain-table-wrap.gain-table-compare tbody td:first-child {
+  width: 14%;
+  white-space: normal;
+}
+
+.gain-table-wrap.gain-table-compare tbody td:nth-child(2),
+.gain-table-wrap.gain-table-compare tbody td:nth-child(3) {
+  width: 43%;
+}
+
+.blog-post-page .gain-insights-page__main .markdown .gain-table-wrap.gain-table-compare,
+.theme-doc-markdown .gain-table-wrap.gain-table-compare {
+  width: 100%;
+  max-width: none;
+}
+
 .gain-section-lead {
   font-size: 1rem;
   line-height: 1.7;
@@ -1008,6 +1044,185 @@ details > p {
 .gain-diagram-wrap .mermaid {
   display: flex;
   justify-content: center;
+}
+
+/* ── Click-to-zoom (Mermaid diagrams only) ── */
+.gain-zoomable {
+  cursor: zoom-in;
+  position: relative;
+}
+
+.gain-zoomable--mermaid {
+  border: 1px solid var(--gain-border);
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  margin: 1.75rem 0;
+  background: #ffffff;
+  overflow-x: auto;
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+[data-theme='dark'] .gain-zoomable--mermaid {
+  background: var(--ifm-background-surface-color);
+}
+
+.gain-zoomable--mermaid:hover,
+.gain-zoomable--mermaid:focus-visible {
+  border-color: var(--ifm-color-primary);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+  outline: none;
+}
+
+.gain-zoomable--mermaid::after {
+  content: 'Click to enlarge';
+  position: absolute;
+  top: 0.625rem;
+  right: 0.75rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--gain-text-muted);
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid var(--gain-border);
+  pointer-events: none;
+}
+
+[data-theme='dark'] .gain-zoomable--mermaid::after {
+  background: rgba(15, 23, 42, 0.85);
+}
+
+body.gain-zoom-open {
+  overflow: hidden;
+}
+
+.gain-zoom-overlay[hidden] {
+  display: none !important;
+}
+
+.gain-zoom-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 400;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.gain-zoom-overlay__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.72);
+  backdrop-filter: blur(2px);
+}
+
+.gain-zoom-overlay__panel {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  width: min(96vw, 1200px);
+  height: min(92vh, 900px);
+  border-radius: 14px;
+  border: 1px solid var(--gain-border);
+  background: #ffffff;
+  box-shadow: 0 24px 80px rgba(15, 23, 42, 0.35);
+  overflow: hidden;
+}
+
+[data-theme='dark'] .gain-zoom-overlay__panel {
+  background: var(--ifm-background-surface-color);
+}
+
+.gain-zoom-overlay__toolbar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 0.75rem;
+  border-bottom: 1px solid var(--gain-border);
+  background: var(--gain-sidebar-bg);
+}
+
+.gain-zoom-overlay__btn,
+.gain-zoom-overlay__close {
+  border: 1px solid var(--gain-border);
+  border-radius: 8px;
+  background: #ffffff;
+  color: var(--gain-text);
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1;
+  padding: 0.45rem 0.7rem;
+  cursor: pointer;
+}
+
+.gain-zoom-overlay__close {
+  margin-left: auto;
+  font-size: 1.25rem;
+  padding: 0.35rem 0.65rem;
+}
+
+[data-theme='dark'] .gain-zoom-overlay__btn,
+[data-theme='dark'] .gain-zoom-overlay__close {
+  background: var(--ifm-background-color);
+}
+
+.gain-zoom-overlay__btn:hover,
+.gain-zoom-overlay__close:hover {
+  border-color: var(--ifm-color-primary);
+  color: var(--ifm-color-primary);
+}
+
+.gain-zoom-overlay__stage {
+  flex: 1;
+  overflow: hidden;
+  cursor: grab;
+  background:
+    linear-gradient(45deg, rgba(148, 163, 184, 0.08) 25%, transparent 25%) 0 0 / 16px 16px,
+    linear-gradient(-45deg, rgba(148, 163, 184, 0.08) 25%, transparent 25%) 0 0 / 16px 16px;
+}
+
+.gain-zoom-overlay__stage:active {
+  cursor: grabbing;
+}
+
+.gain-zoom-overlay__canvas {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform-origin: center center;
+  will-change: transform;
+}
+
+.gain-zoom-overlay__canvas svg {
+  max-width: none;
+  height: auto;
+}
+
+.gain-zoom-overlay__hint {
+  margin: 0;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.75rem;
+  color: var(--gain-text-muted);
+  text-align: center;
+  border-top: 1px solid var(--gain-border);
+}
+
+@media (max-width: 576px) {
+  .gain-zoomable--mermaid::after {
+    content: 'Tap to enlarge';
+    font-size: 0.5625rem;
+  }
+
+  .gain-zoom-overlay__panel {
+    width: 100vw;
+    height: 100vh;
+    border-radius: 0;
+  }
 }
 
 /* ── Doc accordions (Key Patterns) ── */

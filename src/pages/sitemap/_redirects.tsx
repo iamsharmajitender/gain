@@ -19,6 +19,14 @@ export function SitemapInsightsRedirect(): ReactNode {
   return <SitemapTabRedirect tab="insights" />;
 }
 
+export function SitemapBlueprintsRedirect(): ReactNode {
+  return <SitemapTabRedirect tab="blueprints" />;
+}
+
+export function SitemapPlaybooksRedirect(): ReactNode {
+  return <SitemapTabRedirect tab="playbooks" />;
+}
+
 export function SitemapSiteRedirect(): ReactNode {
   return <SitemapTabRedirect tab="site" />;
 }

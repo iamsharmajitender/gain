@@ -1,0 +1,113 @@
+---
+title: "Policy Contracts: SARAC and Payload Shapes"
+sidebar_label: ① Policy contracts
+description: Subject, action, resource, and context schemas for PEP-to-PDP calls — the contracts that make verdict chains replayable.
+tags:
+  - governance-trust
+  - arch
+  - gain
+  - agents
+  - policy
+---
+
+# Policy Contracts: SARAC and Payload Shapes
+
+[Blueprint](/blueprints/pgar-blueprint) · [← Foundation overview](/playbooks/pgar-runtime/foundation) · **Policy contracts** · [Token & session →](/playbooks/pgar-runtime/foundation/token-and-session-boundary)
+
+The PEP does not send natural language to the PDP. It maps session claims and tool proposals into a **fixed four-field contract** so every verdict is replayable.
+
+:::tip[THE CLAIM]
+**SARAC (subject · action · resource · context) is the only shape the PDP evaluates. If your PEP sends prose, you do not have PGAR.**
+:::
+
+<!-- truncate -->
+
+## The four fields
+
+| Field | Source | Carries |
+| --- | --- | --- |
+| **subject** | IdP claims in agentic app session | identity, roles, emts, limits |
+| **action** | Tool proposal name | `lookup_beneficiary`, `retrieve_documents` |
+| **resource** | Proposal target | beneficiary id, corpus, account |
+| **context** | Runtime state + proposal args | amount, sanctions_status, approval |
+
+## Example: wire initiation
+
+```json
+{
+  "subject": {
+    "sub": "officer-123",
+    "roles": ["corporate_banking_officer", "payments_initiator"],
+    "emts": {
+      "payments.wire.initiate": true
+    },
+    "limits": {
+      "wire.auto_approved": 25000
+    }
+  },
+  "action": "initiate_wire",
+  "resource": {
+    "type": "wire_payment",
+    "beneficiary_id": "bene-acme-441",
+    "source_account": "acct-operating-4412"
+  },
+  "context": {
+    "amount": 47500,
+    "sanctions_status": "clear",
+    "approval": null
+  }
+}
+```
+
+After step-up, the same request returns with `context.approval` set and the PDP re-evaluates.
+
+## Example: RAG retrieval
+
+```json
+{
+  "subject": {
+    "sub": "officer-123",
+    "doc_entitlements": ["policy-engine:read"]
+  },
+  "action": "retrieve_documents",
+  "resource": {
+    "type": "corpus",
+    "id": "policy-engine"
+  },
+  "context": {
+    "query": "wire limits EU corporate",
+    "classification_ceiling": "internal"
+  }
+}
+```
+
+See [RAG retrieval](/playbooks/pgar-runtime/domain/rag-retrieval).
+
+## Mapping rules (PEP responsibility)
+
+1. **Never infer subject from model text.** Subject comes from validated token claims only.
+2. **Action = tool name** from manifest, not paraphrased intent.
+3. **Resource = normalized target** (ids, not display names the model invented).
+4. **Context = proposal args + prior tool results** the PDP needs (sanctions, approval, amount).
+
+## Failure classes
+
+- **Schema drift:** PEP sends fields PDP no longer accepts
+- **Subject substitution:** claims from wrong session attached
+- **Resource ambiguity:** model string passed through without resolution
+- **Context leakage:** PII in context field not redacted in audit
+
+## Automated checks
+
+```
+assert pdp_request.has_fields(["subject", "action", "resource", "context"])
+assert subject.sub == session.claims.sub
+assert action in tool_manifest.names
+assert audit.redacted_context == redact(context)
+```
+
+## Trace fields
+
+`pep_request_id`, `subject.sub`, `action`, `resource.type`, `resource.id`, `context_hash`, `pdp_policy_version`
+
+See: [PEP Enforcement](/playbooks/pgar-runtime/foundation/pep-enforcement) · [Policy-Governed Agent Runtime § contracts](/insights/policy-governed-agent-runtime)

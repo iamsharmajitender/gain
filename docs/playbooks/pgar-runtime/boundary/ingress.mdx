@@ -1,0 +1,60 @@
+---
+title: "PGAR Boundary ①: Ingress"
+sidebar_label: ① Ingress
+description: API gateway, Identity Provider, token validation, and claims issuance at the trust boundary.
+tags:
+  - governance-trust
+  - arch
+  - gain
+  - agents
+  - policy
+---
+
+# PGAR Boundary ①: Ingress
+
+[Blueprint](/blueprints/pgar-blueprint) · [← Overview](/playbooks/pgar-runtime/boundary) · **Ingress** · [Agentic app →](/playbooks/pgar-runtime/boundary/agentic-app)
+
+Ingress receives the user request, validates the token, and issues claims to the agentic app. Every downstream decision binds to this principal.
+
+:::tip[THE CLAIM]
+**No valid token, no agent session. Retrieval and tool paths inherit identity from ingress, not from the model.**
+:::
+
+<!-- truncate -->
+
+## What ingress owns
+
+| Responsibility | Does not own |
+| --- | --- |
+| Token validation (OAuth/OIDC/SAML) | Tool proposals |
+| Claims normalization | PDP rules |
+| Rate limits, WAF | Business logic |
+| Correlation / request id | Context pack assembly |
+
+## Claims shape (minimum)
+
+- `sub` — stable principal id
+- `roles` or `groups`
+- `emts` — entitlements map (tool or corpus scoped)
+- `limits` — numeric thresholds where applicable
+- `iat` / `exp` — token lifetime
+
+## Failure classes
+
+- **Anonymous ingress:** agent session without validated principal
+- **Claim injection:** client-supplied roles trusted without IdP
+- **Stale token:** long loops without refresh
+- **Missing correlation id:** cannot tie audit to request
+
+## Implementation checklist
+
+1. Single gateway entry for agent API
+2. IdP validation on every request (no cached trust without TTL)
+3. Claims passed to agentic app as opaque session object
+4. Request id propagated to PEP audit
+
+## Trace fields
+
+`request_id`, `sub`, `token_iss`, `ingress_auth_latency_ms`, `claims_hash`
+
+See: [Token & session boundary](/playbooks/pgar-runtime/foundation/token-and-session-boundary) · [Boundary overview](/playbooks/pgar-runtime/boundary)

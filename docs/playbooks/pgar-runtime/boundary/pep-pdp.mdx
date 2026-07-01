@@ -1,0 +1,69 @@
+---
+title: "PGAR Boundary ④: PEP + PDP"
+sidebar_label: ④ PEP + PDP
+description: The policy layer — enforcement point, decision point, verdict handling, and deny-before-downstream.
+tags:
+  - governance-trust
+  - arch
+  - gain
+  - agents
+  - policy
+---
+
+# PGAR Boundary ④: PEP + PDP
+
+[Blueprint](/blueprints/pgar-blueprint) · [← LLM proposal](/playbooks/pgar-runtime/boundary/llm-proposal) · **PEP + PDP** · [Downstream →](/playbooks/pgar-runtime/boundary/downstream)
+
+Boundary ④ is where **proposal becomes permission** (or explicit DENY / STEP_UP). This is the PGAR choke point.
+
+:::tip[THE CLAIM]
+**PEP enforces. PDP decides. Downstream never runs on DENY; never runs on STEP_UP until re-eval returns ALLOW.**
+:::
+
+<!-- truncate -->
+
+## PEP ↔ PDP loop
+
+```mermaid
+sequenceDiagram
+    participant App as Agentic app
+    participant PEP as PEP
+    participant PDP as PDP
+
+    App->>PEP: proposal + token + claims
+    PEP->>PDP: SARAC request
+    PDP-->>PEP: verdict + policy_version
+    PEP->>PEP: write audit (before act)
+    alt ALLOW
+        PEP->>App: forward downstream
+    else DENY or STEP_UP
+        PEP-->>App: refuse or step-up required
+    end
+```
+
+## DENY is success
+
+When sanctions hit or entitlements fail, **DENY with audit** is the control working, not an error to retry around.
+
+## Co-location vs separation
+
+| Pattern | When |
+| --- | --- |
+| **PEP sidecar** | Same cluster as agentic app; PDP remote |
+| **Central PEP service** | Many apps; one enforcement API |
+| **PDP as product** | OPA, Cedar, custom rules engine |
+
+PEP and PDP are logically separate even if deployed together.
+
+## Failure classes
+
+- **PEP as pass-through:** always forwards
+- **PDP in prompt:** rules only in system message
+- **Missing DENY path:** errors become 500 instead of refusal
+- **Async fire-and-forget:** downstream called before verdict
+
+## Trace fields
+
+`pep_verdict`, `pdp_policy_version`, `reason_code`, `audit_id`, `pdp_latency_ms`
+
+See: [PEP enforcement](/playbooks/pgar-runtime/foundation/pep-enforcement) · [PDP policy surfaces](/playbooks/pgar-runtime/foundation/pdp-policy-surfaces) · [Boundary overview](/playbooks/pgar-runtime/boundary)

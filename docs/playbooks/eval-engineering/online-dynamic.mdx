@@ -1,0 +1,117 @@
+---
+slug: online-dynamic
+title: "Online & Dynamic Eval: Scoring Production After Ship"
+description: How to run online evaluation on live traffic — sampling, shadow scoring, canary eval, drift detection, and promoting production signals back into golden datasets.
+tags:
+  - ai-intelligence
+  - arch
+  - gain
+  - observability
+---
+
+# Online & Dynamic Eval: Scoring Production After Ship
+
+Offline CI gates stop regressions **before** release. Online eval catches what **no golden set imagined** after release: new phrasing, seasonal policy, adversarial adaptation, and slow drift.
+
+Part of the [Eval Framework Blueprint](/blueprints/eval-blueprint) series.
+
+:::tip[THE CLAIM]
+**Online eval applies the same three scorers to live or shadow traffic — sample, score, alert on drift, promote failures into golden datasets. CI alone is not enough.**
+:::
+
+<!-- truncate -->
+
+## Offline vs online (both required)
+
+| Mode | When | Data | Decision |
+| --- | --- | --- | --- |
+| **Offline (CI)** | Pre-release | Golden + synthetic + replay fixtures | Ship or reject |
+| **Online (prod)** | Post-release, continuous | Live sample, shadow, canary | Drift alert, case promotion |
+| **Replay batch** | Pre-release + nightly | Full production traces | Regression on reality |
+
+CI proves you did not break **known** behavior. Online proves you are not drifting on **unknown** behavior.
+
+## Three online execution patterns
+
+### 1. Production sampling
+- Score **0.5–2%** of live traffic (stratified by use case)
+- Same rubrics as offline; async pipeline (never block user latency SLO)
+- Store scores in score store with `trace_id`, `build_id`, `plane_scores`
+
+### 2. Shadow eval
+- New model/prompt/index runs **in parallel** on copied request
+- User sees production version; shadow scores compared offline
+- Use for model swaps and prompt candidates before flipping traffic
+
+### 3. Canary eval
+- **1–5%** of users get new version; compare canary vs control online
+- Pairwise metrics on matched traffic (see [LLM-as-Judge](/playbooks/eval-engineering/llm-as-judge) pairwise mode)
+- Promote when canary ≥ control on critical dimensions + no risk regression
+
+## What to score online
+
+Use the **same three scorers** — do not invent a fourth stack:
+
+| Scorer | Online use |
+| --- | --- |
+| **Automated** | Policy violations, schema errors, latency SLO, retrieval scope |
+| **LLM-as-judge** | Sampled rubric dimensions on subset |
+| **Human** | Low-confidence judge, thumbs-down, near-miss policy |
+
+High-risk online events → **100% human queue**, not judge-only.
+
+## Drift detection
+
+Monitor distributions, not single averages:
+
+| Signal | Alert when |
+| --- | --- |
+| Judge dimension median | Drops &gt; 0.3 vs 7-day baseline |
+| Automated failure rate | &gt; 2× baseline |
+| Abstention rate | Spikes without product change |
+| User negative feedback | &gt; threshold per use case |
+| Plane-specific metric | e.g. recall@k proxy drops |
+
+Drift alert → triage → if real: **incident → golden case within 7 days**.
+
+## User feedback loop
+
+| Source | Action |
+| --- | --- |
+| Thumbs down | 100% score + human triage |
+| Support ticket tagged "AI wrong" | Promote to incident replay |
+| Supervisor override | Capture trace + expected correction |
+| Escaped policy action | Immediate adversarial case + Action plane review |
+
+Feedback is **eval input**, not a separate quality program.
+
+## Architecture placement
+
+Fits the production eval loop from [eval-strategy §8](/insights/eval-engineering):
+
+```
+Production → Telemetry → Trace → Replay → Eval Engine → Scoring → Feedback → Improvement
+```
+
+Online sampling attaches at **Telemetry/Trace**; scores land in **Scoring**; promoted cases feed **Improvement** (golden datasets).
+
+## Gate rules (online complements CI)
+
+| Rule | Meaning |
+| --- | --- |
+| CI green + online drift red | **No auto-promote** of next change until drift explained |
+| Canary pairwise loss on risk dimension | **Rollback** canary |
+| Online policy violation | Page + block feature flag path |
+
+## Anti-patterns
+
+- Scoring 100% of traffic with judge (cost + latency)
+- Online-only eval with no golden CI gate
+- Ignoring drift because CI is green
+- No promotion path from online failures to datasets
+
+## Next in series
+
+- [Synthetic Generation](/playbooks/eval-engineering/synthetic-generation) — fill coverage gaps
+- [Golden Datasets](/playbooks/eval-engineering/golden-datasets) — where promoted cases land
+- [Eval Framework Blueprint](/blueprints/eval-blueprint)

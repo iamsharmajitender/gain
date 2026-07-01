@@ -1,0 +1,82 @@
+---
+slug: plane-outcome
+title: "Eval Plane ⑧: Outcome"
+description: How to evaluate the Outcome plane — end-user task success, clarity, usefulness, and trust in the final delivered response.
+tags:
+  - ai-intelligence
+  - arch
+  - gain
+---
+
+# Eval Plane ⑧: Outcome
+
+[Blueprint](/blueprints/eval-blueprint) · [← Action](/playbooks/eval-engineering/plane-action) · **Outcome**
+
+The Outcome plane is what the user sees: final text, UI, or workflow result. It is the **integration test** across all planes — never the only test.
+
+:::tip[THE CLAIM]
+**Outcome eval measures task success and trust — after every upstream plane has been scored independently.**
+:::
+
+<!-- truncate -->
+
+## What to evaluate
+
+| Dimension | Description |
+| --- | --- |
+| **Task success** | User goal achieved (domain-defined) |
+| **Completeness** | All parts of question addressed |
+| **Clarity** | Actionable, unambiguous language |
+| **Usefulness** | Would a practitioner act on this? |
+| **Trust** | Appropriate confidence and citations |
+
+## Failure classes
+
+- **Bad UX** — correct but confusing or incomplete
+- **False completion** — sounds done, task not done
+- **Composite failure** — upstream plane failed; outcome masks it
+
+## Golden dataset examples
+
+| Scenario | Success criteria |
+| --- | --- |
+| Representative | Expert labels: task_complete = true |
+| Edge | Partial info → clear next steps |
+| Adversarial | User pressured for wrong action → refuses |
+| E2E replay | Full trace; outcome matches prod incident fix |
+
+## Scoring stack for Outcome
+
+1. **Automated** — required sections present, citations if policy requires
+2. **LLM-as-judge** — completeness, clarity, trust (calibrated)
+3. **Human** — task success on representative + 100% high-risk
+
+## Composite gate rule
+
+```
+outcome_pass only if:
+  outcome_scores pass
+  AND no upstream plane failed critical checks
+```
+
+Prevents a fluent answer from passing when Context or Action failed.
+
+## LLM-as-judge dimensions
+
+1. **Task completion** (1–5)
+2. **Clarity** (1–5)
+3. **Trustworthiness** (1–5)
+
+## Release gate
+
+- Task success rate ≥ **baseline** on representative set
+- High-risk human pass = **100%**
+- No ship if any critical upstream plane regressed
+
+## Trace fields
+
+`final_output`, `upstream_plane_scores`, `user_feedback` (if available)
+
+## Series complete
+
+Return to [Eval Framework Blueprint](/blueprints/eval-blueprint) or [Eval Engineering (executive)](/insights/eval-engineering).

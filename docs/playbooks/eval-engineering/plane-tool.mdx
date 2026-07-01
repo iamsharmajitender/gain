@@ -1,0 +1,84 @@
+---
+slug: plane-tool
+title: "Eval Plane ⑤: Tool"
+description: How to evaluate the Tool plane — selection, arguments, idempotency, error handling, and schema compliance for agent tool calls.
+tags:
+  - ai-intelligence
+  - arch
+  - gain
+  - agents
+---
+
+# Eval Plane ⑤: Tool
+
+[Blueprint](/blueprints/eval-blueprint) · [← Reasoning](/playbooks/eval-engineering/plane-reasoning) · **Tool** · [Memory →](/playbooks/eval-engineering/plane-memory)
+
+The Tool plane is where agents touch the real world: APIs, databases, workflows. Most production incidents are tool misuse, not bad prose.
+
+:::tip[THE CLAIM]
+**Tool eval is argument validation, manifest compliance, and error recovery — not whether the model apologized nicely after a 500.**
+:::
+
+<!-- truncate -->
+
+## What to evaluate
+
+| Check | Type |
+| --- | --- |
+| Correct tool selected | Automated + judge |
+| Args match JSON schema | Automated |
+| Args semantically valid | Judge + human on $ |
+| Idempotency key present | Automated |
+| Retry / fallback behavior | Automated scenario tests |
+| No disallowed tools | Automated manifest |
+
+## Failure classes
+
+- **Tool misuse** — wrong tool, wrong args, wrong timing
+- **Schema violation** — type errors, missing required fields
+- **Unsafe composition** — chained calls bypass intent
+
+## Golden dataset examples
+
+| Scenario | Expected |
+| --- | --- |
+| Representative | `initiate_wire` with amount, beneficiary id |
+| Edge | API timeout → retry once, then escalate |
+| Adversarial | Model proposes tool not in manifest → blocked |
+| Incident replay | Wrong currency code accepted → now rejected |
+
+## Automated checks
+
+```json
+{
+  "tool": "get_account_balance",
+  "arguments": { "account_id": "ACC-123" },
+  "schema_valid": true,
+  "in_manifest": true,
+  "policy_precheck": "ALLOW"
+}
+```
+
+Assert against fixture; mock downstream for unit eval, real sandbox for integration eval.
+
+## LLM-as-judge dimensions
+
+1. **Tool fit** (1–5)
+2. **Argument correctness** (1–5)
+3. **Sequencing** (1–5) — order of operations sensible?
+
+## Human review
+
+100% on financial tool calls in calibration; sample on read-only tools.
+
+## Release gate
+
+- Schema validation: **100%** on golden set
+- Manifest violations: **0**
+- Semantic arg errors on high-risk tools: **0** (human sign-off)
+
+## Trace fields
+
+`tool_name`, `arguments`, `schema_validation`, `manifest_version`, `downstream_status`
+
+See: [Policy-Governed Agent Runtime](/insights/policy-governed-agent-runtime) · [PGAR with RAG](/insights/retrieval-is-a-governed-action)

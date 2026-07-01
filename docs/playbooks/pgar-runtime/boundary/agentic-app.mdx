@@ -1,0 +1,57 @@
+---
+title: "PGAR Boundary ②: Agentic App"
+sidebar_label: ② Agentic app
+description: Session custody, orchestration, proposal routing, and receiving results before validation or synthesis.
+tags:
+  - governance-trust
+  - arch
+  - gain
+  - agents
+  - policy
+---
+
+# PGAR Boundary ②: Agentic App
+
+[Blueprint](/blueprints/pgar-blueprint) · [← Ingress](/playbooks/pgar-runtime/boundary/ingress) · **Agentic app** · [LLM proposal →](/playbooks/pgar-runtime/boundary/llm-proposal)
+
+The agentic app is the **orchestrator**. It holds the token, talks to the LLM, forwards proposals to the PEP, receives downstream results, initiates validation, and only then sends validated context back to the model.
+
+:::tip[THE CLAIM]
+**The agentic app is the only component that holds both the conversation and the credentials. It never sends the latter to the LLM.**
+:::
+
+<!-- truncate -->
+
+## Responsibilities
+
+| Owns | Does not own |
+| --- | --- |
+| Session state, token custody | PDP rule authoring |
+| LLM call adapter (strip auth) | Downstream business logic |
+| Route proposals → PEP | Generating verdicts |
+| Step-up UX handoff | Vector search ranking |
+| Initiate validation after retrieval | Policy in system prompt |
+
+## Request loop
+
+1. Receive user message + session from ingress
+2. Load or pin [tool manifest](/playbooks/pgar-runtime/domain/manifest-lifecycle) (`manifest_version` on session)
+3. Call LLM with messages + tool schemas only
+4. On tool proposal → validate against manifest → PEP with token + claims
+5. On ALLOW result → receive downstream/context pack
+6. Run validation gate (app-initiated)
+7. Call LLM for synthesis with validated context only
+8. Return response to user
+
+## Failure classes
+
+- **Direct downstream:** app calls payment hub or vector DB without PEP
+- **Token forwarded to LLM:** PGAR test failure
+- **Validation skipped:** raw retrieval pasted into second LLM call
+- **Stateless chaos:** multi-step flow loses approval context
+
+## Trace fields
+
+`session_id`, `orchestration_step`, `proposal_count`, `pep_calls`, `validation_passed`
+
+See: [PEP enforcement](/playbooks/pgar-runtime/foundation/pep-enforcement) · [Manifest lifecycle](/playbooks/pgar-runtime/domain/manifest-lifecycle) · [Domain: RAG retrieval](/playbooks/pgar-runtime/domain/rag-retrieval) · [Boundary overview](/playbooks/pgar-runtime/boundary)

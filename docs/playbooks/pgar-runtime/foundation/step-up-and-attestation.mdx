@@ -1,0 +1,71 @@
+---
+title: "Step-Up & Attestation"
+sidebar_label: ⑤ Step-up & attestation
+description: STEP_UP verdict handling, four-eyes approval, re-evaluation with context.approval, and UX ownership in the agentic app.
+tags:
+  - governance-trust
+  - arch
+  - gain
+  - agents
+  - policy
+---
+
+# Step-Up & Attestation
+
+[Blueprint](/blueprints/pgar-blueprint) · [← PDP surfaces](/playbooks/pgar-runtime/foundation/pdp-policy-surfaces) · **Step-up** · [Audit & replay →](/playbooks/pgar-runtime/foundation/audit-and-replay)
+
+**STEP_UP is a PDP verdict, not a model feature.** The LLM was never given the limit that triggered step-up. The agentic app owns the approval UX; the PEP re-submits with attestation in context.
+
+:::tip[THE CLAIM]
+**Step-up completes only when context.approval is set and the PDP returns ALLOW on re-evaluation, not when the user says "yes" in chat.**
+:::
+
+<!-- truncate -->
+
+## Flow
+
+1. PEP receives proposal → PDP returns **STEP_UP** (`wire_above_auto_approved`)
+2. PEP returns step-up-required to agentic app (no downstream call)
+3. Supervisor completes four-eyes in **your auth system** (not the LLM)
+4. Agentic app re-submits same proposal with:
+
+```json
+"context": {
+  "amount": 47500,
+  "approval": {
+    "type": "supervisor_four_eyes",
+    "attestation_id": "apr-9f2c",
+    "approver_sub": "supervisor-456"
+  }
+}
+```
+
+5. PDP re-evaluates → **ALLOW** → PEP forwards to downstream
+
+## What the LLM should not do
+
+- Collect supervisor approval in natural language only
+- Proceed after user says "approved" without attestation id
+- See why STEP_UP fired (limit values live in PDP)
+
+## Failure classes
+
+- **Chat-based approval:** no attestation id in context
+- **Stale re-submit:** approval expired but PEP forwards anyway
+- **Wrong approver:** attestation not valid for action/resource class
+- **Skip re-eval:** PEP treats chat confirmation as ALLOW
+
+## Scenario tests
+
+| Scenario | Expected |
+| --- | --- |
+| Over limit, no approval | STEP_UP, downstream not called |
+| Over limit, valid attestation | ALLOW after re-eval |
+| Over limit, forged attestation | DENY |
+| Expired attestation | DENY or STEP_UP |
+
+## Trace fields
+
+`step_up_reason`, `attestation_id`, `approver_sub`, `re_eval_verdict`, `step_up_duration_ms`
+
+See: [Policy-Governed Agent Runtime § wire sequence](/insights/policy-governed-agent-runtime)

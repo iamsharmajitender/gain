@@ -1,0 +1,64 @@
+---
+slug: /pgar-runtime/foundation
+title: "PGAR Foundation Playbooks"
+sidebar_label: Overview
+description: Core PGAR building blocks in implementation order — SARAC contracts, token custody, PEP/PDP enforcement, step-up, and audit replay.
+tags:
+  - governance-trust
+  - arch
+  - gain
+  - agents
+  - policy
+---
+
+# PGAR Foundation Playbooks
+
+[PGAR overview](/playbooks/pgar-runtime) · [Blueprint](/blueprints/pgar-blueprint) · **Foundation overview** · [Policy contracts →](/playbooks/pgar-runtime/foundation/policy-contracts)
+
+Foundation playbooks define **how PGAR works before you wire a specific agent surface**. They cover contracts, custody, enforcement, verdicts, attestation, and audit. Read them before [boundary](/playbooks/pgar-runtime/boundary) and [domain](/playbooks/pgar-runtime/domain/tool-registry) playbooks.
+
+:::tip[THE CLAIM]
+**Build foundations first. Boundaries describe where control lives; domain playbooks describe what side effects look like. Neither replaces SARAC, PEP, or audit.**
+:::
+
+<!-- truncate -->
+
+## Implementation order
+
+| # | Playbook | What it defines | Read when |
+| --- | --- | --- | --- |
+| 1 | [Policy contracts](/playbooks/pgar-runtime/foundation/policy-contracts) | SARAC shape the PDP evaluates | Designing PEP-to-PDP payloads |
+| 2 | [Token & session](/playbooks/pgar-runtime/foundation/token-and-session-boundary) | What crosses the LLM line (and what never does) | PGAR test, credential stripping |
+| 3 | [PEP enforcement](/playbooks/pgar-runtime/foundation/pep-enforcement) | Receive, ask PDP, audit, act | Building the choke point |
+| 4 | [PDP surfaces](/playbooks/pgar-runtime/foundation/pdp-policy-surfaces) | ALLOW, DENY, STEP_UP rules | Authoring policy versions |
+| 5 | [Step-up & attestation](/playbooks/pgar-runtime/foundation/step-up-and-attestation) | Re-eval after human approval | High-risk actions, four-eyes |
+| 6 | [Audit & replay](/playbooks/pgar-runtime/foundation/audit-and-replay) | Immutable verdict chain for examiners | Retention, replay packs |
+
+Then [boundary playbooks](/playbooks/pgar-runtime/boundary) (where each control sits in the request path) and [domain playbooks](/playbooks/pgar-runtime/domain/tool-registry) (tools, manifests, RAG).
+
+## How foundations connect
+
+```mermaid
+flowchart LR
+  TC[Token & session] --> SARAC[Policy contracts]
+  SARAC --> PEP[PEP enforcement]
+  PEP --> PDP[PDP surfaces]
+  PDP --> SU[Step-up]
+  PEP --> AUD[Audit & replay]
+  SU --> PEP
+```
+
+Every tool proposal at runtime flows: agentic app assembles SARAC → PEP asks PDP → verdict logged → ALLOW reaches downstream or DENY/STEP_UP returns to app.
+
+## Assurance (after foundations)
+
+| Playbook | Purpose |
+| --- | --- |
+| [Policy test scenarios](/playbooks/pgar-runtime/assurance/policy-test-scenarios) | Golden authorization cases in CI |
+| [Adversarial testing](/playbooks/pgar-runtime/assurance/adversarial-testing) | Bypass attempts, prompt injection against enforcement |
+
+See the [Assurance playbooks](/playbooks/pgar-runtime/assurance/policy-test-scenarios) category in the sidebar for both.
+
+## Read next
+
+**[Policy contracts →](/playbooks/pgar-runtime/foundation/policy-contracts)**

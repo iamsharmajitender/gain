@@ -1,0 +1,76 @@
+---
+title: "PDP Policy Surfaces"
+sidebar_label: ④ PDP surfaces
+description: ALLOW, DENY, and STEP_UP only — policy versioning, rule authoring, and deterministic authorization.
+tags:
+  - governance-trust
+  - arch
+  - gain
+  - agents
+  - policy
+---
+
+# PDP Policy Surfaces
+
+[Blueprint](/blueprints/pgar-blueprint) · [← PEP enforcement](/playbooks/pgar-runtime/foundation/pep-enforcement) · **PDP surfaces** · [Step-up →](/playbooks/pgar-runtime/foundation/step-up-and-attestation)
+
+The Policy Decision Point evaluates SARAC requests against versioned policy surfaces. Three outcomes only. No model override.
+
+:::tip[THE CLAIM]
+**Authorization is not prediction. Limits, entitlements, and sanctions are boolean facts in the PDP, not fluency in the prompt.**
+:::
+
+<!-- truncate -->
+
+## Three verdicts
+
+| Verdict | When | PEP action |
+| --- | --- | --- |
+| **ALLOW** | All rules pass | Forward to downstream |
+| **DENY** | Hard block (entitlement, sanctions, scope) | Stop; log; return refusal |
+| **STEP_UP** | Additional attestation required | Return to app; re-eval after approval |
+
+Example DENY reason codes: `sanctions_hit`, `entitlement_missing`, `corpus_forbidden`.
+
+Example STEP_UP reason codes: `wire_above_auto_approved`, `classification_requires_supervisor`.
+
+## Policy versioning
+
+Every audit record carries the policy version that decided:
+
+```
+pgar.payments.wire/v3
+pgar.retrieval.corpus/v2
+```
+
+Version bumps require full [policy test scenario](/playbooks/pgar-runtime/assurance/policy-test-scenarios) replay before promotion.
+
+## Rule ownership
+
+| Rule type | Typical owner | Example |
+| --- | --- | --- |
+| Entitlements | IAM / platform | `emts.payments.wire.initiate` |
+| Limits | Domain + compliance | `wire.auto_approved: 25000` |
+| Sanctions | Payment hub + PDP | external screening result in context |
+| Classification | Data governance | corpus ceiling per role |
+
+## Failure classes
+
+- **Prompt as policy:** limits described in system message instead of PDP
+- **Shadow rules:** engineers hard-code checks in PEP instead of PDP
+- **Version drift:** prod PEP calls stale policy surface id
+- **Non-deterministic PDP:** ML model returns verdict (wrong layer)
+
+## PDP regression gate
+
+```
+for scenario in golden_policy_scenarios:
+    assert pdp.evaluate(scenario.input).verdict == scenario.expected
+    assert pdp.evaluate(scenario.input).policy_version == current_version
+```
+
+## Trace fields
+
+`pdp_policy_version`, `verdict`, `reason_code`, `rule_ids_fired`, `evaluation_ms`
+
+See: [Policy contracts](/playbooks/pgar-runtime/foundation/policy-contracts) · [Step-Up & attestation](/playbooks/pgar-runtime/foundation/step-up-and-attestation)

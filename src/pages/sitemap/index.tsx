@@ -57,13 +57,21 @@ function OverviewTab(): ReactNode {
           </table>
         </div>
         <p className={styles.overviewNote}>
-          <strong>Rule of thumb:</strong> principles and ownership → Framework · essays and field
-          lessons → Insights.
+          <strong>Rule of thumb:</strong> principles and ownership → G.A.I.N Framework · reference
+          designs → Blueprints · operational guides → Playbooks · essays → Insights.
         </p>
       </section>
 
       <div className={styles.flow} aria-label="Recommended reading flow">
         <div className={styles.flowStep}>Framework: why &amp; who</div>
+        <div className={styles.flowArrow} aria-hidden="true">
+          →
+        </div>
+        <div className={styles.flowStep}>Blueprints: reference design</div>
+        <div className={styles.flowArrow} aria-hidden="true">
+          →
+        </div>
+        <div className={styles.flowStep}>Playbooks: how to build</div>
         <div className={styles.flowArrow} aria-hidden="true">
           →
         </div>
@@ -76,6 +84,8 @@ function OverviewTab(): ReactNode {
 const sitemapTabContent: Record<SitemapTabId, () => ReactNode> = {
   overview: OverviewTab,
   frameworks: () => <SitemapSectionBlock section={getHandbookSection('frameworks')} />,
+  blueprints: () => <SitemapSectionBlock section={getHandbookSection('blueprints')} />,
+  playbooks: () => <SitemapSectionBlock section={getHandbookSection('playbooks')} />,
   insights: InsightsSitemapTab,
   site: () => <SitemapSectionBlock section={getSiteSection('site')} />,
 };
