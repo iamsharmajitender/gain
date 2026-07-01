@@ -23,5 +23,6 @@ export const publishedInsightTags = [
 export const publishedInsightTypeTags = [
   "pov",
   "arch",
+  "lrn",
   "exp"
 ] as const;

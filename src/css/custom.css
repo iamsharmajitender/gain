@@ -464,6 +464,49 @@ button.gain-sidebar__link {
   max-width: none;
 }
 
+/* Four-column tables with a short numeric "Example" column */
+.gain-table-wrap.gain-table-narrow-col2 table {
+  table-layout: fixed;
+}
+
+.gain-table-wrap.gain-table-narrow-col2 thead th:first-child,
+.gain-table-wrap.gain-table-narrow-col2 tbody td:first-child {
+  width: 15%;
+}
+
+.gain-table-wrap.gain-table-narrow-col2 thead th:nth-child(2),
+.gain-table-wrap.gain-table-narrow-col2 tbody td:nth-child(2) {
+  width: 5%;
+  min-width: 2.5rem;
+}
+
+.gain-table-wrap.gain-table-narrow-col2 thead th:nth-child(3),
+.gain-table-wrap.gain-table-narrow-col2 tbody td:nth-child(3) {
+  width: 40%;
+}
+
+.gain-table-wrap.gain-table-narrow-col2 thead th:nth-child(4),
+.gain-table-wrap.gain-table-narrow-col2 tbody td:nth-child(4) {
+  width: 40%;
+}
+
+/* gain-table-compare also applies to 4-col tables — need higher specificity */
+.gain-table-wrap.gain-table-compare.gain-table-narrow-col2 thead th:nth-child(2),
+.gain-table-wrap.gain-table-compare.gain-table-narrow-col2 tbody td:nth-child(2) {
+  width: 5%;
+  min-width: 2.5rem;
+}
+
+.gain-table-wrap.gain-table-compare.gain-table-narrow-col2 thead th:nth-child(3),
+.gain-table-wrap.gain-table-compare.gain-table-narrow-col2 tbody td:nth-child(3) {
+  width: 40%;
+}
+
+.gain-table-wrap.gain-table-compare.gain-table-narrow-col2 thead th:nth-child(4),
+.gain-table-wrap.gain-table-compare.gain-table-narrow-col2 tbody td:nth-child(4) {
+  width: 40%;
+}
+
 .gain-section-lead {
   font-size: 1rem;
   line-height: 1.7;
