@@ -10,7 +10,6 @@ tags:
   - gain
   - llm
 authors: [iamsharmajitender]
-draft: true
 date: 2026-07-02
 ---
 
@@ -105,7 +104,7 @@ AI systems map input → many possible outputs. Routing is one place where you c
 - Empty message → clarification, no tool call
 - Injection payload → block, no exfil route
 
-That is the same discipline as [Eval Engineering](/insights/eval-engineering): behavior validated under uncertainty, not just “did it run.”
+That is the same discipline as [Eval Plane ①: Input](/playbooks/eval-engineering/plane-input): behavior validated under uncertainty, not just “did it run.”
 
 ### 4. It separates cheap decisions from expensive ones
 
@@ -113,28 +112,70 @@ Routing should be fast. A layered router — rules, classifier, LLM fallback onl
 
 ### 5. It enables multi-agent systems without chaos
 
-When you have specialized agents — support, payments, compliance, internal ops — something must decide which one owns the turn. Without a router, you get:
+When you have specialized agents (support, payments, compliance, internal ops), something must decide **which governed path owns the turn**. **Owns the turn** means: for this user message, exactly one route contract is active (workflow, tool manifest, policy profile, and retrieval scope if applicable) before the agent loop starts.
+
+Without a router, you get:
 
 - every agent loaded with every tool,
 - supervisor prompts that grow without bound,
 - handoffs that depend on model mood rather than contracts.
 
+Same user, two messages in one session:
+
+| User says | Route owns turn | What activates |
+| --- | --- | --- |
+| “What’s our wire limit for EU corporate clients?” | `policy_qa` | RAG-only manifest, low-risk policy profile, policy corpus |
+| “Send $500 to Acme Corp” | `payment_initiate` | Payment tool manifest, step-up policy profile, PEP on wire tools |
+
+The intent router picks the path; the agent planner picks the next step inside it. Intent routing is strongest when paths split by risk and authority, but it still applies with one agent when manifests differ per turn.
+
 The router is the **capability matrix at ingress**: task × role × data class → route.
 
-## Intent router vs agent planner
+## Intent router, agent planner, and model router
 
-Teams often collapse these. They should not.
+Teams collapse three separate decisions into one "routing" step. They should not. Each layer answers a different question on the request path.
 
-| | Intent router | Agent planner |
-| --- | --- | --- |
-| **When** | Once per user turn (usually) | Inside the plan → act → observe loop |
-| **Decides** | Which workflow / manifest | Which step / tool within workflow |
-| **Nature** | Deterministic + eval-gated | Model-assisted, policy-gated |
-| **Output** | Route contract | Tool proposal |
-| **Failure** | Intent misroute | Wrong tool, wrong args, loop runaway |
+| | Intent router | Agent planner | Model router |
+| --- | --- | --- | --- |
+| **Question** | Which workflow, agent, and tool manifest? | Which step or tool within that workflow? | Which approved model runs this inference call? |
+| **When** | Once per user turn (usually) | Inside the plan → act → observe loop | Per inference call (plan, synthesize, classify) |
+| **Where** | Ingress, before the agent loop | Agentic app / orchestration loop | [G.A.I.N LLM](/frameworks/gain-llm) gateway |
+| **Nature** | Deterministic + eval-gated | Model-assisted, policy-gated | Capability matrix + registry |
+| **Output** | Route contract (`route_id`, manifest, policy profile) | Tool proposal | Model endpoint |
+| **Failure** | Intent misroute: wrong tools, corpus, policy | Wrong tool, wrong args, loop runaway | Wrong capability tier, cost, or latency |
+| **Eval** | Intent golden set, confusion matrix | Tool and policy evals in-loop | Per-task quality, canary on model swap |
+
+```mermaid
+flowchart LR
+    User(["User turn"])
+    IR["Intent router<br/>workflow · manifest · policy"]
+    AP["Agent planner<br/>step · tool proposal"]
+    MR["Model router<br/>capability matrix"]
+    LLM["LLM inference"]
+    PEP["PEP · tools · validation"]
+
+    User --> IR
+    IR -->|"once per turn"| AP
+    AP -->|"each plan step"| MR
+    MR --> LLM
+    LLM --> AP
+    AP --> PEP
+    PEP --> AP
+
+    classDef product fill:#dbeafe,stroke:#93c5fd,color:#1e293b,stroke-width:2px
+    classDef gate fill:#ffedd5,stroke:#fdba74,color:#1e293b,stroke-width:2px
+    classDef process fill:#ede9fe,stroke:#c4b5fd,color:#1e293b,stroke-width:2px
+
+    class User product
+    class IR gate
+    class AP,PEP process
+    class MR,LLM process
+```
+
+The intent router runs **once** at ingress. The agent planner and model router run **inside** the loop: the planner proposes the next step; the model router picks which endpoint serves each LLM call. An intent router may pin a coarse `model_profile` on the route (for example, `reasoning-standard` vs a lightweight chat model). That is a route-level default, not a substitute for gateway routing.
 
 :::important[PREDICTION VS. TRUTH]
-**Intelligence in the LLM. Truth in the system.** The model may infer intent as part of conversation — that is prediction. The router’s verdict, constrained by entitlements and safety, is the architectural decision that activates a governed path.
+**Intelligence in the LLM. Truth in the system.** The model may infer intent or propose tools; that is prediction. The intent router's verdict and the PEP gate activate governed paths. The model router scopes **which model does the work**; the intent router scopes **what the system may do**.
 :::
 
 ## What happens when you skip it
@@ -148,17 +189,6 @@ Teams often collapse these. They should not.
 | No session stickiness | “Yes” after “initiate wire?” re-classified as general chat |
 
 Every row is an **architecture failure**, not a model failure. The services ran. The model responded. The user still lost trust.
-
-## Where it sits in the G.A.I.N stack
-
-| G.A.I.N pillar | Router contribution |
-| --- | --- |
-| **G · Grounded** | Route table respects entitlements; high-risk paths require step-up profiles |
-| **A · Adaptive** | Misroute feedback closes loop into route table and golden sets |
-| **I · Intelligent** | LLM used for ambiguous classification only — not for owning dispatch |
-| **N · Native** | Trace every route decision; latency SLOs per layer; cost attribution by route |
-
-The router is not optional glue. It is the **control plane entry** for agentic intelligence — the same way an API gateway is not optional for microservices.
 
 ## Examiner and operator questions
 

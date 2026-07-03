@@ -62,7 +62,7 @@ The API gateway and IdP validate the token and normalize claims (`sub`, roles, e
 
 ### ② Agentic app
 
-The orchestrator holds session state and credentials, loads the [tool manifest](/playbooks/pgar-runtime/domain/manifest-lifecycle), calls the LLM with schemas only, forwards proposals to the PEP, receives downstream results, runs validation (for RAG), and only then sends validated context back to the model.
+The orchestrator holds session state and credentials, loads the [tool manifest](/playbooks/pgar-runtime/domain/manifest-lifecycle) selected at ingress by the [intent router](/insights/what-is-intent-router), calls the LLM with schemas only, forwards proposals to the PEP, receives downstream results, runs validation (for RAG), and only then sends validated context back to the model.
 
 **Start here when:** building the request loop, step-up UX handoff, or validation gates after retrieval.
 

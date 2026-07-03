@@ -35,7 +35,7 @@ The agentic app is the **orchestrator**. It holds the token, talks to the LLM, f
 ## Request loop
 
 1. Receive user message + session from ingress
-2. Load or pin [tool manifest](/playbooks/pgar-runtime/domain/manifest-lifecycle) (`manifest_version` on session)
+2. Load or pin [tool manifest](/playbooks/pgar-runtime/domain/manifest-lifecycle) scoped by the [intent router](/insights/what-is-intent-router) route contract (`manifest_version` on session)
 3. Call LLM with messages + tool schemas only
 4. On tool proposal → validate against manifest → PEP with token + claims
 5. On ALLOW result → receive downstream/context pack

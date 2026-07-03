@@ -12,7 +12,7 @@ tags:
 
 [Blueprint](/blueprints/eval-blueprint) · **Input** · [Data →](/playbooks/eval-engineering/plane-data)
 
-The Input plane is where requests enter: parsing, normalization, intent classification, and first-line safety filters. Failures here poison every downstream plane.
+The Input plane is where requests enter: parsing, normalization, intent classification, and first-line safety filters. Failures here poison every downstream plane. See [What Is an Intent Router](/insights/what-is-intent-router) for the architectural role; this plane is where you eval it.
 
 :::tip[THE CLAIM]
 **If injection or ambiguous intent passes the Input plane, no amount of retrieval quality will save the outcome.**
@@ -33,7 +33,7 @@ The Input plane is where requests enter: parsing, normalization, intent classifi
 ## Failure classes
 
 - **Injection** — system prompt override via user or retrieved text
-- **Intent misroute** — wrong workflow or tool family selected
+- **Intent misroute** — wrong workflow or tool family selected ([What Is an Intent Router](/insights/what-is-intent-router))
 - **PII leak-in** — unmasked secrets in logs or model context
 
 ## Golden dataset examples

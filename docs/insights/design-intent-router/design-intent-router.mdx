@@ -10,7 +10,6 @@ tags:
   - gain
   - observability
 authors: [iamsharmajitender]
-draft: true
 date: 2026-07-02
 ---
 
@@ -33,10 +32,10 @@ This is a **decision guide** for intent router design — route contracts, layer
 ## The bottom line first
 
 - **Start with 5–8 routes**, each with a distinct manifest and policy profile — merge until every route earns its place.
-- **Use a layered router**: rules → classifier → LLM fallback → safety override. Never one LLM call for everything.
+- **Use a layered router**: eligible routes → rules → classifier → LLM fallback → safety. Top-k + user pick only when ambiguous or high-risk, not every turn.
 - **Treat clarify and abstain as first-class outcomes**, not errors.
 - **Respect session stickiness** — mid-flow utterances inherit route context.
-- **Gate every routing change** with a golden eval set in CI — same discipline as [Eval Engineering](/insights/eval-engineering).
+- **Gate every routing change** with a golden eval set in CI — same discipline as [Eval Plane ①: Input](/playbooks/eval-engineering/plane-input).
 
 ## Step 1 — Define the route table
 
@@ -68,83 +67,64 @@ Example starter routes for a regulated assistant:
 **Can this route be distinguished from the others by tools and policy alone?** If two routes share the same manifest and profile, merge them until they differ.
 :::
 
-## Step 2 — Layer the classifier
+**Logical table, versioned platform config.** Each row is a route contract; storage is an ops choice. Same discipline as [manifest lifecycle](/playbooks/pgar-runtime/domain/manifest-lifecycle): version id, CI on change, pin `route_table_version` per session, audit on every decision. **Eligible routes** are not a second store: ingress claims filter the table at request time.
 
-Production routers are **hybrid**. Each layer handles what the previous one could not — fast and cheap first, capable last.
+| Pattern | Maintain where | Regulated fit |
+| --- | --- | --- |
+| **GitOps + object storage** | YAML/JSON in Git; publish immutable artifact (S3/GCS) | Strong: PR review, immutable releases, rollback via `active` pointer |
+| **Route registry API** | Platform service; Git or approved UI as source | Strong: runtime rollback, multi-tenant, natural `route_table_version` audit |
+| **Versioned file in repo** | `platform/routes/{product}/2026.07.1.yaml` | Good pilot / single team; rollback often needs redeploy |
+| **Config service** | Consul, AppConfig, etc. | OK if your stack already has versioned, audited config |
+| **Hardcoded in app code** | Python/TS dict | Demos only; not production PGAR |
+
+Row fields reference other artifacts by id (`tool_manifest`, `policy_profile`); those live in their own versioned stores. Do not put entitlements in the route table; the router intersects claims from ingress with route requirements.
+
+## Step 2 — Classify in layers
+
+Do not send every message to one LLM with the full route table and hope it picks right. Use a **short pipeline**: cheap layers first, capable layers only when needed, safety on every path.
 
 ```mermaid
-flowchart TB
-    Input["Normalized input<br/>+ session + entitlements"]
-    L1["Layer 1 · Rules<br/>regex · channel · mid-flow"]
-    L2["Layer 2 · Classifier<br/>small model · fixed labels"]
-    L3["Layer 3 · LLM router<br/>structured output · fallback only"]
-    Safety["Layer 4 · Safety gate<br/>injection · PII · block"]
-    Decision{"Confidence<br/>≥ threshold?"}
-    Route["Dispatch route"]
-    Clarify["Clarify"]
-    Abstain["Abstain / escalate"]
+flowchart LR
+    In["Input + session"]
+    Elig["Eligible routes<br/>entitlements"]
+    Rules["① Rules"]
+    Clf["② Classifier"]
+    LLM["③ LLM<br/>fallback only"]
+    Safe["④ Safety"]
+    Out{"Outcome"}
 
-    Input --> L1
-    L1 -->|"no match"| L2
-    L2 -->|"low confidence"| L3
-    L1 --> Safety
-    L2 --> Safety
-    L3 --> Safety
-    Safety --> Decision
-    Decision -->|"yes"| Route
-    Decision -->|"ambiguous"| Clarify
-    Decision -->|"no / OOD"| Abstain
+    In --> Elig --> Rules
+    Rules -->|"match"| Safe
+    Rules -->|"no match"| Clf
+    Clf -->|"confident"| Safe
+    Clf -->|"uncertain"| LLM
+    LLM --> Safe
+    Safe --> Out
+    Out --> Route["Route"]
+    Out --> Pick["Top-k + user pick"]
+    Out --> Clarify["Clarify"]
+    Out --> Abstain["Abstain"]
 
     classDef gate fill:#ffedd5,stroke:#fdba74,color:#1e293b,stroke-width:2px
     classDef process fill:#ede9fe,stroke:#c4b5fd,color:#1e293b,stroke-width:2px
     classDef outcome fill:#dbeafe,stroke:#93c5fd,color:#1e293b,stroke-width:2px
 
-    class L1,L2,L3,Safety gate
-    class Input process
-    class Route,Clarify,Abstain outcome
+    class Elig,Rules,Clf,LLM,Safe gate
+    class In process
+    class Route,Pick,Clarify,Abstain outcome
 ```
 
-### Layer 1 — Deterministic rules
+| Layer | Runs when | Job | Clarification |
+| --- | --- | --- | --- |
+| **Eligible routes** | Always first | Prune the route table by entitlements before any model sees labels | Example: no `payment_initiate` in the set if the user lacks payment role |
+| **① Rules** | Every turn | Explicit commands, channel routing, **session stickiness** | Mid-flow utterances (“yes”, “the second one”, “$500”) stay on the active route; do not re-classify from scratch |
+| **② Classifier** | No rule match | Small model or kNN on **your** golden set; fixed label set | Target most clear traffic here in &lt;50ms; auto-route when confidence meets threshold (Step 3) |
+| **③ LLM router** | Low confidence only | Structured JSON: pick from **fixed** `route_id` list, extract entities, flag `needs_clarification` | Fallback only, not every turn. May return top 3 options for user pick when ambiguous or high-risk (`payment_initiate`); manifest loads after selection |
+| **④ Safety** | Always, after any layer | Injection scan, PII handling, block or force a safe route | Can **veto** a confident classification; [Input plane](/playbooks/eval-engineering/plane-input) requires **100%** adversarial pass before release |
 
-Use for high-confidence, low-ambiguity paths:
-
-- Explicit commands (“cancel order 12345”)
-- Channel routing (IVR vs web chat)
-- **Session stickiness**: user is in `payment_initiate` flow → stay until complete or explicit exit
-- **Entitlement pre-filter**: user lacks payment role → `payment_initiate` not in eligible routes
-
-Rules should emit `{ intent, confidence: 1.0, layer: "rules" }`.
-
-### Layer 2 — Classifier
-
-For stable intent sets (roughly 10–50 labels):
-
-- Fine-tuned small model, embedding + kNN, or lightweight LLM with fixed label set
-- Output: `{ intent, confidence, entities }`
-- Train and eval on **your** golden set — not a generic intent dataset
-
-Target: handle the bulk of traffic at sub-50ms latency.
-
-### Layer 3 — LLM router (fallback only)
-
-Invoke when Layer 2 confidence is below threshold. Requirements:
-
-- **Structured output** — JSON schema, not free text
-- **Fixed route list in prompt** — model picks from table, does not invent routes
-- **Entity extraction** in same call where useful
-- **`needs_clarification` flag** when slots are missing
-
-Keep this layer expensive and rare.
-
-### Layer 4 — Safety gate (always)
-
-Runs regardless of classification result:
-
-- Injection pattern detection
-- PII scan and redaction
-- Adversarial override: block or force `general_chat` with no tools
-
-Safety can **veto** a high-confidence route. [Eval Input plane](/playbooks/eval-engineering/plane-input) requires **100% adversarial pass rate** before release.
+:::important[Do not skip layering]
+An LLM that routes every turn with user disambiguation still pays latency and cost on clear traffic, widens the injection surface, and is harder to eval. Keep Layer ③ rare; reserve top-k + user pick for ambiguous or high-risk paths.
+:::
 
 ## Step 3 — Define confidence and outcomes
 
@@ -243,7 +223,7 @@ Do not ship routing without a golden set. Minimum coverage per [Eval Input plane
 - Zero PII-in-context violations on compliance subset
 - Confusion matrix reviewed for high-risk route pairs (`payment_initiate` vs `account_history`)
 
-Every production misroute becomes a permanent fixture. That is how routing quality compounds — the same principle as eval coverage in [Eval Engineering](/insights/eval-engineering).
+Every production misroute becomes a permanent fixture. That is how routing quality compounds — the same principle as eval coverage on the [Eval Input plane](/playbooks/eval-engineering/plane-input).
 
 ## Step 7 — Operate and evolve
 
@@ -263,6 +243,7 @@ Use canary routing for classifier model changes — same pattern as [G.A.I.N LLM
 | --- | --- |
 | 40 intents on day one | Merge to 5–8; split only when manifests diverge |
 | Single LLM call routes and plans | Router at ingress; planner inside loop |
+| LLM + user pick on every message | Auto-route clear traffic; disambiguation for ambiguous or high-risk only |
 | No eligible-routes filter | Entitlements prune route table before classification |
 | Confidence ignored | Explicit clarify/abstain paths |
 | No adversarial eval | Injection that hijacks route to high-risk manifest |
@@ -285,7 +266,7 @@ Before calling the router done:
 ## Key takeaways
 
 - **Write the route table before the classifier:** each row binds manifest, policy profile, model path, and eval fixtures.
-- **Layer dispatch** rules → classifier → LLM fallback → safety veto; keep the expensive layer rare.
+- **Layer dispatch:** eligible routes → rules → classifier → LLM fallback → safety; top-k + user pick for ambiguous or high-risk paths only.
 - **Tune confidence by risk tier:** payment routes need higher bars than general chat; session stickiness inherits mid-flow context.
 - **Emit a route decision record on every request:** without trace fields, misroutes cannot become regression tests.
 - **Load manifest scope from the route contract:** the agentic app pins tools; the LLM does not negotiate scope in the prompt.
