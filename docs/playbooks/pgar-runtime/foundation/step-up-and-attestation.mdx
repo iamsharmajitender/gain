@@ -10,6 +10,8 @@ tags:
   - policy
 ---
 
+import Details from '@theme/Details';
+
 # Step-Up & Attestation
 
 [Blueprint](/blueprints/pgar-blueprint) · [← PDP surfaces](/playbooks/pgar-runtime/foundation/pdp-policy-surfaces) · **Step-up** · [Audit & replay →](/playbooks/pgar-runtime/foundation/audit-and-replay)
@@ -29,6 +31,8 @@ tags:
 3. Supervisor completes four-eyes in **your auth system** (not the LLM)
 4. Agentic app re-submits same proposal with:
 
+<Details summary="Step-up context with approval (JSON)">
+
 ```json
 "context": {
   "amount": 47500,
@@ -39,6 +43,8 @@ tags:
   }
 }
 ```
+
+</Details>
 
 5. PDP re-evaluates → **ALLOW** → PEP forwards to downstream
 

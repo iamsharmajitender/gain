@@ -10,6 +10,8 @@ tags:
   - policy
 ---
 
+import Details from '@theme/Details';
+
 # Eval Plane ⑦: Action
 
 [Blueprint](/blueprints/eval-blueprint) · [← Memory](/playbooks/eval-engineering/plane-memory) · **Action** · [Outcome →](/playbooks/eval-engineering/plane-outcome)
@@ -52,11 +54,15 @@ The Action plane is where proposals become effects: payments, tickets, data chan
 
 Replay `proposal + token + context` through PDP fixture:
 
+<Details summary="PDP replay automated checks (pseudo-code)">
+
 ```
 assert verdict == expected
 assert downstream_called == (verdict == ALLOW)
 assert audit_event.policy_version == "pgar.payments/v3"
 ```
+
+</Details>
 
 ## Human review
 

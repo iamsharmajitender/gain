@@ -10,6 +10,8 @@ tags:
   - policy
 ---
 
+import Details from '@theme/Details';
+
 # Policy Test Scenarios
 
 [Blueprint](/blueprints/pgar-blueprint) · [← Audit & replay](/playbooks/pgar-runtime/foundation/audit-and-replay) · **Policy scenarios** · [Adversarial →](/playbooks/pgar-runtime/assurance/adversarial-testing)
@@ -23,6 +25,8 @@ Policy regressions are deterministic. Build a versioned scenario library paralle
 <!-- truncate -->
 
 ## Scenario schema
+
+<Details summary="Policy scenario schema (JSON)">
 
 ```json
 {
@@ -45,6 +49,8 @@ Policy regressions are deterministic. Build a versioned scenario library paralle
 }
 ```
 
+</Details>
+
 ## Four scenario layers
 
 | Layer | Purpose | Examples |
@@ -56,12 +62,16 @@ Policy regressions are deterministic. Build a versioned scenario library paralle
 
 ## CI gate
 
+<Details summary="CI scenario harness (pseudo-code)">
+
 ```
 for case in active_scenarios:
     result = pep_simulate(case.input)
     assert result.verdict == case.expected.verdict
     assert result.downstream_called == case.expected.downstream_called
 ```
+
+</Details>
 
 Only `status: active` scenarios block releases.
 
@@ -150,6 +160,8 @@ Run **monitoring, sampling, and replay**, not the full CI suite on every request
 
 Example CI step (pseudocode):
 
+<Details summary="CI commands (bash)">
+
 ```bash
 # Before merge — blocking
 pnpm run pgar:scenarios --status active --policy-version pgar.payments.wire/v3
@@ -157,6 +169,8 @@ pnpm run pgar:scenarios --status active --policy-version pgar.payments.wire/v3
 # After deploy — non-blocking sample (cron)
 pnpm run pgar:replay-audit --sample 100 --since 24h
 ```
+
+</Details>
 
 Pair with the [PGAR release gate matrix](/blueprints/pgar-blueprint#release-gate-matrix) for which scenario layers to re-run per change type.
 

@@ -9,6 +9,8 @@ tags:
   - agents
 ---
 
+import Details from '@theme/Details';
+
 # Eval Plane ⑤: Tool
 
 [Blueprint](/blueprints/eval-blueprint) · [← Reasoning](/playbooks/eval-engineering/plane-reasoning) · **Tool** · [Memory →](/playbooks/eval-engineering/plane-memory)
@@ -49,6 +51,8 @@ The Tool plane is where agents touch the real world: APIs, databases, workflows.
 
 ## Automated checks
 
+<Details summary="Tool plane fixture example (JSON)">
+
 ```json
 {
   "tool": "get_account_balance",
@@ -58,6 +62,8 @@ The Tool plane is where agents touch the real world: APIs, databases, workflows.
   "policy_precheck": "ALLOW"
 }
 ```
+
+</Details>
 
 Assert against fixture; mock downstream for unit eval, real sandbox for integration eval.
 

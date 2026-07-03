@@ -10,6 +10,8 @@ tags:
   - policy
 ---
 
+import Details from '@theme/Details';
+
 # PDP Policy Surfaces
 
 [Blueprint](/blueprints/pgar-blueprint) · [← PEP enforcement](/playbooks/pgar-runtime/foundation/pep-enforcement) · **PDP surfaces** · [Step-up →](/playbooks/pgar-runtime/foundation/step-up-and-attestation)
@@ -38,10 +40,14 @@ Example STEP_UP reason codes: `wire_above_auto_approved`, `classification_requir
 
 Every audit record carries the policy version that decided:
 
+<Details summary="Policy version identifiers (pseudo-code)">
+
 ```
 pgar.payments.wire/v3
 pgar.retrieval.corpus/v2
 ```
+
+</Details>
 
 Version bumps require full [policy test scenario](/playbooks/pgar-runtime/assurance/policy-test-scenarios) replay before promotion.
 
@@ -63,11 +69,15 @@ Version bumps require full [policy test scenario](/playbooks/pgar-runtime/assura
 
 ## PDP regression gate
 
+<Details summary="PDP regression harness (pseudo-code)">
+
 ```
 for scenario in golden_policy_scenarios:
     assert pdp.evaluate(scenario.input).verdict == scenario.expected
     assert pdp.evaluate(scenario.input).policy_version == current_version
 ```
+
+</Details>
 
 ## Trace fields
 

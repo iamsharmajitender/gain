@@ -10,6 +10,8 @@ tags:
   - policy
 ---
 
+import Details from '@theme/Details';
+
 # Token & Session Boundary
 
 [Blueprint](/blueprints/pgar-blueprint) · [← Policy contracts](/playbooks/pgar-runtime/foundation/policy-contracts) · **Token & session** · [PEP enforcement →](/playbooks/pgar-runtime/foundation/pep-enforcement)
@@ -24,6 +26,8 @@ The bearer token and claims live in the **agentic app session**. They attach to 
 
 ## What the agentic app holds
 
+<Details summary="Agentic app session (JSON)">
+
 ```json
 {
   "session_id": "sess-8f2a",
@@ -36,6 +40,8 @@ The bearer token and claims live in the **agentic app session**. They attach to 
   }
 }
 ```
+
+</Details>
 
 :::note[About `claims` (and `limits` in particular)]
 `sub` and `roles` align with common OIDC/JWT practice. `emts` is **entitlements** shorthand in this series (production systems often use OAuth scopes, app roles, or custom IdP claims instead).
@@ -55,6 +61,8 @@ See [Policy contracts](/playbooks/pgar-runtime/foundation/policy-contracts) for 
 
 ## What the LLM sees
 
+<Details summary="LLM request payload (JSON)">
+
 ```json
 {
   "messages": [{ "role": "user", "content": "Send wire to Acme for INV-8842" }],
@@ -64,6 +72,8 @@ See [Policy contracts](/playbooks/pgar-runtime/foundation/policy-contracts) for 
   ]
 }
 ```
+
+</Details>
 
 No `Authorization` header. No roles. No limits. No policy text.
 

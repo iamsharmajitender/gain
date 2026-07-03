@@ -10,6 +10,8 @@ tags:
   - policy
 ---
 
+import Details from '@theme/Details';
+
 # PGAR Boundary ⑤: Downstream
 
 [Blueprint](/blueprints/pgar-blueprint) · [← PEP + PDP](/playbooks/pgar-runtime/boundary/pep-pdp) · **Downstream** · [Tool registry →](/playbooks/pgar-runtime/domain/tool-registry)
@@ -33,9 +35,13 @@ Both must pass. PGAR without downstream re-auth is half a control.
 
 ## Return path
 
+<Details summary="Downstream return path (pseudo-code)">
+
 ```
 Downstream → PEP (optional audit of execution) → Agentic app → (validation) → LLM
 ```
+
+</Details>
 
 Results do not go directly to the LLM. The app sanitizes, logs, and decides what the model may see.
 

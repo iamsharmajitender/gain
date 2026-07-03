@@ -11,6 +11,8 @@ tags:
   - agents
 ---
 
+import Details from '@theme/Details';
+
 # Eval Framework Blueprint: All Planes, All Methods
 
 This is the **implementation guide** for the Eval Engineering executive insight — *Eval Engineering: The Control System for Trustworthy AI* (not yet published). That piece explains *why* evals are the control system. This series explains *how* to build one that covers every plane, every failure mode, every data source, and every execution mode — without pretending a single end-of-pipeline score is enough.
@@ -151,6 +153,8 @@ Each plane gets its own dataset slice, rubric dimensions, and gate.
 
 ## Golden case schema (every plane)
 
+<Details summary="Golden eval case schema (JSON)">
+
 ```json
 {
   "id": "eval-2026-07-001",
@@ -169,6 +173,8 @@ Each plane gets its own dataset slice, rubric dimensions, and gate.
   "risk_tier": "low | medium | high"
 }
 ```
+
+</Details>
 
 Only `status: active` cases gate releases. High-risk → human regardless of judge score.
 

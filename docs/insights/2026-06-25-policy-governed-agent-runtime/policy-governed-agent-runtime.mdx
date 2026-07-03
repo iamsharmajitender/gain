@@ -15,6 +15,8 @@ authors: [iamsharmajitender]
 
 ---
 
+import Details from '@theme/Details';
+
 ![Policy-Governed Agent Runtime](./policy-governed-agent-runtime.png)
 
 # Policy-Governed Agent Runtime
@@ -256,7 +258,11 @@ If you can answer examiner questions from PEP/PDP logs alone, you have PGAR. If 
 
 Every PDP evaluation uses the same four-field shape: **who** (subject), **what** (action), **on what** (resource), **under what conditions** (context).
 
+Click each block to expand. Collapsed by default.
+
 ### 1. Token and claims stay in the Agentic App
+
+<Details summary="Token and claims (JSON)">
 
 The token never enters the LLM request. It stays in the session and attaches to every Agentic App → PEP → Payment Hub call.
 
@@ -288,7 +294,11 @@ The token never enters the LLM request. It stays in the session and attaches to 
 }
 ```
 
+</Details>
+
 ### 2. What the LLM actually sees
+
+<Details summary="LLM request payload (JSON)">
 
 This is the payload that crosses the Agentic App → LLM boundary. Notice what's missing.
 
@@ -314,6 +324,8 @@ This is the payload that crosses the Agentic App → LLM boundary. Notice what's
 }
 ```
 
+</Details>
+
 No `Authorization` header. No `roles`, `emts`, or `limits`. No policy text.
 
 :::important[THE PGAR TEST]
@@ -330,6 +342,8 @@ The PEP doesn't send natural language to the PDP. It maps session **claims** int
 |**action**| Tool proposal name | What. `lookup_beneficiary`, `validate_payment`, `initiate_wire` |
 |**resource**| Tool proposal target | On what: beneficiary, source account, wire payment |
 |**context**| Proposal + runtime state | Conditions. `amount`, `sanctions_status`, `approval` |
+
+<Details summary="PEP → PDP authorization request (JSON)">
 
 ```json
 {
@@ -370,9 +384,13 @@ The PEP doesn't send natural language to the PDP. It maps session **claims** int
 }
 ```
 
+</Details>
+
 After step-up, the same request returns with `context.approval` set to `{ "type": "supervisor_four_eyes", "attestation_id": "apr-9f2c" }`. And the PDP re-evaluates.
 
 ### 4. Policy rules: three verdicts, no fourth option
+
+<Details summary="Wire payment policy rules (JSON)">
 
 The PDP runs one policy surface. Three outcomes only: **ALLOW**, **DENY**, **STEP_UP**. No "the model said it was fine."
 
@@ -438,6 +456,8 @@ The PDP runs one policy surface. Three outcomes only: **ALLOW**, **DENY**, **STE
   ]
 }
 ```
+
+</Details>
 
 OPA, Cedar, your IAM PDP, or an internal rules engine can implement this surface: the requirement is **structured input, deterministic output**, evaluated by the PDP, not natural-language policy in a system prompt.
 

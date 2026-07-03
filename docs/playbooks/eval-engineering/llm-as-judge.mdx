@@ -9,6 +9,8 @@ tags:
   - llm
 ---
 
+import Details from '@theme/Details';
+
 # LLM-as-Judge: Scaled Eval With Calibration
 
 LLM-as-judge lets you score thousands of cases per build. Used without calibration, it is a **confident random number generator**. Used with human-anchored rubrics and holdout validation, it is how enterprise teams make CI gates feasible.
@@ -42,6 +44,8 @@ flowchart LR
 
 ## Rubric prompt structure
 
+<Details summary="Rubric prompt template (pseudo-code)">
+
 ```
 You are an evaluator, not the assistant being evaluated.
 
@@ -68,6 +72,8 @@ Score the system response on each dimension using the anchors below.
 ## Output format (JSON only)
 {"grounding": {"score": 4, "rationale": "..."}, ...}
 ```
+
+</Details>
 
 Plane-specific dimensions live in each [plane playbook](/blueprints/eval-blueprint).
 
@@ -111,6 +117,8 @@ Plane-specific dimensions live in each [plane playbook](/blueprints/eval-bluepri
 
 Example composite (tune per use case):
 
+<Details summary="Gate aggregation (pseudo-code)">
+
 ```
 plane_pass = all(automated_checks) 
   AND all(judge_dim >= 4 for dim in critical_dims)
@@ -118,6 +126,8 @@ plane_pass = all(automated_checks)
 
 release_pass = all(plane_pass for plane in affected_planes)
 ```
+
+</Details>
 
 **Critical dimensions** (typical): grounding, policy_fit on high-risk cases.
 

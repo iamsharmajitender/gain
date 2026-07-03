@@ -10,6 +10,8 @@ tags:
   - policy
 ---
 
+import Details from '@theme/Details';
+
 # Policy Contracts: SARAC and Payload Shapes
 
 [Blueprint](/blueprints/pgar-blueprint) · [← Foundation overview](/playbooks/pgar-runtime/foundation) · **Policy contracts** · [Token & session →](/playbooks/pgar-runtime/foundation/token-and-session-boundary)
@@ -32,6 +34,8 @@ The PEP does not send natural language to the PDP. It maps session claims and to
 | **context** | Runtime state + proposal args | amount, sanctions_status, approval |
 
 ## Example: wire initiation
+
+<Details summary="Wire initiation SARAC (JSON)">
 
 ```json
 {
@@ -59,9 +63,13 @@ The PEP does not send natural language to the PDP. It maps session claims and to
 }
 ```
 
+</Details>
+
 After step-up, the same request returns with `context.approval` set and the PDP re-evaluates.
 
 ## Example: RAG retrieval
+
+<Details summary="RAG retrieval SARAC (JSON)">
 
 ```json
 {
@@ -81,6 +89,8 @@ After step-up, the same request returns with `context.approval` set and the PDP 
 }
 ```
 
+</Details>
+
 See [RAG retrieval](/playbooks/pgar-runtime/domain/rag-retrieval).
 
 ## Mapping rules (PEP responsibility)
@@ -99,12 +109,16 @@ See [RAG retrieval](/playbooks/pgar-runtime/domain/rag-retrieval).
 
 ## Automated checks
 
+<Details summary="SARAC automated checks (pseudo-code)">
+
 ```
 assert pdp_request.has_fields(["subject", "action", "resource", "context"])
 assert subject.sub == session.claims.sub
 assert action in tool_manifest.names
 assert audit.redacted_context == redact(context)
 ```
+
+</Details>
 
 ## Trace fields
 

@@ -10,6 +10,8 @@ tags:
   - policy
 ---
 
+import Details from '@theme/Details';
+
 # Manifest Lifecycle & Registry Patterns
 
 [Blueprint](/blueprints/pgar-blueprint) · [← Tool registry](/playbooks/pgar-runtime/domain/tool-registry) · **Manifest lifecycle** · [RAG retrieval →](/playbooks/pgar-runtime/domain/rag-retrieval)
@@ -68,6 +70,8 @@ Manifest **shape** and **enforcement** live in [Tool registry](/playbooks/pgar-r
 
 **Typical layout:**
 
+<Details summary="Repo manifest layout (text)">
+
 ```text
 platform/manifests/
   payments-agent/
@@ -76,6 +80,8 @@ platform/manifests/
   policy-assistant/
     2026.07.1.json
 ```
+
+</Details>
 
 **Load:** `MANIFEST_PATH=/config/manifests/payments-agent/2026.07.1.json` or `MANIFEST_AGENT=payments-agent` + resolve active version from small index file.
 
@@ -100,10 +106,14 @@ platform/manifests/
 
 **Example:**
 
+<Details summary="Manifest registry API (text)">
+
 ```text
 GET /v1/manifests/payments-agent/active
 → { "manifest_version": "2026.07.1", "tools": [ ... ] }
 ```
+
+</Details>
 
 **Session pin:** On session open, app fetches manifest and stores `manifest_version` on the session. All proposals in that session use the same version even if registry publishes `2026.08.1` mid-flight.
 
@@ -125,10 +135,14 @@ RAG tools (`retrieve_documents`, etc.) use the same JSON shape as payment tools.
 
 **Pattern:** Registry API or build-time merge in CI.
 
+<Details summary="Composed manifest build (text)">
+
 ```text
 base-tools.json + payments-tools.json + rag-tools.json
   → build → payments-agent/2026.07.1.json (published)
 ```
+
+</Details>
 
 Platform owns merge rules; squads own fragment files. One published `manifest_version`.
 
@@ -136,9 +150,13 @@ Platform owns merge rules; squads own fragment files. One published `manifest_ve
 
 **Pattern:** Registry API with tenant dimension.
 
+<Details summary="Multi-tenant manifest API (text)">
+
 ```text
 GET /v1/manifests/{agent_id}?tenant=bank-eu
 ```
+
+</Details>
 
 Tenant-specific tool subsets or schemas. PDP still decides authorization; manifest defines **what can be proposed at all**.
 

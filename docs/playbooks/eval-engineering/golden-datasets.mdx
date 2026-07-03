@@ -9,6 +9,8 @@ tags:
   - observability
 ---
 
+import Details from '@theme/Details';
+
 # Golden Datasets: Building Eval Data That Predicts Production
 
 A golden dataset is the **institutional memory** of what "good" looks like for your AI system. Without it, every eval conversation devolves into anecdotes. With a bad one, you optimize for the demo and fail in production.
@@ -32,6 +34,8 @@ Part of the [Eval Framework Blueprint](/blueprints/eval-blueprint) series.
 | **Regression** | Locked baselines after each gate | Snapshot per release |
 
 ## Case schema
+
+<Details summary="Golden dataset case schema (JSON)">
 
 ```json
 {
@@ -60,6 +64,8 @@ Part of the [Eval Framework Blueprint](/blueprints/eval-blueprint) series.
   "source": "production_replay"
 }
 ```
+
+</Details>
 
 ## Plane tagging
 

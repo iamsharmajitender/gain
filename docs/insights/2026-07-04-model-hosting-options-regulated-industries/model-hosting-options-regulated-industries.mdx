@@ -1,7 +1,7 @@
 ---
 slug: model-hosting-options-regulated-industries
 title: LLM Hosting Options for Regulated Industries
-description: From public SaaS to air-gapped on-prem — a practical ladder of LLM hosting options, and how to choose based on regulatory pressure and engineering maturity.
+description: "From public SaaS to air-gapped on-prem: a practical ladder of LLM hosting options, and how to choose based on regulatory pressure and engineering maturity."
 image: ./model-hosting-options-regulated-industries.png
 tags:
   - ai-intelligence
@@ -17,12 +17,12 @@ authors: [iamsharmajitender]
 
 # LLM Hosting Options for Regulated Industries
 
-Enterprise teams ask **which model** first. Regulated organisations should ask **where it runs**, **who owns the boundary**, and **who is accountable when inference touches sensitive data**. The model brand matters less than the hosting pattern — and the hosting pattern must match both **regulatory pressure** and **engineering capability**.
+Enterprise teams ask **which model** first. Regulated organisations should ask **where it runs**, **who owns the boundary**, and **who is accountable when inference touches sensitive data**. The model brand matters less than the hosting pattern, and the hosting pattern must match both **regulatory pressure** and **engineering capability**.
 
-This is a **decision guide**: the hosting ladder (what exists), selection logic by industry profile, and a simple matrix to shortlist realistic options — aligned with [G.A.I.N LLM](/frameworks/gain-llm) and production governance patterns.
+This is a **decision guide**: the hosting ladder (what exists), selection logic by industry profile, and a simple matrix to shortlist realistic options, aligned with [G.A.I.N LLM](/frameworks/gain-llm) and production governance patterns.
 
 :::tip[THE CLAIM]
-**SaaS is fastest. Hyperscaler managed is the safest default for most enterprises. Dedicated and VPC patterns earn their cost when isolation is auditable. On-prem and air-gapped are sovereignty choices — not performance choices.**
+**SaaS is fastest. Hyperscaler managed is the safest default for most enterprises. Dedicated and VPC patterns earn their cost when isolation is auditable. On-prem and air-gapped are sovereignty choices, not performance choices.**
 :::
 
 <!-- truncate -->
@@ -44,7 +44,7 @@ This is a **decision guide**: the hosting ladder (what exists), selection logic 
 
 ---
 
-## 1. LLM hosting options — what exists
+## 1. LLM hosting options: what exists
 
 From **least to most control**:
 
@@ -59,7 +59,7 @@ From **least to most control**:
 | **Edge / local** | Laptop / edge devices | You | High | Low | You |
 | **Hybrid** | Mixed setup | Shared | Flexible | Flexible | Shared |
 
-### The hosting ladder — at a glance
+### The hosting ladder: at a glance
 
 | Option | Control | Cost | Ownership | Responsibility |
 | --- | --- | --- | --- | --- |
@@ -96,18 +96,32 @@ flowchart BT
 
 ---
 
-## 2. How organisations choose — regulation × engineering
+## 2. How organisations choose: regulation × engineering
 
 Map on two axes:
 
 - **Regulatory pressure** (low → very high)
 - **Engineering maturity** (low → high)
 
-Then shortlist **three realistic options** — not every rung on the ladder.
+Then shortlist **three realistic options**, not every rung on the ladder.
 
 ```mermaid
 ---
 config:
+  themeVariables:
+    quadrant1Fill: '#ffedd5'
+    quadrant2Fill: '#fee2e2'
+    quadrant3Fill: '#dbeafe'
+    quadrant4Fill: '#ede9fe'
+    quadrant1TextFill: '#1e293b'
+    quadrant2TextFill: '#1e293b'
+    quadrant3TextFill: '#1e293b'
+    quadrant4TextFill: '#1e293b'
+    quadrantInternalBorderStrokeFill: '#cbd5e1'
+    quadrantExternalBorderStrokeFill: '#94a3b8'
+    quadrantTitleFill: '#1e293b'
+    quadrantXAxisTextFill: '#475569'
+    quadrantYAxisTextFill: '#475569'
   quadrantChart:
     chartWidth: 625
 ---
@@ -136,9 +150,9 @@ quadrantChart
 
 | Option | When to choose | Examples |
 | --- | --- | --- |
-| **A — Public SaaS** | Fast delivery; minimal infra team | OpenAI Platform, Anthropic API |
-| **B — Hyperscaler managed** | Already on AWS / Azure / GCP; want IAM and audit hooks | Azure OpenAI Service, Amazon Bedrock, Vertex AI |
-| **C — Hybrid** | SaaS for general workloads; private RAG for internal docs | Managed inference + private vector store |
+| **A: Public SaaS** | Fast delivery; minimal infra team | OpenAI Platform, Anthropic API |
+| **B: Hyperscaler managed** | Already on AWS / Azure / GCP; want IAM and audit hooks | Azure OpenAI Service, Amazon Bedrock, Vertex AI |
+| **C: Hybrid** | SaaS for general workloads; private RAG for internal docs | Managed inference + private vector store |
 
 :::note
 Even in low-regulation contexts, **data classification** still applies. Do not paste customer PII or unreleased financials into public SaaS without a policy review.
@@ -154,9 +168,9 @@ Even in low-regulation contexts, **data classification** still applies. Do not p
 
 | Option | When to choose | Examples |
 | --- | --- | --- |
-| **A — Hyperscaler managed** (default) | Strongest default: audit logs, IAM, regional controls | Azure OpenAI, Bedrock, Vertex AI |
-| **B — Dedicated vendor deployment** | Regulator or CISO asks for stronger isolation | OpenAI Enterprise, Cohere Enterprise, isolated enterprise tenants |
-| **C — Private RAG + managed inference** | Keep documents and indexes in your boundary; use managed model for inference | Private retrieval gateway + Azure OpenAI / Bedrock |
+| **A: Hyperscaler managed** (default) | Strongest default: audit logs, IAM, regional controls | Azure OpenAI, Bedrock, Vertex AI |
+| **B: Dedicated vendor deployment** | Regulator or CISO asks for stronger isolation | OpenAI Enterprise, Cohere Enterprise, isolated enterprise tenants |
+| **C: Private RAG + managed inference** | Keep documents and indexes in your boundary; use managed model for inference | Private retrieval gateway + Azure OpenAI / Bedrock |
 
 **Very common pattern:** private data layer + managed model API. Retrieval and context assembly stay yours; inference is vendor-operated. See [Retrieval is a governed action](/insights/retrieval-is-a-governed-action).
 
@@ -170,11 +184,11 @@ Even in low-regulation contexts, **data classification** still applies. Do not p
 
 | Option | When to choose | Examples |
 | --- | --- | --- |
-| **A — Dedicated on hyperscaler** (best balance) | Isolated infra; vendor-managed GPU; lower ops than full self-host | Single-tenant Azure OpenAI, dedicated Bedrock, private endpoints |
-| **B — VPC private deployment** | Platform team exists; want model stack in your account | Llama, Mistral, vLLM on EKS / AKS / GKE |
-| **C — Hybrid split by risk** | Different workloads, different boundaries | Low-risk → dedicated managed; high-risk → VPC private |
+| **A: Dedicated on hyperscaler** (best balance) | Isolated infra; vendor-managed GPU; lower ops than full self-host | Single-tenant Azure OpenAI, dedicated Bedrock, private endpoints |
+| **B: VPC private deployment** | Platform team exists; want model stack in your account | Llama, Mistral, vLLM on EKS / AKS / GKE |
+| **C: Hybrid split by risk** | Different workloads, different boundaries | Low-risk → dedicated managed; high-risk → VPC private |
 
-Most realistic at scale: **risk-based routing** in the [LLM gateway](/frameworks/gain-llm) — not one hosting pattern for every use case.
+Most realistic at scale: **risk-based routing** in the [LLM gateway](/frameworks/gain-llm), not one hosting pattern for every use case.
 
 ---
 
@@ -186,9 +200,9 @@ Most realistic at scale: **risk-based routing** in the [LLM gateway](/frameworks
 
 | Option | When to choose | Examples |
 | --- | --- | --- |
-| **A — On-prem self-hosted** | Strict data residency and ownership; ops team in place | Private GPU cluster, on-prem vLLM / TGI |
-| **B — Air-gapped** | Classified or fully offline requirements | Offline model weights, no egress |
-| **C — VPC private with open models** | On-prem too heavy; cloud account still sovereign-controlled | Open weights in private cloud with no public endpoints |
+| **A: On-prem self-hosted** | Strict data residency and ownership; ops team in place | Private GPU cluster, on-prem vLLM / TGI |
+| **B: Air-gapped** | Classified or fully offline requirements | Offline model weights, no egress |
+| **C: VPC private with open models** | On-prem too heavy; cloud account still sovereign-controlled | Open weights in private cloud with no public endpoints |
 
 Examiner and auditor questions at this tier: **who can reach the model**, **where weights live**, **what leaves the boundary**, **what is logged**, and **how you patch without egress**.
 
@@ -232,18 +246,18 @@ The wrong hosting choice is expensive to unwind. The right hosting choice with n
 | **Defaulting to public SaaS for regulated data** | Data leaves your control boundary without a recorded decision |
 | **Jumping to on-prem for speed** | Ops burden kills delivery; team cannot patch or scale |
 | **One pattern for all use cases** | Marketing chatbot and wire-transfer copilot share a boundary they should not |
-| **Confusing vendor SOC 2 with your compliance** | Shared responsibility — you still own data classification and access |
+| **Confusing vendor SOC 2 with your compliance** | Shared responsibility: you still own data classification and access |
 | **Ignoring hybrid as a permanent state** | Risk-based routing is a valid end state, not a stepping-stone failure |
 
 ---
 
 ## Summary
 
-**Section 1 — the ladder:** from public SaaS (fastest, least control) to air-gapped (maximum security, highest cost). Edge and hybrid extend the ladder for latency and split-risk designs.
+**Section 1: the ladder:** from public SaaS (fastest, least control) to air-gapped (maximum security, highest cost). Edge and hybrid extend the ladder for latency and split-risk designs.
 
-**Section 2 — the choice:** map **regulatory pressure** against **engineering maturity**. Low/low → SaaS or hyperscaler managed. Medium → hyperscaler managed or dedicated. High → dedicated or VPC private. Very high → on-prem or air-gapped.
+**Section 2: the choice:** map **regulatory pressure** against **engineering maturity**. Low/low → SaaS or hyperscaler managed. Medium → hyperscaler managed or dedicated. High → dedicated or VPC private. Very high → on-prem or air-gapped.
 
-Move **right** when regulation outpaces engineering. Move **down** on ownership when engineering outpaces regulation. Shortlist three options, then validate against data class, residency, and operational reality — not vendor marketing slides.
+Move **right** when regulation outpaces engineering. Move **down** on ownership when engineering outpaces regulation. Shortlist three options, then validate against data class, residency, and operational reality, not vendor marketing slides.
 
 :::info[Builds on]
 [G.A.I.N LLM](/frameworks/gain-llm) · [G.A.I.N AIOM](/frameworks/gain-aiom) · [Policy-Governed Agent Runtime](/insights/policy-governed-agent-runtime)

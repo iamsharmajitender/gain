@@ -9,6 +9,8 @@ tags:
   - rag
 ---
 
+import Details from '@theme/Details';
+
 # Eval Plane ③: Context
 
 [Blueprint](/blueprints/eval-blueprint) · [← Data](/playbooks/eval-engineering/plane-data) · **Context** · [Reasoning →](/playbooks/eval-engineering/plane-reasoning)
@@ -50,12 +52,16 @@ This is not the Data plane. Data owns freshness, lineage, ACL at ingest, and ind
 
 ## Automated checks
 
+<Details summary="Context plane automated checks (Python)">
+
 ```python
 assert set(required_doc_ids) <= set(retrieved_ids[:k])
 assert len(scope_violations) == 0
 if expect_abstain:
     assert response.abstained
 ```
+
+</Details>
 
 ## LLM-as-judge dimensions
 

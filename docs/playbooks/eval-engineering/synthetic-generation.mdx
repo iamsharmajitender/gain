@@ -8,6 +8,8 @@ tags:
   - gain
 ---
 
+import Details from '@theme/Details';
+
 # Synthetic Eval Generation: Scaling Coverage Safely
 
 Humans cannot write every injection variant, tool-argument permutation, or cross-plane failure combo. **Synthetic generation** expands coverage — but ungoverned synthetics teach you to pass fake tests.
@@ -64,6 +66,8 @@ Never gate on `draft` synthetics.
 
 ## LLM generator prompt pattern
 
+<Details summary="Synthetic generator prompt (pseudo-code)">
+
 ```
 Generate 10 eval cases for plane: context
 Scenario: adversarial
@@ -74,6 +78,8 @@ Constraints:
 - Do not use real customer names
 Output: JSON array matching golden schema
 ```
+
+</Details>
 
 Human reviewer validates **expected** fields — generators often mark wrong docs as "must retrieve."
 

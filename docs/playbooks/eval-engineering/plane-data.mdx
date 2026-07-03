@@ -9,6 +9,8 @@ tags:
   - rag
 ---
 
+import Details from '@theme/Details';
+
 # Eval Plane ②: Data
 
 [Blueprint](/blueprints/eval-blueprint) · [← Input](/playbooks/eval-engineering/plane-input) · **Data** · [Context →](/playbooks/eval-engineering/plane-context)
@@ -131,6 +133,8 @@ Build slices per corpus (policy, product, support, rates) — not one generic "R
 
 **Schema fields every Data golden case should carry:**
 
+<Details summary="Data golden case schema (JSON)">
+
 ```json
 {
   "plane": "data",
@@ -146,9 +150,13 @@ Build slices per corpus (policy, product, support, rates) — not one generic "R
 }
 ```
 
+</Details>
+
 ## Automated checks (primary scorer for Data)
 
 Data eval should be **mostly deterministic**. Judges and humans supplement; they do not replace ACL and version checks.
+
+<Details summary="Data plane automated checks (Python)">
 
 ```python
 # Version assertion on indexed chunks
@@ -168,6 +176,8 @@ assert doc_id not in index.searchable_doc_ids(any_principal)
 # Golden extract hash (correctness on fixtures)
 assert sha256(index.get_extract(fixture_id)) == FIXTURE_HASHES[fixture_id]
 ```
+
+</Details>
 
 Also enforce:
 

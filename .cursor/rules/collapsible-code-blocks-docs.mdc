@@ -1,0 +1,56 @@
+---
+description: Wrap docs code blocks in collapsible Details (docs/**/*.mdx)
+globs: docs/**/*.mdx
+alwaysApply: false
+---
+
+# Collapsible code blocks in docs
+
+When writing or editing `docs/**/*.mdx`, make fenced code blocks **collapsible by default** using Docusaurus `<Details>`. Readers click the summary to expand or collapse.
+
+Reference: `docs/insights/2026-07-02-langchain-vs-langgraph/langchain-vs-langgraph.mdx`.
+
+## Setup
+
+Add once per file (after frontmatter), if missing:
+
+```mdx
+import Details from '@theme/Details';
+```
+
+## Wrap code blocks
+
+Wrap each fenced block in `<Details summary="...">` ... `</Details>`.
+
+- **Collapsed by default** — do not add `open`.
+- **Summary** — short, scannable label: topic + language or purpose (e.g. `LangChain chain (RAG, no loop)`, `Pseudo-code — validation (tool wrapper vs graph node)`).
+- **Prose inside** — optional intro or bullets above the fence inside the same `<Details>` (see reference doc).
+- **Related blocks** — group multiple fences in one `<Details>` when they belong to one example.
+
+## Do not wrap
+
+- ` ```mermaid ` diagrams (keep visible for architecture flow)
+- Frontmatter, imports, inline `` `code` ``
+- Fences already inside `<Details>`
+- Third-party quotes where collapsing would break attribution
+
+## Example
+
+```mdx
+<Details summary="LangGraph (production-shaped loop)">
+
+Explicit nodes map to agentic loop stages.
+
+```python
+graph = StateGraph(AgentState)
+graph.add_node("plan", plan_node)
+```
+
+</Details>
+```
+
+## Before finishing
+
+1. Every new or edited fenced code block in changed `.mdx` files is inside `<Details>` (unless excluded above).
+2. `import Details from '@theme/Details';` is present when the file uses `<Details>`.
+3. Section with several blocks may include a one-line note: "Click each block to expand. Collapsed by default."

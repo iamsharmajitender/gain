@@ -12,6 +12,8 @@ authors: [iamsharmajitender]
 draft: true
 ---
 
+import Details from '@theme/Details';
+
 # How to Design an Intent Router for Agentic AI
 
 You know you need an intent router — see [What Is an Intent Router](/insights/what-is-intent-router) for why it is not optional in agentic systems. The design question is harder: **how few routes can you ship**, **how do you classify reliably**, and **how do you gate changes** so routing does not become the silent source of production incidents?
@@ -162,6 +164,8 @@ Tune thresholds per route risk:
 
 Every dispatch must be traceable. Minimum fields:
 
+<Details summary="Route decision record (JSON)">
+
 ```json
 {
   "raw_input": "...",
@@ -177,6 +181,8 @@ Every dispatch must be traceable. Minimum fields:
   "latency_ms": 18
 }
 ```
+
+</Details>
 
 Align with Input plane trace fields: `raw_input`, `normalized_input`, `intent_scores`, `safety_flags`, `redaction_map`. Without this, you cannot debug misroutes or feed [observability](/frameworks/gain-observability) back into the route table.
 

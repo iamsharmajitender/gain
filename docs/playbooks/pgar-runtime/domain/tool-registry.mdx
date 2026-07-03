@@ -10,6 +10,8 @@ tags:
   - policy
 ---
 
+import Details from '@theme/Details';
+
 # Domain: Tool Registry
 
 [Blueprint](/blueprints/pgar-blueprint) · [← Downstream](/playbooks/pgar-runtime/boundary/downstream) · **Tool registry** · [Manifest lifecycle →](/playbooks/pgar-runtime/domain/manifest-lifecycle) · [RAG retrieval →](/playbooks/pgar-runtime/domain/rag-retrieval)
@@ -39,6 +41,10 @@ Each tool in the manifest:
 Payment agent manifest (matches [PGAR wire insight](/insights/policy-governed-agent-runtime)). RAG tools use the same shape; see [RAG retrieval walkthrough](/playbooks/pgar-runtime/domain/rag-retrieval#worked-example-one-request-step-by-step).
 
 **Where to maintain manifests:** [Manifest lifecycle & registry patterns](/playbooks/pgar-runtime/domain/manifest-lifecycle).
+
+Click each block to expand. Collapsed by default.
+
+<Details summary="Payment agent tool manifest (JSON)">
 
 ```json
 {
@@ -95,6 +101,8 @@ Payment agent manifest (matches [PGAR wire insight](/insights/policy-governed-ag
 }
 ```
 
+</Details>
+
 ## Manifest → LLM → PEP
 
 The agentic app **derives** the LLM tool list from the manifest. Governance fields never cross the LLM boundary.
@@ -111,6 +119,8 @@ The agentic app **derives** the LLM tool list from the manifest. Governance fiel
 
 **LLM payload** (from manifest above):
 
+<Details summary="LLM tool schemas (JSON)">
+
 ```json
 {
   "tools": [
@@ -120,6 +130,8 @@ The agentic app **derives** the LLM tool list from the manifest. Governance fiel
   ]
 }
 ```
+
+</Details>
 
 No `emts`, `limits`, or `pdp_action`. See [Token & session boundary](/playbooks/pgar-runtime/foundation/token-and-session-boundary).
 
@@ -142,6 +154,8 @@ No `emts`, `limits`, or `pdp_action`. See [Token & session boundary](/playbooks/
 
 **Claims** (session, not sent to LLM):
 
+<Details summary="Session claims (JSON)">
+
 ```json
 {
   "sub": "officer-123",
@@ -154,9 +168,13 @@ No `emts`, `limits`, or `pdp_action`. See [Token & session boundary](/playbooks/
 }
 ```
 
+</Details>
+
 Prior tool results in app state: `beneficiary_id: bene-acme-441`, `sanctions_status: clear`.
 
 ### ③ LLM proposes
+
+<Details summary="Tool proposal (JSON)">
 
 ```json
 {
@@ -169,6 +187,8 @@ Prior tool results in app state: `beneficiary_id: bene-acme-441`, `sanctions_sta
   }
 }
 ```
+
+</Details>
 
 ### ② App checks (before PEP)
 
@@ -205,6 +225,8 @@ These fail **before or without** a successful PDP ALLOW:
 
 Retrieval tools use the **same manifest contract**. Difference is SARAC **resource** (corpus / doc id) and PDP rules (doc entitlements), not manifest mechanics.
 
+<Details summary="RAG tool manifest entry (JSON)">
+
 ```json
 {
   "name": "retrieve_documents",
@@ -220,6 +242,8 @@ Retrieval tools use the **same manifest contract**. Difference is SARAC **resour
   "risk_tier": "medium"
 }
 ```
+
+</Details>
 
 Walkthrough: [Domain: RAG retrieval](/playbooks/pgar-runtime/domain/rag-retrieval#worked-example-one-request-step-by-step).
 

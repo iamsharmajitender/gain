@@ -8,6 +8,8 @@ tags:
   - gain
 ---
 
+import Details from '@theme/Details';
+
 # Eval Plane ⑧: Outcome
 
 [Blueprint](/blueprints/eval-blueprint) · [← Action](/playbooks/eval-engineering/plane-action) · **Outcome**
@@ -53,11 +55,15 @@ The Outcome plane is what the user sees: final text, UI, or workflow result. It 
 
 ## Composite gate rule
 
+<Details summary="Composite outcome gate (pseudo-code)">
+
 ```
 outcome_pass only if:
   outcome_scores pass
   AND no upstream plane failed critical checks
 ```
+
+</Details>
 
 Prevents a fluent answer from passing when Context or Action failed.
 
