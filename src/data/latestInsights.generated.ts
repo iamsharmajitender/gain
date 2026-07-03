@@ -14,12 +14,28 @@ export interface LatestInsight {
 
 export const latestInsights: readonly LatestInsight[] = [
   {
+    "title": "LLM Hosting Options for Regulated Industries",
+    "date": "2026-07-04",
+    "readTime": 13,
+    "description": "From public SaaS to air-gapped on-prem: a practical ladder of LLM hosting options, and how to choose based on regulatory pressure and engineering maturity.",
+    "typeTag": "arch",
+    "to": "/insights/model-hosting-options-regulated-industries"
+  },
+  {
     "title": "Retrieval Is a Governed Action",
     "date": "2026-07-04",
     "readTime": 12,
     "description": "Retrieval is not a database query; it is a governed action. How Policy-Governed Agent Runtime applies to RAG when context construction must be scoped, auditable, and enforced before inference.",
     "typeTag": "arch",
     "to": "/insights/retrieval-is-a-governed-action"
+  },
+  {
+    "title": "LangChain vs LangGraph — When to Use What in Production Agents",
+    "date": "2026-07-03",
+    "readTime": 13,
+    "description": "LangChain and LangGraph are not rivals — they are layers of the same stack. This guide explains when to use chains, agents, or graphs; pseudo-code for both paths; and how memory, validation, and LLM selection fit a governed agentic loop.",
+    "typeTag": "arch",
+    "to": "/insights/langchain-vs-langgraph"
   },
   {
     "title": "How to Design an Intent Router for Agentic AI",
@@ -38,43 +54,27 @@ export const latestInsights: readonly LatestInsight[] = [
     "to": "/insights/what-is-intent-router"
   },
   {
+    "title": "What Is the Agentic Loop — and How It Works End to End",
+    "date": "2026-07-02",
+    "readTime": 17,
+    "description": "The agentic loop is the plan → act → observe cycle that turns a user goal into a completed workflow. This breakdown walks every stage — ingress, routing, proposal, policy, execution, validation, synthesis — and what each one owns in production.",
+    "typeTag": "arch",
+    "to": "/insights/what-is-agentic-loop"
+  },
+  {
+    "title": "Eval Engineering: The Control System for Trustworthy AI",
+    "date": "2026-07-01",
+    "readTime": 14,
+    "description": "Testing tells you the AI ran. Evals tell you it behaved. For non-deterministic systems, evaluation is the control system that turns AI risk into a managed, measurable, board-defensible discipline.",
+    "typeTag": "pov",
+    "to": "/insights/eval-engineering"
+  },
+  {
     "title": "The Blueprint Before Training an LLM",
     "date": "2026-06-30",
     "readTime": 10,
     "description": "Hyperparameters, vocabulary, and why a 7B model is 7B before day one — how the dials connect, where parameters live, and why the context window is a budgeted choice.",
     "typeTag": "exp",
     "to": "/insights/before-training-an-llm"
-  },
-  {
-    "title": "RAG Is Not a Database",
-    "date": "2026-06-27",
-    "readTime": 7,
-    "description": "RAG is runtime context construction at query time, not a storage layer you bolt onto an LLM.",
-    "typeTag": "lrn",
-    "to": "/insights/rag-is-not-a-database"
-  },
-  {
-    "title": "Policy-Governed Agent Runtime",
-    "date": "2026-06-25",
-    "readTime": 16,
-    "description": "Proposal is not permission. Agents propose tool calls; governance decides whether they run. An architecture breakdown of runtime trust boundaries for production agent systems in regulated industries.",
-    "typeTag": "arch",
-    "to": "/insights/policy-governed-agent-runtime"
-  },
-  {
-    "title": "AI Observability In Enterprise",
-    "date": "2026-06-18",
-    "readTime": 7,
-    "description": "AI observability is not a dashboard. It is a capture-and-retention architecture with five signals, five retention policies, and four consumers.",
-    "typeTag": "arch",
-    "to": "/insights/ai-observability-in-enterprise"
-  },
-  {
-    "title": "Hallucinations Is a System Design Problem",
-    "date": "2026-06-16",
-    "readTime": 9,
-    "description": "Hallucination is not the model failing. It is the model succeeding at the wrong objective in a system that never gave it the right one.",
-    "typeTag": "pov",
-    "to": "/insights/hallucinations-is-a-system-design-problem-not-model-problem"
   }
 ];
