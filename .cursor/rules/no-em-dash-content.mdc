@@ -1,0 +1,52 @@
+---
+description: Do not use em dashes in LLM-written docs prose (docs/**/*.mdx)
+globs: docs/**/*.mdx
+alwaysApply: false
+---
+
+# No em dashes in content
+
+When writing or editing **LLM-produced text** in `docs/**/*.mdx`, do not use em dashes (`—`) or en dashes as punctuation (`–`).
+
+## Do not edit
+
+- `slug:` (and any URL/path identifiers)
+- `tags:`, `authors:`, `image:`, `draft:`, `sidebar_*`, imports, file paths
+- Fenced code blocks (``` ... ```)
+- Third-party quotes (keep original punctuation)
+
+## Do edit (LLM prose)
+
+- Body copy: paragraphs, lists, tables, admonitions
+- `title:` and `description:` in frontmatter (quote YAML values if they contain `:`)
+- Markdown headings (`#`, `##`, …)
+- `<Details summary="...">` text
+
+## Use instead
+
+| Instead of em dash | Prefer |
+| --- | --- |
+| Parenthetical aside | Commas, parentheses, or a new sentence |
+| Title separator | Colon (`:`) or pipe (`\|`) |
+| Range or contrast | Colon, period, or rephrase |
+| List lead-in | Colon |
+| Numeric/circled ranges (`2–3`, `①–③`) | Hyphen (`2-3`, `①-③`) |
+
+## Examples
+
+```markdown
+# BAD
+An intent router maps requests to routes — not to answers.
+LangChain vs LangGraph — When to Use What
+
+# GOOD
+An intent router maps requests to routes, not to answers.
+LangChain vs LangGraph: When to Use What
+```
+
+## Before finishing
+
+1. Skip every `slug:` line unchanged.
+2. Scan only LLM prose in changed `.mdx` files for `—` and `–`.
+3. Quote `title:` / `description:` values when the result contains `:`.
+4. Run `node scripts/fix-em-dashes-docs.mjs` for bulk cleanup (docs only).
