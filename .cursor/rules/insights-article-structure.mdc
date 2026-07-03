@@ -12,6 +12,12 @@ Reference articles: `langchain-vs-langgraph.mdx` (decision guide), `policy-gover
 
 ## Global rules
 
+- **Hero banner + thumbnail (required).** Every insight needs a co-located PNG in the article folder, referenced twice:
+  - **Thumbnail:** `image: ./{basename}.png` in frontmatter (insight list cards).
+  - **Hero banner:** `![Short descriptive alt](./{basename}.png)` as the first content after frontmatter (before `#` title). Use the same file for both unless a separate `-thumb.png` is already in use in that folder.
+  - **Naming:** prefer `{slug}.png`; match an existing `-thumb.png` in the folder if present.
+  - **Style:** wide infographic (~16:9), G.A.I.N palette (navy grid background, blue / purple / orange accents), topic-specific diagram or metaphor. No em dashes in alt text.
+  - **Create both references when authoring** — do not ship an insight without `image:` and the hero `![...]` line.
 - **`<!-- truncate -->`** after the opening hook (before the main body).
 - **`:::tip[THE CLAIM]`** near the top on all types except pure explainers that use stage takeaways only.
 - **One opening hook** and **one closing hook**. Do not use `## Summary`, `## Key takeaways`, and `:::tip[TAKEAWAY]` together with the same bullets.
@@ -98,3 +104,4 @@ When unsure, prefer **architecture breakdown** for trace/wire articles and **dec
 2. Confirm opening and closing match the type table.
 3. Remove duplicate Summary/Key takeaways/TAKEAWAY blocks.
 4. Key takeaways bullets: **decision-oriented**, not a prose recap of every section.
+5. Confirm `image:` frontmatter, hero `![...](./…png)`, and the PNG file exist in the article folder.

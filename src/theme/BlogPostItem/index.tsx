@@ -29,8 +29,8 @@ function BlogPostItemListView({className}: Pick<Props, 'className'>): ReactNode 
   const typeTag = findTypeTag(tags);
   const badgeLabel = typeTag ? TYPE_TAG_LABELS[typeTag] : null;
   const badgeClass = typeTag;
-  const thumbSrc =
-    imageUrl ?? (frontMatter.draft || frontMatter.wip ? DRAFT_THUMBNAIL : undefined);
+  const isDraft = Boolean(frontMatter.draft || frontMatter.wip);
+  const thumbSrc = imageUrl ?? (isDraft ? DRAFT_THUMBNAIL : undefined);
 
   return (
     <BlogPostItemContainer className={clsx('gain-insight-card', className)}>
@@ -56,11 +56,18 @@ function BlogPostItemListView({className}: Pick<Props, 'className'>): ReactNode 
           {description && (
             <p className="gain-insight-card__desc">{description}</p>
           )}
-          <time
-            className="gain-insight-card__date"
-            dateTime={new Date(date).toISOString()}>
-            {formatInsightDate(date)}
-          </time>
+          <div className="gain-insight-card__meta">
+            <time
+              className="gain-insight-card__date"
+              dateTime={new Date(date).toISOString()}>
+              {formatInsightDate(date)}
+            </time>
+            {isDraft && (
+              <span className="gain-insight-card__draft" aria-label="Draft article">
+                Draft
+              </span>
+            )}
+          </div>
         </div>
       </Link>
     </BlogPostItemContainer>

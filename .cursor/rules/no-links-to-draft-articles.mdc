@@ -34,6 +34,8 @@ Before adding `[text](/insights/<slug>)`, confirm the target file does **not** h
 
 Remove `draft: true` (or set `draft: false`) **first**, then add inbound links from other pages.
 
+For the full publish workflow (scan `docs/` for link opportunities, suggest only, apply after approval), use the **remove-draft** skill: `.cursor/skills/remove-draft/SKILL.md`.
+
 ## Examples
 
 ```markdown

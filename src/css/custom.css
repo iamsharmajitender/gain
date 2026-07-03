@@ -4334,6 +4334,13 @@ body.gain-zoom-open {
   overflow: hidden;
 }
 
+.gain-insight-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
 .gain-insight-card__date {
   display: block;
   margin: 0;
@@ -4342,6 +4349,25 @@ body.gain-zoom-open {
   letter-spacing: 0.04em;
   text-transform: uppercase;
   color: var(--gain-text-muted);
+}
+
+.gain-insight-card__draft {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 0.125rem 0.375rem;
+  border-radius: 4px;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #dc2626;
+  line-height: 1.2;
+}
+
+[data-theme='dark'] .gain-insight-card__draft {
+  background: rgba(220, 38, 38, 0.12);
+  border-color: rgba(248, 113, 113, 0.35);
+  color: #f87171;
 }
 
 .blog-wrapper article footer a[href*='/insights/tags/'] {
