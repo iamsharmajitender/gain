@@ -9,7 +9,7 @@
         <generator>https://github.com/jpmonette/feed</generator>
         <language>en</language>
         <item>
-            <title><![CDATA[Retrieval is a governed action]]></title>
+            <title><![CDATA[Retrieval Is a Governed Action]]></title>
             <link>https://jitendersharma.dev/insights/retrieval-is-a-governed-action</link>
             <guid>https://jitendersharma.dev/insights/retrieval-is-a-governed-action</guid>
             <pubDate>Sat, 04 Jul 2026 00:00:00 GMT</pubDate>
@@ -17,8 +17,8 @@
             <content:encoded><![CDATA[<p><img decoding="async" loading="lazy" alt="Retrieval is not a database query. It is a governed action" src="https://jitendersharma.dev/assets/images/retrieval-is-a-governed-action-4b68712cda2cbe80b8c3b02319ff13a6.png" width="1536" height="1024" class="img_ev3q"></p>
 <p>Two architecture questions collide in agentic RAG:</p>
 <ul>
-<li class=""><em>"What assembles evidence for this principal, on this request?"</em> — <a class="" href="https://jitendersharma.dev/insights/rag-is-not-a-database">RAG Is Not a Database</a></li>
-<li class=""><em>"Who authorized what, with which policy, before side effects?"</em> — <a class="" href="https://jitendersharma.dev/insights/policy-governed-agent-runtime">Policy-Governed Agent Runtime</a></li>
+<li class=""><em>"What assembles evidence for this principal, on this request?"</em>: <a class="" href="https://jitendersharma.dev/insights/rag-is-not-a-database">RAG Is Not a Database</a></li>
+<li class=""><em>"Who authorized what, with which policy, before side effects?"</em>: <a class="" href="https://jitendersharma.dev/insights/policy-governed-agent-runtime">Policy-Governed Agent Runtime</a></li>
 </ul>
 <p>If you have not reframed retrieval as runtime context construction, start with the RAG insight. The database fallacy, treating the vector index as the architecture, is what makes prompt-governed similarity search feel like production RAG.</p>
 <p>This is an <strong>architecture breakdown</strong> of what happens when you apply PGAR to that pipeline: every retrieval path and every assembled context pack is something governance must decide, not something the model or the index gets to choose.</p>
@@ -28,15 +28,15 @@
 <p>Both reject the same mistake: <strong>delegating truth to a predictor.</strong> Entitlements in the system prompt are suggestions the model may ignore. ACL rules applied after vector search still leak candidates into logs and rerankers. PGAR with RAG keeps prediction upstream (what to search, how to phrase an answer) and truth on the execution path (whether this principal may see these documents, whether this context pack may reach the model).</p>
 <div class="theme-admonition theme-admonition-important admonition_xJq3 alert alert--info"><div class="admonitionHeading_Gvgb"><span class="admonitionIcon_Rf37"><svg viewBox="0 0 14 16"><path fill-rule="evenodd" d="M7 2.3c3.14 0 5.7 2.56 5.7 5.7s-2.56 5.7-5.7 5.7A5.71 5.71 0 0 1 1.3 8c0-3.14 2.56-5.7 5.7-5.7zM7 1C3.14 1 0 4.14 0 8s3.14 7 7 7 7-3.14 7-7-3.14-7-7-7zm1 3H6v5h2V4zm0 6H6v2h2v-2z"></path></svg></span>PREDICTION VS. TRUTH</div><div class="admonitionContent_BuS1"><p><strong>Intelligence in the LLM. Truth in the PDP.</strong> Never conflate a retrieval proposal with permission to assemble context for a regulated inference call.</p></div></div>
 <h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="the-unified-path-on-one-page">The unified path on one page<a href="https://jitendersharma.dev/insights/retrieval-is-a-governed-action#the-unified-path-on-one-page" class="hash-link" aria-label="Direct link to The unified path on one page" title="Direct link to The unified path on one page" translate="no">​</a></h2>
-<p><a class="" href="https://jitendersharma.dev/insights/rag-is-not-a-database#what-actually-runs-at-query-time">RAG Is Not a Database</a> maps production RAG as four query-time boundaries: ingress → retrieval → rank &amp; pack → inference. Agentic PGAR wraps that pipeline with orchestration and authorization — and splits inference into validation before synthesis.</p>
+<p><a class="" href="https://jitendersharma.dev/insights/rag-is-not-a-database#what-actually-runs-at-query-time">RAG Is Not a Database</a> maps production RAG as four query-time boundaries: ingress → retrieval → rank &amp; pack → inference. Agentic PGAR wraps that pipeline with orchestration and authorization, and splits inference into validation before synthesis.</p>
 <!-- -->
-<p>Seven boundaries, one request. Stages <strong>⑤–⑦</strong> run the RAG pipeline under PEP/PDP control; stages <strong>①–④</strong> add what the RAG insight assumes but does not specify when an agent drives retrieval:</p>
+<p>Seven boundaries, one request. Stages <strong>⑤-⑦</strong> run the RAG pipeline under PEP/PDP control; stages <strong>①-④</strong> add what the RAG insight assumes but does not specify when an agent drives retrieval:</p>
 <ul>
 <li class=""><strong>① Ingress · ② Agentic app:</strong> identity binding and session orchestration as in the RAG pipeline; the app holds token and claims and never forwards them to the LLM.</li>
 <li class=""><strong>③ LLM proposes:</strong> rewrite the query or propose a <code>retrieve_*</code> tool call. Proposal only, not permission.</li>
 <li class=""><strong>④ PEP + PDP:</strong> map subject, action, resource, and context; return ALLOW, DENY, or STEP_UP <strong>before</strong> search runs.</li>
-<li class=""><strong>⑤ Retrieval executes:</strong> hybrid search, ACL filter, rerank, context-pack assembly — only on ALLOW (<a class="" href="https://jitendersharma.dev/insights/rag-is-not-a-database#what-actually-runs-at-query-time">four-boundary pipeline</a>).</li>
-<li class=""><strong>⑥ Validation gate · ⑦ Synthesis:</strong> grounding, citations, abstention, then response — orchestrated by the agentic app; validated context only, not raw index output.</li>
+<li class=""><strong>⑤ Retrieval executes:</strong> hybrid search, ACL filter, rerank, context-pack assembly, only on ALLOW (<a class="" href="https://jitendersharma.dev/insights/rag-is-not-a-database#what-actually-runs-at-query-time">four-boundary pipeline</a>).</li>
+<li class=""><strong>⑥ Validation gate · ⑦ Synthesis:</strong> grounding, citations, abstention, then response, orchestrated by the agentic app; validated context only, not raw index output.</li>
 </ul>
 <p>Two enforcement surfaces matter, and they are not interchangeable:</p>
 <ul>
@@ -84,11 +84,11 @@
 <h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="what-breaks-when-you-skip-this">What breaks when you skip this<a href="https://jitendersharma.dev/insights/retrieval-is-a-governed-action#what-breaks-when-you-skip-this" class="hash-link" aria-label="Direct link to What breaks when you skip this" title="Direct link to What breaks when you skip this" translate="no">​</a></h2>
 <p>Teams conflate PGAR with RAG in the demo and split them in production. Three governance-specific symptoms show up first:</p>
 <ul>
-<li class=""><strong>Leakage.</strong> A user retrieves chunks from documents their role should never see. Policy ran in the prompt, or ACL filters ran after top-k — not at the gateway before candidate generation.</li>
+<li class=""><strong>Leakage.</strong> A user retrieves chunks from documents their role should never see. Policy ran in the prompt, or ACL filters ran after top-k, not at the gateway before candidate generation.</li>
 <li class=""><strong>No replay story.</strong> An auditor asks what the model saw on a specific date. The team has index stats and chat logs, not the assembled context pack with policy version and verdict chain.</li>
 <li class=""><strong>Fluent bypass.</strong> The model proposes a broader search than entitlements allow. Without a PEP on the proposal, the retrieval service runs anyway because the API key is valid.</li>
 </ul>
-<p>For empty vs wrong retrieval — and why abstention and ranking are separate gates — see <a class="" href="https://jitendersharma.dev/insights/rag-is-not-a-database#two-failure-modes-do-not-conflate-them">Two failure modes</a> in the RAG insight. PGAR adds authorization before the pipeline runs; it does not replace ranking or abstention.</p>
+<p>For empty vs wrong retrieval, and why abstention and ranking are separate gates, see <a class="" href="https://jitendersharma.dev/insights/rag-is-not-a-database#two-failure-modes-do-not-conflate-them">Two failure modes</a> in the RAG insight. PGAR adds authorization before the pipeline runs; it does not replace ranking or abstention.</p>
 <h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="design-checklist">Design checklist<a href="https://jitendersharma.dev/insights/retrieval-is-a-governed-action#design-checklist" class="hash-link" aria-label="Direct link to Design checklist" title="Direct link to Design checklist" translate="no">​</a></h2>
 <ol>
 <li class=""><strong>Policy before retrieval:</strong> Entitlements and classification filters at the gateway, not after vector search and not in the prompt.</li>
