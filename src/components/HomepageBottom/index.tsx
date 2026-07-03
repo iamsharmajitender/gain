@@ -1,62 +1,17 @@
 import type {ReactNode} from 'react';
 import clsx from 'clsx';
 import Link from '@docusaurus/Link';
-import {TYPE_TAG_LABELS, type TypeTagId} from '@site/src/data/insightTags';
+import {TYPE_TAG_LABELS} from '@site/src/data/insightTags';
+import {latestInsights} from '@site/src/data/latestInsights.generated';
 
-const posts: {
-  title: string;
-  date: string;
-  readTime: number;
-  description: string;
-  typeTag: TypeTagId;
-  to: string;
-}[] = [
-  {
-    title: 'PGAR with RAG',
-    date: 'Jul 10, 2026',
-    readTime: 10,
-    description:
-      'Retrieval is not a database query; it is a governed action. How PGAR applies when context construction must be scoped, auditable, and enforced before inference.',
-    typeTag: 'arch',
-    to: '/insights/retrieval-is-a-governed-action',
-  },
-  {
-    title: 'Policy-Governed Agent Runtime',
-    date: 'Jun 25, 2026',
-    readTime: 12,
-    description:
-      'Agents propose tool calls. Governance decides whether they run. Runtime trust boundaries for production agent systems in regulated industries.',
-    typeTag: 'arch',
-    to: '/insights/policy-governed-agent-runtime',
-  },
-  {
-    title: 'What AI Observability Looks Like in Enterprise',
-    date: 'Jun 18, 2026',
-    readTime: 5,
-    description:
-      'AI observability is not a dashboard. It is a capture-and-retention architecture with five signals, five retention policies, and four consumers.',
-    typeTag: 'exp',
-    to: '/insights/ai-observability-in-enterprise',
-  },
-  {
-    title: 'Hallucinations Is a System Design Problem, Not a Model Problem',
-    date: 'Jun 16, 2026',
-    readTime: 6,
-    description:
-      'Hallucination is not the model failing. It is the model succeeding at the wrong objective in a system that never gave it the right one.',
-    typeTag: 'pov',
-    to: '/insights/hallucinations-is-a-system-design-problem-not-model-problem',
-  },
-  {
-    title: 'How LLM Works Under the Hood',
-    date: 'Jun 9, 2026',
-    readTime: 8,
-    description:
-      'A 20,000-ft view of the LLM lifecycle and why understanding the four stages matters for enterprise architecture.',
-    typeTag: 'lrn',
-    to: '/insights/how-llm-works-under-the-hood',
-  },
-];
+function formatInsightDate(isoDate: string): string {
+  return new Date(`${isoDate}T00:00:00.000Z`).toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+    timeZone: 'UTC',
+  });
+}
 
 export default function HomepageBottom(): ReactNode {
   return (
@@ -75,7 +30,7 @@ export default function HomepageBottom(): ReactNode {
             </Link>
           </div>
           <div className="gain-latest-insights__grid">
-            {posts.map((item) => (
+            {latestInsights.map((item) => (
               <Link key={item.to} to={item.to} className="gain-latest-insights__card">
                 <span
                   className={clsx(
@@ -87,7 +42,7 @@ export default function HomepageBottom(): ReactNode {
                 <h3>{item.title}</h3>
                 <p>{item.description}</p>
                 <footer>
-                  <time>{item.date}</time>
+                  <time dateTime={item.date}>{formatInsightDate(item.date)}</time>
                   <span aria-hidden="true"> • </span>
                   <span>{item.readTime} min read</span>
                 </footer>

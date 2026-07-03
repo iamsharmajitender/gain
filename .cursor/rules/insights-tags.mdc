@@ -1,0 +1,84 @@
+---
+description: Insight tag layers and counts from docs/insights/tags.yml (docs/insights/**/*.mdx)
+globs: docs/insights/**/*.mdx
+alwaysApply: false
+---
+
+# Insight tags
+
+Source of truth: `docs/insights/tags.yml`. Use **only** tag IDs defined there. Do not invent tags in frontmatter.
+
+## Three layers (every insight)
+
+| Layer | Count | IDs |
+| --- | --- | --- |
+| **Domain** | **exactly 1**  | `system-architecture` · `platforms-engineering` · `ai-intelligence` · `governance-trust` |
+| **Voice** | **exactly 1** | `pov` · `arch` · `lrn` · `exp` |
+| **Topic** | **1+** | `gain` · `agents` · `observability` · `policy` · `llm` · `rag` · `hallucinations` · `compliance` |
+
+**Frontmatter order:** domain tag first, then voice, then topic tag(s).
+
+```yaml
+tags:
+  - ai-intelligence        # domain
+  - arch                   # voice (one only)
+  - llm                    # topic
+  - compliance             # topic
+  - gain                   # topic
+```
+
+## Picking tags
+
+### Domain (exactly 1)
+
+| ID | Use when |
+| --- | --- |
+| `ai-intelligence` | Agents, RAG, LLM production, eval, routing |
+| `governance-trust` | Policy, compliance, PGAR, regulated controls |
+| `platforms-engineering` | Observability, gateways, platform ops, cloud |
+| `system-architecture` | Enterprise roadmaps, lifecycle, transformation framing |
+
+Pick the **single best-fit** domain for the article's primary pillar. Use topic tags for cross-cutting subjects (e.g. `compliance` on an `ai-intelligence` hosting piece).
+
+### Voice (exactly 1)
+
+| ID | Use when |
+| --- | --- |
+| `pov` | Leadership conviction, "where to intervene", narrative challenge |
+| `arch` | End-to-end breakdown, layers, wire diagrams, design principles |
+| `lrn` | Lessons from a real situation: what broke, what changed |
+| `exp` | Concept taught in stages, analogies, "under the hood" explainers |
+
+Voice tag drives the list-card badge (POV / ARC / LRN / EXP). Never combine two voice tags on one insight.
+
+### Topic (1+)
+
+Add every subject the article materially covers. Common clusters:
+
+| Topic | Typical pairing |
+| --- | --- |
+| `agents` | agentic loop, intent router, PGAR, tool use |
+| `rag` | retrieval, context construction, grounding |
+| `policy` | PEP/PDP, guardrails, enforcement boundaries |
+| `llm` | inference, hosting, cost, prompting, lifecycle |
+| `observability` | traces, signals, retention, ops visibility |
+| `compliance` | audit, residency, regulated industries |
+| `hallucinations` | grounding failures, validation, system design |
+| `gain` | article explicitly maps to G.A.I.N framework pillars |
+
+Skip `gain` when the piece is topical but not framework-grounded.
+
+## Adding a new tag
+
+1. Add the ID to `docs/insights/tags.yml` with `label` and `description`.
+2. Place it under the correct comment block (domain, voice, or topic).
+3. Use the new ID in insight frontmatter.
+
+Do not add undefined IDs to MDX before updating `tags.yml`.
+
+## Before finishing
+
+1. Exactly **one** domain tag and **one** voice tag.
+2. **One or more** topic tags.
+3. Every ID exists in `docs/insights/tags.yml`.
+4. Order: domain → voice → topic.

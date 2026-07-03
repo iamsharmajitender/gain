@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "docusaurus": "docusaurus",
-    "start": "node scripts/sync-published-routes.mjs && docusaurus start --port 3002",
+    "start": "node scripts/sync-published-routes.mjs --include-drafts && docusaurus start --port 3002",
     "build": "node scripts/sync-published-routes.mjs && docusaurus build",
     "swizzle": "docusaurus swizzle",
     "deploy": "USE_SSH=true docusaurus deploy",

@@ -1,4 +1,4 @@
-# Core domain pillars — shared across blueprints, architecture, and playbooks.
+# Core domain pillars — shared across blueprints, architecture, insights, and playbooks.
 
 system-architecture:
   label: Strategy & Architecture
@@ -16,7 +16,7 @@ governance-trust:
   label: Governance & Trust
   description: Policy, compliance, and operational resilience in regulated environments.
 
-# Content-type tags — one per insight article.
+# voice tags — one per insight article.
 
 pov:
   label: Point of View
@@ -34,7 +34,7 @@ exp:
   label: Explainer
   description: Clear analogies and step-by-step breakdowns for complex concepts.
 
-# Framework and topic tags.
+# topic tags - one or more topic tag per blueprints, architecture, insights, and playbooks.
 
 gain:
   label: G.A.I.N
