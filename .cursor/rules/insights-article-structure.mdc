@@ -1,0 +1,100 @@
+---
+description: Insight article types and required open/close sections (docs/insights/**/*.mdx)
+globs: docs/insights/**/*.mdx
+alwaysApply: false
+---
+
+# Insight article structure
+
+When writing or editing `docs/insights/**/*.mdx`, pick **one article type** and apply its required sections. Do not stack redundant closings.
+
+Reference articles: `langchain-vs-langgraph.mdx` (decision guide), `policy-governed-agent-runtime.mdx` (breakdown), `what-is-agentic-loop.mdx` (primer), `how-llm-work-under-the-hood.mdx` (explainer).
+
+## Global rules
+
+- **`<!-- truncate -->`** after the opening hook (before the main body).
+- **`:::tip[THE CLAIM]`** near the top on all types except pure explainers that use stage takeaways only.
+- **One opening hook** and **one closing hook**. Do not use `## Summary`, `## Key takeaways`, and `:::tip[TAKEAWAY]` together with the same bullets.
+- End with **`:::info[Builds on]`** when the article links to frameworks or related insights (decision guides and primers).
+
+## Article types
+
+### 1. Decision guide
+
+**When:** reader chooses between options (hosting, LangChain vs LangGraph, design intent router).
+
+| Position | Required |
+| --- | --- |
+| Open | `:::tip[THE CLAIM]` + `## The bottom line first` (4-6 bullets) |
+| Close | `## Key takeaways` (4-6 bullets) + `:::info[Builds on]` |
+| Avoid | Long `## Summary` paragraph if Key takeaways exists |
+
+**Examples:** `model-hosting-options-regulated-industries`, `langchain-vs-langgraph`, `design-intent-router`
+
+### 2. Architecture breakdown
+
+**When:** one system traced end-to-end (PGAR wire, RAG path, observability stack).
+
+| Position | Required |
+| --- | --- |
+| Open | `:::tip[THE CLAIM]` |
+| Close | `:::tip[TAKEAWAY]` (one paragraph) **or** `## Where I land` |
+| Optional | `:::info[Builds on]` |
+
+**Examples:** `policy-governed-agent-runtime`, `retrieval-is-a-governed-action`, `ai-observability-in-enterprise`, `rag-is-not-a-database`, `hallucination-system-design`
+
+### 3. Concept primer
+
+**When:** defines one idea before a how-to (what is agentic loop, what is intent router).
+
+| Position | Required |
+| --- | --- |
+| Open | `:::tip[THE CLAIM]` + `## The bottom line first` (4-6 bullets) |
+| Close | `## Key takeaways` (3-5 bullets) **or** `:::tip[TAKEAWAY]` + `:::info[Builds on]` |
+| Body | Link to design/how-to insight where one exists |
+
+**Examples:** `what-is-agentic-loop`, `what-is-intent-router`
+
+### 4. Explainer
+
+**When:** teaches a mechanism in stages (LLM lifecycle, training math).
+
+| Position | Required |
+| --- | --- |
+| Open | Short intro; `:::tip[THE CLAIM]` optional |
+| Body | `:::tip[TAKEAWAY]` per major stage/section where helpful |
+| Close | `## Final takeaway` **or** final `:::tip[TAKEAWAY]` |
+| Avoid | Generic `## Key takeaways` that repeats stage tips |
+
+**Examples:** `how-llm-work-under-the-hood`, `before-training-an-llm`
+
+### 5. Executive / long-form
+
+**When:** boardroom or program-level framing with numbered sections.
+
+| Position | Required |
+| --- | --- |
+| Open | `## The bottom line first` (4-6 bullets) |
+| Close | Action section (e.g. questions to ask, maturity model, build series link) |
+| Avoid | `## Key takeaways` that duplicates the opening bullets |
+
+**Examples:** `eval-engineering-control-system-trustworthy-ai`
+
+## Picking the type
+
+| Signal in title or intent | Type |
+| --- | --- |
+| "how to choose", "vs", "options", "design guide" | Decision guide |
+| "one request", "end to end", "architecture breakdown" | Architecture breakdown |
+| "what is", "why it matters" (concept, not how-to) | Concept primer |
+| Stages, lifecycle, "under the hood", worked examples | Explainer |
+| Executive, maturity, "questions to ask", numbered program | Executive |
+
+When unsure, prefer **architecture breakdown** for trace/wire articles and **decision guide** for comparison matrices.
+
+## Before finishing
+
+1. Classify the article (one type).
+2. Confirm opening and closing match the type table.
+3. Remove duplicate Summary/Key takeaways/TAKEAWAY blocks.
+4. Key takeaways bullets: **decision-oriented**, not a prose recap of every section.

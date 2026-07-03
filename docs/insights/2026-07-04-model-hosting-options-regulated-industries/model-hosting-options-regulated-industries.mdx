@@ -27,20 +27,22 @@ This is a **decision guide**: the hosting ladder (what exists), selection logic 
 
 <!-- truncate -->
 
-## Two questions, one guide
+## The bottom line first
+
+- **Hosting is a ladder**, from public SaaS to air-gapped, not a single vendor or model choice.
+- **Regulatory pressure × engineering maturity** picks the rung; shortlist three realistic options.
+- **Sovereignty follows data class**: prompts, weights, logs, and egress differ on every rung.
+- **Hyperscaler managed** is the safest default for most enterprises; **dedicated/VPC** when isolation must be auditable.
+- **Hybrid + gateway routing** is a valid end state for split-risk workloads.
+- **Right hosting without gateway, eval, and policy** still fails in production.
+
+## Three questions, one guide
 
 | Section | Answers |
 | --- | --- |
 | **1. Hosting ladder** | Where *can* I run models? |
-| **2. Selection logic** | Which option fits *my* risk and capability? |
-
-**One-line summary:**
-
-- **SaaS** = fastest
-- **Hyperscaler managed / dedicated** = safest managed default through enterprise isolation
-- **VPC private** = controlled ownership
-- **On-prem** = full sovereignty
-- **Air-gapped** = maximum security
+| **2. Data sovereignty** | Who holds prompts, weights, and logs; what crosses borders? |
+| **3. Selection logic** | Which option fits *my* risk and capability? |
 
 ---
 
@@ -58,17 +60,6 @@ From **least to most control**:
 | **Air-gapped** | Offline secure environment | You | Maximum+ | Highest | Fully you |
 | **Edge / local** | Laptop / edge devices | You | High | Low | You |
 | **Hybrid** | Mixed setup | Shared | Flexible | Flexible | Shared |
-
-### The hosting ladder: at a glance
-
-| Option | Control | Cost | Ownership | Responsibility |
-| --- | --- | --- | --- | --- |
-| Public SaaS | Low | Low | Vendor | Vendor |
-| Hyperscaler managed | Medium | Medium | Vendor | Shared |
-| Dedicated hyperscaler | High | High | Vendor | Mostly vendor |
-| VPC private | Very high | High | You | Mostly you |
-| On-prem | Very high | Very high | You | Fully you |
-| Air-gapped | Maximum | Highest | You | Fully you |
 
 ```mermaid
 flowchart BT
@@ -96,7 +87,62 @@ flowchart BT
 
 ---
 
-## 2. How organisations choose: regulation × engineering
+## 2. Data sovereignty by hosting model
+
+Hosting is not only a **control** choice. It is a **sovereignty** choice: who legally and operationally owns the data that enters inference, where it is processed and stored, what may leave your jurisdiction, and who can access logs under subpoena or vendor policy.
+
+Sovereignty has four layers. Every hosting model answers them differently:
+
+| Layer | Question |
+| --- | --- |
+| **Ingress** | Where do prompts, RAG context, and attachments land? |
+| **Inference** | Where does the model run; who operates the GPU stack? |
+| **Egress** | What leaves the boundary (responses, embeddings, telemetry, support logs)? |
+| **Persistence** | Where are weights, caches, fine-tunes, and audit trails stored? |
+
+### Sovereignty posture by option
+
+| Hosting model | Prompt & response data | Model weights | Residency control | Cross-border risk | Typical sovereignty posture |
+| --- | --- | --- | --- | --- | --- |
+| **Public SaaS API** | Processed in vendor-chosen region(s); often US-default | Vendor-owned; location opaque | Contractual only (DPA, data region clauses) | **High** unless vendor offers explicit in-region processing | Non-sensitive workloads only; legal review before any PII or unreleased financials |
+| **Hyperscaler managed** | Pin to chosen region (e.g. EU West, Sydney) via Azure OpenAI, Bedrock, Vertex | Vendor-managed in that region; shared tenancy | **Medium**: regional deployment + IAM; you configure region | **Medium**: stays in region if configured; metadata/support flows may still cross borders | Default for medium regulation when region pinning, no-training, and logging contracts are in place |
+| **Dedicated hyperscaler** | Single-tenant compute in contracted region | Isolated stack; vendor still owns platform | **High** for compute boundary; vendor operates infra | **Lower** if dedicated instance never leaves sovereign region | Strong isolation without full self-host ops; common for banking and health at scale |
+| **VPC private** | Prompts, RAG packs, logs in **your** cloud account and region | Open weights in your storage; you control replication | **Very high**: your VPC, KMS, network policy | **Low** if no public endpoints and egress is gated | Sovereign-cloud pattern: data stays inside your legal entity's cloud boundary |
+| **On-prem self-hosted** | All inference data on your hardware in your datacenter | Weights on your storage; no vendor runtime dependency | **Maximum**: physical and legal control in your facilities | **Minimal** if egress is blocked by policy | Full sovereignty; you own patch velocity, capacity, and incident response |
+| **Air-gapped** | Offline only; no network path to vendor | Weights imported via controlled physical transfer | **Maximum+**: no external jurisdiction by design | **None** if truly air-gapped | Classified, defense, critical infrastructure; not a general enterprise default |
+| **Edge / local** | Data on device; may sync if connected | Small models local; updates may pull from vendor | **High locally**, weak if device syncs to cloud | **Variable**: depends on sync and telemetry policy | Latency and offline use cases; sovereignty follows device management policy |
+| **Hybrid** | Split by workload: SaaS for low sensitivity, private stack for regulated | Mixed: managed APIs + self-hosted weights per route | **Per-route**: classification drives where data may go | **Managed by routing policy**, not one global rule | Realistic end state for large regulated orgs; requires gateway and data-class enforcement |
+
+### What crosses the boundary (checklist)
+
+Before signing off on a hosting model, record answers for **each** data class you will send to the model:
+
+1. **Prompts and attachments**: region, encryption at rest, retention period, vendor training use
+2. **Retrieved context (RAG)**: does retrieval stay in your boundary while only a summary hits SaaS?
+3. **Embeddings**: where vectors are computed and stored; re-index replication across regions
+4. **Logs and telemetry**: inference logs, prompt logging, support tickets, crash dumps
+5. **Model artifacts**: base weights, LoRA adapters, fine-tunes; who can export them
+6. **Subprocessor chain**: vendor's subprocessors, cloud regions, and lawful-access jurisdictions
+
+:::important[Sovereignty ≠ vendor compliance badge]
+A vendor SOC 2 or ISO 27001 report proves **their** controls exist. It does not prove **your** data residency, **your** lawful-access posture, or **your** regulator's acceptance. You still own classification, residency decisions, and evidence that data stayed where policy requires.
+:::
+
+### Examiner and auditor questions
+
+At minimum, be able to answer:
+
+- **Which hosting model applies to each data class?** (not one model for everything)
+- **Where are prompts processed and stored?** (region, legal entity, subprocessors)
+- **What may leave the jurisdiction?** (responses, logs, embeddings, support access)
+- **Where do model weights live?** (vendor cloud, your account, on-prem, air-gapped vault)
+- **How do you enforce routing?** (gateway, policy, not prompt instructions alone)
+
+Hybrid and VPC patterns fail audits when **policy says private** but **routing still sends regulated context to public SaaS**. See [G.A.I.N LLM gateway routing](/frameworks/gain-llm) and [Retrieval is a governed action](/insights/retrieval-is-a-governed-action).
+
+---
+
+## 3. How organisations choose: regulation × engineering
 
 Map on two axes:
 
@@ -246,18 +292,20 @@ The wrong hosting choice is expensive to unwind. The right hosting choice with n
 | **Defaulting to public SaaS for regulated data** | Data leaves your control boundary without a recorded decision |
 | **Jumping to on-prem for speed** | Ops burden kills delivery; team cannot patch or scale |
 | **One pattern for all use cases** | Marketing chatbot and wire-transfer copilot share a boundary they should not |
-| **Confusing vendor SOC 2 with your compliance** | Shared responsibility: you still own data classification and access |
+| **Confusing vendor SOC 2 with your compliance** | Shared responsibility: you still own data classification, residency, and access |
+| **Treating region pinning as full sovereignty** | Hyperscaler managed keeps vendor subprocessors and support paths; record what still crosses borders |
 | **Ignoring hybrid as a permanent state** | Risk-based routing is a valid end state, not a stepping-stone failure |
 
 ---
 
-## Summary
+## Key takeaways
 
-**Section 1: the ladder:** from public SaaS (fastest, least control) to air-gapped (maximum security, highest cost). Edge and hybrid extend the ladder for latency and split-risk designs.
-
-**Section 2: the choice:** map **regulatory pressure** against **engineering maturity**. Low/low → SaaS or hyperscaler managed. Medium → hyperscaler managed or dedicated. High → dedicated or VPC private. Very high → on-prem or air-gapped.
-
-Move **right** when regulation outpaces engineering. Move **down** on ownership when engineering outpaces regulation. Shortlist three options, then validate against data class, residency, and operational reality, not vendor marketing slides.
+- **Move right** on the ladder when regulation outpaces engineering (managed isolation: dedicated, VPC).
+- **Move down** on ownership when engineering outpaces regulation (VPC, on-prem, self-hosted stack).
+- **Match hosting to data class**, not one global pattern for every workload.
+- **Record sovereignty** for prompts, RAG context, embeddings, logs, and subprocessors before sign-off.
+- **SOC 2 and ISO reports** prove vendor controls, not your residency or lawful-access posture.
+- **Validate three shortlisted options** against residency, ops reality, and gateway policy, not vendor slides.
 
 :::info[Builds on]
 [G.A.I.N LLM](/frameworks/gain-llm) · [G.A.I.N AIOM](/frameworks/gain-aiom) · [Policy-Governed Agent Runtime](/insights/policy-governed-agent-runtime)
