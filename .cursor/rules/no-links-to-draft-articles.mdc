@@ -1,0 +1,54 @@
+---
+description: Do not link published docs to insight articles marked draft:true (Docusaurus build)
+globs: docs/**/*.mdx
+alwaysApply: false
+---
+
+# No links to draft insight articles
+
+Docusaurus **excludes** pages with `draft: true` from production builds. Any link from a published page to a draft slug fails `onBrokenLinks` and breaks the build.
+
+## Rule
+
+When you **create** an insight article with `draft: true`, or **set** `draft: true` on an existing one:
+
+1. **Do not add** links to that article from any other doc page (insights, playbooks, blueprints, frameworks, etc.).
+2. **Remove or replace** existing inbound links before leaving the article as draft.
+
+Draft articles may still link **out** to published pages. The ban is on **inbound** links only.
+
+## How to identify draft targets
+
+Check frontmatter in `docs/insights/**/*.mdx`:
+
+```yaml
+slug: before-training-an-llm
+draft: true
+```
+
+Link paths use the slug: `/insights/before-training-an-llm`.
+
+Before adding `[text](/insights/<slug>)`, confirm the target file does **not** have `draft: true`.
+
+## When publishing
+
+Remove `draft: true` (or set `draft: false`) **first**, then add inbound links from other pages.
+
+## Examples
+
+```markdown
+# BAD — published page links to a draft insight
+Deep dive: [The Blueprint Before Training](/insights/before-training-an-llm)
+
+# GOOD — wait until draft is removed, or use plain text with no link
+Deep dive: The Blueprint Before Training (coming soon)
+
+# GOOD — after draft: true is removed from the target
+Deep dive: [The Blueprint Before Training](/insights/before-training-an-llm)
+```
+
+## Before finishing
+
+1. If you added or kept `draft: true`, grep the repo for `/insights/<slug>` and remove inbound links.
+2. If you linked to an insight from another doc, verify the target is not draft.
+3. Do not add `:::info[Builds on]` or body cross-links from published pages to draft slugs.
