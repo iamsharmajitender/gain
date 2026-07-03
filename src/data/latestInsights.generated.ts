@@ -38,20 +38,20 @@ export const latestInsights: readonly LatestInsight[] = [
     "to": "/insights/retrieval-is-a-governed-action"
   },
   {
+    "title": "LangChain vs LangGraph — When to Use What in Production Agents",
+    "date": "2026-07-03",
+    "readTime": 13,
+    "description": "LangChain and LangGraph are not rivals — they are layers of the same stack. This guide explains when to use chains, agents, or graphs; pseudo-code for both paths; and how memory, validation, and LLM selection fit a governed agentic loop.",
+    "typeTag": "arch",
+    "to": "/insights/langchain-vs-langgraph"
+  },
+  {
     "title": "How to Design an Intent Router for Agentic AI",
     "date": "2026-07-02",
     "readTime": 10,
     "description": "A practical design guide for intent routing — route tables, layered classification, confidence thresholds, session stickiness, eval gates, and wiring dispatch into the agentic app before the model loop runs.",
     "typeTag": "arch",
     "to": "/insights/design-intent-router"
-  },
-  {
-    "title": "LangChain vs LangGraph — When to Use What in Production Agents",
-    "date": "2026-07-02",
-    "readTime": 13,
-    "description": "LangChain and LangGraph are not rivals — they are layers of the same stack. This guide explains when to use chains, agents, or graphs; pseudo-code for both paths; and how memory, validation, and LLM selection fit a governed agentic loop.",
-    "typeTag": "arch",
-    "to": "/insights/langchain-vs-langgraph"
   },
   {
     "title": "What Is an Intent Router — and Why It Matters in Agentic AI",
