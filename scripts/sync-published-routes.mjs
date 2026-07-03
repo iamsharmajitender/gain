@@ -167,9 +167,7 @@ function parseInsightDate(filePath, frontmatter) {
     return explicitDate.slice(0, 10);
   }
 
-  const folder = path.basename(path.dirname(filePath));
-  const folderDateMatch = folder.match(/^(\d{4}-\d{2}-\d{2})/);
-  return folderDateMatch?.[1] ?? '1970-01-01';
+  return '1970-01-01';
 }
 
 function estimateReadingTime(content) {

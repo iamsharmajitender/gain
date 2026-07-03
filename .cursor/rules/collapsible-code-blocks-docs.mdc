@@ -8,7 +8,7 @@ alwaysApply: false
 
 When writing or editing `docs/**/*.mdx`, make fenced code blocks **collapsible by default** using Docusaurus `<Details>`. Readers click the summary to expand or collapse.
 
-Reference: `docs/insights/2026-07-02-langchain-vs-langgraph/langchain-vs-langgraph.mdx`.
+Reference: `docs/insights/langchain-vs-langgraph/langchain-vs-langgraph.mdx`.
 
 ## Setup
 

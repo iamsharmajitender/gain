@@ -73,11 +73,11 @@ When unsure: **architecture breakdown** for trace/wire articles; **decision guid
 
 **Slug:** lowercase kebab-case, 3–6 words, stable URL (`/insights/{slug}`). Prefer topic over date.
 
-**Folder:** `docs/insights/YYYY-MM-DD-{slug}/`
+**Folder:** `docs/insights/{slug}/`
 
 **File:** `{slug}.mdx` (match slug; same name as PNG)
 
-**Date prefix:** use today's date in `YYYY-MM-DD` unless the user specifies a publish date.
+**Date:** `date: YYYY-MM-DD` in frontmatter (publish/sort date; not in the folder name).
 
 Check for collisions: grep `docs/insights` for existing slug.
 
@@ -107,6 +107,7 @@ tags:
   - {topic-2}
 authors: [iamsharmajitender]
 draft: true
+date: {YYYY-MM-DD}
 ```
 
 Always start with **`draft: true`**. Never add inbound links from published pages until `@remove-draft`.
@@ -154,7 +155,7 @@ If a companion insight is still `draft: true`, use plain text + "(coming soon)" 
 
 If the user wants a hero image spec, include:
 
-- **File:** `docs/insights/YYYY-MM-DD-{slug}/{slug}.png`
+- **File:** `docs/insights/{slug}/{slug}.png`
 - **Aspect:** ~16:9 infographic
 - **Style:** G.A.I.N palette (navy grid, blue / purple / orange accents)
 - **Alt text:** short, descriptive, no em dashes
@@ -173,7 +174,7 @@ Use this format exactly. **Do not create files.**
 | --- | --- |
 | **Slug** | `{slug}` |
 | **URL** | `/insights/{slug}` |
-| **Folder** | `docs/insights/YYYY-MM-DD-{slug}/` |
+| **Folder** | `docs/insights/{slug}/` |
 | **File** | `{slug}.mdx` |
 | **Type** | {decision guide \| architecture breakdown \| …} |
 | **Status** | `draft: true` |
@@ -255,7 +256,7 @@ If the user says **`abort`**, **`cancel`**, **`quit`**, **`exit`**, or **`never 
 
 Only when the user sends **`approve`** (after any requested edits are reflected in the proposal).
 
-1. **Create folder** `docs/insights/YYYY-MM-DD-{slug}/` if it does not exist.
+1. **Create folder** `docs/insights/{slug}/` if it does not exist.
 2. **Write `{slug}.mdx`** using [template.mdx](template.mdx), filled from the approved proposal. For type-specific section placeholders, follow [examples/decision-guide.mdx](examples/decision-guide.mdx) or [examples/concept-primer.mdx](examples/concept-primer.mdx) as appropriate.
 3. **Add `import Details from '@theme/Details';`** after frontmatter if the scaffold includes fenced code blocks.
 4. **Do not** create the PNG unless the user asked for image generation in Phase 2.
@@ -302,6 +303,6 @@ Full rules: `.cursor/rules/insights-article-structure.mdc`.
 
 **User:** `approve`
 
-**Agent Phase 2:** create `docs/insights/2026-07-04-model-hosting-options-regulated-industries/model-hosting-options-regulated-industries.mdx` with scaffold + checklist summary.
+**Agent Phase 2:** create `docs/insights/model-hosting-options-regulated-industries/model-hosting-options-regulated-industries.mdx` with scaffold + checklist summary.
 
 **User:** `abort` during Phase 1 → no files created.
