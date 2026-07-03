@@ -170,6 +170,14 @@ If you cannot answer these from logs and evals, the router is not production-rea
 
 This article defines **what** an intent router is and **why** it belongs in the architecture. The companion piece — [How to Design an Intent Router](/insights/design-intent-router) — covers route tables, layered classification, confidence thresholds, eval gates, and wiring into the agentic app.
 
+## Key takeaways
+
+- **Route before the loop:** intent selection is a platform decision that picks workflow, manifest, and policy profile, not a prompt trick inside the agent.
+- **Scope authority at ingress:** the LLM should never see tools from routes that were not selected for this turn.
+- **Eval routing on its own golden set:** intent labels, confusion matrices, and CI gates on the Input plane.
+- **Treat clarify and abstain as first-class outcomes:** low confidence should not silently activate high-risk manifests.
+- **Design next:** route table, layered classification, and session stickiness in [How to Design an Intent Router](/insights/design-intent-router).
+
 :::info[Builds on]
 [G.A.I.N Agents](/frameworks/gain-agents) · [Policy-Governed Agent Runtime](/insights/policy-governed-agent-runtime) · [Eval Plane ①: Input](/playbooks/eval-engineering/plane-input)
 :::

@@ -460,11 +460,13 @@ Each maps to an architecture fix — not a prompt tweak.
 
 ---
 
-## Summary
+## Key takeaways
 
-The **agentic loop** is plan → act → observe, repeated under orchestrator control. End to end, a production request crosses **eighteen named stages** — from ingress through routing, the inner loop, synthesis, and audit. The model plans and proposes inside the loop; the platform routes, permits, executes, validates, persists, and traces everything around it.
-
-Build the loop as a **governed workflow with intelligence** — not a chat completion with function calling and hope.
+- **Own the loop in the platform:** the model plans and proposes; orchestration executes, validates, persists, and traces every iteration.
+- **Diagnose by stage:** misroute at ③, skipped validation at ⑫, and lost step-up at ⑨ are architecture fixes, not prompt tweaks.
+- **Validate observations before re-plan or synthesis:** raw tool or retrieval output is not trusted context.
+- **Cap iteration explicitly:** max steps, timeouts, and defined exit paths; unbounded loops are a design defect.
+- **Trace proposal, PEP verdict, and manifest version per step:** audit must answer who authorized what before money moved.
 
 :::info[Builds on]
 [G.A.I.N Agents](/frameworks/gain-agents) · [Policy-Governed Agent Runtime](/insights/policy-governed-agent-runtime) · [What Is an Intent Router](/insights/what-is-intent-router) · [PGAR Boundary ②: Agentic App](/playbooks/pgar-runtime/boundary/agentic-app)

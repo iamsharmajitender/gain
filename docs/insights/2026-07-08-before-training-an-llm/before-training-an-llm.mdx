@@ -9,6 +9,7 @@ tags:
   - llm
   - lrn
 authors: [iamsharmajitender]
+draft: true
 ---
 
 ![The Blueprint Before Training](./before-training-an-llm.png)
@@ -51,6 +52,10 @@ These are the architectural dials. They are set **once**, before any weights are
 The model's parameter count is fully determined by these hyperparameters — **before training starts**.
 
 You can compute the total parameter count from `hidden_size`, `num_layers`, `num_heads`, `ffn_hidden`, and `vocab_size` alone. Training does not change *how many* parameters there are; it only changes *what values* they hold. A 7B model is 7B because of these dials, not because training "grew" it.
+:::
+
+:::tip[TAKEAWAY]
+**The blueprint sets the count.** D, L, H, D_ff, and V determine every tensor shape and total parameter count before training touches a single weight.
 :::
 
 ## How these dials connect
@@ -194,6 +199,10 @@ The context window is a **budgeted design choice**, not a free dial. RoPE/ALiBi 
 
 Recent LLMs (Llama 3/4, Qwen, DeepSeek, Gemma, GPT, Gemini, Claude) reach 128K–10M tokens by combining these methods — not by flipping one hyperparameter.
 
+:::tip[TAKEAWAY]
+**Context is a budget, not a dial.** Positional encoding, training length, and serving cost together set how far the model can attend, not one free hyperparameter.
+:::
+
 ## 2. Create the token vocabulary
 
 Models do not read text. They read **integers**. Before training, a tokenizer maps those integers to a **token vocabulary** — the alphabet the model will speak in for its entire life.
@@ -213,17 +222,14 @@ You decide the target vocabulary size. The model does **not** discover `vocab_si
 By the time training starts, the embedding table shape `(V, D)` and the LM head shape `(D, V)` are already fixed because V is known and frozen. Changing the vocabulary after the fact requires resizing the embedding table and effectively re-training the model.
 :::
 
-## Summary
+:::tip[TAKEAWAY]
+**The alphabet is frozen first.** Target vocabulary size sets embedding and LM head shapes; changing it later means re-training, not a patch.
+:::
 
-Before a single gradient is computed, the model is fully described by:
-
-- **The shape** of every weight tensor — set by design hyperparameters.
-- **The alphabet** the model will speak in — set by the tokenizer.
-
-Pre-training fills in the values. Alignment shapes behavior. Inference navigates a frozen geometry. But the shapes and alphabet stay frozen for the life of that model.
+## Final takeaway
 
 :::tip[TAKEAWAY]
-**Shape + vocabulary are fixed first.** Training only fills the values. A 7B model is 7B because of dials you set on day zero — and most of those parameters live in the FFN, not attention.
+**Shape + vocabulary are fixed first.** Training only fills the values. A 7B model is 7B because of dials you set on day zero, and most of those parameters live in the FFN, not attention.
 
-Continue the lifecycle: [How LLM Works Under the Hood](/insights/how-llm-works-under-the-hood) (Stages 2–4: training, alignment, inference).
+Continue the lifecycle: [How LLM Works Under the Hood](/insights/how-llm-works-under-the-hood) (Stages 2-4: training, alignment, inference).
 :::

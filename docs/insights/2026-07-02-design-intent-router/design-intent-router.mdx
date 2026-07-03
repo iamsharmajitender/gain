@@ -18,7 +18,7 @@ import Details from '@theme/Details';
 
 You know you need an intent router — see [What Is an Intent Router](/insights/what-is-intent-router) for why it is not optional in agentic systems. The design question is harder: **how few routes can you ship**, **how do you classify reliably**, and **how do you gate changes** so routing does not become the silent source of production incidents?
 
-This is an **architecture breakdown** of intent router design — route contracts, layered dispatch, uncertainty handling, and eval integration — aligned with [G.A.I.N Agents](/frameworks/gain-agents) and the [Eval Input plane](/playbooks/eval-engineering/plane-input).
+This is a **decision guide** for intent router design — route contracts, layered dispatch, uncertainty handling, and eval integration — aligned with [G.A.I.N Agents](/frameworks/gain-agents) and the [Eval Input plane](/playbooks/eval-engineering/plane-input).
 
 :::tip[THE CLAIM]
 **Design the route table before the classifier.** Intents are business contracts — tool manifests, policy profiles, model paths — not labels you discover after the agent is built. The router implements the table; it does not invent it.
@@ -278,11 +278,14 @@ Before calling the router done:
 - [ ] Golden set in CI with representative + edge + adversarial + incident rows
 - [ ] Runbook for misroute triage and golden set updates
 
-## Summary
+## Key takeaways
 
-Design an intent router as a **governed dispatch service**: define route contracts first, classify in layers, handle uncertainty explicitly, trace every decision, and gate changes with evals. The router selects the workflow; the agentic app runs it; policy gates every tool proposal inside.
-
-Start small, eval early, and treat every misroute as architecture debt with an owner — not as “the model had a bad day.”
+- **Write the route table before the classifier:** each row binds manifest, policy profile, model path, and eval fixtures.
+- **Layer dispatch** rules → classifier → LLM fallback → safety veto; keep the expensive layer rare.
+- **Tune confidence by risk tier:** payment routes need higher bars than general chat; session stickiness inherits mid-flow context.
+- **Emit a route decision record on every request:** without trace fields, misroutes cannot become regression tests.
+- **Load manifest scope from the route contract:** the agentic app pins tools; the LLM does not negotiate scope in the prompt.
+- **Gate every routing change in CI:** adversarial 100%, representative ≥95%, production incidents as permanent fixtures.
 
 :::info[Builds on]
 [What Is an Intent Router](/insights/what-is-intent-router) · [G.A.I.N Agents](/frameworks/gain-agents) · [Eval Plane ①: Input](/playbooks/eval-engineering/plane-input) · [PGAR Boundary ②: Agentic App](/playbooks/pgar-runtime/boundary/agentic-app)

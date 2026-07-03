@@ -486,18 +486,14 @@ Sometimes a **plain state machine** (Temporal, Step Functions, custom) orchestra
 
 ---
 
-## Summary
+## Key takeaways
 
-**LangChain** gives you models, tools, prompts, and linear composition. **LangGraph** gives you the cyclic, stateful orchestration that production agents need. You use both: LangChain components inside LangGraph nodes, with **your platform** owning routing, policy, validation, memory tiers, and LLM selection.
-
-| Need | Use |
-| --- | --- |
-| RAG Q&A, extraction, classification | LangChain chain |
-| Demo agent, internal tool, short loop | LangChain `AgentExecutor` |
-| Governed multi-step loop, step-up, resume | LangGraph |
-| Intent routing, PEP, eval gates | Your agentic app — before and around either |
-
-Build the loop you can **eval, trace, and audit** — not the loop that ships fastest in a notebook.
+- **Same ecosystem, different pattern:** LangGraph builds on LangChain; choose chain vs graph by workflow shape, not library loyalty.
+- **Use LangChain chains** for fixed paths: RAG, extraction, classification, and one-shot tool calls.
+- **Use LangGraph** when the workflow loops, branches, persists state, or needs step-up interrupts and per-node evals.
+- **Wrap both in your platform:** intent routing, PEP, observation validation, and output filtering stay outside either library.
+- **Split memory by tier:** conversation and loop state in session or checkpointer; long-term memory is your retrieval layer.
+- **Route models by stage:** cheap for classification and judges; capable for plan and synthesize.
 
 :::info[Builds on]
 [What Is the Agentic Loop](/insights/what-is-agentic-loop) · [G.A.I.N Agents](/frameworks/gain-agents) · [G.A.I.N LLM](/frameworks/gain-llm) · [What Is an Intent Router](/insights/what-is-intent-router)
