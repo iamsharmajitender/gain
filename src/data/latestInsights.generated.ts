@@ -32,7 +32,7 @@ export const latestInsights: readonly LatestInsight[] = [
   {
     "title": "Retrieval is a governed action",
     "date": "2026-07-04",
-    "readTime": 13,
+    "readTime": 12,
     "description": "Retrieval is not a database query; it is a governed action. How Policy-Governed Agent Runtime applies to RAG when context construction must be scoped, auditable, and enforced before inference.",
     "typeTag": "arch",
     "to": "/insights/retrieval-is-a-governed-action"

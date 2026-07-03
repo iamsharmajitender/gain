@@ -1,6 +1,6 @@
 ---
 slug: retrieval-is-a-governed-action
-title: Retrieval is a governed action
+title: Retrieval Is a Governed Action
 description: Retrieval is not a database query; it is a governed action. How Policy-Governed Agent Runtime applies to RAG when context construction must be scoped, auditable, and enforced before inference.
 image: ./retrieval-is-a-governed-action.png
 tags:
@@ -19,8 +19,8 @@ date: 2026-07-04
 
 Two architecture questions collide in agentic RAG:
 
-- *"What assembles evidence for this principal, on this request?"* — [RAG Is Not a Database](/insights/rag-is-not-a-database)
-- *"Who authorized what, with which policy, before side effects?"* — [Policy-Governed Agent Runtime](/insights/policy-governed-agent-runtime)
+- *"What assembles evidence for this principal, on this request?"*: [RAG Is Not a Database](/insights/rag-is-not-a-database)
+- *"Who authorized what, with which policy, before side effects?"*: [Policy-Governed Agent Runtime](/insights/policy-governed-agent-runtime)
 
 If you have not reframed retrieval as runtime context construction, start with the RAG insight. The database fallacy, treating the vector index as the architecture, is what makes prompt-governed similarity search feel like production RAG.
 
@@ -51,7 +51,7 @@ Both reject the same mistake: **delegating truth to a predictor.** Entitlements 
 
 ## The unified path on one page
 
-[RAG Is Not a Database](/insights/rag-is-not-a-database#what-actually-runs-at-query-time) maps production RAG as four query-time boundaries: ingress → retrieval → rank & pack → inference. Agentic PGAR wraps that pipeline with orchestration and authorization — and splits inference into validation before synthesis.
+[RAG Is Not a Database](/insights/rag-is-not-a-database#what-actually-runs-at-query-time) maps production RAG as four query-time boundaries: ingress → retrieval → rank & pack → inference. Agentic PGAR wraps that pipeline with orchestration and authorization, and splits inference into validation before synthesis.
 
 ```mermaid
 flowchart LR
@@ -114,13 +114,13 @@ flowchart LR
     class LLM2 output
 ```
 
-Seven boundaries, one request. Stages **⑤–⑦** run the RAG pipeline under PEP/PDP control; stages **①–④** add what the RAG insight assumes but does not specify when an agent drives retrieval:
+Seven boundaries, one request. Stages **⑤-⑦** run the RAG pipeline under PEP/PDP control; stages **①-④** add what the RAG insight assumes but does not specify when an agent drives retrieval:
 
 - **① Ingress · ② Agentic app:** identity binding and session orchestration as in the RAG pipeline; the app holds token and claims and never forwards them to the LLM.
 - **③ LLM proposes:** rewrite the query or propose a `retrieve_*` tool call. Proposal only, not permission.
 - **④ PEP + PDP:** map subject, action, resource, and context; return ALLOW, DENY, or STEP_UP **before** search runs.
-- **⑤ Retrieval executes:** hybrid search, ACL filter, rerank, context-pack assembly — only on ALLOW ([four-boundary pipeline](/insights/rag-is-not-a-database#what-actually-runs-at-query-time)).
-- **⑥ Validation gate · ⑦ Synthesis:** grounding, citations, abstention, then response — orchestrated by the agentic app; validated context only, not raw index output.
+- **⑤ Retrieval executes:** hybrid search, ACL filter, rerank, context-pack assembly, only on ALLOW ([four-boundary pipeline](/insights/rag-is-not-a-database#what-actually-runs-at-query-time)).
+- **⑥ Validation gate · ⑦ Synthesis:** grounding, citations, abstention, then response, orchestrated by the agentic app; validated context only, not raw index output.
 
 Two enforcement surfaces matter, and they are not interchangeable:
 
@@ -264,11 +264,11 @@ In all three, the non-negotiables are the same: **policy before retrieval**, **c
 
 Teams conflate PGAR with RAG in the demo and split them in production. Three governance-specific symptoms show up first:
 
-- **Leakage.** A user retrieves chunks from documents their role should never see. Policy ran in the prompt, or ACL filters ran after top-k — not at the gateway before candidate generation.
+- **Leakage.** A user retrieves chunks from documents their role should never see. Policy ran in the prompt, or ACL filters ran after top-k, not at the gateway before candidate generation.
 - **No replay story.** An auditor asks what the model saw on a specific date. The team has index stats and chat logs, not the assembled context pack with policy version and verdict chain.
 - **Fluent bypass.** The model proposes a broader search than entitlements allow. Without a PEP on the proposal, the retrieval service runs anyway because the API key is valid.
 
-For empty vs wrong retrieval — and why abstention and ranking are separate gates — see [Two failure modes](/insights/rag-is-not-a-database#two-failure-modes-do-not-conflate-them) in the RAG insight. PGAR adds authorization before the pipeline runs; it does not replace ranking or abstention.
+For empty vs wrong retrieval, and why abstention and ranking are separate gates, see [Two failure modes](/insights/rag-is-not-a-database#two-failure-modes-do-not-conflate-them) in the RAG insight. PGAR adds authorization before the pipeline runs; it does not replace ranking or abstention.
 
 ## Design checklist
 
