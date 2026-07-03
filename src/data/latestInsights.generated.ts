@@ -38,17 +38,9 @@ export const latestInsights: readonly LatestInsight[] = [
     "to": "/insights/langchain-vs-langgraph"
   },
   {
-    "title": "The Blueprint Before Training an LLM",
-    "date": "2026-07-03",
-    "readTime": 10,
-    "description": "Hyperparameters, vocabulary, and why a 7B model is 7B before day one — how the dials connect, where parameters live, and why the context window is a budgeted choice.",
-    "typeTag": "exp",
-    "to": "/insights/before-training-an-llm"
-  },
-  {
     "title": "How to Design an Intent Router for Agentic AI",
     "date": "2026-07-02",
-    "readTime": 10,
+    "readTime": 11,
     "description": "A practical design guide for intent routing — route tables, layered classification, confidence thresholds, session stickiness, eval gates, and wiring dispatch into the agentic app before the model loop runs.",
     "typeTag": "arch",
     "to": "/insights/design-intent-router"
@@ -76,5 +68,13 @@ export const latestInsights: readonly LatestInsight[] = [
     "description": "Testing tells you the AI ran. Evals tell you it behaved. For non-deterministic systems, evaluation is the control system that turns AI risk into a managed, measurable, board-defensible discipline.",
     "typeTag": "pov",
     "to": "/insights/eval-engineering"
+  },
+  {
+    "title": "The Blueprint Before Training an LLM",
+    "date": "2026-06-30",
+    "readTime": 10,
+    "description": "Hyperparameters, vocabulary, and why a 7B model is 7B before day one — how the dials connect, where parameters live, and why the context window is a budgeted choice.",
+    "typeTag": "exp",
+    "to": "/insights/before-training-an-llm"
   }
 ];

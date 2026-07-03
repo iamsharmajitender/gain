@@ -1,0 +1,66 @@
+---
+slug: /intent-router
+title: "Intent Router Playbooks"
+sidebar_label: Overview
+description: Hub for intent routing playbooks — route table lifecycle, layered classification, agentic app wiring, and routing eval CI.
+tags:
+  - ai-intelligence
+  - arch
+  - gain
+  - agents
+---
+
+# Intent Router Playbooks
+
+[Playbooks](/playbooks) · **Intent router overview** · [Route table lifecycle →](/playbooks/intent-router/route-table-lifecycle)
+
+Implementation guides for [What Is an Intent Router](/insights/what-is-intent-router). **Plane ①** of the [Router Blueprint](/blueprints/router-blueprint). The [Intent Router Blueprint](/blueprints/intent-router-blueprint) is the reference design for this plane.
+
+:::tip[THE CLAIM]
+**Route before the loop.** The router owns dispatch and trace; the agentic app owns manifest pin and orchestration. The LLM never sees tools from routes that were not selected for this turn.
+:::
+
+<!-- truncate -->
+
+## Four playbooks
+
+| Playbook | One-line purpose |
+| --- | --- |
+| [Route table lifecycle](/playbooks/intent-router/route-table-lifecycle) | Versioned route contracts, storage patterns, promote and rollback |
+| [Layered classifier](/playbooks/intent-router/layered-classifier) | Eligible routes, rules, classifier, LLM fallback, safety |
+| [Wire agentic app](/playbooks/intent-router/wire-agentic-app) | Manifest load, outcomes UX, PGAR handoff |
+| [Routing eval CI](/playbooks/intent-router/routing-eval-ci) | Golden set, release gates, incident replay |
+
+## Recommended path
+
+```mermaid
+flowchart LR
+  R[Route table lifecycle]
+  L[Layered classifier]
+  E[Routing eval CI]
+  W[Wire agentic app]
+
+  R --> L
+  R --> E
+  L --> W
+  E --> W
+```
+
+1. **[Route table lifecycle](/playbooks/intent-router/route-table-lifecycle):** define rows and storage before writing classifier code
+2. **[Routing eval CI](/playbooks/intent-router/routing-eval-ci):** golden set in parallel with Layer ①–②
+3. **[Layered classifier](/playbooks/intent-router/layered-classifier):** implement the pipeline
+4. **[Wire agentic app](/playbooks/intent-router/wire-agentic-app):** manifest pin and loop entry
+
+Bridge reading: [PGAR Agentic app](/playbooks/pgar-runtime/boundary/agentic-app) · [Eval Plane ①: Input](/playbooks/eval-engineering/plane-input).
+
+## Who should read what
+
+| Role | Start with | Then |
+| --- | --- | --- |
+| **AI platform** | [Route table lifecycle](/playbooks/intent-router/route-table-lifecycle), [Layered classifier](/playbooks/intent-router/layered-classifier) | [Wire agentic app](/playbooks/intent-router/wire-agentic-app) |
+| **Domain squad** | [Route table lifecycle](/playbooks/intent-router/route-table-lifecycle) | [Routing eval CI](/playbooks/intent-router/routing-eval-ci) |
+| **Governance** | [Routing eval CI](/playbooks/intent-router/routing-eval-ci) | [Eval Input plane](/playbooks/eval-engineering/plane-input) |
+
+## Read next
+
+**[Route table lifecycle →](/playbooks/intent-router/route-table-lifecycle)**

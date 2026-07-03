@@ -27,3 +27,16 @@ Four playbook groups for [Policy-Governed Agent Runtime](/insights/policy-govern
 | **Domain** | [Tool registry](/playbooks/pgar-runtime/domain/tool-registry) | Tools, manifests, RAG retrieval |
 
 Also see [PGAR Blueprint](/blueprints/pgar-blueprint) for the reference design. Bridge reading: [PGAR with RAG](/insights/retrieval-is-a-governed-action). Eval overlap: [Action plane](/playbooks/eval-engineering/plane-action) and [Tool plane](/playbooks/eval-engineering/plane-tool).
+
+## Intent router (Plane ①)
+
+Plane ① of the [Router Blueprint](/blueprints/router-blueprint). Start at [Intent Router playbooks](/playbooks/intent-router).
+
+| Playbook | Covers |
+| --- | --- |
+| [Route table lifecycle](/playbooks/intent-router/route-table-lifecycle) | Versioned route contracts and storage |
+| [Layered classifier](/playbooks/intent-router/layered-classifier) | Rules, classifier, LLM fallback, safety |
+| [Wire agentic app](/playbooks/intent-router/wire-agentic-app) | Manifest pin and PGAR handoff |
+| [Routing eval CI](/playbooks/intent-router/routing-eval-ci) | Golden set and release gates |
+
+Plane ② orchestration: [PGAR Runtime](/playbooks/pgar-runtime). Plane ③ model routing: [G.A.I.N LLM](/frameworks/gain-llm) (dedicated playbooks planned).

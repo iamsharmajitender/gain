@@ -33,6 +33,18 @@ const sidebars: SidebarsConfig = {
     },
     {
       type: 'category',
+      label: 'Intent Router (Plane ①)',
+      collapsed: true,
+      items: [
+        'intent-router/overview',
+        'intent-router/route-table-lifecycle',
+        'intent-router/layered-classifier',
+        'intent-router/wire-agentic-app',
+        'intent-router/routing-eval-ci',
+      ],
+    },
+    {
+      type: 'category',
       label: 'PGAR Runtime',
       collapsed: true,
       items: [

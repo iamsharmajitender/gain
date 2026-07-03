@@ -1,0 +1,74 @@
+---
+title: "Layered Classifier"
+sidebar_label: Layered classifier
+description: Implement intent classification — eligible routes, rules, classifier, LLM fallback, safety veto, and outcomes before the agent loop.
+tags:
+  - ai-intelligence
+  - arch
+  - gain
+  - agents
+---
+
+# Layered Classifier
+
+[Blueprint](/blueprints/intent-router-blueprint) · [← Route table](/playbooks/intent-router/route-table-lifecycle) · **Classifier** · [Wire agentic app →](/playbooks/intent-router/wire-agentic-app)
+
+Do not send every message to one LLM with the full route table. Use a **short pipeline**: cheap layers first, capable layers only when needed, safety on every path.
+
+:::tip[THE CLAIM]
+**Eligible routes first, then rules, then classifier, then LLM fallback, then safety.** Keep Layer ③ rare.
+:::
+
+<!-- truncate -->
+
+## Pipeline
+
+```mermaid
+flowchart LR
+    In["Input + session"]
+    Elig["Eligible routes"]
+    Rules["① Rules"]
+    Clf["② Classifier"]
+    LLM["③ LLM fallback"]
+    Safe["④ Safety"]
+    Out{"Outcome"}
+
+    In --> Elig --> Rules
+    Rules -->|"match"| Safe
+    Rules -->|"no match"| Clf
+    Clf -->|"confident"| Safe
+    Clf -->|"uncertain"| LLM
+    LLM --> Safe
+    Safe --> Out
+
+    classDef gate fill:#ffedd5,stroke:#fdba74,color:#1e293b,stroke-width:2px
+    class Elig,Rules,Clf,LLM,Safe gate
+```
+
+## Layer reference
+
+| Layer | Job | Clarification |
+| --- | --- | --- |
+| **Eligible routes** | Prune table by ingress claims | No `payment_initiate` if user lacks payment role |
+| **① Rules** | Commands, channel, session stickiness | "yes", "$500" stay on active route |
+| **② Classifier** | Small model / kNN on your golden set | Target most traffic in &lt;50ms |
+| **③ LLM fallback** | Structured JSON, fixed `route_id` list | Top 3 + user pick for ambiguous or high-risk only |
+| **④ Safety** | Injection, PII, veto | [Input plane](/playbooks/eval-engineering/plane-input): 100% adversarial pass |
+
+## Outcomes
+
+| Outcome | Typical action |
+| --- | --- |
+| **Route** | confidence ≥ threshold → hand off to agentic app |
+| **Clarify** | missing entities or mid confidence → question or top-k pick |
+| **Abstain** | low confidence or OOD → safe refusal or human handoff |
+
+Tune thresholds per route risk. Details: [How to Design an Intent Router](/insights/design-intent-router) (Step 3).
+
+## Trace fields
+
+`intent_label`, `route_id`, `confidence`, `router_layer`, `eligible_routes`, `safety_flags`, `outcome`, `latency_ms`, `route_table_version`
+
+## Read next
+
+**[Wire agentic app →](/playbooks/intent-router/wire-agentic-app)**
