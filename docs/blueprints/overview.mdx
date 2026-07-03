@@ -36,12 +36,13 @@ Playbooks: [PGAR Runtime](/playbooks/pgar-runtime) series under [Playbooks](/pla
 
 ## Router (three planes)
 
-Routing is three separate decisions: **intent** (which path), **orchestration** (which step inside the loop), **model** (which LLM endpoint). The [Router Blueprint](/blueprints/router-blueprint) is the umbrella.
+The **Router Blueprint** covers intent dispatch at ingress, orchestration inside the agent loop, and model selection at the LLM gateway.
 
-| Plane | Blueprint | Playbooks / framework |
-| --- | --- | --- |
-| **① Intent** | [Intent Router Blueprint](/blueprints/intent-router-blueprint) | [Intent Router playbooks](/playbooks/intent-router) |
-| **② Orchestration** | [Orchestration Plane](/blueprints/orchestration-plane-blueprint) | [PGAR Runtime](/playbooks/pgar-runtime) (existing) |
-| **③ Model** | [Model Routing Plane](/blueprints/model-routing-plane-blueprint) | [G.A.I.N LLM](/frameworks/gain-llm) (playbooks planned) |
+| | |
+| --- | --- |
+| **[G.A.I.N Agents](/frameworks/gain-agents)** · **[G.A.I.N LLM](/frameworks/gain-llm)** | Principles for agents and gateway routing — published |
+| **[Router Blueprint](/blueprints/router-blueprint)** | Three planes, playbooks, release gates — draft |
+| **[What Is an Intent Router](/insights/what-is-intent-router)** | Primer — published |
+| **[How to Design an Intent Router](/insights/design-intent-router)** | Decision guide — published |
 
-Insights: [What Is an Intent Router](/insights/what-is-intent-router) · [How to Design an Intent Router](/insights/design-intent-router).
+Playbooks: [Router](/playbooks/router) (Plane ① [Intent router](/playbooks/router/intent-router)) · [PGAR Runtime](/playbooks/pgar-runtime) (Plane ②). Plane ③: [G.A.I.N LLM](/frameworks/gain-llm) (dedicated playbooks planned).

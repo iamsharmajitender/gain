@@ -28,15 +28,14 @@ Four playbook groups for [Policy-Governed Agent Runtime](/insights/policy-govern
 
 Also see [PGAR Blueprint](/blueprints/pgar-blueprint) for the reference design. Bridge reading: [PGAR with RAG](/insights/retrieval-is-a-governed-action). Eval overlap: [Action plane](/playbooks/eval-engineering/plane-action) and [Tool plane](/playbooks/eval-engineering/plane-tool).
 
-## Intent router (Plane ①)
+## Router
 
-Plane ① of the [Router Blueprint](/blueprints/router-blueprint). Start at [Intent Router playbooks](/playbooks/intent-router).
+Three planes for the [Router Blueprint](/blueprints/router-blueprint). Start at the [Router overview](/playbooks/router).
 
-| Playbook | Covers |
-| --- | --- |
-| [Route table lifecycle](/playbooks/intent-router/route-table-lifecycle) | Versioned route contracts and storage |
-| [Layered classifier](/playbooks/intent-router/layered-classifier) | Rules, classifier, LLM fallback, safety |
-| [Wire agentic app](/playbooks/intent-router/wire-agentic-app) | Manifest pin and PGAR handoff |
-| [Routing eval CI](/playbooks/intent-router/routing-eval-ci) | Golden set and release gates |
+| Plane | Start here | Covers |
+| --- | --- | --- |
+| **Intent router (Plane ①)** | [Overview](/playbooks/router/intent-router) | Route table, classifier, wire app, routing eval CI |
+| **Orchestration (Plane ②)** | [PGAR Runtime](/playbooks/pgar-runtime) | Agent loop, PEP/PDP, manifests |
+| **Model routing (Plane ③)** | [G.A.I.N LLM](/frameworks/gain-llm) | Gateway profiles (dedicated playbooks planned) |
 
-Plane ② orchestration: [PGAR Runtime](/playbooks/pgar-runtime). Plane ③ model routing: [G.A.I.N LLM](/frameworks/gain-llm) (dedicated playbooks planned).
+Also see [Router Blueprint](/blueprints/router-blueprint). Bridge reading: [What Is an Intent Router](/insights/what-is-intent-router). Plane ② detail: [PGAR Runtime](/playbooks/pgar-runtime).

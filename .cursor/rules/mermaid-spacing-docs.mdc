@@ -1,0 +1,48 @@
+---
+description: Add <br/> after every mermaid diagram in docs (docs/**/*.mdx)
+globs: docs/**/*.mdx
+alwaysApply: false
+---
+
+# Mermaid spacing in docs
+
+When writing or editing `docs/**/*.mdx`, add **`<br/>`** on its own line immediately after every ` ```mermaid ` closing fence.
+
+Reference: `docs/frameworks/gain-mcp.mdx`, `docs/blueprints/router-blueprint.mdx`.
+
+## Required pattern (bare mermaid)
+
+1. Open with a ` ```mermaid ` fenced block and close it with ` ``` `.
+2. On the **next line**, add `<br/>`.
+3. Then the heading, paragraph, or table.
+
+Example shape (closing fence, then spacer, then prose):
+
+    [mermaid fence open]
+    flowchart LR
+        A --> B
+    [mermaid fence close]
+    <br/>
+    ## Next section
+
+## Wrapped in `gain-mermaid` (framework pages)
+
+When the fence is inside `<div className="gain-mermaid">`, put `<br/>` after `</div>`:
+
+    <br/>
+    <div className="gain-mermaid">
+    [mermaid fence + diagram]
+    </div>
+    <br/>
+
+Optional `<br/>` before the wrapper is fine for top spacing. **After** the diagram is required.
+
+## Do not add
+
+- `<br/>` inside the mermaid fence (breaks the diagram).
+- Duplicate `<br/>` between consecutive diagrams unless prose sits between them.
+
+## Before finishing
+
+1. Every ` ```mermaid ` block in changed `.mdx` files has `<br/>` after the closing fence (or after `</div>` when wrapped).
+2. When editing a section with mermaid, fix spacing on blocks you touch; do not bulk-rewrite unrelated diagrams.

@@ -11,7 +11,7 @@ tags:
 
 # Route Table Lifecycle
 
-[Blueprint](/blueprints/intent-router-blueprint) · **Route table** · [Layered classifier →](/playbooks/intent-router/layered-classifier)
+[Blueprint](/blueprints/router-blueprint) · **Route table** · [Layered classifier →](/playbooks/router/intent-router/layered-classifier)
 
 The route table is **versioned platform config**: one row per governed path (`route_id`, manifest ref, policy profile, `model_profile`). Same discipline as [manifest lifecycle](/playbooks/pgar-runtime/domain/manifest-lifecycle).
 
@@ -62,7 +62,7 @@ platform/routes/
 | **Rollback** | Repoint to prior version; no classifier redeploy if using registry |
 | **Audit** | Log `route_table_version`, `eligible_routes`, `route_id` |
 
-See [Routing eval CI](/playbooks/intent-router/routing-eval-ci) for gates.
+See [Routing eval CI](/playbooks/router/intent-router/routing-eval-ci) for gates.
 
 ## Anti-patterns
 
@@ -75,4 +75,4 @@ See [Routing eval CI](/playbooks/intent-router/routing-eval-ci) for gates.
 
 ## Read next
 
-**[Layered classifier →](/playbooks/intent-router/layered-classifier)**
+**[Layered classifier →](/playbooks/router/intent-router/layered-classifier)**

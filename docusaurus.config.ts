@@ -63,9 +63,16 @@ const config: Config = {
       '@docusaurus/plugin-client-redirects',
       {
         createRedirects(existingPath) {
-      
           if (existingPath.startsWith('/insights')) {
             return [existingPath.replace(/^\/insights/, '/blogs')];
+          }
+          if (existingPath.startsWith('/playbooks/router/intent-router')) {
+            return [
+              existingPath.replace(
+                '/playbooks/router/intent-router',
+                '/playbooks/intent-router',
+              ),
+            ];
           }
           return undefined;
         },

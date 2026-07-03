@@ -33,19 +33,27 @@ const sidebars: SidebarsConfig = {
     },
     {
       type: 'category',
-      label: 'Intent Router (Plane ①)',
+      label: 'Router',
       collapsed: true,
       items: [
-        'intent-router/overview',
-        'intent-router/route-table-lifecycle',
-        'intent-router/layered-classifier',
-        'intent-router/wire-agentic-app',
-        'intent-router/routing-eval-ci',
+        'router/overview',
+        {
+          type: 'category',
+          label: 'Intent router (Plane ①)',
+          collapsed: true,
+          items: [
+            'router/intent-router/overview',
+            'router/intent-router/route-table-lifecycle',
+            'router/intent-router/layered-classifier',
+            'router/intent-router/wire-agentic-app',
+            'router/intent-router/routing-eval-ci',
+          ],
+        },
       ],
     },
     {
       type: 'category',
-      label: 'PGAR Runtime',
+      label: 'Policy-Governed Agent Runtime',
       collapsed: true,
       items: [
         'pgar-runtime/overview',

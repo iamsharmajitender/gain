@@ -105,7 +105,8 @@ export const handbookSections: SitemapSection[] = [
     href: '/playbooks',
     links: [
       {label: 'Overview', href: '/playbooks'},
-      {label: 'Intent Router (Plane ①)', href: '/playbooks/intent-router', draft: true},
+      {label: 'Router', href: '/playbooks/router', draft: true},
+      {label: 'Intent router (Plane ①)', href: '/playbooks/router/intent-router', draft: true},
       {label: 'Eval Engineering', href: '/playbooks/eval-engineering/golden-datasets', draft: true},
       {label: 'PGAR Runtime', href: '/playbooks/pgar-runtime', draft: true},
     ],
