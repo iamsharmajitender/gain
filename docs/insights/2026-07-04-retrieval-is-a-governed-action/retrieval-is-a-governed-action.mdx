@@ -53,6 +53,8 @@ Both reject the same mistake: **delegating truth to a predictor.** Entitlements 
 
 [RAG Is Not a Database](/insights/rag-is-not-a-database#what-actually-runs-at-query-time) maps production RAG as four query-time boundaries: ingress → retrieval → rank & pack → inference. Agentic PGAR wraps that pipeline with orchestration and authorization, and splits inference into validation before synthesis.
 
+<div className="gain-diagram-wrap">
+
 ```mermaid
 flowchart LR
     subgraph ingress["① Ingress"]
@@ -113,6 +115,9 @@ flowchart LR
     class VAL deliver
     class LLM2 output
 ```
+
+</div>
+<br/>
 
 Seven boundaries, one request. Stages **⑤-⑦** run the RAG pipeline under PEP/PDP control; stages **①-④** add what the RAG insight assumes but does not specify when an agent drives retrieval:
 
@@ -194,6 +199,8 @@ The model never "decided" access. It proposed a search. Governance decided what 
 
 **Implementation walkthrough** (payloads, SARAC, audit, branches): [Domain: RAG retrieval § worked example](/playbooks/pgar-runtime/domain/rag-retrieval#worked-example-one-request-step-by-step).
 
+<div className="gain-diagram-wrap">
+
 ```mermaid
 sequenceDiagram
     actor U as User
@@ -243,6 +250,9 @@ sequenceDiagram
     M-->>App: ⑦ synthesized answer with citations
     App-->>U: grounded response
 ```
+
+</div>
+<br/>
 
 :::note[DECISION FIRST, CONTEXT SECOND]
 This is the record operational-resilience and model-risk reviewers expect: verdict logged before any chunk enters the context window. No retroactive narrative from chat transcripts.
