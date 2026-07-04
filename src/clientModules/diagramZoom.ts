@@ -6,7 +6,6 @@ const MERMAID_SELECTOR = [
   '.markdown .docusaurus-mermaid-container',
   '.gain-mermaid .docusaurus-mermaid-container',
   '.gain-diagram-wrap .docusaurus-mermaid-container',
-  // Legacy class (pre–Docusaurus 3 theme-mermaid)
   '.theme-doc-markdown .mermaid',
   '.markdown .mermaid',
   '.gain-mermaid .mermaid',
@@ -14,9 +13,10 @@ const MERMAID_SELECTOR = [
 ].join(', ');
 
 type ZoomPayload = {kind: 'svg'; node: SVGSVGElement};
-type PointerPoint = {x: number; y: number};
+type Point = {x: number; y: number};
 
 let overlay: HTMLElement | null = null;
+let stageEl: HTMLElement | null = null;
 let canvas: HTMLElement | null = null;
 let resetBtn: HTMLButtonElement | null = null;
 let hintEl: HTMLElement | null = null;
@@ -31,10 +31,18 @@ let translateStartX = 0;
 let translateStartY = 0;
 let pinchStartDistance = 0;
 let pinchStartScale = 1;
+let pinchCenterX = 0;
+let pinchCenterY = 0;
 let bodyScrollY = 0;
 let enhanceScheduled = false;
+let fitRetryTimer: ReturnType<typeof setTimeout> | null = null;
 
-const activePointers = new Map<number, PointerPoint>();
+const activePointers = new Map<number, Point>();
+const activeTouches = new Map<number, Point>();
+
+function isCoarsePointer(): boolean {
+  return window.matchMedia('(pointer: coarse)').matches;
+}
 
 function clamp(value: number, min: number, max: number): number {
   return Math.min(max, Math.max(min, value));
@@ -45,14 +53,14 @@ function minScale(): number {
 }
 
 function maxScale(): number {
-  return baseScale * 3;
+  return isCoarsePointer() || window.innerWidth <= 996 ? baseScale * 4 : baseScale * 3;
 }
 
 function applyTransform(): void {
   if (!canvas) {
     return;
   }
-  canvas.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+  canvas.style.transform = `translate3d(${translateX}px, ${translateY}px, 0) scale(${scale})`;
   updateResetLabel();
 }
 
@@ -71,29 +79,91 @@ function resetTransform(): void {
   applyTransform();
 }
 
-function adjustScale(delta: number): void {
-  scale = clamp(Number((scale + delta).toFixed(2)), minScale(), maxScale());
+function adjustScale(delta: number, centerX?: number, centerY?: number): void {
+  const next = clamp(Number((scale + delta).toFixed(3)), minScale(), maxScale());
+  if (centerX != null && centerY != null && stageEl) {
+    scaleAtPoint(next, centerX, centerY);
+    return;
+  }
+  scale = next;
   applyTransform();
 }
 
-function getPinchDistance(): number {
-  const pts = [...activePointers.values()];
-  return Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y);
+function scaleAtPoint(nextScale: number, centerX: number, centerY: number): void {
+  if (!stageEl) {
+    scale = nextScale;
+    applyTransform();
+    return;
+  }
+
+  const rect = stageEl.getBoundingClientRect();
+  const cx = centerX - rect.left - rect.width / 2;
+  const cy = centerY - rect.top - rect.height / 2;
+  const ratio = nextScale / scale;
+
+  translateX = cx - ratio * (cx - translateX);
+  translateY = cy - ratio * (cy - translateY);
+  scale = nextScale;
+  applyTransform();
+}
+
+function getDistance(a: Point, b: Point): number {
+  return Math.hypot(a.x - b.x, a.y - b.y);
+}
+
+function getPinchCenter(a: Point, b: Point): Point {
+  return {x: (a.x + b.x) / 2, y: (a.y + b.y) / 2};
 }
 
 function stagePadding(): number {
   if (window.innerWidth <= 576) {
-    return 12;
+    return 8;
   }
   if (window.innerWidth <= 996) {
-    return 20;
+    return 12;
   }
   return 28;
 }
 
+function computeBaseScale(
+  maxW: number,
+  maxH: number,
+  svgW: number,
+  svgH: number,
+): number {
+  const widthFit = maxW / svgW;
+  const heightFit = maxH / svgH;
+
+  if (isCoarsePointer() || window.innerWidth <= 996) {
+    // Fill screen width first; pan for overflow.
+    let fit = widthFit * 0.98;
+
+    // Tall diagrams: cap height so some content is visible without extreme zoom-out.
+    if (svgH * fit > maxH * 1.2) {
+      fit = (maxH * 1.1) / svgH;
+    }
+
+    // Wide diagrams: if full-width fit is tiny, start zoomed in for readability.
+    if (widthFit < 0.65) {
+      fit = Math.max(fit, Math.min(widthFit * 2.2, heightFit * 1.05));
+    }
+
+    return Number(Math.min(fit, 2.5).toFixed(3));
+  }
+
+  return Number(Math.min(widthFit, heightFit, 1).toFixed(3));
+}
+
+function getSvgDimensions(svg: SVGSVGElement): {width: number; height: number} {
+  const bbox = svg.getBBox();
+  const viewBox = svg.viewBox.baseVal;
+  const width = bbox.width || viewBox.width || svg.clientWidth;
+  const height = bbox.height || viewBox.height || svg.clientHeight;
+  return {width, height};
+}
+
 function fitToStage(svg: SVGSVGElement): void {
-  const stage = overlay?.querySelector('.gain-zoom-overlay__stage') as HTMLElement | null;
-  if (!stage) {
+  if (!stageEl) {
     return;
   }
 
@@ -102,14 +172,9 @@ function fitToStage(svg: SVGSVGElement): void {
   translateY = 0;
   applyTransform();
 
-  const stageRect = stage.getBoundingClientRect();
-  const pad = stagePadding();
-  const maxW = Math.max(stageRect.width - pad * 2, 1);
-  const maxH = Math.max(stageRect.height - pad * 2, 1);
-
-  const bbox = svg.getBBox();
-  const svgW = bbox.width || svg.clientWidth;
-  const svgH = bbox.height || svg.clientHeight;
+  const maxW = Math.max(stageEl.clientWidth - stagePadding() * 2, 1);
+  const maxH = Math.max(stageEl.clientHeight - stagePadding() * 2, 1);
+  const {width: svgW, height: svgH} = getSvgDimensions(svg);
 
   if (svgW <= 0 || svgH <= 0) {
     baseScale = 1;
@@ -118,33 +183,92 @@ function fitToStage(svg: SVGSVGElement): void {
     return;
   }
 
-  baseScale = Number(Math.min(maxW / svgW, maxH / svgH, 1).toFixed(3));
+  svg.style.width = `${svgW}px`;
+  svg.style.height = `${svgH}px`;
+  svg.style.maxWidth = 'none';
+  svg.style.maxHeight = 'none';
+
+  baseScale = computeBaseScale(maxW, maxH, svgW, svgH);
   scale = baseScale;
   translateX = 0;
   translateY = 0;
   applyTransform();
 }
 
+function scheduleFitToStage(svg: SVGSVGElement): void {
+  fitToStage(svg);
+  requestAnimationFrame(() => fitToStage(svg));
+  if (fitRetryTimer) {
+    clearTimeout(fitRetryTimer);
+  }
+  fitRetryTimer = setTimeout(() => fitToStage(svg), 120);
+}
+
 function updateHintText(): void {
   if (!hintEl) {
     return;
   }
-  const coarse = window.matchMedia('(pointer: coarse)').matches;
-  hintEl.textContent = coarse
-    ? 'Pinch to zoom · drag to pan · tap × to close'
+  hintEl.textContent = isCoarsePointer()
+    ? 'Pinch or use +/− · drag to pan · tap × to close'
     : 'Scroll or pinch to zoom · drag to pan · Esc to close';
 }
 
 function lockBodyScroll(): void {
   bodyScrollY = window.scrollY;
-  document.body.style.top = `-${bodyScrollY}px`;
+  document.documentElement.classList.add('gain-zoom-open');
   document.body.classList.add('gain-zoom-open');
+  document.body.style.top = `-${bodyScrollY}px`;
 }
 
 function unlockBodyScroll(): void {
+  document.documentElement.classList.remove('gain-zoom-open');
   document.body.classList.remove('gain-zoom-open');
   document.body.style.top = '';
   window.scrollTo(0, bodyScrollY);
+}
+
+function beginPan(x: number, y: number): void {
+  dragging = true;
+  dragStartX = x;
+  dragStartY = y;
+  translateStartX = translateX;
+  translateStartY = translateY;
+}
+
+function movePan(x: number, y: number): void {
+  if (!dragging) {
+    return;
+  }
+  translateX = translateStartX + (x - dragStartX);
+  translateY = translateStartY + (y - dragStartY);
+  applyTransform();
+}
+
+function beginPinch(distance: number, centerX: number, centerY: number): void {
+  dragging = false;
+  pinchStartDistance = distance;
+  pinchStartScale = scale;
+  pinchCenterX = centerX;
+  pinchCenterY = centerY;
+}
+
+function movePinch(distance: number, centerX: number, centerY: number): void {
+  if (pinchStartDistance <= 0) {
+    return;
+  }
+  const next = clamp(
+    Number((pinchStartScale * (distance / pinchStartDistance)).toFixed(3)),
+    minScale(),
+    maxScale(),
+  );
+  scaleAtPoint(next, centerX || pinchCenterX, centerY || pinchCenterY);
+}
+
+function endGestures(): void {
+  dragging = false;
+  pinchStartDistance = 0;
+  activePointers.clear();
+  activeTouches.clear();
 }
 
 function ensureOverlay(): HTMLElement {
@@ -172,6 +296,7 @@ function ensureOverlay(): HTMLElement {
   `;
 
   document.body.appendChild(overlay);
+  stageEl = overlay.querySelector('.gain-zoom-overlay__stage');
   canvas = overlay.querySelector('.gain-zoom-overlay__canvas');
   resetBtn = overlay.querySelector('[data-gain-zoom-action="reset"]');
   hintEl = overlay.querySelector('.gain-zoom-overlay__hint');
@@ -186,17 +311,15 @@ function ensureOverlay(): HTMLElement {
       'data-gain-zoom-action',
     );
     if (action === 'in') {
-      adjustScale(baseScale * 0.2);
+      adjustScale(baseScale * 0.25);
     } else if (action === 'out') {
-      adjustScale(-baseScale * 0.2);
+      adjustScale(-baseScale * 0.25);
     } else if (action === 'reset') {
       resetTransform();
     }
   });
 
-  const stage = overlay.querySelector('.gain-zoom-overlay__stage') as HTMLElement;
-
-  stage.addEventListener(
+  stageEl?.addEventListener(
     'wheel',
     (event) => {
       event.preventDefault();
@@ -205,57 +328,50 @@ function ensureOverlay(): HTMLElement {
     {passive: false},
   );
 
-  stage.addEventListener('pointerdown', (event) => {
+  stageEl?.addEventListener('pointerdown', (event) => {
+    if (event.pointerType === 'touch') {
+      return;
+    }
+
     activePointers.set(event.pointerId, {x: event.clientX, y: event.clientY});
 
     if (activePointers.size === 2) {
-      dragging = false;
-      pinchStartDistance = getPinchDistance();
-      pinchStartScale = scale;
+      const pts = [...activePointers.values()];
+      const center = getPinchCenter(pts[0], pts[1]);
+      beginPinch(getDistance(pts[0], pts[1]), center.x, center.y);
     } else if (activePointers.size === 1) {
-      dragging = true;
-      dragStartX = event.clientX;
-      dragStartY = event.clientY;
-      translateStartX = translateX;
-      translateStartY = translateY;
+      beginPan(event.clientX, event.clientY);
     }
 
-    stage.setPointerCapture(event.pointerId);
+    stageEl?.setPointerCapture(event.pointerId);
   });
 
-  stage.addEventListener('pointermove', (event) => {
-    if (!activePointers.has(event.pointerId)) {
+  stageEl?.addEventListener('pointermove', (event) => {
+    if (event.pointerType === 'touch' || !activePointers.has(event.pointerId)) {
       return;
     }
 
     activePointers.set(event.pointerId, {x: event.clientX, y: event.clientY});
 
     if (activePointers.size >= 2) {
+      const pts = [...activePointers.values()];
+      const center = getPinchCenter(pts[0], pts[1]);
       if (pinchStartDistance <= 0) {
-        pinchStartDistance = getPinchDistance();
-        pinchStartScale = scale;
+        beginPinch(getDistance(pts[0], pts[1]), center.x, center.y);
         return;
       }
-      const distance = getPinchDistance();
-      scale = clamp(
-        Number((pinchStartScale * (distance / pinchStartDistance)).toFixed(2)),
-        minScale(),
-        maxScale(),
-      );
-      applyTransform();
+      movePinch(getDistance(pts[0], pts[1]), center.x, center.y);
       return;
     }
 
-    if (!dragging) {
-      return;
-    }
-
-    translateX = translateStartX + (event.clientX - dragStartX);
-    translateY = translateStartY + (event.clientY - dragStartY);
-    applyTransform();
+    movePan(event.clientX, event.clientY);
   });
 
   const endPointer = (event: PointerEvent) => {
+    if (event.pointerType === 'touch') {
+      return;
+    }
+
     activePointers.delete(event.pointerId);
     if (activePointers.size < 2) {
       pinchStartDistance = 0;
@@ -264,16 +380,82 @@ function ensureOverlay(): HTMLElement {
       dragging = false;
     } else if (activePointers.size === 1) {
       const remaining = [...activePointers.values()][0];
-      dragging = true;
-      dragStartX = remaining.x;
-      dragStartY = remaining.y;
-      translateStartX = translateX;
-      translateStartY = translateY;
+      beginPan(remaining.x, remaining.y);
     }
   };
 
-  stage.addEventListener('pointerup', endPointer);
-  stage.addEventListener('pointercancel', endPointer);
+  stageEl?.addEventListener('pointerup', endPointer);
+  stageEl?.addEventListener('pointercancel', endPointer);
+
+  stageEl?.addEventListener(
+    'touchstart',
+    (event) => {
+      for (const touch of event.changedTouches) {
+        activeTouches.set(touch.identifier, {x: touch.clientX, y: touch.clientY});
+      }
+
+      if (activeTouches.size === 2) {
+        event.preventDefault();
+        const pts = [...activeTouches.values()];
+        const center = getPinchCenter(pts[0], pts[1]);
+        beginPinch(getDistance(pts[0], pts[1]), center.x, center.y);
+      } else if (activeTouches.size === 1) {
+        const pt = [...activeTouches.values()][0];
+        beginPan(pt.x, pt.y);
+      }
+    },
+    {passive: false},
+  );
+
+  stageEl?.addEventListener(
+    'touchmove',
+    (event) => {
+      for (const touch of event.changedTouches) {
+        if (activeTouches.has(touch.identifier)) {
+          activeTouches.set(touch.identifier, {x: touch.clientX, y: touch.clientY});
+        }
+      }
+
+      if (activeTouches.size >= 2) {
+        event.preventDefault();
+        const pts = [...activeTouches.values()];
+        const center = getPinchCenter(pts[0], pts[1]);
+        if (pinchStartDistance <= 0) {
+          beginPinch(getDistance(pts[0], pts[1]), center.x, center.y);
+          return;
+        }
+        movePinch(getDistance(pts[0], pts[1]), center.x, center.y);
+        return;
+      }
+
+      if (activeTouches.size === 1 && dragging) {
+        event.preventDefault();
+        const pt = [...activeTouches.values()][0];
+        movePan(pt.x, pt.y);
+      }
+    },
+    {passive: false},
+  );
+
+  const endTouch = (event: TouchEvent) => {
+    for (const touch of event.changedTouches) {
+      activeTouches.delete(touch.identifier);
+    }
+
+    if (activeTouches.size < 2) {
+      pinchStartDistance = 0;
+    }
+
+    if (activeTouches.size === 0) {
+      dragging = false;
+    } else if (activeTouches.size === 1) {
+      const pt = [...activeTouches.values()][0];
+      beginPan(pt.x, pt.y);
+    }
+  };
+
+  stageEl?.addEventListener('touchend', endTouch);
+  stageEl?.addEventListener('touchcancel', endTouch);
 
   document.addEventListener('keydown', (event) => {
     if (event.key === 'Escape' && overlay && !overlay.hidden) {
@@ -281,16 +463,19 @@ function ensureOverlay(): HTMLElement {
     }
   });
 
-  window.addEventListener('resize', () => {
+  const onViewportChange = () => {
     if (!overlay || overlay.hidden) {
       return;
     }
     const svg = canvas?.querySelector('svg');
     if (svg) {
-      fitToStage(svg);
+      scheduleFitToStage(svg);
     }
     updateHintText();
-  });
+  };
+
+  window.addEventListener('resize', onViewportChange);
+  window.visualViewport?.addEventListener('resize', onViewportChange);
 
   return overlay;
 }
@@ -304,25 +489,18 @@ function openZoom(payload: ZoomPayload): void {
   scale = 1;
   translateX = 0;
   translateY = 0;
-  activePointers.clear();
-  dragging = false;
-  pinchStartDistance = 0;
+  endGestures();
 
   const clone = payload.node.cloneNode(true) as SVGSVGElement;
   clone.removeAttribute('width');
   clone.removeAttribute('height');
   clone.style.display = 'block';
-  clone.style.maxWidth = 'none';
-  clone.style.maxHeight = 'none';
   stageCanvas.appendChild(clone);
 
   updateHintText();
   root.hidden = false;
   lockBodyScroll();
-
-  requestAnimationFrame(() => {
-    fitToStage(clone);
-  });
+  scheduleFitToStage(clone);
 }
 
 function closeZoom(): void {
@@ -331,9 +509,11 @@ function closeZoom(): void {
   }
   overlay.hidden = true;
   unlockBodyScroll();
-  activePointers.clear();
-  dragging = false;
-  pinchStartDistance = 0;
+  endGestures();
+  if (fitRetryTimer) {
+    clearTimeout(fitRetryTimer);
+    fitRetryTimer = null;
+  }
   baseScale = 1;
   scale = 1;
   translateX = 0;
@@ -367,6 +547,11 @@ function enhanceMermaid(mermaidEl: HTMLElement): void {
   mermaidEl.setAttribute('aria-label', 'Enlarge diagram');
 
   const open = () => openZoom({kind: 'svg', node: svg});
+
+  let tapStartX = 0;
+  let tapStartY = 0;
+  let tapMoved = false;
+
   mermaidEl.addEventListener('click', open);
   mermaidEl.addEventListener('keydown', (event) => {
     if (event.key === 'Enter' || event.key === ' ') {
@@ -374,6 +559,47 @@ function enhanceMermaid(mermaidEl: HTMLElement): void {
       open();
     }
   });
+
+  mermaidEl.addEventListener(
+    'touchstart',
+    (event) => {
+      if (event.touches.length !== 1) {
+        tapMoved = true;
+        return;
+      }
+      tapStartX = event.touches[0].clientX;
+      tapStartY = event.touches[0].clientY;
+      tapMoved = false;
+    },
+    {passive: true},
+  );
+
+  mermaidEl.addEventListener(
+    'touchmove',
+    (event) => {
+      if (event.touches.length !== 1) {
+        return;
+      }
+      const dx = event.touches[0].clientX - tapStartX;
+      const dy = event.touches[0].clientY - tapStartY;
+      if (Math.hypot(dx, dy) > 12) {
+        tapMoved = true;
+      }
+    },
+    {passive: true},
+  );
+
+  mermaidEl.addEventListener(
+    'touchend',
+    (event) => {
+      if (tapMoved || event.changedTouches.length !== 1) {
+        return;
+      }
+      event.preventDefault();
+      open();
+    },
+    {passive: false},
+  );
 }
 
 function enhanceZoomables(root: ParentNode = document): void {

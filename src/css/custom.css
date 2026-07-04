@@ -1148,6 +1148,11 @@ body.gain-zoom-open {
   right: 0;
 }
 
+html.gain-zoom-open {
+  overflow: hidden;
+  height: 100%;
+}
+
 .gain-zoom-overlay[hidden] {
   display: none !important;
 }
@@ -1159,6 +1164,13 @@ body.gain-zoom-open {
   display: flex;
   align-items: center;
   justify-content: center;
+  touch-action: none;
+  overscroll-behavior: none;
+  padding:
+    env(safe-area-inset-top, 0)
+    env(safe-area-inset-right, 0)
+    env(safe-area-inset-bottom, 0)
+    env(safe-area-inset-left, 0);
 }
 
 .gain-zoom-overlay__backdrop {
@@ -1242,13 +1254,13 @@ body.gain-zoom-open {
 }
 
 .gain-zoom-overlay__canvas {
-  width: 100%;
-  height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
   transform-origin: center center;
   will-change: transform;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
 }
 
 .gain-zoom-overlay__canvas svg {
@@ -1258,6 +1270,7 @@ body.gain-zoom-open {
   max-width: none;
   max-height: none;
   pointer-events: none;
+  flex-shrink: 0;
 }
 
 .gain-zoom-overlay__hint {
@@ -1271,19 +1284,26 @@ body.gain-zoom-open {
 
 @media (max-width: 996px) {
   .gain-zoom-overlay__panel {
-    width: 100vw;
-    height: 100vh;
-    height: 100dvh;
-    max-height: 100vh;
+    width: 100%;
+    height: 100%;
+    min-height: 100dvh;
     max-height: 100dvh;
     border-radius: 0;
-    border-left: none;
-    border-right: none;
+    border: none;
+    box-shadow: none;
   }
 
   .gain-zoom-overlay__toolbar {
-    padding: 0.75rem;
+    padding:
+      calc(0.5rem + env(safe-area-inset-top, 0))
+      0.75rem
+      0.5rem;
     gap: 0.625rem;
+    flex-shrink: 0;
+  }
+
+  .gain-zoom-overlay__stage {
+    min-height: 0;
   }
 
   .gain-zoom-overlay__btn,
@@ -1291,12 +1311,16 @@ body.gain-zoom-open {
     min-width: 2.75rem;
     min-height: 2.75rem;
     padding: 0.5rem 0.75rem;
-    font-size: 1rem;
+    font-size: 1.125rem;
+    touch-action: manipulation;
   }
 
   .gain-zoom-overlay__hint {
     font-size: 0.6875rem;
-    padding: 0.625rem 0.75rem;
+    padding:
+      0.625rem 0.75rem
+      calc(0.625rem + env(safe-area-inset-bottom, 0));
+    flex-shrink: 0;
   }
 }
 

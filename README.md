@@ -121,6 +121,17 @@ npm run deploy
 
 The live site at [https://jitendersharma.dev](https://jitendersharma.dev) updates after GitHub Pages finishes serving the new commit (usually within a few minutes).
 
+### Purge Cloudflare after deploy
+
+The domain sits behind Cloudflare. After `npm run deploy`, purge cache so new HTML and hashed assets (`/assets/css/*`, `/assets/js/*`) are not mixed with stale or cached 404s.
+
+1. Open [Cloudflare Dashboard](https://dash.cloudflare.com/) → **jitendersharma.dev**
+2. **Caching** → **Configuration** → **Purge Cache**
+3. Choose **Purge Everything**, or **Custom Purge** with URLs such as `https://jitendersharma.dev/` and the new CSS/JS paths from the build
+4. Hard-refresh the site (Cmd+Shift+R / Ctrl+Shift+R)
+
+If styles look missing right after a deploy, this is usually the fix.
+
 ### If deploy fails
 
 - **SSH:** Ensure `git@github.com:iamsharmajitender/gain.git` works (`ssh -T git@github.com`).
