@@ -30,7 +30,7 @@ Implementation guides for [Policy-Governed Agent Runtime](/insights/policy-gover
 | **[Foundation](/playbooks/pgar-runtime/foundation)** | [Open →](/playbooks/pgar-runtime/foundation) | SARAC contracts, token custody, PEP/PDP loop, step-up, audit replay |
 | **[Assurance](/playbooks/pgar-runtime/assurance/policy-test-scenarios)** | Policy test scenarios | Golden authorization cases in CI, adversarial bypass tests |
 | **[Boundary](/playbooks/pgar-runtime/boundary)** | [Open →](/playbooks/pgar-runtime/boundary) | Five trust boundaries from ingress through downstream |
-| **[Domain](/playbooks/pgar-runtime/domain/tool-registry)** | Tool registry | Tool manifests, lifecycle, RAG retrieval as governed actions |
+| **[Domain](/playbooks/pgar-runtime/domain/manifest-registry)** | Manifest registry | Tool manifests, lifecycle, RAG retrieval as governed actions |
 
 Plus [Further reading (external)](/playbooks/pgar-runtime/further-reading) for third-party PDP/PEP and OAuth patterns mapped to this series.
 
@@ -51,7 +51,7 @@ flowchart TB
 1. **[Foundation](/playbooks/pgar-runtime/foundation)** (6 playbooks): policy contracts → token & session → PEP → PDP → step-up → audit
 2. **[Assurance](/playbooks/pgar-runtime/assurance/policy-test-scenarios)** (2 playbooks): scenario library and adversarial bypass set (start in parallel once PEP exists)
 3. **[Boundary](/playbooks/pgar-runtime/boundary)** (5 playbooks + overview): ingress, agentic app, LLM proposal, PEP + PDP, downstream
-4. **[Domain](/playbooks/pgar-runtime/domain/tool-registry)** (3 playbooks): pick tools, manifests, and/or RAG for your agent surface
+4. **[Domain](/playbooks/pgar-runtime/domain/manifest-registry)** (3 playbooks): pick tools, manifests, and/or RAG for your agent surface
 
 Bridge reading: [PGAR with RAG](/insights/retrieval-is-a-governed-action). Eval overlap: [Action plane](/playbooks/eval-engineering/plane-action) · [Tool plane](/playbooks/eval-engineering/plane-tool).
 
@@ -91,7 +91,7 @@ See [Boundary overview](/playbooks/pgar-runtime/boundary) for request flow and m
 
 | Playbook | One-line purpose |
 | --- | --- |
-| [Tool registry](/playbooks/pgar-runtime/domain/tool-registry) | Manifest contract, PEP gating per tool |
+| [Manifest registry](/playbooks/pgar-runtime/domain/manifest-registry) | Manifest contract, PEP gating per tool |
 | [Manifest lifecycle](/playbooks/pgar-runtime/domain/manifest-lifecycle) | Where manifests live, version, and roll back |
 | [RAG retrieval](/playbooks/pgar-runtime/domain/rag-retrieval) | Retrieval as a governed tool and context pack |
 
@@ -100,7 +100,7 @@ See [Boundary overview](/playbooks/pgar-runtime/boundary) for request flow and m
 | Role | Start with | Then |
 | --- | --- | --- |
 | **Security / IAM** | [Token & session](/playbooks/pgar-runtime/foundation/token-and-session-boundary), [Ingress](/playbooks/pgar-runtime/boundary/ingress) | [PDP surfaces](/playbooks/pgar-runtime/foundation/pdp-policy-surfaces), [Audit & replay](/playbooks/pgar-runtime/foundation/audit-and-replay) |
-| **AI platform** | [PEP enforcement](/playbooks/pgar-runtime/foundation/pep-enforcement), [Agentic app](/playbooks/pgar-runtime/boundary/agentic-app) | [Tool registry](/playbooks/pgar-runtime/domain/tool-registry), [Manifest lifecycle](/playbooks/pgar-runtime/domain/manifest-lifecycle) |
+| **AI platform** | [PEP enforcement](/playbooks/pgar-runtime/foundation/pep-enforcement), [Agentic app](/playbooks/pgar-runtime/boundary/agentic-app) | [Manifest registry](/playbooks/pgar-runtime/domain/manifest-registry), [Manifest lifecycle](/playbooks/pgar-runtime/domain/manifest-lifecycle) |
 | **Governance / compliance** | [Policy contracts](/playbooks/pgar-runtime/foundation/policy-contracts), [Audit & replay](/playbooks/pgar-runtime/foundation/audit-and-replay) | [Policy test scenarios](/playbooks/pgar-runtime/assurance/policy-test-scenarios) |
 | **RAG / knowledge teams** | [RAG retrieval](/playbooks/pgar-runtime/domain/rag-retrieval) | [PGAR with RAG](/insights/retrieval-is-a-governed-action), [Boundary overview](/playbooks/pgar-runtime/boundary) |
 

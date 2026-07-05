@@ -79,7 +79,7 @@ Click each block to expand. Collapsed by default.
 
 `policy-engine:read` means this principal may search the **`policy-engine` corpus** only. It does not merge corpora; each retrieval proposal targets one corpus and PDP checks the matching entitlement.
 
-**Tool manifest:** version `2026.07.1`, held by agentic app. This walkthrough uses the **RAG tool subset**; manifest shape and enforcement hops are defined in [Tool registry § full manifest](/playbooks/pgar-runtime/domain/tool-registry#full-manifest-example) and [§ one proposal](/playbooks/pgar-runtime/domain/tool-registry#worked-example-one-proposal).
+**Tool manifest:** version `2026.07.1`, held by agentic app. This walkthrough uses the **RAG tool subset**; manifest shape and enforcement hops are defined in [Manifest registry § full manifest](/playbooks/pgar-runtime/domain/manifest-registry#full-manifest-example) and [§ one proposal](/playbooks/pgar-runtime/domain/manifest-registry#worked-example-one-proposal).
 
 | Tool | Used in this walkthrough |
 | --- | --- |
@@ -146,7 +146,7 @@ Boundary playbook: [Ingress](/playbooks/pgar-runtime/boundary/ingress)
 
 </Details>
 
-The app derives the `tools` array from the manifest (see [Tool registry § manifest → LLM](/playbooks/pgar-runtime/domain/tool-registry#manifest--llm--pep)). Same three names; no `pdp_action`, `risk_tier`, or entitlements in the LLM payload.
+The app derives the `tools` array from the manifest (see [Manifest registry § manifest → LLM](/playbooks/pgar-runtime/domain/manifest-registry#manifest--llm--pep)). Same three names; no `pdp_action`, `risk_tier`, or entitlements in the LLM payload.
 
 **Trace:** `session_id`, `llm_payload_hash`
 

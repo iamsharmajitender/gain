@@ -15,7 +15,7 @@ tags:
 
 [PGAR overview](/playbooks/pgar-runtime) · [Blueprint](/blueprints/pgar-blueprint) · **Foundation overview** · [Policy contracts →](/playbooks/pgar-runtime/foundation/policy-contracts)
 
-Foundation playbooks define **how PGAR works before you wire a specific agent surface**. They cover contracts, custody, enforcement, verdicts, attestation, and audit. Read them before [boundary](/playbooks/pgar-runtime/boundary) and [domain](/playbooks/pgar-runtime/domain/tool-registry) playbooks.
+Foundation playbooks define **how PGAR works before you wire a specific agent surface**. They cover contracts, custody, enforcement, verdicts, attestation, and audit. Read them before [boundary](/playbooks/pgar-runtime/boundary) and [domain](/playbooks/pgar-runtime/domain/manifest-registry) playbooks.
 
 :::tip[THE CLAIM]
 **Build foundations first. Boundaries describe where control lives; domain playbooks describe what side effects look like. Neither replaces SARAC, PEP, or audit.**
@@ -34,7 +34,7 @@ Foundation playbooks define **how PGAR works before you wire a specific agent su
 | 5 | [Step-up & attestation](/playbooks/pgar-runtime/foundation/step-up-and-attestation) | Re-eval after human approval | High-risk actions, four-eyes |
 | 6 | [Audit & replay](/playbooks/pgar-runtime/foundation/audit-and-replay) | Immutable verdict chain for examiners | Retention, replay packs |
 
-Then [boundary playbooks](/playbooks/pgar-runtime/boundary) (where each control sits in the request path) and [domain playbooks](/playbooks/pgar-runtime/domain/tool-registry) (tools, manifests, RAG).
+Then [boundary playbooks](/playbooks/pgar-runtime/boundary) (where each control sits in the request path) and [domain playbooks](/playbooks/pgar-runtime/domain/manifest-registry) (tools, manifests, RAG).
 
 ## How foundations connect
 

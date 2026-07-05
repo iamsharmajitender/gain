@@ -98,7 +98,7 @@ const sidebars: SidebarsConfig = {
           label: 'Domain playbooks',
           collapsed: true,
           items: [
-            'pgar-runtime/domain/tool-registry',
+            'pgar-runtime/domain/manifest-registry',
             'pgar-runtime/domain/manifest-lifecycle',
             'pgar-runtime/domain/rag-retrieval',
           ],

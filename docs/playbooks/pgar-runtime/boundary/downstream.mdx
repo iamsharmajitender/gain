@@ -14,7 +14,7 @@ import Details from '@theme/Details';
 
 # PGAR Boundary ⑤: Downstream
 
-[Blueprint](/blueprints/pgar-blueprint) · [← PEP + PDP](/playbooks/pgar-runtime/boundary/pep-pdp) · **Downstream** · [Tool registry →](/playbooks/pgar-runtime/domain/tool-registry)
+[Blueprint](/blueprints/pgar-blueprint) · [← PEP + PDP](/playbooks/pgar-runtime/boundary/pep-pdp) · **Downstream** · [Manifest registry →](/playbooks/pgar-runtime/domain/manifest-registry)
 
 Downstream services (payment hub, retrieval gateway, CRM APIs) execute **only on PEP ALLOW**. They re-authorize the token. Results return to the agentic app.
 
@@ -60,4 +60,4 @@ High-risk tools require idempotency keys in proposal context. PEP forwards key t
 
 `downstream_service`, `downstream_request_id`, `downstream_status`, `idempotency_key`, `return_to_app_ts`
 
-See: [Audit & replay](/playbooks/pgar-runtime/foundation/audit-and-replay) · [Domain: tool registry](/playbooks/pgar-runtime/domain/tool-registry) · [Boundary overview](/playbooks/pgar-runtime/boundary)
+See: [Audit & replay](/playbooks/pgar-runtime/foundation/audit-and-replay) · [Domain: manifest registry](/playbooks/pgar-runtime/domain/manifest-registry) · [Boundary overview](/playbooks/pgar-runtime/boundary)

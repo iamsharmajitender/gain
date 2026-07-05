@@ -1,6 +1,6 @@
 ---
-title: "Domain: Tool Registry"
-sidebar_label: ① Tool registry
+title: "Domain: Manifest Registry"
+sidebar_label: ① Manifest registry
 description: Tool manifests, schema compliance, PEP gating per tool, and blocking proposals outside the registry.
 tags:
   - governance-trust
@@ -12,9 +12,9 @@ tags:
 
 import Details from '@theme/Details';
 
-# Domain: Tool Registry
+# Domain: Manifest Registry
 
-[Blueprint](/blueprints/pgar-blueprint) · [← Downstream](/playbooks/pgar-runtime/boundary/downstream) · **Tool registry** · [Manifest lifecycle →](/playbooks/pgar-runtime/domain/manifest-lifecycle) · [RAG retrieval →](/playbooks/pgar-runtime/domain/rag-retrieval)
+[Blueprint](/blueprints/pgar-blueprint) · [← Downstream](/playbooks/pgar-runtime/boundary/downstream) · **Manifest registry** · [Manifest lifecycle →](/playbooks/pgar-runtime/domain/manifest-lifecycle) · [RAG retrieval →](/playbooks/pgar-runtime/domain/rag-retrieval)
 
 Every tool the LLM may propose must appear in a **versioned manifest**. The agentic app rejects unknown tools before PEP. The PEP maps manifest entries to PDP action names. For business agents, that registry often starts with governed domain APIs and OpenAPI specs; see [MCP for enterprise business agents](/insights/mcp-for-enterprise-business-agents).
 
@@ -36,13 +36,210 @@ Each tool in the manifest:
 | `risk_tier` | `low` / `medium` / `high`; drives audit and step-up rules |
 | `idempotency_required` | High-risk side effects require idempotency key in context |
 
-## Full manifest example {#full-manifest-example}
+## Manifest artifacts (JSON)
 
-Payment agent manifest (matches [PGAR wire insight](/insights/policy-governed-agent-runtime)). RAG tools use the same shape; see [RAG retrieval walkthrough](/playbooks/pgar-runtime/domain/rag-retrieval#worked-example-one-request-step-by-step).
+Each `tool_manifest` id on the [route table](/insights/design-intent-router) resolves to a **versioned manifest file** in its own store. One published artifact per version: metadata plus a `tools` array. Governance fields (`pdp_action`, `risk_tier`) stay in the manifest; the LLM receives schemas only ([Manifest → LLM → PEP](#manifest--llm--pep)).
+
+Click each block to expand. Collapsed by default.
+
+<Details summary="accounts-readonly-v2: read-only account tools (JSON)">
+
+Loaded when the intent router selects `account_history`. No write or payment tools.
+
+```json
+{
+  "manifest_id": "accounts-readonly-v2",
+  "manifest_version": "2026.07.1",
+  "description": "Read-only account and wire history",
+  "tools": [
+    {
+      "name": "list_wire_transfers",
+      "description": "List outbound wire transfers for an account in a time range",
+      "schema": {
+        "type": "object",
+        "required": ["account_id", "time_range"],
+        "properties": {
+          "account_id": { "type": "string" },
+          "time_range": { "type": "string", "enum": ["30d", "90d", "1y"] },
+          "limit": { "type": "integer", "maximum": 50 }
+        }
+      },
+      "pdp_action": "list_wire_transfers",
+      "risk_tier": "low"
+    },
+    {
+      "name": "get_account_summary",
+      "description": "Balances and status for one account",
+      "schema": {
+        "type": "object",
+        "required": ["account_id"],
+        "properties": {
+          "account_id": { "type": "string" }
+        }
+      },
+      "pdp_action": "get_account_summary",
+      "risk_tier": "low"
+    }
+  ]
+}
+```
+
+</Details>
+
+<Details summary="payments-readwrite-v3: payment tools + step-up (JSON)">
+
+Loaded for `payment_initiate`. High-risk tools require idempotency before PEP. Full proposal walkthrough: [Worked example: one proposal](#worked-example-one-proposal).
+
+```json
+{
+  "manifest_id": "payments-readwrite-v3",
+  "manifest_version": "2026.07.1",
+  "description": "Lookup, validate, and initiate outbound wires",
+  "tools": [
+    {
+      "name": "lookup_beneficiary",
+      "description": "Resolve payee name and invoice to beneficiary id",
+      "schema": {
+        "type": "object",
+        "required": ["payee_name", "invoice_ref"],
+        "properties": {
+          "payee_name": { "type": "string" },
+          "invoice_ref": { "type": "string" }
+        }
+      },
+      "pdp_action": "lookup_beneficiary",
+      "risk_tier": "low"
+    },
+    {
+      "name": "validate_payment",
+      "description": "Pre-auth: limits, sanctions, cut-off for a payment",
+      "schema": {
+        "type": "object",
+        "required": ["beneficiary_id", "amount", "source_account", "reference"],
+        "properties": {
+          "beneficiary_id": { "type": "string" },
+          "amount": { "type": "number" },
+          "source_account": { "type": "string" },
+          "reference": { "type": "string" }
+        }
+      },
+      "pdp_action": "validate_payment",
+      "risk_tier": "medium"
+    },
+    {
+      "name": "initiate_wire",
+      "description": "Initiate wire transfer on payment hub",
+      "schema": {
+        "type": "object",
+        "required": ["beneficiary_id", "amount", "source_account", "reference"],
+        "properties": {
+          "beneficiary_id": { "type": "string" },
+          "amount": { "type": "number" },
+          "source_account": { "type": "string" },
+          "reference": { "type": "string" }
+        }
+      },
+      "pdp_action": "initiate_wire",
+      "risk_tier": "high",
+      "idempotency_required": true
+    }
+  ]
+}
+```
+
+</Details>
+
+<Details summary="rag-readonly-v1: policy Q&A retrieval (JSON)">
+
+Loaded for `policy_qa`. RAG tools use the same manifest contract as API tools.
+
+```json
+{
+  "manifest_id": "rag-readonly-v1",
+  "manifest_version": "2026.07.1",
+  "description": "Retrieve from approved policy corpora only",
+  "tools": [
+    {
+      "name": "retrieve_documents",
+      "description": "Semantic search over a named corpus",
+      "schema": {
+        "type": "object",
+        "required": ["corpus", "query"],
+        "properties": {
+          "corpus": { "type": "string", "enum": ["policy-engine"] },
+          "query": { "type": "string" },
+          "top_k": { "type": "integer", "maximum": 10 }
+        }
+      },
+      "pdp_action": "retrieve_documents",
+      "risk_tier": "medium"
+    }
+  ]
+}
+```
+
+</Details>
+
+<Details summary="handoff-v1: human escalation (JSON)">
+
+Loaded for `escalate_human`. Side effect is a workflow handoff, not an LLM-only reply.
+
+```json
+{
+  "manifest_id": "handoff-v1",
+  "manifest_version": "2026.07.1",
+  "description": "Create a supervised handoff ticket",
+  "tools": [
+    {
+      "name": "create_handoff",
+      "description": "Open a case for a human agent with session context",
+      "schema": {
+        "type": "object",
+        "required": ["reason", "priority"],
+        "properties": {
+          "reason": { "type": "string" },
+          "priority": { "type": "string", "enum": ["normal", "urgent"] },
+          "summary": { "type": "string" }
+        }
+      },
+      "pdp_action": "create_handoff",
+      "risk_tier": "low"
+    }
+  ]
+}
+```
+
+</Details>
+
+Routes with `tool_manifest: "none"` (for example `general_chat`) skip manifest load: the agentic app calls the LLM with **no tools** array.
+
+**Typical on-disk layout** (one id, many versions):
+
+<Details summary="Manifest store layout (text)">
+
+```text
+platform/manifests/
+  accounts-readonly-v2/
+    2026.07.1.json
+    2026.08.1.json
+  payments-readwrite-v3/
+    2026.07.1.json
+  rag-readonly-v1/
+    2026.07.1.json
+  handoff-v1/
+    2026.07.1.json
+  active/
+    accounts-readonly-v2 → 2026.07.1
+    payments-readwrite-v3 → 2026.07.1
+```
+
+</Details>
 
 **Where to maintain manifests:** [Manifest lifecycle & registry patterns](/playbooks/pgar-runtime/domain/manifest-lifecycle).
 
-Click each block to expand. Collapsed by default.
+## Full manifest example {#full-manifest-example}
+
+Payment agent manifest (matches [PGAR wire insight](/insights/policy-governed-agent-runtime)). RAG tools use the same shape; see [RAG retrieval walkthrough](/playbooks/pgar-runtime/domain/rag-retrieval#worked-example-one-request-step-by-step).
 
 <Details summary="Payment agent tool manifest (JSON)">
 
