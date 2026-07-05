@@ -3,6 +3,7 @@ import type {Config} from '@docusaurus/types';
 import type * as Preset from '@docusaurus/preset-classic';
 import clearCacheBeforeStartPlugin from './plugins/clearCacheBeforeStart';
 import rehypeWrapTables from './plugins/rehypeWrapTables.mjs';
+import createFeedItems from './plugins/createFeedItems.mjs';
 import {getFooterFrameworkLinks} from './docusaurus.footer';
 
 const config: Config = {
@@ -13,6 +14,7 @@ const config: Config = {
 
   url: 'https://jitendersharma.dev',
   baseUrl: '/',
+  trailingSlash: false,
 
   organizationName: 'iamsharmajitender',
   projectName: 'gain',
@@ -42,6 +44,7 @@ const config: Config = {
           feedOptions: {
             type: ['rss', 'atom'],
             xslt: true,
+            createFeedItems,
           },
           onInlineTags: 'warn',
           onInlineAuthors: 'warn',
