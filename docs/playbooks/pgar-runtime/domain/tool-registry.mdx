@@ -16,7 +16,7 @@ import Details from '@theme/Details';
 
 [Blueprint](/blueprints/pgar-blueprint) · [← Downstream](/playbooks/pgar-runtime/boundary/downstream) · **Tool registry** · [Manifest lifecycle →](/playbooks/pgar-runtime/domain/manifest-lifecycle) · [RAG retrieval →](/playbooks/pgar-runtime/domain/rag-retrieval)
 
-Every tool the LLM may propose must appear in a **versioned manifest**. The agentic app rejects unknown tools before PEP. The PEP maps manifest entries to PDP action names.
+Every tool the LLM may propose must appear in a **versioned manifest**. The agentic app rejects unknown tools before PEP. The PEP maps manifest entries to PDP action names. For business agents, that registry often starts with governed domain APIs and OpenAPI specs; see [MCP for enterprise business agents](/insights/mcp-for-enterprise-business-agents).
 
 :::tip[THE CLAIM]
 **The manifest is the contract between proposal and policy. No manifest entry, no PEP call, no side effect.**

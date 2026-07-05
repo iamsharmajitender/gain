@@ -14,6 +14,14 @@ export interface LatestInsight {
 
 export const latestInsights: readonly LatestInsight[] = [
   {
+    "title": "Is MCP Really Necessary for Business Agents in Large Regulated Enterprises?",
+    "date": "2026-07-05",
+    "readTime": 10,
+    "description": "MCP is a valuable standard for AI tool interoperability. For regulated business agents, the question is whether its benefits outweigh operational cost for your use case, not whether MCP is good.",
+    "typeTag": "pov",
+    "to": "/insights/mcp-for-enterprise-business-agents"
+  },
+  {
     "title": "Retrieval Is a Governed Action",
     "date": "2026-07-04",
     "readTime": 12,
@@ -68,13 +76,5 @@ export const latestInsights: readonly LatestInsight[] = [
     "description": "AI observability is not a dashboard. It is a capture-and-retention architecture with five signals, five retention policies, and four consumers.",
     "typeTag": "arch",
     "to": "/insights/ai-observability-in-enterprise"
-  },
-  {
-    "title": "Hallucinations Is a System Design Problem",
-    "date": "2026-06-16",
-    "readTime": 9,
-    "description": "Hallucination is not the model failing. It is the model succeeding at the wrong objective in a system that never gave it the right one.",
-    "typeTag": "pov",
-    "to": "/insights/hallucinations-is-a-system-design-problem-not-model-problem"
   }
 ];
