@@ -53,6 +53,81 @@ Before writing classification code, write the **route contract** for each path. 
 | `max_loop_steps` | `8` | Bounds plan → act → observe |
 | `fallback` | `clarify` or `escalate_human` | When entities missing or OOD |
 
+<Details summary="Route table (JSON) — versioned route contracts">
+
+One published artifact: table metadata plus one object per route row. References (`tool_manifest`, `policy_profile`) point at versioned stores elsewhere; entitlements are enforced at runtime from ingress claims, not stored per user.
+
+```json
+{
+  "route_table_version": "2026.07.1",
+  "product": "corporate-assistant",
+  "routes": [
+    {
+      "route_id": "agent-account-v3",
+      "intent_label": "account_history",
+      "description": "Read-only account and transaction history",
+      "tool_manifest": "accounts-readonly-v2",
+      "policy_profile": "read_only_standard",
+      "model_profile": "reasoning-standard",
+      "retrieval_scope": ["accounts"],
+      "max_loop_steps": 6,
+      "fallback": "clarify",
+      "required_claims": ["accounts:read"]
+    },
+    {
+      "route_id": "agent-payments-v2",
+      "intent_label": "payment_initiate",
+      "description": "Initiate outbound transfer",
+      "tool_manifest": "payments-readwrite-v3",
+      "policy_profile": "high_risk_step_up",
+      "model_profile": "reasoning-standard",
+      "retrieval_scope": ["policy-engine", "accounts"],
+      "max_loop_steps": 8,
+      "fallback": "escalate_human",
+      "required_claims": ["payments:initiate"]
+    },
+    {
+      "route_id": "agent-policy-qa-v1",
+      "intent_label": "policy_qa",
+      "description": "Policy and procedure Q&A via RAG",
+      "tool_manifest": "rag-readonly-v1",
+      "policy_profile": "read_only_standard",
+      "model_profile": "reasoning-standard",
+      "retrieval_scope": ["policy-engine"],
+      "max_loop_steps": 4,
+      "fallback": "clarify",
+      "required_claims": ["policy:read"]
+    },
+    {
+      "route_id": "agent-chat-v1",
+      "intent_label": "general_chat",
+      "description": "Lightweight chat with no tools",
+      "tool_manifest": "none",
+      "policy_profile": "low_risk_chat",
+      "model_profile": "lightweight-chat",
+      "retrieval_scope": [],
+      "max_loop_steps": 2,
+      "fallback": "clarify",
+      "required_claims": []
+    },
+    {
+      "route_id": "agent-escalate-v1",
+      "intent_label": "escalate_human",
+      "description": "Hand off to human agent",
+      "tool_manifest": "handoff-v1",
+      "policy_profile": "read_only_standard",
+      "model_profile": "lightweight-chat",
+      "retrieval_scope": [],
+      "max_loop_steps": 3,
+      "fallback": "clarify",
+      "required_claims": []
+    }
+  ]
+}
+```
+
+</Details>
+
 Example starter routes for a regulated assistant:
 
 | Intent | User example | Manifest family |
@@ -121,6 +196,10 @@ flowchart LR
 | **② Classifier** | No rule match | Small model or kNN on **your** golden set; fixed label set | Target most clear traffic here in &lt;50ms; auto-route when confidence meets threshold (Step 3) |
 | **③ LLM router** | Low confidence only | Structured JSON: pick from **fixed** `route_id` list, extract entities, flag `needs_clarification` | Fallback only, not every turn. May return top 3 options for user pick when ambiguous or high-risk (`payment_initiate`); manifest loads after selection |
 | **④ Safety** | Always, after any layer | Injection scan, PII handling, block or force a safe route | Can **veto** a confident classification; [Input plane](/playbooks/eval-engineering/plane-input) requires **100%** adversarial pass before release |
+
+:::tip[Why session stickiness matters]
+Most follow-up turns in a multi-step flow are **continuations**, not new intents. Short replies like "yes", "$500", or "the second one" carry almost no standalone intent signal. Re-classifying every turn invites silent misroutes (for example, `general_chat` for "yes" mid-wire). Stickiness keeps the active `route_id` and partial `entities` in session state so Layer ① resolves continuations **deterministically**, without another classifier call or confidence lottery.
+:::
 
 :::important[Do not skip layering]
 An LLM that routes every turn with user disambiguation still pays latency and cost on clear traffic, widens the injection surface, and is harder to eval. Keep Layer ③ rare; reserve top-k + user pick for ambiguous or high-risk paths.
