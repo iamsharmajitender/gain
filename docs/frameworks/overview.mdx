@@ -5,6 +5,7 @@ sidebar_position: 1
 hide_title: true
 slug: /
 description: Truth, control, and scale live in the system around the model — not inside it.
+image: ./img/gain.png
 tags:
   - system-architecture
   - gain
@@ -15,28 +16,6 @@ tags:
   <h1 className="gain-doc-title">G.A.I.N</h1>
   <div className="gain-doc-subtitle" style={{marginTop: '-0.25rem', marginBottom: '1.75rem'}}>
     Governed AI-Native Systems: an operating model for enterprise AI.
-  </div>
-</div>
-
-<div className="gain-letter-flow">
-  <div className="gain-letter-flow__item gain-letter-flow__item--g">
-    <span className="gain-letter-flow__circle">G</span>
-    <span className="gain-letter-flow__label">Grounded</span>
-  </div>
-  <div className="gain-letter-flow__arrow" aria-hidden="true">→</div>
-  <div className="gain-letter-flow__item gain-letter-flow__item--a">
-    <span className="gain-letter-flow__circle">A</span>
-    <span className="gain-letter-flow__label">Adaptive</span>
-  </div>
-  <div className="gain-letter-flow__arrow" aria-hidden="true">→</div>
-  <div className="gain-letter-flow__item gain-letter-flow__item--i">
-    <span className="gain-letter-flow__circle">I</span>
-    <span className="gain-letter-flow__label">Intelligent</span>
-  </div>
-  <div className="gain-letter-flow__arrow" aria-hidden="true">→</div>
-  <div className="gain-letter-flow__item gain-letter-flow__item--n">
-    <span className="gain-letter-flow__circle">N</span>
-    <span className="gain-letter-flow__label">Native</span>
   </div>
 </div>
 
@@ -60,8 +39,14 @@ Most enterprise AI failures are not model failures. They are architecture and op
 Generic AI advice stops at "pick a model" or "stand up a center of excellence." **G.A.I.N** maps the full production domain: how context enters, how decisions are governed, how feedback closes the loop, and who owns each layer before anyone ships to production.
 
 :::tip
-**Reading order:** G.A.I.N AIOM defines who owns each plane; domain frameworks (LLM, RAG, Agents, …) apply G · A · I · N to specific capabilities.
+**Reading order:** Start with [G.A.I.N AIOM](/frameworks/gain-aiom) for plane ownership; domain frameworks (LLM, RAG, Agents, …) apply G · A · I · N to specific capabilities.
 :::
+
+## G.A.I.N AIOM
+
+[G.A.I.N AIOM](/frameworks/gain-aiom) is the enterprise AI operating model: who owns the application, control, runtime, and data/knowledge planes before anyone picks a model or ships a copilot. It turns G · A · I · N from principles into team boundaries and accountable owners.
+
+Enterprise AI is an operating model, not a center of excellence with a GPU budget. Start with AIOM when org design, platform ownership, or "who runs what" is the question; use the domain frameworks (LLM, RAG, Agents, …) for capability patterns.
 
 ## The Core Principles
 
