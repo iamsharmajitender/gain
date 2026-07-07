@@ -32,7 +32,7 @@ export const latestInsights: readonly LatestInsight[] = [
   {
     "title": "The Death of Distributed Systems? Why Agentic AI Changes the Interface, Not the Foundation",
     "date": "2026-07-07",
-    "readTime": 5,
+    "readTime": 7,
     "description": "Agentic AI does not replace distributed systems. It adds a non-deterministic reasoning layer on top of deterministic execution. Reason flexibly; execute reliably.",
     "typeTag": "pov",
     "to": "/insights/agentic-ai-distributed-systems"
