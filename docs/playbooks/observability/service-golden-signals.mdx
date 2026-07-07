@@ -1,0 +1,97 @@
+---
+title: Service Golden Signals
+sidebar_label: Service signals
+description: Instrument applications with latency, traffic, errors, saturation, distributed traces, and SLIs/SLOs. Service-layer observability for unified enterprise stacks.
+tags:
+  - platforms-engineering
+  - arch
+  - gain
+  - observability
+---
+
+# Service Golden Signals
+
+**Layer:** service observability (the what)
+
+Engineering and SRE own this layer. Every production service exposes mechanism-level truth: what failed, where latency entered, which dependencies broke.
+
+## Outcome
+
+For each service, you can answer:
+
+- What are the four golden signals right now?
+- Which dependency caused the error budget burn?
+- Can we trace one failed business event across all hops?
+
+## Golden signals
+
+| Signal | Measures | Typical alert |
+| --- | --- | --- |
+| **Latency** | Request duration | p95 above SLO |
+| **Traffic** | Demand | Unexpected drop or spike |
+| **Errors** | Failed requests | Error rate above budget |
+| **Saturation** | Resource pressure | Queue depth, thread pool, pool exhaustion |
+
+## Steps
+
+### 1. Instrument ingress and egress
+
+| Boundary | Emit |
+| --- | --- |
+| HTTP / gRPC ingress | Span start, status, duration |
+| Downstream calls | Client spans with dependency name |
+| Async / queue | Message consume and publish spans |
+
+Use OpenTelemetry (or equivalent) with **W3C trace context** propagation.
+
+### 2. Define SLIs
+
+| SLI | Formula (example) |
+| --- | --- |
+| Availability | successful requests / total requests |
+| Latency | % requests &lt; 300ms |
+| Correctness | valid responses / total (domain-specific) |
+
+### 3. Set SLOs and error budgets
+
+| Element | Guideline |
+| --- | --- |
+| Window | 30d rolling for customer-facing APIs |
+| Budget policy | Freeze features when budget exhausted |
+| Review | Monthly with product for business-aligned services |
+
+### 4. Build the dependency graph
+
+Maintain a **service catalog** entry per deployable:
+
+- Upstream callers
+- Downstream dependencies
+- Critical path flag for incident triage
+
+### 5. AI and agent services (extension)
+
+Add spans for hops that generic APM skips:
+
+| Hop | Span attributes |
+| --- | --- |
+| Gateway | auth, route, policy allow/deny |
+| Retrieval | corpus, chunk count, latency |
+| Model | tokens, provider, finish reason |
+| Tool | tool name, success, redacted args |
+| Validation | grounding result, abstention |
+
+See [G.A.I.N Observability](/frameworks/gain-observability).
+
+## Release gate
+
+- [ ] Golden signals exported for every production service
+- [ ] Correlation ID propagated on all sync and async paths
+- [ ] SLIs and SLOs documented per tier-1 service
+- [ ] Dependency graph current in catalog
+- [ ] AI paths include retrieval, tool, and policy spans where applicable
+
+## Related
+
+- [Correlation graph](/playbooks/observability/correlation-graph)
+- [Infrastructure telemetry](/playbooks/observability/infrastructure-telemetry)
+- [AI Observability in Enterprise](/insights/ai-observability-in-enterprise)

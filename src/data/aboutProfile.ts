@@ -1,8 +1,16 @@
+export type BackgroundTimelineMeta = {
+  yearStart: number;
+  yearEnd: number | null;
+  org: string;
+  tier: 'engineering' | 'senior' | 'architect' | 'enterprise';
+};
+
 export type BackgroundEntry = {
   period: string;
   role: string;
   context: string;
   highlights: string[];
+  timeline: BackgroundTimelineMeta;
 };
 
 export type CredentialIssuerKey =
@@ -110,32 +118,47 @@ export function getCredentialsByTab(
   });
 }
 
+export const careerHighlights: string[] = [
+  'Led cloud-aligned modernization across 2,000+ enterprise applications',
+  'Created multi-cloud governance framework aligned with APRA (CPS 232/230)',
+  'Built enterprise Microservices and API working groups; practice-level savings ~AUD 10M annually',
+  'Designed Mortgage Factory: unconditional approval turnaround from days to ~1 hour',
+  'Re-architected CCOM notification platform to 700-1,000 TPS with priority-lane design',
+  'Led white-label enterprise data platform uplift (100+ inputs/outputs, multi-cloud)',
+  'Led replatform of Emirates.com in 2015 to AWS cloud and container technology: first in the GCC region',
+  'Mentored 20+ engineers and architects through GROW, Star Camp, and hands-on programs',
+];
+
 export const backgroundEntries: BackgroundEntry[] = [
   {
     period: 'Dec 2020 – Present',
     role: 'Enterprise Architect, Cloud & Application Modernization',
     context: 'National Australia Bank (NAB), Melbourne',
+    timeline: {yearStart: 2020, yearEnd: null, org: 'NAB', tier: 'enterprise'},
     highlights: [
-      'Enterprise-wide cloud and application modernization: secure, scalable, regulator-aligned platforms',
-      'Multi-cloud adoption (AWS & Azure), hybrid governance, and integration across mission-critical banking',
-      'AI / GenAI adoption strategy with responsible, ethical, and scalable deployment',
-      'Architecture review boards, standards, and design authority across delivery streams',
+      'Directed hybrid and multi-cloud architecture governance across core banking, digital channels, payments, and enterprise data services',
+      'Partnered with business, risk, compliance, and security to align target architectures to operational resilience and regulatory expectations',
+      'Established architecture review board and design authority operating model across portfolios',
+      'Defined enterprise-wide standards for cloud, API, event-driven, and microservices architecture',
+      'Led AI and GenAI architecture enablement with reusable enterprise patterns for responsible, scalable adoption',
     ],
   },
   {
     period: 'Aug 2019 – Dec 2020',
     role: 'Senior Architect, Software Engineering & Distributed Systems',
     context: 'National Australia Bank (NAB), Melbourne',
+    timeline: {yearStart: 2019, yearEnd: 2020, org: 'NAB', tier: 'architect'},
     highlights: [
-      'Enterprise patterns, libraries, and quickstarts for developer productivity',
-      'Led Microservices, API, and Event-driven Centers of Excellence',
-      'Distributed systems guidance for critical banking platforms',
+      'Defined enterprise engineering patterns and 10+ reusable libraries and quickstarts, saving approximately AUD 100K per implementation',
+      'Led API, microservices, and event-driven architecture communities of practice',
+      'Provided distributed systems architecture leadership for critical banking services and modernization programs',
     ],
   },
   {
     period: 'Jun 2018 – Aug 2019',
     role: 'Solution Architect / Technical Development Lead',
     context: 'Mondo (AusNet Services), Melbourne',
+    timeline: {yearStart: 2018, yearEnd: 2019, org: 'AusNet', tier: 'architect'},
     highlights: [
       'Event-driven and microservice architecture for mission-critical energy platforms',
       'Legacy-to-hybrid-cloud migration (Azure & on-prem), DevOps and CI/CD adoption',
@@ -146,6 +169,7 @@ export const backgroundEntries: BackgroundEntry[] = [
     period: 'Sep 2017 – May 2018',
     role: 'Software Consultant',
     context: 'Tuned Global, Melbourne',
+    timeline: {yearStart: 2017, yearEnd: 2018, org: 'Tuned', tier: 'senior'},
     highlights: [
       'Platform architecture and AWS-based solutions for enterprise clients',
       'Domain APIs and CI/CD enablement across delivery teams',
@@ -153,31 +177,54 @@ export const backgroundEntries: BackgroundEntry[] = [
   },
   {
     period: 'May 2015 – Jun 2017',
-    role: 'Cloud Solution Architect / Senior Technical Consultant',
-    context: 'Emirates Airline (HCL Infosystems MEA), Dubai',
+    role: 'Senior Technical Consultant / Architect / Tech Lead',
+    context: 'HCL Infosystems MEA (Emirates Airline), Dubai',
+    timeline: {yearStart: 2015, yearEnd: 2017, org: 'HCL', tier: 'architect'},
     highlights: [
-      'Digital transformation and AWS cloud migration for global aviation platforms',
-      'Multi-region, multi-language application design, migration, and architecture governance',
-      'Mentored engineering teams and drove adoption of cloud-native best practices',
+      'Led digital transformation and cloud migration initiatives for Emirates Airline',
+      'Developed AWS cloud roadmap and architecture governance frameworks',
+      'Oversaw multi-location, multi-language application design, migration, and delivery',
+      'Mentored engineering teams and drove adoption of best practices',
     ],
   },
   {
-    period: '2012 – 2015',
-    role: 'Senior Technical Consultant & Solution Architect',
-    context: 'Sapient, TASC (Emirates Airline), and retail clients in India & UAE',
+    period: 'Feb 2014 – May 2015',
+    role: 'Senior Technical Consultant',
+    context: 'Sapient Consulting Services, Gurgaon, India',
+    timeline: {yearStart: 2014, yearEnd: 2015, org: 'Sapient', tier: 'senior'},
     highlights: [
-      'Large-scale CMS and enterprise platform delivery across banking and aviation',
-      'Multi-location development, migration, and stakeholder alignment',
-      'Architecture guidance and mentorship across distributed delivery teams',
+      'Delivered digital transformation programs across banking and retail clients',
+      'Managed multi-location development and migration initiatives',
+      'Engaged with stakeholders for architecture, design, and delivery alignment',
     ],
   },
   {
-    period: '2008 – 2012',
-    role: 'Software Engineer → Senior Software Engineer',
-    context: 'Tesco (India & UK) and Sapient Corporation, India',
+    period: 'Dec 2012 – Feb 2014',
+    role: 'Senior Technical Consultant',
+    context: 'TASC Outsourcing (Emirates Airline), Dubai',
+    timeline: {yearStart: 2012, yearEnd: 2014, org: 'TASC', tier: 'senior'},
     highlights: [
-      'Core distributed systems, APIs, and enterprise-scale delivery frameworks',
-      'CI/CD enablement and technical knowledge sharing from engineering foundations',
+      'Led application design, development, and delivery across multi-location teams',
+      'Enabled developer adoption of standardized patterns and frameworks',
+    ],
+  },
+  {
+    period: 'Nov 2010 – Dec 2012',
+    role: 'Senior Software Engineer',
+    context: 'Sapient Corporation, Gurgaon, India',
+    timeline: {yearStart: 2010, yearEnd: 2012, org: 'Sapient', tier: 'senior'},
+    highlights: [
+      'Developed enterprise-scale software solutions, contributing to architecture and delivery frameworks',
+    ],
+  },
+  {
+    period: 'Apr 2008 – Nov 2010',
+    role: 'Software Developer',
+    context: 'Tesco, Bangalore, India',
+    timeline: {yearStart: 2008, yearEnd: 2010, org: 'Tesco', tier: 'engineering'},
+    highlights: [
+      'Designed and delivered core application features in distributed systems',
+      'Participated in CI/CD enablement and technical knowledge sharing initiatives',
     ],
   },
 ];
@@ -346,4 +393,7 @@ export const profilePhotoUrl = '/img/jitender-sharma-profile.jpg';
 export const profileName = 'Jitender Sharma';
 
 export const profileHeroBio =
-  'Melbourne-based advisor and technical leader with 18+ years across banking, aviation, and critical infrastructure in Australia, the UAE, and India.';
+  'Principal-level enterprise architect and technical leader with 18+ years delivering transformation across banking, aviation, and critical infrastructure in Australia, the UAE, and India. Focused on cloud modernization, operational resilience, and regulator-aligned AI adoption.';
+
+export const profileCardBio =
+  'Principal-level enterprise architect with 18+ years across banking, aviation, and critical infrastructure in Australia, the UAE, and India. Focused on cloud modernization, operational resilience, and regulator-aligned AI adoption.';

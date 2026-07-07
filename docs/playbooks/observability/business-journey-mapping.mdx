@@ -1,0 +1,88 @@
+---
+title: Business Journey Mapping
+sidebar_label: Business journeys
+description: Map business KPIs and customer journeys to observable events. Outcome SLOs, conversion signals, and business-layer instrumentation for unified observability.
+tags:
+  - platforms-engineering
+  - arch
+  - gain
+  - observability
+  - compliance
+---
+
+# Business Journey Mapping
+
+**Layer:** business observability (the why)
+
+Product and business operations own this layer. Platform teams support emission and storage; they do not define what "success" means for a regulated journey.
+
+## Outcome
+
+For each critical journey, you can answer:
+
+- Is the customer completing the workflow?
+- Is revenue or obligation impact visible in near real time?
+- Which step drives drop-off when outcomes degrade?
+
+## Steps
+
+### 1. Name the journeys
+
+Pick journeys that matter for revenue, risk, or regulation (not every screen).
+
+| Journey | Business owner | Example outcome |
+| --- | --- | --- |
+| Retail checkout | Product / payments | Payment success rate |
+| Claims intake | Operations | First-touch resolution rate |
+| KYC onboarding | Compliance / product | Verification completion |
+
+### 2. Define business KPIs per journey
+
+| KPI type | Example | Avoid |
+| --- | --- | --- |
+| Success rate | % payments completed | Raw page views without outcome |
+| Conversion | Application → approval | Infra CPU as proxy for business health |
+| Drop-off | Abandon at step 3 of 5 | Vanity metrics with no service mapping |
+
+### 3. Emit business events
+
+Business events are **first-class signals**, not spreadsheet exports.
+
+| Field | Purpose |
+| --- | --- |
+| `journey_id` | Stable workflow identifier |
+| `step` | Named stage in the journey |
+| `outcome` | success / failure / abandon |
+| `correlation_id` | Join to service traces (required) |
+| `principal` | Customer or case identity (policy-compliant) |
+
+### 4. Set business-facing SLOs
+
+| SLO | Example target | Consumer |
+| --- | --- | --- |
+| Payment success | 99.5% / 24h | Product + SRE |
+| Claims submission completion | 95% / 7d | Operations |
+| Onboarding completion | 90% / 30d | Compliance |
+
+### 5. Map KPI → service entry points
+
+Document which API or event **starts** the journey slice you measure. Correlation playbook wires the rest.
+
+| Business KPI | Service entry |
+| --- | --- |
+| Payment success | `POST /checkout/pay` |
+| Claims intake | `POST /claims/submit` |
+
+## Release gate
+
+- [ ] Each priority journey has a named business owner
+- [ ] KPIs are outcome-based, not activity-based
+- [ ] Business events include `correlation_id`
+- [ ] Business SLOs are documented and alertable
+- [ ] KPI → service entry mapping exists for correlation
+
+## Related
+
+- [Correlation graph](/playbooks/observability/correlation-graph)
+- [Service golden signals](/playbooks/observability/service-golden-signals)
+- [Operating model](/playbooks/observability/operating-model)

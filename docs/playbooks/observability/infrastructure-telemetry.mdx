@@ -1,0 +1,82 @@
+---
+title: Infrastructure Telemetry
+sidebar_label: Infrastructure
+description: Monitor compute, Kubernetes, network, and storage with signals linked to service identities. Infrastructure-layer observability for unified enterprise stacks.
+tags:
+  - platforms-engineering
+  - arch
+  - gain
+  - observability
+---
+
+# Infrastructure Telemetry
+
+**Layer:** infrastructure observability (the where)
+
+Platform and infrastructure teams own this layer. The goal is not more host graphs. It is **binding resource stress to the services and journeys** that consume those resources.
+
+## Outcome
+
+When service latency spikes, you can answer:
+
+- Which nodes, pools, or volumes are saturated?
+- Is degradation localized or fleet-wide?
+- Which workload labels tie infra signals to a owning service?
+
+## Core signals
+
+| Category | Examples |
+| --- | --- |
+| **Compute** | CPU throttling, memory pressure, OOM kills |
+| **Kubernetes** | Pod restarts, pending pods, eviction events |
+| **Network** | Latency, packet loss, connection errors |
+| **Storage** | Disk I/O wait, queue depth, replication lag |
+| **Data plane** | Connection pool usage, replica lag, lock waits |
+
+## Steps
+
+### 1. Label everything with service identity
+
+| Label | Purpose |
+| --- | --- |
+| `service.name` | Join to service catalog |
+| `deployment` / `workload` | Rollback correlation |
+| `environment` | Prod vs non-prod separation |
+| `region` / `zone` | Blast radius |
+
+### 2. Collect platform metrics
+
+| Source | Minimum set |
+| --- | --- |
+| Kubernetes | Node and pod CPU/memory, restarts, scheduling failures |
+| Managed DB | CPU, connections, IOPS, replication lag |
+| Load balancers | Healthy targets, 5xx from edge |
+
+### 3. Link infra to services
+
+In the observability graph, infra nodes attach to **service spans** via time alignment and shared resource IDs (cluster, instance, pool name).
+
+### 4. Alert on saturation before hard failure
+
+| Pattern | Example |
+| --- | --- |
+| Sustained CPU &gt; 85% | Scale or shed load before timeouts |
+| Pool exhaustion trend | Alert at 80% connections, not 100% |
+| Disk latency p95 | Storage tier degradation |
+
+### 5. Regulated retention
+
+Infra metrics often live in shorter retention than audit logs. Document tier and access separately from business and audit stores.
+
+## Release gate
+
+- [ ] Tier-1 services have infra metrics with `service.name` (or equivalent)
+- [ ] Database and queue saturation visible on dashboards
+- [ ] Infra alerts include linked service and recent deploy
+- [ ] Runbooks name scale, failover, and capacity actions
+
+## Related
+
+- [Correlation graph](/playbooks/observability/correlation-graph)
+- [Service golden signals](/playbooks/observability/service-golden-signals)
+- [Observability Blueprint](/blueprints/observability-blueprint)

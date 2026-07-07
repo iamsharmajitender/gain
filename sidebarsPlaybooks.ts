@@ -106,6 +106,21 @@ const sidebars: SidebarsConfig = {
         'pgar-runtime/further-reading',
       ],
     },
+    {
+      type: 'category',
+      label: 'Unified Observability',
+      collapsed: true,
+      items: [
+        'observability/overview',
+        'observability/governance-rules',
+        'observability/business-journey-mapping',
+        'observability/service-golden-signals',
+        'observability/infrastructure-telemetry',
+        'observability/correlation-graph',
+        'observability/maturity-assessment',
+        'observability/operating-model',
+      ],
+    },
   ],
 };
 

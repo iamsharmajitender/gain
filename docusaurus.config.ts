@@ -51,6 +51,7 @@ const config: Config = {
           onUntruncatedBlogPosts: 'warn',
           routeBasePath: 'insights',
           postsPerPage: 10,
+          sortPosts: 'descending',
           rehypePlugins: [rehypeWrapTables],
         },
         theme: {

@@ -1,0 +1,87 @@
+---
+title: Operating Model
+sidebar_label: Operating model
+description: RACI and team boundaries for unified observability. Product, engineering, platform, SRE, and architecture responsibilities in regulated enterprises.
+tags:
+  - platforms-engineering
+  - arch
+  - gain
+  - observability
+  - compliance
+---
+
+# Operating Model
+
+Observability is not owned by one team. It is a **shared responsibility model** with clear boundaries, aligned to [G.A.I.N AIOM](/frameworks/gain-aiom) plane thinking.
+
+## RACI summary
+
+| Activity | Product | Engineering | Platform | SRE | Architecture |
+| --- | --- | --- | --- | --- | --- |
+| Define business KPIs and journeys | **A/R** | C | I | C | C |
+| Map KPI → service entry | C | **R** | I | C | **A** |
+| Service instrumentation | I | **R** | C | C | A |
+| Infra / K8s / DB telemetry | I | C | **R** | C | A |
+| Correlation standards | C | C | **R** | C | **A** |
+| Alert registry and paging | C | C | C | **R/A** | C |
+| Dashboards (canonical) | C | C | **R** | **R** | A |
+| Maturity roadmap | C | C | C | C | **A/R** |
+| Audit / replay consumers | C | C | **R** | C | **A** |
+
+**R** = responsible · **A** = accountable · **C** = consulted · **I** = informed
+
+## Team charters (one paragraph each)
+
+### Product
+
+Owns **what success looks like** for customer and regulatory journeys. Defines outcome KPIs, business SLOs, and journey steps. Does not own Prometheus or log pipelines.
+
+### Engineering
+
+Owns **service instrumentation**: golden signals, traces, dependency accuracy, and feature-level SLIs. Ships code that emits structured logs and propagates correlation IDs.
+
+### Platform
+
+Owns **observability infrastructure**: collectors, stores, retention tiers, enrichment, cost attribution, and self-service onboarding templates.
+
+### SRE / reliability
+
+Owns **alerting, incident response, and error budgets**. Maintains alert registry, runbooks, and drill programs. Escalates when business SLOs burn.
+
+### Architecture
+
+Owns **standards and the correlation model**: governance rules, maturity targets, tool boundaries, and cross-domain graph design. Resolves layer-mixing debates (strategy vs system vs software).
+
+## Cadence
+
+| Meeting | Frequency | Output |
+| --- | --- | --- |
+| SLO review | Monthly | Error budget decisions |
+| Journey / KPI review | Quarterly | Updated business maps |
+| Maturity assessment | Semi-annual | Roadmap refresh |
+| Graph drill | Quarterly | E2E trace evidence |
+
+## AI-specific overlay
+
+When agents or RAG are in scope, add:
+
+| Role | Added responsibility |
+| --- | --- |
+| AI platform | Request-path spans, eval sampling hooks |
+| Security / compliance | Audit tier access, redaction policy |
+| Model risk (regulated) | Quality metrics as control evidence |
+
+Bridge: [G.A.I.N Observability](/frameworks/gain-observability) · [Eval Engineering playbooks](/playbooks/eval-engineering/plane-outcome).
+
+## Release gate
+
+- [ ] RACI published for observability workstreams
+- [ ] Named owners for tier-1 journeys and services
+- [ ] Monthly SLO review on calendar
+- [ ] Architecture sign-off on correlation standard
+
+## Related
+
+- [Governance rules](/playbooks/observability/governance-rules)
+- [Maturity assessment](/playbooks/observability/maturity-assessment)
+- [G.A.I.N AIOM](/frameworks/gain-aiom)

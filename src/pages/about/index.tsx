@@ -2,9 +2,10 @@ import type {ReactNode} from 'react';
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 import AboutPageLayout from '@site/src/components/AboutPageLayout';
-import {backgroundEntries} from '@site/src/data/aboutProfile';
+import {backgroundEntries, careerHighlights} from '@site/src/data/aboutProfile';
 import {aboutTabs, type AboutTabId} from '@site/src/data/sectionNav';
 import CredentialsTab from './_credentials-tab';
+import CareerTimeline from './_career-timeline';
 import styles from './about.module.css';
 
 function PhilosophyTab(): ReactNode {
@@ -85,8 +86,22 @@ function IndustriesTab(): ReactNode {
         <li>Aviation: global customer and operations platforms</li>
         <li>Critical infrastructure & energy: mission-critical utility services</li>
         <li>Retail & enterprise platforms: large-scale distributed systems</li>
+        <li>Digital consulting: enterprise transformation, platform modernization, and architecture governance</li>
       </ul>
       <p>Based in Melbourne, with delivery experience across Australia, the UAE, and India.</p>
+    </div>
+  );
+}
+
+function CareerHighlightsTab(): ReactNode {
+  return (
+    <div className={styles.tabBox}>
+      <h2 className={styles.tabBoxTitle}>Career Highlights</h2>
+      <ul>
+        {careerHighlights.map((highlight) => (
+          <li key={highlight}>{highlight}</li>
+        ))}
+      </ul>
     </div>
   );
 }
@@ -100,20 +115,7 @@ function BackgroundTab(): ReactNode {
         regulated banking, aviation, and critical infrastructure. Outcomes and scope matter more than
         title inflation.
       </p>
-      <ul className={styles.timeline}>
-        {backgroundEntries.map((entry) => (
-          <li key={`${entry.period}-${entry.context}`} className={styles.timelineItem}>
-            <span className={styles.period}>{entry.period}</span>
-            <h3 className={styles.role}>{entry.role}</h3>
-            <p className={styles.context}>{entry.context}</p>
-            <ul className={styles.highlights}>
-              {entry.highlights.map((highlight) => (
-                <li key={highlight}>{highlight}</li>
-              ))}
-            </ul>
-          </li>
-        ))}
-      </ul>
+      <CareerTimeline entries={backgroundEntries} />
     </div>
   );
 }
@@ -140,6 +142,7 @@ const aboutTabContent: Record<AboutTabId, () => ReactNode> = {
   'how-i-lead': HowILeadTab,
   'what-i-build': WhatIBuildTab,
   industries: IndustriesTab,
+  'career-highlights': CareerHighlightsTab,
   background: BackgroundTab,
   credentials: CredentialsTab,
   'why-this-exists': WhyThisExistsTab,

@@ -1,0 +1,82 @@
+---
+title: Governance Rules
+sidebar_label: Governance rules
+description: Discipline rules for enterprise observability. Structured logs, correlation IDs, KPI mapping, alert ownership, and telemetry purpose in regulated environments.
+tags:
+  - platforms-engineering
+  - arch
+  - gain
+  - observability
+  - compliance
+---
+
+# Governance Rules
+
+**Layer:** enterprise architecture standards
+
+These rules prevent **observability sprawl**: dashboards nobody trusts, alerts nobody owns, and telemetry nobody can use in audit.
+
+## The rules
+
+| # | Rule | Enforcement |
+| --- | --- | --- |
+| 1 | Every service emits **structured logs** (JSON or equivalent) | CI schema check, onboarding checklist |
+| 2 | Every request carries a **correlation ID** | Gateway policy, integration tests |
+| 3 | Every business KPI maps to **system signals** | Journey map review |
+| 4 | Every alert has an **owner and runbook** | Alert registry, paging policy |
+| 5 | Every dashboard answers a **decision question** | Architecture review |
+| 6 | **No telemetry without purpose** | Retention and cost review |
+
+## Structured logging standard
+
+| Field | Required | Notes |
+| --- | --- | --- |
+| `timestamp` | Yes | UTC |
+| `level` | Yes | error, warn, info |
+| `service.name` | Yes | Catalog name |
+| `correlation_id` | Yes | Trace join |
+| `message` | Yes | Human-readable |
+| `error.type` | On errors | Stable taxonomy |
+
+Do not log secrets, full PAN, or raw prompts in operational tiers.
+
+## Alert registry
+
+| Column | Purpose |
+| --- | --- |
+| Alert name | Unique ID |
+| Owner team | Pager destination |
+| Runbook URL | First action |
+| Business KPI | What customer outcome this protects |
+| Severity | P1–P4 with customer impact definition |
+
+## Dashboard review questions
+
+Before publishing a new dashboard:
+
+1. Who makes decisions from this view?
+2. What action follows a red panel?
+3. Which SLO or KPI does it support?
+4. Can it be replaced by an existing canonical view?
+
+## Regulated-enterprise additions
+
+| Rule | Rationale |
+| --- | --- |
+| Redaction at collector | PII and prompts never land in wrong tier |
+| Immutable audit tier | Verdict and outcome chains for examiners |
+| Retention documented per signal | Legal hold and erasure policies |
+| Access controls per consumer | Ops vs audit vs product analytics |
+
+## Release gate
+
+- [ ] Logging standard published and linted in CI where possible
+- [ ] Alert registry covers all production pages
+- [ ] No orphan dashboards on official landing pages
+- [ ] KPI → signal mapping reviewed quarterly
+
+## Related
+
+- [Operating model](/playbooks/observability/operating-model)
+- [Correlation graph](/playbooks/observability/correlation-graph)
+- [Observability Blueprint](/blueprints/observability-blueprint)

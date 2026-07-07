@@ -1,16 +1,17 @@
 import type {SectionNavItem} from '@site/src/components/SectionPageLayout';
 
 export const aboutSubtitle =
-  'Melbourne-based advisor, architect, and technical leader with 18+ years across banking, aviation, and critical infrastructure in Australia, UAE, and India.';
+  'Principal-level enterprise architect and advisor with 18+ years across banking, aviation, and critical infrastructure. Cloud modernization, operational resilience, and regulator-aligned AI adoption in Australia, the UAE, and India.';
 
 export const advisorySubtitle =
-  'Advisory for enterprise architecture, platform modernization, and governed AI.';
+  'Principal-level advisory for enterprise architecture, cloud and application modernization, and governed AI in regulated banking, aviation, and critical infrastructure across Australia, the UAE, and India.';
 
 export const aboutTabs = [
   {id: 'philosophy', label: 'Philosophy'},
   {id: 'how-i-lead', label: 'How I Lead'},
   {id: 'what-i-build', label: 'What I Build'},
   {id: 'industries', label: 'Industries'},
+  {id: 'career-highlights', label: 'Career Highlights'},
   {id: 'background', label: 'Background'},
   {id: 'credentials', label: 'Credentials'},
   {id: 'why-this-exists', label: 'Why This Exists'},

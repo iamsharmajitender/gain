@@ -3603,7 +3603,7 @@ html.gain-zoom-open {
 
 .gain-hero__grid {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(220px, 280px);
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 340px);
   gap: 3rem;
   align-items: start;
 }
@@ -3642,12 +3642,16 @@ html.gain-zoom-open {
 
 .gain-hero__profile-bio {
   margin: 0 0 1rem;
-  font-size: 0.9375rem;
-  line-height: 1.55;
-  color: rgba(255, 255, 255, 0.72);
+  font-size: 0.875rem;
+  line-height: 1.65;
+  color: rgba(255, 255, 255, 0.78);
+  text-align: left;
+  align-self: stretch;
+  width: 100%;
 }
 
 .gain-hero__profile-link {
+  align-self: center;
   font-size: 0.875rem;
   font-weight: 600;
   color: rgba(255, 255, 255, 0.8);
@@ -4558,7 +4562,7 @@ html.gain-zoom-open {
   }
 
   .gain-hero__profile {
-    max-width: 360px;
+    max-width: 400px;
     margin: 0 auto;
   }
 

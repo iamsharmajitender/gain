@@ -23,6 +23,10 @@ export function AboutIndustriesRedirect(): ReactNode {
   return <AboutTabRedirect tab="industries" />;
 }
 
+export function AboutCareerHighlightsRedirect(): ReactNode {
+  return <AboutTabRedirect tab="career-highlights" />;
+}
+
 export function AboutBackgroundRedirect(): ReactNode {
   return <AboutTabRedirect tab="background" />;
 }

@@ -6,7 +6,7 @@ import HomepageGainSystem from '@site/src/components/HomepageGainSystem';
 import HomepagePillars from '@site/src/components/HomepagePillars';
 import HomepageBottom from '@site/src/components/HomepageBottom';
 import {
-  profileHeroBio,
+  profileCardBio,
   profileName,
   profilePhotoUrl,
 } from '@site/src/data/aboutProfile';
@@ -55,7 +55,7 @@ export default function Home(): ReactNode {
                 loading="eager"
               />
               <p className="gain-hero__profile-name">{profileName}</p>
-              <p className="gain-hero__profile-bio">{profileHeroBio}</p>
+              <p className="gain-hero__profile-bio">{profileCardBio}</p>
               <Link className="gain-hero__profile-link" to="/about">
                 About me →
               </Link>

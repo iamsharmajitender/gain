@@ -152,6 +152,7 @@ export const siteSections: SitemapSection[] = [
       {label: 'How I Lead', href: '/about?tab=how-i-lead'},
       {label: 'What I Build', href: '/about?tab=what-i-build'},
       {label: 'Industries', href: '/about?tab=industries'},
+      {label: 'Career Highlights', href: '/about?tab=career-highlights'},
       {label: 'Background', href: '/about?tab=background'},
       {label: 'Credentials', href: '/about?tab=credentials'},
       {label: 'Why This Exists', href: '/about?tab=why-this-exists'},

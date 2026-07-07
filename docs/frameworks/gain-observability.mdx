@@ -27,7 +27,30 @@ import Details from '@theme/Details';
 Enterprise teams debate which APM vendor to buy. G.A.I.N Observability reframes the question: what signals are captured at each hop, where do they land, who consumes them, and how does telemetry feed eval and rollback from day one.
 :::
 
-Observability in production is **capture, retention, and routing architecture** — not a single dashboard. Logs alone cannot explain why an agent chose a tool, why a RAG answer hallucinated, or who approved a policy exception. Every AI request is an auditable, measurable event on the path.
+## Enterprise three-layer model
+
+Large enterprises rarely fail because they lack dashboards. They fail because **business, service, and infrastructure observability evolved in silos** and nobody owns the graph between them.
+
+| Layer | Question | Primary signals | Maps to first principles |
+| --- | --- | --- | --- |
+| **Business** | Why are outcomes degrading? | Journey success, conversion, revenue, business SLAs | Strategy and solution scope |
+| **Service** | What is failing in the stack? | Golden signals, traces, dependencies, SLIs/SLOs | System architecture |
+| **Infrastructure** | Where is degradation rooted? | CPU, memory, saturation, network, storage | System architecture (runtime) |
+
+**Unifying rule:** every business outcome must trace to system behaviour and infrastructure state through a shared **observability graph** (correlation IDs, journey mapping, dependency links).
+
+| G.A.I.N pillar | Role in three-layer model |
+| --- | --- |
+| **G · Grounded** | Audit trails, decision replay, compliance events at business and service boundaries |
+| **A · Adaptive** | Drift detection, eval sampling, feedback from production into routing and prompts |
+| **I · Intelligent** | Quality metrics on reasoning, tools, and outcomes, not only infra uptime |
+| **N · Native** | Multi-store telemetry platform, retention tiers, cost attribution |
+
+**This page** goes deep on **service-layer observability for AI workloads** (capture path, five signals, four consumers). For the full enterprise model (capability stack, maturity, operating model), see [Observability Blueprint](/blueprints/observability-blueprint) and [Observability playbooks](/playbooks/observability). For the AI capture architecture breakdown, see [AI Observability in Enterprise](/insights/ai-observability-in-enterprise).
+
+---
+
+Observability in production is **capture, retention, and routing architecture**, not a single dashboard. Logs alone cannot explain why an agent chose a tool, why a RAG answer hallucinated, or who approved a policy exception. Every AI request is an auditable, measurable event on the path.
 
 ## How This Maps to G.A.I.N
 

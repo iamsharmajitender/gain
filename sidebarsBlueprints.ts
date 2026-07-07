@@ -5,6 +5,7 @@ const sidebars: SidebarsConfig = {
     'overview',
     'router-blueprint',
     'eval-blueprint',
+    'observability-blueprint',
     'pgar-blueprint',
   ],
 };

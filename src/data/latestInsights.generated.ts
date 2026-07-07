@@ -14,6 +14,22 @@ export interface LatestInsight {
 
 export const latestInsights: readonly LatestInsight[] = [
   {
+    "title": "The Blueprint Before Training an LLM",
+    "date": "2026-07-08",
+    "readTime": 10,
+    "description": "Hyperparameters, vocabulary, and why a 7B model is 7B before day one, how the dials connect, where parameters live, and why the context window is a budgeted choice.",
+    "typeTag": "lrn",
+    "to": "/insights/before-training-an-llm"
+  },
+  {
+    "title": "The Death of Distributed Systems? Why Agentic AI Changes the Interface, Not the Foundation",
+    "date": "2026-07-07",
+    "readTime": 5,
+    "description": "Agentic AI does not replace distributed systems. It adds a non-deterministic reasoning layer on top of deterministic execution. Reason flexibly; execute reliably.",
+    "typeTag": "pov",
+    "to": "/insights/agentic-ai-distributed-systems"
+  },
+  {
     "title": "Is MCP Really Necessary for Business Agents in Large Regulated Enterprises?",
     "date": "2026-07-05",
     "readTime": 10,
@@ -46,14 +62,6 @@ export const latestInsights: readonly LatestInsight[] = [
     "to": "/insights/what-is-intent-router"
   },
   {
-    "title": "The Blueprint Before Training an LLM",
-    "date": "2026-06-30",
-    "readTime": 10,
-    "description": "Hyperparameters, vocabulary, and why a 7B model is 7B before day one — how the dials connect, where parameters live, and why the context window is a budgeted choice.",
-    "typeTag": "exp",
-    "to": "/insights/before-training-an-llm"
-  },
-  {
     "title": "RAG Is Not a Database",
     "date": "2026-06-27",
     "readTime": 7,
@@ -68,13 +76,5 @@ export const latestInsights: readonly LatestInsight[] = [
     "description": "Proposal is not permission. Agents propose tool calls; governance decides whether they run. An architecture breakdown of runtime trust boundaries for production agent systems in regulated industries.",
     "typeTag": "arch",
     "to": "/insights/policy-governed-agent-runtime"
-  },
-  {
-    "title": "AI Observability In Enterprise",
-    "date": "2026-06-18",
-    "readTime": 7,
-    "description": "AI observability is not a dashboard. It is a capture-and-retention architecture with five signals, five retention policies, and four consumers.",
-    "typeTag": "arch",
-    "to": "/insights/ai-observability-in-enterprise"
   }
 ];

@@ -1,0 +1,100 @@
+---
+title: Correlation Graph
+sidebar_label: Correlation graph
+description: Connect business KPIs to service traces and infrastructure signals. Correlation IDs, journey mapping, and the observability graph for unified enterprise operations.
+tags:
+  - platforms-engineering
+  - arch
+  - gain
+  - observability
+  - compliance
+---
+
+# Correlation Graph
+
+**Capability:** correlation layer
+
+Architecture owns the **graph model**. Engineering implements propagation. Platform operates the stores and query paths that make the graph traversable in incidents and audits.
+
+## Outcome
+
+From one business KPI degradation, an on-call engineer (or auditor) can traverse:
+
+**Business event → service trace → infrastructure signal**
+
+without manual copy-paste across three tools.
+
+## Graph nodes and edges
+
+| Node type | Key fields | Edge to |
+| --- | --- | --- |
+| **Business event** | `journey_id`, `step`, `outcome`, `correlation_id` | Service root span |
+| **Service span** | `trace_id`, `span_id`, `service.name`, `operation` | Parent/child spans, infra context |
+| **Infra signal** | `resource_id`, metric, value, timestamp | Service via workload labels |
+
+## Steps
+
+### 1. Standardize correlation ID propagation
+
+| Rule | Implementation |
+| --- | --- |
+| Ingress assigns or accepts ID | API gateway or first service hop |
+| All outbound calls forward context | HTTP headers, message metadata |
+| Async preserves ID | Queue message attributes |
+| Batch jobs inherit parent ID | Scheduler metadata |
+
+### 2. Map journeys to entry services
+
+From [Business journey mapping](/playbooks/observability/business-journey-mapping), maintain a table:
+
+| `journey_id` | Entry service | Entry operation |
+| --- | --- | --- |
+| `checkout.pay` | `payment-api` | `POST /pay` |
+| `claims.submit` | `claims-api` | `POST /submit` |
+
+### 3. Enrich spans at collection
+
+Collector adds:
+
+- `journey_id` (when known)
+- `tenant` / `environment`
+- `deploy.version`
+
+Redact before write to operational tiers.
+
+### 4. Build traversal queries
+
+Define saved paths for tier-1 incidents:
+
+| Scenario | Start | Traverse |
+| --- | --- | --- |
+| Payment success drop | Business KPI dashboard | Events with `journey_id=checkout.pay` → traces → DB CPU |
+| Error budget burn | SLO alert | Service trace → dependency → infra |
+
+### 5. Regulator replay path
+
+Audit consumers need **immutable** chains. Link business outcome records to audit-tier storage where policy requires 7y retention (see [G.A.I.N Observability](/frameworks/gain-observability) for AI audit pattern).
+
+## Anti-patterns
+
+| Anti-pattern | Why it fails |
+| --- | --- |
+| Different IDs per hop | Graph breaks at first async boundary |
+| Business metrics only in BI warehouse | Hours of lag in incidents |
+| Infra dashboards without service labels | Cannot answer "who hurt whom" |
+| AI: logging final answer only | Agent failures invisible |
+
+## Release gate
+
+- [ ] Correlation ID on 100% of tier-1 synchronous paths
+- [ ] Async and batch paths documented and tested
+- [ ] Journey → entry service map published
+- [ ] One end-to-end drill from KPI to infra completed quarterly
+- [ ] AI paths include multi-hop traces where applicable
+
+## Related
+
+- [Business journey mapping](/playbooks/observability/business-journey-mapping)
+- [Service golden signals](/playbooks/observability/service-golden-signals)
+- [Infrastructure telemetry](/playbooks/observability/infrastructure-telemetry)
+- [PGAR audit and replay](/playbooks/pgar-runtime/foundation/audit-and-replay)
