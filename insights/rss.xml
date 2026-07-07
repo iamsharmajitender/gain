@@ -4,10 +4,34 @@
         <title>Jitender Sharma Blog</title>
         <link>https://jitendersharma.dev/insights</link>
         <description>Jitender Sharma Blog</description>
-        <lastBuildDate>Sun, 05 Jul 2026 00:00:00 GMT</lastBuildDate>
+        <lastBuildDate>Wed, 08 Jul 2026 00:00:00 GMT</lastBuildDate>
         <docs>https://validator.w3.org/feed/docs/rss2.html</docs>
         <generator>https://github.com/jpmonette/feed</generator>
         <language>en</language>
+        <item>
+            <title><![CDATA[The Blueprint Before Training an LLM]]></title>
+            <link>https://jitendersharma.dev/insights/before-training-an-llm</link>
+            <guid>https://jitendersharma.dev/insights/before-training-an-llm</guid>
+            <pubDate>Wed, 08 Jul 2026 00:00:00 GMT</pubDate>
+            <description><![CDATA[Hyperparameters, vocabulary, and why a 7B model is 7B before day one, how the dials connect, where parameters live, and why the context window is a budgeted choice.]]></description>
+            <content:encoded><![CDATA[Hyperparameters, vocabulary, and why a 7B model is 7B before day one, how the dials connect, where parameters live, and why the context window is a budgeted choice.]]></content:encoded>
+            <category>Strategy &amp; Architecture</category>
+            <category>Explainer</category>
+            <category>LLM</category>
+            <category>Learner</category>
+        </item>
+        <item>
+            <title><![CDATA[The Death of Distributed Systems? Why Agentic AI Changes the Interface, Not the Foundation]]></title>
+            <link>https://jitendersharma.dev/insights/agentic-ai-distributed-systems</link>
+            <guid>https://jitendersharma.dev/insights/agentic-ai-distributed-systems</guid>
+            <pubDate>Tue, 07 Jul 2026 00:00:00 GMT</pubDate>
+            <description><![CDATA[Agentic AI does not replace distributed systems. It adds a non-deterministic reasoning layer on top of deterministic execution. Reason flexibly; execute reliably.]]></description>
+            <content:encoded><![CDATA[Agentic AI does not replace distributed systems. It adds a non-deterministic reasoning layer on top of deterministic execution. Reason flexibly; execute reliably.]]></content:encoded>
+            <category>Strategy &amp; Architecture</category>
+            <category>Point of View</category>
+            <category>Agents</category>
+            <category>G.A.I.N</category>
+        </item>
         <item>
             <title><![CDATA[Is MCP Really Necessary for Business Agents in Large Regulated Enterprises?]]></title>
             <link>https://jitendersharma.dev/insights/mcp-for-enterprise-business-agents</link>
@@ -58,17 +82,6 @@
             <category>Architecture</category>
             <category>Agents</category>
             <category>G.A.I.N</category>
-            <category>LLM</category>
-        </item>
-        <item>
-            <title><![CDATA[The Blueprint Before Training an LLM]]></title>
-            <link>https://jitendersharma.dev/insights/before-training-an-llm</link>
-            <guid>https://jitendersharma.dev/insights/before-training-an-llm</guid>
-            <pubDate>Tue, 30 Jun 2026 00:00:00 GMT</pubDate>
-            <description><![CDATA[Hyperparameters, vocabulary, and why a 7B model is 7B before day one — how the dials connect, where parameters live, and why the context window is a budgeted choice.]]></description>
-            <content:encoded><![CDATA[Hyperparameters, vocabulary, and why a 7B model is 7B before day one — how the dials connect, where parameters live, and why the context window is a budgeted choice.]]></content:encoded>
-            <category>Strategy &amp; Architecture</category>
-            <category>Explainer</category>
             <category>LLM</category>
         </item>
         <item>
