@@ -22,12 +22,28 @@ export const latestInsights: readonly LatestInsight[] = [
     "to": "/insights/before-training-an-llm"
   },
   {
+    "title": "Building a Unified Observability Framework",
+    "date": "2026-07-07",
+    "readTime": 6,
+    "description": "Business, service, and infrastructure observability in large regulated enterprises. A three-layer model where every business outcome traces to system behaviour and infrastructure state.",
+    "typeTag": "pov",
+    "to": "/insights/unified-observability-framework"
+  },
+  {
     "title": "The Death of Distributed Systems? Why Agentic AI Changes the Interface, Not the Foundation",
     "date": "2026-07-07",
     "readTime": 5,
     "description": "Agentic AI does not replace distributed systems. It adds a non-deterministic reasoning layer on top of deterministic execution. Reason flexibly; execute reliably.",
     "typeTag": "pov",
     "to": "/insights/agentic-ai-distributed-systems"
+  },
+  {
+    "title": "The First Principles of Technology",
+    "date": "2026-07-06",
+    "readTime": 13,
+    "description": "First principles differ by decision layer. Five levels from business strategy to software engineering, and why applying the right principles at the right level matters.",
+    "typeTag": "arch",
+    "to": "/insights/first-principles-of-technology"
   },
   {
     "title": "Is MCP Really Necessary for Business Agents in Large Regulated Enterprises?",
@@ -38,6 +54,14 @@ export const latestInsights: readonly LatestInsight[] = [
     "to": "/insights/mcp-for-enterprise-business-agents"
   },
   {
+    "title": "LLM Hosting Options for Regulated Industries",
+    "date": "2026-07-04",
+    "readTime": 13,
+    "description": "From public SaaS to air-gapped on-prem: a practical ladder of LLM hosting options, and how to choose based on regulatory pressure and engineering maturity.",
+    "typeTag": "arch",
+    "to": "/insights/model-hosting-options-regulated-industries"
+  },
+  {
     "title": "Retrieval Is a Governed Action",
     "date": "2026-07-04",
     "readTime": 12,
@@ -46,35 +70,11 @@ export const latestInsights: readonly LatestInsight[] = [
     "to": "/insights/retrieval-is-a-governed-action"
   },
   {
-    "title": "How to Design an Intent Router for Agentic AI",
-    "date": "2026-07-02",
-    "readTime": 12,
-    "description": "A practical design guide for intent routing — route tables, layered classification, confidence thresholds, session stickiness, eval gates, and wiring dispatch into the agentic app before the model loop runs.",
+    "title": "LangChain vs LangGraph — When to Use What in Production Agents",
+    "date": "2026-07-03",
+    "readTime": 13,
+    "description": "LangChain and LangGraph are not rivals — they are layers of the same stack. This guide explains when to use chains, agents, or graphs; pseudo-code for both paths; and how memory, validation, and LLM selection fit a governed agentic loop.",
     "typeTag": "arch",
-    "to": "/insights/design-intent-router"
-  },
-  {
-    "title": "What Is an Intent Router — and Why It Matters in Agentic AI",
-    "date": "2026-07-02",
-    "readTime": 9,
-    "description": "An intent router is the first deterministic decision in an agent stack. It maps user requests to the right workflow, agent, and tool manifest before the model loop runs — and when it fails, every downstream stage can execute perfectly and still miss the user’s goal.",
-    "typeTag": "arch",
-    "to": "/insights/what-is-intent-router"
-  },
-  {
-    "title": "RAG Is Not a Database",
-    "date": "2026-06-27",
-    "readTime": 7,
-    "description": "RAG is runtime context construction at query time, not a storage layer you bolt onto an LLM.",
-    "typeTag": "lrn",
-    "to": "/insights/rag-is-not-a-database"
-  },
-  {
-    "title": "Policy-Governed Agent Runtime",
-    "date": "2026-06-25",
-    "readTime": 16,
-    "description": "Proposal is not permission. Agents propose tool calls; governance decides whether they run. An architecture breakdown of runtime trust boundaries for production agent systems in regulated industries.",
-    "typeTag": "arch",
-    "to": "/insights/policy-governed-agent-runtime"
+    "to": "/insights/langchain-vs-langgraph"
   }
 ];

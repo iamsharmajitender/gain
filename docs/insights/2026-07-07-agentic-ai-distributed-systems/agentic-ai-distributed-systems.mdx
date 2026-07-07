@@ -38,6 +38,7 @@ An agent that "increases a customer's credit limit" still invokes identity, frau
 - **The layers stack.** Distributed systems answer reliability and consistency; agents answer planning and tool selection.
 - **Agents increase path complexity:** dynamic tool chains make latency, retries, and partial failure harder, not easier.
 - **Reason non-deterministically. Execute deterministically.** AI explores options; business services and platforms must run auditable, repeatable actions.
+- **Distributed systems literacy is a core skill, not a legacy specialty.** Agentic paths multiply the failure modes great engineers already knew how to handle.
 
 ## Two layers, one stack
 
@@ -154,13 +155,37 @@ Platforms expose **capabilities for agents**: tool contracts, policy-aware APIs,
 
 Cloud did not kill networking. Serverless did not kill distributed computing. **Agentic AI will not kill distributed systems.** It changes the surface; the kernel stays.
 
+## Where I land
+
+I am **more convinced than ever** that distributed systems thinking is one of the primary skills required to build great software, not less.
+
+The hype cycle suggests otherwise. If the model can plan, wire services, and recover from errors in a demo, why study consensus, idempotency, or backpressure? Because the demo skipped the hard part. Production does not forgive it.
+
+Every convincing agent story still depends on someone who understands:
+
+| Skill | Why it matters more with agents |
+| --- | --- |
+| **Partial failure** | Step three of seven times out after step four already committed |
+| **Idempotency** | The agent retries a payment tool call the model proposed twice |
+| **Backpressure** | Ten parallel tool chains saturate a downstream API |
+| **Consistency boundaries** | Fraud, risk, and ledger services disagree mid-workflow |
+| **Traceability** | An examiner asks which service owned the side effect, not which prompt ran |
+
+None of that is prompt engineering. It is distributed systems engineering, applied under unpredictable orchestration.
+
+I have watched teams hire for "AI skills" and discover six months later that the bottleneck was never the model. It was sagas nobody designed, caches nobody invalidated, queues nobody drained, and retries that doubled spend without doubling success. The teams that ship governed agents are not the ones who prompt best. They are the ones who **already knew** how distributed systems fail, and built the agent layer assuming those failures are guaranteed.
+
+:::important[MY POSITION]
+Agentic AI did not retire distributed systems expertise. It **raised the bar**. The reasoning layer is new. The failure modes underneath are familiar. Shallow literacy in partitions, retries, and consistency shows up faster when paths are dynamic and autonomy widens the blast radius.
+:::
+
 ## Questions to ask
 
 1. Which actions stay **deterministic** no matter how the agent plans?
 2. Where does **deterministic routing** run before the model loop (intent, policy, manifest)?
 3. Can you **replay** a run from verdict and audit chains, not chat logs alone?
 
-Distributed systems plus agentic AI is the future: intelligent at the edge of decision-making, certain at the point of execution.
+Distributed systems plus agentic AI is the future: intelligent at the edge of decision-making, certain at the point of execution. The engineers who thrive will not be the ones who treat distributed systems as yesterday's curriculum. They will be the ones who treat it as the skill that makes agentic software **survivable**.
 
 :::info[Builds on]
 [Policy-Governed Agent Runtime](/insights/policy-governed-agent-runtime) · [What Is an Intent Router](/insights/what-is-intent-router) · [How LLM Works Under the Hood](/insights/how-llm-works-under-the-hood) · [Hallucinations Is a System Design Problem](/insights/hallucinations-is-a-system-design-problem-not-model-problem) · [Retrieval Is a Governed Action](/insights/retrieval-is-a-governed-action) · What Is the Agentic Loop (coming soon) · The First Principles of Technology (coming soon)
