@@ -14,6 +14,38 @@ export interface LatestInsight {
 
 export const latestInsights: readonly LatestInsight[] = [
   {
+    "title": "Anycast vs Unicast - Under the Hood",
+    "date": "2026-07-14",
+    "readTime": 8,
+    "description": "Unicast maps one IP to one place. Anycast maps one IP to many places and lets BGP pick the path. How both work, where DNS and CDNs use them, and which failures look like app bugs.",
+    "typeTag": "exp",
+    "to": "/insights/anycast-vs-unicast-under-the-hood"
+  },
+  {
+    "title": "CDN - Under the Hood",
+    "date": "2026-07-14",
+    "readTime": 11,
+    "description": "A CDN is a cache-and-route fabric at the edge: PoPs, origin, cache keys, TTL, anycast, and the hit/miss path. Why delivery scales, and which failures people mislabel as app or network.",
+    "typeTag": "exp",
+    "to": "/insights/cdn-under-the-hood"
+  },
+  {
+    "title": "TCP vs UDP - Under the Hood",
+    "date": "2026-07-14",
+    "readTime": 8,
+    "description": "TCP is a reliable byte stream with handshake, ACKs, and congestion control. UDP is datagrams with no delivery guarantee. Components, steps, use cases, and which failures people mislabel as app bugs.",
+    "typeTag": "exp",
+    "to": "/insights/tcp-vs-udp-under-the-hood"
+  },
+  {
+    "title": "DNS - Under the Hood",
+    "date": "2026-07-13",
+    "readTime": 12,
+    "description": "DNS is a globally distributed, hierarchical, eventually consistent naming database. Stub, recursive resolver, root, TLD, authoritative name server, caching, TTL, and anycast.",
+    "typeTag": "exp",
+    "to": "/insights/dns-under-the-hood"
+  },
+  {
     "title": "The Blueprint Before Training an LLM",
     "date": "2026-07-08",
     "readTime": 10,
@@ -30,14 +62,6 @@ export const latestInsights: readonly LatestInsight[] = [
     "to": "/insights/unified-observability-framework"
   },
   {
-    "title": "The Death of Distributed Systems? Why Agentic AI Changes the Interface, Not the Foundation",
-    "date": "2026-07-07",
-    "readTime": 7,
-    "description": "Agentic AI does not replace distributed systems. It adds a non-deterministic reasoning layer on top of deterministic execution. Reason flexibly; execute reliably.",
-    "typeTag": "pov",
-    "to": "/insights/agentic-ai-distributed-systems"
-  },
-  {
     "title": "The First Principles of Technology",
     "date": "2026-07-06",
     "readTime": 13,
@@ -52,29 +76,5 @@ export const latestInsights: readonly LatestInsight[] = [
     "description": "MCP is a valuable standard for AI tool interoperability. For regulated business agents, the question is whether its benefits outweigh operational cost for your use case, not whether MCP is good.",
     "typeTag": "pov",
     "to": "/insights/mcp-for-enterprise-business-agents"
-  },
-  {
-    "title": "LLM Hosting Options for Regulated Industries",
-    "date": "2026-07-04",
-    "readTime": 13,
-    "description": "From public SaaS to air-gapped on-prem: a practical ladder of LLM hosting options, and how to choose based on regulatory pressure and engineering maturity.",
-    "typeTag": "arch",
-    "to": "/insights/model-hosting-options-regulated-industries"
-  },
-  {
-    "title": "Retrieval Is a Governed Action",
-    "date": "2026-07-04",
-    "readTime": 12,
-    "description": "Retrieval is not a database query; it is a governed action. How Policy-Governed Agent Runtime applies to RAG when context construction must be scoped, auditable, and enforced before inference.",
-    "typeTag": "arch",
-    "to": "/insights/retrieval-is-a-governed-action"
-  },
-  {
-    "title": "LangChain vs LangGraph — When to Use What in Production Agents",
-    "date": "2026-07-03",
-    "readTime": 13,
-    "description": "LangChain and LangGraph are not rivals — they are layers of the same stack. This guide explains when to use chains, agents, or graphs; pseudo-code for both paths; and how memory, validation, and LLM selection fit a governed agentic loop.",
-    "typeTag": "arch",
-    "to": "/insights/langchain-vs-langgraph"
   }
 ];

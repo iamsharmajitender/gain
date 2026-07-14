@@ -1,0 +1,249 @@
+---
+title: "Domain: Tool Registry"
+sidebar_label: ① Tool registry
+description: "Tool manifests, schema compliance, PEP gating per tool, and blocking proposals outside the registry."
+tags:
+  - governance-trust
+  - arch
+  - gain
+  - agents
+  - policy
+---
+
+# Domain: Tool Registry
+
+[Blueprint](/blueprints/pgar-blueprint) · [← Downstream](/playbooks/pgar-runtime/boundary/downstream) · **Tool registry** · [Manifest lifecycle →](/playbooks/pgar-runtime/domain/manifest-lifecycle) · [RAG retrieval →](/playbooks/pgar-runtime/domain/rag-retrieval)
+
+Every tool the LLM may propose must appear in a **versioned manifest**. The agentic app rejects unknown tools before PEP. The PEP maps manifest entries to PDP action names.
+
+:::tip[THE CLAIM]
+**The manifest is the contract between proposal and policy. No manifest entry, no PEP call, no side effect.**
+:::
+
+<!-- truncate -->
+
+## Entry schema
+
+Each tool in the manifest:
+
+| Field | Purpose |
+| --- | --- |
+| `name` | Tool id the LLM proposes (must match exactly) |
+| `schema` | JSON Schema for arguments; validated before PEP |
+| `pdp_action` | Action name sent to PDP (often same as `name`) |
+| `risk_tier` | `low` / `medium` / `high`; drives audit and step-up rules |
+| `idempotency_required` | High-risk side effects require idempotency key in context |
+
+## Full manifest example {#full-manifest-example}
+
+Payment agent manifest (matches [PGAR wire insight](/insights/policy-governed-agent-runtime)). RAG tools use the same shape; see [RAG retrieval walkthrough](/playbooks/pgar-runtime/domain/rag-retrieval#worked-example-one-request-step-by-step).
+
+**Where to maintain manifests:** [Manifest lifecycle & registry patterns](/playbooks/pgar-runtime/domain/manifest-lifecycle).
+
+```json
+{
+  "manifest_version": "2026.07.1",
+  "tools": [
+    {
+      "name": "lookup_beneficiary",
+      "description": "Resolve payee name and invoice to beneficiary id",
+      "schema": {
+        "type": "object",
+        "required": ["payee_name", "invoice_ref"],
+        "properties": {
+          "payee_name": { "type": "string" },
+          "invoice_ref": { "type": "string" }
+        }
+      },
+      "pdp_action": "lookup_beneficiary",
+      "risk_tier": "low"
+    },
+    {
+      "name": "validate_payment",
+      "description": "Pre-auth: limits, sanctions, cut-off for a payment",
+      "schema": {
+        "type": "object",
+        "required": ["beneficiary_id", "amount", "source_account", "reference"],
+        "properties": {
+          "beneficiary_id": { "type": "string" },
+          "amount": { "type": "number" },
+          "source_account": { "type": "string" },
+          "reference": { "type": "string" }
+        }
+      },
+      "pdp_action": "validate_payment",
+      "risk_tier": "medium"
+    },
+    {
+      "name": "initiate_wire",
+      "description": "Initiate wire transfer on payment hub",
+      "schema": {
+        "type": "object",
+        "required": ["beneficiary_id", "amount", "source_account", "reference"],
+        "properties": {
+          "beneficiary_id": { "type": "string" },
+          "amount": { "type": "number" },
+          "source_account": { "type": "string" },
+          "reference": { "type": "string" }
+        }
+      },
+      "pdp_action": "initiate_wire",
+      "risk_tier": "high",
+      "idempotency_required": true
+    }
+  ]
+}
+```
+
+## Manifest → LLM → PEP
+
+The agentic app **derives** the LLM tool list from the manifest. Governance fields never cross the LLM boundary.
+
+| Manifest field | LLM sees | Agentic app | PEP / PDP |
+| --- | --- | --- | --- |
+| `name` | tool name in schema | must match proposal | SARAC **action** (via `pdp_action`) |
+| `description` | optional in schema | no | no |
+| `schema` | `parameters` shape | validate proposal args | re-validate before PEP |
+| `pdp_action` | **hidden** | map proposal → PDP | PDP action name |
+| `risk_tier` | **hidden** | audit tag | policy rules (e.g. high → step-up) |
+| `idempotency_required` | **hidden** | reject if missing key | forward in SARAC **context** |
+| `manifest_version` | **hidden** | log on every proposal | audit record |
+
+**LLM payload** (from manifest above):
+
+```json
+{
+  "tools": [
+    { "name": "lookup_beneficiary", "parameters": { "payee_name": "string", "invoice_ref": "string" } },
+    { "name": "validate_payment", "parameters": { "beneficiary_id": "string", "amount": "number", "source_account": "string", "reference": "string" } },
+    { "name": "initiate_wire", "parameters": { "beneficiary_id": "string", "amount": "number", "source_account": "string", "reference": "string" } }
+  ]
+}
+```
+
+No `emts`, `limits`, or `pdp_action`. See [Token & session boundary](/playbooks/pgar-runtime/foundation/token-and-session-boundary).
+
+## Enforcement hops
+
+| Hop | Check | On failure |
+| --- | --- | --- |
+| **① LLM schema exposure** | Only manifest tools in `tools` array | N/A (app builds payload) |
+| **② Agentic app** | `proposal.tool` ∈ manifest | Reject; no PEP call; log `in_manifest: false` |
+| **③ Agentic app** | Args validate against `schema` | Reject; log `schema_valid: false` |
+| **④ Agentic app** | Idempotency key if `idempotency_required` | Reject before PEP |
+| **⑤ PEP** | Map to SARAC; call PDP | DENY / STEP_UP / ALLOW |
+| **⑥ Downstream** | Execute only on ALLOW | Per domain playbook |
+
+## Worked example: one proposal through the registry {#worked-example-one-proposal}
+
+**Context:** After lookup and validate, the LLM proposes `initiate_wire`. Full multi-tool sequence: [PGAR insight § corporate wire](/insights/policy-governed-agent-runtime).
+
+### Setup
+
+**Claims** (session, not sent to LLM):
+
+```json
+{
+  "sub": "officer-123",
+  "emts": {
+    "payments.lookup": true,
+    "payments.validate": true,
+    "payments.wire.initiate": true
+  },
+  "limits": { "wire.auto_approved": 25000 }
+}
+```
+
+Prior tool results in app state: `beneficiary_id: bene-acme-441`, `sanctions_status: clear`.
+
+### ③ LLM proposes
+
+```json
+{
+  "tool": "initiate_wire",
+  "arguments": {
+    "beneficiary_id": "bene-acme-441",
+    "amount": 47500,
+    "source_account": "acct-operating-4412",
+    "reference": "INV-8842"
+  }
+}
+```
+
+### ② App checks (before PEP)
+
+1. `initiate_wire` in manifest? **Yes**
+2. Schema valid? **Yes**
+3. `idempotency_required` and key present? **Yes** (`idempotency_key: idm-4a2b` in session context)
+
+Trace: `manifest_version: 2026.07.1`, `in_manifest: true`, `schema_valid: true`
+
+### ④ PEP → PDP
+
+PEP maps manifest entry to SARAC:
+
+| Field | Value |
+| --- | --- |
+| **action** | `initiate_wire` (from `pdp_action`) |
+| **resource** | `{ "type": "wire_payment", "beneficiary_id": "bene-acme-441", ... }` |
+| **context** | `{ "amount": 47500, "sanctions_status": "clear", "idempotency_key": "idm-4a2b" }` |
+
+PDP returns **STEP_UP** (`47500 > 25000`). PEP logs verdict; no downstream call. See [Step-up & attestation](/playbooks/pgar-runtime/foundation/step-up-and-attestation).
+
+### Block paths (registry layer)
+
+These fail **before or without** a successful PDP ALLOW:
+
+| Scenario | Where blocked | Trace |
+| --- | --- | --- |
+| Model proposes `shell_exec` | App: not in manifest | `in_manifest: false` |
+| `amount` is string not number | App: schema validation | `schema_valid: false` |
+| `initiate_wire` without idempotency key | App: manifest rule | `idempotency_missing: true` |
+| Debug flag exposes undeclared tools | Should never ship; adversarial test | [Adversarial testing](/playbooks/pgar-runtime/assurance/adversarial-testing) |
+
+## RAG tools in the same model
+
+Retrieval tools use the **same manifest contract**. Difference is SARAC **resource** (corpus / doc id) and PDP rules (doc entitlements), not manifest mechanics.
+
+```json
+{
+  "name": "retrieve_documents",
+  "schema": {
+    "type": "object",
+    "required": ["corpus", "query"],
+    "properties": {
+      "corpus": { "type": "string" },
+      "query": { "type": "string" }
+    }
+  },
+  "pdp_action": "retrieve_documents",
+  "risk_tier": "medium"
+}
+```
+
+Walkthrough: [Domain: RAG retrieval](/playbooks/pgar-runtime/domain/rag-retrieval#worked-example-one-request-step-by-step).
+
+## Failure classes
+
+- **Shadow tools:** engineer adds API call not in manifest
+- **Schema drift:** model args don't match JSON schema
+- **Risk mismatch:** high-risk tool without idempotency
+- **Manifest bypass in prod:** debug flag exposes all tools
+- **pdp_action mismatch:** manifest maps to action PDP does not know
+
+## Release gate
+
+- Schema validation: **100%** on golden tool scenarios
+- Manifest violations: **0**
+- New tool requires [policy scenarios](/playbooks/pgar-runtime/assurance/policy-test-scenarios) before `active`
+- `manifest_version` pinned in audit for every proposal
+
+## Eval overlap
+
+[Eval plane Tool](/playbooks/eval-engineering/plane-tool): selection, args, manifest compliance.
+
+## Trace fields
+
+`tool_name`, `manifest_version`, `schema_valid`, `in_manifest`, `risk_tier`, `pdp_action`, `idempotency_key`
+
+See: [Boundary: LLM proposal](/playbooks/pgar-runtime/boundary/llm-proposal) · [Adversarial testing](/playbooks/pgar-runtime/assurance/adversarial-testing) · [Policy contracts](/playbooks/pgar-runtime/foundation/policy-contracts)

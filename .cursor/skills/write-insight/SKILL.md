@@ -2,10 +2,10 @@
 name: write-insight
 description: >-
   Scaffold a new insight article in docs/insights only: propose slug, tags, type,
-  section outline, and insights-only cross-links first, then create folder and
-  MDX after explicit approval. Use when the user says "write insight", "create
-  insight", "new insight", invokes /write-insight or @write-insight, or asks to
-  draft an article for the insights blog.
+  section outline, hero PNG spec, and insights-only cross-links first, then create
+  dated folder, MDX, and 16:9 hero PNG after explicit approval. Use when the user
+  says "write insight", "create insight", "new insight", invokes /write-insight
+  or @write-insight, or asks to draft an article for the insights blog.
 disable-model-invocation: true
 ---
 
@@ -16,6 +16,8 @@ Two-phase workflow. **Phase 1 proposes only — no files created.** Phase 2 runs
 ## Scope
 
 **Insights only.** Creates and scaffolds articles under `docs/insights/`. Cross-links in proposals and scaffolds are **`/insights/…` only** — scan `docs/insights/**/*.mdx` for companions, series pairs, and `:::info[Builds on]` targets.
+
+**Folder convention:** `{YYYY-MM-DD}-{slug}/` on disk (e.g. `2026-07-02-what-is-agentic-loop/`). URL and frontmatter `slug:` stay **without** the date prefix (`what-is-agentic-loop` → `/insights/what-is-agentic-loop`).
 
 **Rule = shape.** Read `.cursor/rules/insights-article-structure.mdc` for article types and open/close requirements. This skill orchestrates creation; it does not duplicate that rule.
 
@@ -71,15 +73,17 @@ When unsure: **architecture breakdown** for trace/wire articles; **decision guid
 
 ### 3. Propose slug and path
 
-**Slug:** lowercase kebab-case, 3–6 words, stable URL (`/insights/{slug}`). Prefer topic over date.
+**Slug:** lowercase kebab-case, 3–6 words, stable URL (`/insights/{slug}`). Prefer topic over date. The slug does **not** include the date prefix.
 
-**Folder:** `docs/insights/{slug}/`
+**Date:** `YYYY-MM-DD` for frontmatter `date:` and the folder prefix. Use today's date unless the user specifies another publish date.
 
-**File:** `{slug}.mdx` (match slug; same name as PNG)
+**Folder:** `docs/insights/{YYYY-MM-DD}-{slug}/` (e.g. `docs/insights/2026-07-02-what-is-agentic-loop/`)
 
-**Date:** `date: YYYY-MM-DD` in frontmatter (publish/sort date; not in the folder name).
+**File:** `{slug}.mdx` inside the dated folder (filename matches slug only; same basename as PNG)
 
-Check for collisions: grep `docs/insights` for existing slug.
+**PNG:** `{slug}.png` co-located in the dated folder (no date in the image filename)
+
+Check for collisions: grep `docs/insights` for existing `slug:` in frontmatter (folder name may differ).
 
 ### 4. Propose tags
 
@@ -151,15 +155,29 @@ Search **`docs/insights/`** only. List **published-only** `/insights/{slug}` lin
 
 If a companion insight is still `draft: true`, use plain text + "(coming soon)" — no link.
 
-### 8. Propose hero PNG (optional spec)
+### 8. Propose hero PNG (required)
 
-If the user wants a hero image spec, include:
+Every proposal includes a hero image spec. Phase 2 **always** generates the PNG.
 
-- **File:** `docs/insights/{slug}/{slug}.png`
-- **Aspect:** ~16:9 infographic
-- **Style:** G.A.I.N palette (navy grid, blue / purple / orange accents)
-- **Alt text:** short, descriptive, no em dashes
-- **Note:** PNG is not created in Phase 2 unless the user explicitly asks for image generation
+| Field | Value |
+| --- | --- |
+| **Path** | `docs/insights/{YYYY-MM-DD}-{slug}/{slug}.png` |
+| **Aspect** | 16:9 (`aspect_ratio: "16:9"` on GenerateImage) |
+| **Style** | G.A.I.N infographic palette: dark navy grid background, subtle technical grid floor, blue / purple / orange accent glows, clean sans-serif title text, isometric or flat diagram nodes with connector arrows |
+| **Alt text** | Short, descriptive, no em dashes (matches hero `![alt](./{slug}.png)` in MDX) |
+| **Concept** | One-line visual brief tied to the article claim (e.g. pipeline stages, platform ring, comparison metaphor) |
+
+**Visual patterns by type (pick one that fits):**
+
+| Type | Typical hero concept |
+| --- | --- |
+| Concept primer | Central concept node with 3–5 labeled stages or pillars around it |
+| Architecture breakdown | Left-to-right pipeline or layered platform diagram |
+| Decision guide | Split comparison, decision tree, or option matrix metaphor |
+| Explainer | Staged lifecycle flow (step 1 → step 2 → …) |
+| Executive | Maturity ladder, control loop, or governance ring around AI core |
+
+Reference existing heroes for style consistency (read one PNG from `docs/insights/` in the same topic cluster before generating).
 
 ### 9. Present the proposal report
 
@@ -174,7 +192,8 @@ Use this format exactly. **Do not create files.**
 | --- | --- |
 | **Slug** | `{slug}` |
 | **URL** | `/insights/{slug}` |
-| **Folder** | `docs/insights/{slug}/` |
+| **Date** | `{YYYY-MM-DD}` |
+| **Folder** | `docs/insights/{YYYY-MM-DD}-{slug}/` |
 | **File** | `{slug}.mdx` |
 | **Type** | {decision guide \| architecture breakdown \| …} |
 | **Status** | `draft: true` |
@@ -215,13 +234,13 @@ N. {Closing section per type}
 
 | Field | Value |
 | --- | --- |
-| **Path** | `./{slug}.png` |
+| **Path** | `docs/insights/{YYYY-MM-DD}-{slug}/{slug}.png` |
 | **Alt** | {proposed alt} |
-| **Concept** | {one-line visual brief} |
+| **Concept** | {one-line visual brief, e.g. find/select/ground pipeline with platform ring} |
 
 ### Checklist (will run in Phase 2)
 
-- [ ] Folder + `{slug}.mdx` from [template.mdx](template.mdx) or type example
+- [ ] Dated folder `docs/insights/{YYYY-MM-DD}-{slug}/` + `{slug}.mdx` from [template.mdx](template.mdx) or type example
 - [ ] `image:` + hero `![...]` both reference `./{slug}.png`
 - [ ] Tags match `insights-tags` (1 domain, 1 voice, 1+ topic)
 - [ ] Open/close match type in `insights-article-structure`
@@ -230,6 +249,8 @@ N. {Closing section per type}
 - [ ] Outbound links in scaffold are `/insights/…` only (published targets)
 - [ ] No inbound links from published pages to this slug while draft
 - [ ] `draft: true` set
+- [ ] Hero PNG `{slug}.png` generated at `docs/insights/{YYYY-MM-DD}-{slug}/{slug}.png`
+
 ```
 
 ### 10. Stop and wait
@@ -256,17 +277,24 @@ If the user says **`abort`**, **`cancel`**, **`quit`**, **`exit`**, or **`never 
 
 Only when the user sends **`approve`** (after any requested edits are reflected in the proposal).
 
-1. **Create folder** `docs/insights/{slug}/` if it does not exist.
-2. **Write `{slug}.mdx`** using [template.mdx](template.mdx), filled from the approved proposal. For type-specific section placeholders, follow [examples/decision-guide.mdx](examples/decision-guide.mdx) or [examples/concept-primer.mdx](examples/concept-primer.mdx) as appropriate.
+1. **Create folder** `docs/insights/{YYYY-MM-DD}-{slug}/` if it does not exist (date from approved proposal frontmatter).
+2. **Write `{slug}.mdx`** inside that folder using [template.mdx](template.mdx), filled from the approved proposal. For type-specific section placeholders, follow [examples/decision-guide.mdx](examples/decision-guide.mdx) or [examples/concept-primer.mdx](examples/concept-primer.mdx) as appropriate.
 3. **Add `import Details from '@theme/Details';`** after frontmatter if the scaffold includes fenced code blocks.
-4. **Do not** create the PNG unless the user asked for image generation in Phase 2.
+4. **Generate hero PNG** (required on every new insight):
+   - Call **GenerateImage** with `aspect_ratio: "16:9"`.
+   - **Description:** combine the approved **Concept**, article **title**, and G.A.I.N style from §8. Include labeled diagram nodes, connector arrows, and the visual metaphor (e.g. find → select → ground pipeline with a platform ring for identity, policy, orchestration, observability).
+   - **filename:** `{slug}.png`
+   - **Save target:** move or ensure the file lands at `docs/insights/{YYYY-MM-DD}-{slug}/{slug}.png` (co-located with the MDX).
+   - **reference_image_paths (optional):** one existing hero from the same topic cluster for style consistency (e.g. `docs/insights/2026-06-27-rag-is-not-a-database/rag-is-not-a-database.png` for RAG articles).
+   - Hero `![alt](./{slug}.png)` alt text must match the approved alt from the proposal.
 5. **Do not** add inbound links from other published docs.
 6. **Run checklist** (mark each item in the summary):
 
 | Check | Rule / action |
 | --- | --- |
-| Slug matches folder and filename | — |
+| Dated folder `{YYYY-MM-DD}-{slug}/`, filename `{slug}.mdx`, frontmatter `slug:` matches | — |
 | `image: ./{slug}.png` + hero `![...](./{slug}.png)` | `insights-article-structure` |
+| `{slug}.png` exists in the dated folder | §8 hero PNG |
 | `<!-- truncate -->` after hook, before main body | `insights-article-structure` |
 | Open/close sections match classified type | `insights-article-structure` |
 | No em dashes in title, description, body | `no-em-dash-content` |
@@ -275,7 +303,7 @@ Only when the user sends **`approve`** (after any requested edits are reflected 
 | `draft: true` present | default for new insights |
 
 7. **Run** `node scripts/sync-published-routes.mjs --include-drafts` if dev server should pick up the new slug (optional; note in summary).
-8. **Summarize:** path created, type, tags, what remains (body prose, PNG, publish via `@remove-draft`).
+8. **Summarize:** path created, type, tags, hero PNG path, what remains (body prose polish, publish via `@remove-draft`).
 
 Do not commit unless the user asks.
 
@@ -303,6 +331,6 @@ Full rules: `.cursor/rules/insights-article-structure.mdc`.
 
 **User:** `approve`
 
-**Agent Phase 2:** create `docs/insights/model-hosting-options-regulated-industries/model-hosting-options-regulated-industries.mdx` with scaffold + checklist summary.
+**Agent Phase 2:** create `docs/insights/2026-07-04-model-hosting-options-regulated-industries/model-hosting-options-regulated-industries.mdx`, generate `model-hosting-options-regulated-industries.png` (16:9 hero), run checklist summary.
 
 **User:** `abort` during Phase 1 → no files created.

@@ -62,7 +62,7 @@ Business events are **first-class signals**, not spreadsheet exports.
 | --- | --- | --- |
 | Payment success | 99.5% / 24h | Product + SRE |
 | Claims submission completion | 95% / 7d | Operations |
-| Onboarding completion | 90% / 30d | Compliance |
+| Onboarding verification decision | 90% terminal outcome / 30d | Compliance |
 
 ### 5. Map KPI → service entry points
 
@@ -72,6 +72,82 @@ Document which API or event **starts** the journey slice you measure. Correlatio
 | --- | --- |
 | Payment success | `POST /checkout/pay` |
 | Claims intake | `POST /claims/submit` |
+| Onboarding verification | `POST /onboarding/applications` (`onboarding-api`) |
+
+## Worked example: KYC onboarding (banking)
+
+One regulated journey end to end. Use this as the template when you name journeys, emit events, and hand off to the [correlation graph](/playbooks/observability/correlation-graph).
+
+| Field | Value |
+| --- | --- |
+| **Process / journey name** | Retail KYC onboarding |
+| **`journey_id`** | `onboarding.kyc.retail` |
+| **Business owner** | Compliance + product |
+| **Outcome KPI** | Verification decision rate (application started → final KYC outcome) |
+| **Business SLO** | 90% reach a terminal verification outcome within 30 days (exclude customer-abandoned) |
+| **Service entry** | `POST /onboarding/applications` on `onboarding-api` |
+
+### Journey steps
+
+| Step | `step` value | What happens | Owning service (typical) |
+| --- | --- | --- | --- |
+| 1 | `application_started` | Customer opens account application; case created | `onboarding-api` |
+| 2 | `identity_captured` | ID document and biometrics captured | `onboarding-api` / `doc-capture` |
+| 3 | `identity_checked` | Document authenticity and face match run | `idv-service` |
+| 4 | `screening_complete` | Sanctions, PEP, and adverse-media screen complete | `screening-service` |
+| 5 | `risk_rated` | Customer risk rating assigned; enhanced due diligence if required | `risk-engine` |
+| 6 | `verification_decided` | KYC case reaches a terminal verification outcome | `onboarding-api` / `case-service` |
+
+Terminal outcomes on `verification_decided` (use `outcome`):
+
+| `outcome` | Meaning | When applicable |
+| --- | --- | --- |
+| `verified_success` | Identity and screening clear; KYC passed | IDV passed, sanctions/PEP clear (or cleared after review), risk rating within policy, no outstanding document requests |
+| `failed` | Verification rejected; case closed without pass | Hard fail: forged/mismatched ID, confirmed sanctions hit, policy deny after review, applicant ineligible, or customer withdraws after a final reject |
+| `need_more_info` | Customer action required before a pass/fail decision | Soft gap the applicant can fix: expired passport, blurry selfie, missing proof of address, incomplete form fields, or a requested re-upload |
+| `hold` | Bank/ops action required; customer cannot unblock alone | Manual compliance review, PEP escalation, adverse-media investigation, vendor outage awaiting retry, four-eyes attestation pending, or legal freeze |
+
+**How to choose:** if the next move is the **customer's**, use `need_more_info`. If the next move is the **bank's or a vendor's**, use `hold`. If the case is closed with a deny, use `failed`. Only emit `verified_success` when KYC policy is satisfied end to end.
+
+Account opening is a **downstream** process. It is not the success signal for this journey.
+
+### Correlation ID through the path
+
+Ingress assigns one `correlation_id` (or accepts a client-supplied ID that passes validation). Every hop forwards it.
+
+| Hop | Propagates as | Joins to |
+| --- | --- | --- |
+| API gateway → `onboarding-api` | HTTP header `X-Correlation-Id` (or W3C `traceparent` + baggage) | Root service span |
+| `onboarding-api` → `idv-service` | Same header on outbound HTTP | Child span |
+| `onboarding-api` → `screening-service` | Message attribute on async queue (vendor callbacks) | Async consumer span |
+| Business event store | Field `correlation_id` on each journey event | KPI dashboard → trace query |
+
+Example ID for one applicant attempt: `corr-9b1e4d70-kyc-20260711`.
+
+All six step events for that attempt share the same `correlation_id` and `journey_id`. Service traces for the same attempt share the same ID (or link via `trace_id` recorded on the business event).
+
+### Sample business events
+
+Emit one event per step transition (not only the final outcome).
+
+| When | Example payload fields |
+| --- | --- |
+| Step 1 | `journey_id=onboarding.kyc.retail`, `step=application_started`, `outcome=in_progress`, `correlation_id=corr-9b1e4d70-kyc-20260711`, `principal=app-55201` (tokenised case ID) |
+| Step 4 hold path | `step=screening_complete`, `outcome=in_progress`, same `correlation_id`, `reason_code=PEP_MATCH` |
+| Step 6 verified | `step=verification_decided`, `outcome=verified_success`, same `correlation_id`, `channel=mobile` |
+| Step 6 more info | `step=verification_decided`, `outcome=need_more_info`, same `correlation_id`, `reason_code=DOC_EXPIRED` |
+| Step 6 hold | `step=verification_decided`, `outcome=hold`, same `correlation_id`, `reason_code=MANUAL_REVIEW` |
+
+### What you can answer in an incident
+
+With this mapping in place:
+
+1. **Business:** `verified_success` rate dropped this week. Filter events where `journey_id=onboarding.kyc.retail` and `step=verification_decided`.
+2. **Step:** Rise in `need_more_info` and `hold` after `identity_checked` → `screening_complete` (vendor timeouts or escalations).
+3. **Service:** Open traces for `correlation_id=corr-9b1e4d70-kyc-20260711` (or the cohort of IDs in the window).
+4. **Infra:** From the slow `screening-service` span, follow workload labels to queue depth or vendor dependency latency.
+
+That is the business layer's job: name the process, emit step outcomes with a shared `correlation_id`, and document the service entry. Correlation and infra playbooks complete the graph.
 
 ## Release gate
 
