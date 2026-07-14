@@ -111,10 +111,13 @@ tags:
   - {topic-2}
 authors: [iamsharmajitender]
 draft: true
+homepage: false   # optional: set for series that must stay off homepage cards (e.g. Under the Hood foundations)
 date: {YYYY-MM-DD}
 ```
 
 Always start with **`draft: true`**. Never add inbound links from published pages until `@remove-draft`.
+
+**Homepage cards:** `latestInsights.generated.ts` never lists drafts. Insights that should stay off the home strip even after publish must set **`homepage: false`** (see `.cursor/rules/insights-homepage.mdc`). Under the Hood Internet-foundations articles use this. Do not run sync expecting `--include-drafts` to put drafts on the homepage.
 
 ### 6. Propose section outline
 
@@ -302,7 +305,7 @@ Only when the user sends **`approve`** (after any requested edits are reflected 
 | Outbound links are `/insights/…` only and target published routes | scope + `no-links-to-draft-articles` |
 | `draft: true` present | default for new insights |
 
-7. **Run** `node scripts/sync-published-routes.mjs --include-drafts` if dev server should pick up the new slug (optional; note in summary).
+7. **Run** `node scripts/sync-published-routes.mjs` (optionally `--include-drafts` for draft **routes**/tags only). Homepage cards stay published-only and omit `homepage: false`. Confirm Under the Hood foundations are **not** in `latestInsights.generated.ts`.
 8. **Summarize:** path created, type, tags, hero PNG path, what remains (body prose polish, publish via `@remove-draft`).
 
 Do not commit unless the user asks.

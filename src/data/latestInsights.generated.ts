@@ -14,38 +14,6 @@ export interface LatestInsight {
 
 export const latestInsights: readonly LatestInsight[] = [
   {
-    "title": "Anycast vs Unicast - Under the Hood",
-    "date": "2026-07-14",
-    "readTime": 8,
-    "description": "Unicast maps one IP to one place. Anycast maps one IP to many places and lets BGP pick the path. How both work, where DNS and CDNs use them, and which failures look like app bugs.",
-    "typeTag": "exp",
-    "to": "/insights/anycast-vs-unicast-under-the-hood"
-  },
-  {
-    "title": "CDN - Under the Hood",
-    "date": "2026-07-14",
-    "readTime": 11,
-    "description": "A CDN is a cache-and-route fabric at the edge: PoPs, origin, cache keys, TTL, anycast, and the hit/miss path. Why delivery scales, and which failures people mislabel as app or network.",
-    "typeTag": "exp",
-    "to": "/insights/cdn-under-the-hood"
-  },
-  {
-    "title": "TCP vs UDP - Under the Hood",
-    "date": "2026-07-14",
-    "readTime": 8,
-    "description": "TCP is a reliable byte stream with handshake, ACKs, and congestion control. UDP is datagrams with no delivery guarantee. Components, steps, use cases, and which failures people mislabel as app bugs.",
-    "typeTag": "exp",
-    "to": "/insights/tcp-vs-udp-under-the-hood"
-  },
-  {
-    "title": "DNS - Under the Hood",
-    "date": "2026-07-13",
-    "readTime": 12,
-    "description": "DNS is a globally distributed, hierarchical, eventually consistent naming database. Stub, recursive resolver, root, TLD, authoritative name server, caching, TTL, and anycast.",
-    "typeTag": "exp",
-    "to": "/insights/dns-under-the-hood"
-  },
-  {
     "title": "The Blueprint Before Training an LLM",
     "date": "2026-07-08",
     "readTime": 10,
@@ -54,27 +22,59 @@ export const latestInsights: readonly LatestInsight[] = [
     "to": "/insights/before-training-an-llm"
   },
   {
-    "title": "Building a Unified Observability Framework",
-    "date": "2026-07-07",
-    "readTime": 6,
-    "description": "Business, service, and infrastructure observability in large regulated enterprises. A three-layer model where every business outcome traces to system behaviour and infrastructure state.",
-    "typeTag": "pov",
-    "to": "/insights/unified-observability-framework"
-  },
-  {
-    "title": "The First Principles of Technology",
-    "date": "2026-07-06",
-    "readTime": 13,
-    "description": "First principles differ by decision layer. Five levels from business strategy to software engineering, and why applying the right principles at the right level matters.",
-    "typeTag": "arch",
-    "to": "/insights/first-principles-of-technology"
-  },
-  {
     "title": "Is MCP Really Necessary for Business Agents in Large Regulated Enterprises?",
     "date": "2026-07-05",
     "readTime": 10,
     "description": "MCP is a valuable standard for AI tool interoperability. For regulated business agents, the question is whether its benefits outweigh operational cost for your use case, not whether MCP is good.",
     "typeTag": "pov",
     "to": "/insights/mcp-for-enterprise-business-agents"
+  },
+  {
+    "title": "Retrieval Is a Governed Action",
+    "date": "2026-07-04",
+    "readTime": 12,
+    "description": "Retrieval is not a database query; it is a governed action. How Policy-Governed Agent Runtime applies to RAG when context construction must be scoped, auditable, and enforced before inference.",
+    "typeTag": "arch",
+    "to": "/insights/retrieval-is-a-governed-action"
+  },
+  {
+    "title": "How to Design an Intent Router for Agentic AI",
+    "date": "2026-07-02",
+    "readTime": 12,
+    "description": "A practical design guide for intent routing — route tables, layered classification, confidence thresholds, session stickiness, eval gates, and wiring dispatch into the agentic app before the model loop runs.",
+    "typeTag": "arch",
+    "to": "/insights/design-intent-router"
+  },
+  {
+    "title": "What Is an Intent Router — and Why It Matters in Agentic AI",
+    "date": "2026-07-02",
+    "readTime": 9,
+    "description": "An intent router is the first deterministic decision in an agent stack. It maps user requests to the right workflow, agent, and tool manifest before the model loop runs — and when it fails, every downstream stage can execute perfectly and still miss the user’s goal.",
+    "typeTag": "arch",
+    "to": "/insights/what-is-intent-router"
+  },
+  {
+    "title": "RAG Is Not a Database",
+    "date": "2026-06-27",
+    "readTime": 7,
+    "description": "RAG is runtime context construction at query time, not a storage layer you bolt onto an LLM.",
+    "typeTag": "lrn",
+    "to": "/insights/rag-is-not-a-database"
+  },
+  {
+    "title": "Policy-Governed Agent Runtime",
+    "date": "2026-06-25",
+    "readTime": 16,
+    "description": "Proposal is not permission. Agents propose tool calls; governance decides whether they run. An architecture breakdown of runtime trust boundaries for production agent systems in regulated industries.",
+    "typeTag": "arch",
+    "to": "/insights/policy-governed-agent-runtime"
+  },
+  {
+    "title": "AI Observability In Enterprise",
+    "date": "2026-06-18",
+    "readTime": 7,
+    "description": "AI observability is not a dashboard. It is a capture-and-retention architecture with five signals, five retention policies, and four consumers.",
+    "typeTag": "arch",
+    "to": "/insights/ai-observability-in-enterprise"
   }
 ];

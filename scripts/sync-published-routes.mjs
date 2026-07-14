@@ -57,6 +57,11 @@ function isDraft(frontmatter) {
   return /^(?!\/\/)\s*draft:\s*true\s*$/m.test(frontmatter);
 }
 
+/** Opt out of homepage latestInsights cards (`homepage: false`). */
+function isHomepageExcluded(frontmatter) {
+  return /^(?!\/\/)\s*homepage:\s*false\s*$/m.test(frontmatter);
+}
+
 function parseSlug(frontmatter, filePath) {
   const slugMatch = frontmatter.match(/^slug:\s*(.+)$/m);
   if (slugMatch) {
@@ -191,7 +196,8 @@ function scanLatestInsights() {
   for (const filePath of readMdxFiles('docs/insights')) {
     const content = fs.readFileSync(filePath, 'utf8');
     const frontmatter = parseFrontmatter(content);
-    if (!includeDrafts && isDraft(frontmatter)) {
+    // Homepage cards are production surface: never include drafts, even with --include-drafts.
+    if (isDraft(frontmatter) || isHomepageExcluded(frontmatter)) {
       continue;
     }
 
@@ -243,7 +249,7 @@ export const latestInsights: readonly LatestInsight[] = ${JSON.stringify(latestI
   fs.writeFileSync(LATEST_INSIGHTS_OUTPUT, body);
   console.log(`[sync-published-routes] Wrote ${path.relative(root, LATEST_INSIGHTS_OUTPUT)}`);
   console.log(
-    `  homepage insights: ${latestInsights.length} ${includeDrafts ? '(including drafts)' : 'published'}`,
+    `  homepage insights: ${latestInsights.length} (published only; drafts and homepage: false excluded)`,
   );
 }
 

@@ -1,0 +1,33 @@
+---
+description: Keep draft and homepage-excluded insights off the homepage latestInsights cards
+globs: docs/insights/**/*.mdx
+alwaysApply: false
+---
+
+# Insights homepage cards
+
+Homepage “latest insights” come from `src/data/latestInsights.generated.ts`, written by `scripts/sync-published-routes.mjs`.
+
+## Do not put these on the homepage
+
+1. **Drafts** (`draft: true`) — never homepage cards. The sync script skips them for `latestInsights` even if you pass `--include-drafts`.
+2. **Under the Hood (Internet foundations) series** and any insight that should stay off the home strip — set:
+
+```yaml
+homepage: false
+```
+
+Use for: DNS / CDN / Anycast / TCP vs UDP Under the Hood (and similar primers meant for dig/series reading, not homepage promotion).
+
+## Agent rules
+
+- When creating or editing Under the Hood Internet-foundations insights, include `homepage: false` in frontmatter (alongside `draft: true` until published).
+- Do **not** expect `--include-drafts` to preview those cards on the homepage. It may still refresh other published-route data; homepage cards stay published-only and respect `homepage: false`.
+- After insight create/rename, run `node scripts/sync-published-routes.mjs` (add `--include-drafts` only if you need draft routes elsewhere). Confirm new Under the Hood slugs are **absent** from `latestInsights.generated.ts`.
+- Do not hand-edit `latestInsights.generated.ts` to force a draft onto the homepage.
+
+## Related
+
+- Generator: `scripts/sync-published-routes.mjs` (`scanLatestInsights`, `isHomepageExcluded`)
+- UI: `src/components/HomepageBottom/index.tsx`
+- Authoring: `.cursor/skills/write-insight/SKILL.md`
