@@ -4,10 +4,61 @@
         <title>Jitender Sharma Blog</title>
         <link>https://jitendersharma.dev/insights</link>
         <description>Jitender Sharma Blog</description>
-        <lastBuildDate>Tue, 14 Jul 2026 00:00:00 GMT</lastBuildDate>
+        <lastBuildDate>Fri, 17 Jul 2026 00:00:00 GMT</lastBuildDate>
         <docs>https://validator.w3.org/feed/docs/rss2.html</docs>
         <generator>https://github.com/jpmonette/feed</generator>
         <language>en</language>
+        <item>
+            <title><![CDATA[LLM Hosting Options for Regulated Industries]]></title>
+            <link>https://jitendersharma.dev/insights/model-hosting-options-regulated-industries</link>
+            <guid>https://jitendersharma.dev/insights/model-hosting-options-regulated-industries</guid>
+            <pubDate>Fri, 17 Jul 2026 00:00:00 GMT</pubDate>
+            <description><![CDATA[From public SaaS to air-gapped on-prem: a practical ladder of LLM hosting options, and how to choose based on regulatory pressure and engineering maturity.]]></description>
+            <content:encoded><![CDATA[From public SaaS to air-gapped on-prem: a practical ladder of LLM hosting options, and how to choose based on regulatory pressure and engineering maturity.]]></content:encoded>
+            <category>AI &amp; Intelligence</category>
+            <category>Architecture</category>
+            <category>LLM</category>
+            <category>Compliance</category>
+            <category>G.A.I.N</category>
+        </item>
+        <item>
+            <title><![CDATA[HTTPS Encryption Lifecycle - Under the Hood]]></title>
+            <link>https://jitendersharma.dev/insights/https-encryption-lifecycle-under-the-hood</link>
+            <guid>https://jitendersharma.dev/insights/https-encryption-lifecycle-under-the-hood</guid>
+            <pubDate>Thu, 16 Jul 2026 00:00:00 GMT</pubDate>
+            <description><![CDATA[One HTTPS call from TCP open through TLS handshake, session keys, AEAD records, and teardown. Where asymmetric trust ends and symmetric bulk encryption begins.]]></description>
+            <content:encoded><![CDATA[One HTTPS call from TCP open through TLS handshake, session keys, AEAD records, and teardown. Where asymmetric trust ends and symmetric bulk encryption begins.]]></content:encoded>
+            <category>Platforms &amp; Engineering</category>
+            <category>Explainer</category>
+            <category>Under the Hood</category>
+            <category>Observability</category>
+            <category>Compliance</category>
+        </item>
+        <item>
+            <title><![CDATA[HTTP vs HTTPS - Under the Hood]]></title>
+            <link>https://jitendersharma.dev/insights/http-vs-https-under-the-hood</link>
+            <guid>https://jitendersharma.dev/insights/http-vs-https-under-the-hood</guid>
+            <pubDate>Wed, 15 Jul 2026 00:00:00 GMT</pubDate>
+            <description><![CDATA[HTTP is the application protocol for requests and responses. HTTPS is HTTP over TLS. Methods, status, headers, the TLS wrap, certificates, and which failures people mislabel as network or app.]]></description>
+            <content:encoded><![CDATA[HTTP is the application protocol for requests and responses. HTTPS is HTTP over TLS. Methods, status, headers, the TLS wrap, certificates, and which failures people mislabel as network or app.]]></content:encoded>
+            <category>Platforms &amp; Engineering</category>
+            <category>Explainer</category>
+            <category>Under the Hood</category>
+            <category>Observability</category>
+        </item>
+        <item>
+            <title><![CDATA[Symmetric vs Asymmetric Encryption - Under the Hood]]></title>
+            <link>https://jitendersharma.dev/insights/symmetric-vs-asymmetric-encryption-under-the-hood</link>
+            <guid>https://jitendersharma.dev/insights/symmetric-vs-asymmetric-encryption-under-the-hood</guid>
+            <pubDate>Wed, 15 Jul 2026 00:00:00 GMT</pubDate>
+            <description><![CDATA[Symmetric crypto shares one secret for speed. Asymmetric uses key pairs for trust and key exchange. Where each appears in TLS, APIs, data at rest, and which mistakes look like security.]]></description>
+            <content:encoded><![CDATA[Symmetric crypto shares one secret for speed. Asymmetric uses key pairs for trust and key exchange. Where each appears in TLS, APIs, data at rest, and which mistakes look like security.]]></content:encoded>
+            <category>Platforms &amp; Engineering</category>
+            <category>Explainer</category>
+            <category>Under the Hood</category>
+            <category>Observability</category>
+            <category>Compliance</category>
+        </item>
         <item>
             <title><![CDATA[Anycast vs Unicast - Under the Hood]]></title>
             <link>https://jitendersharma.dev/insights/anycast-vs-unicast-under-the-hood</link>
@@ -17,17 +68,7 @@
             <content:encoded><![CDATA[Unicast maps one IP to one place. Anycast maps one IP to many places and lets BGP pick the path. How both work, where DNS and CDNs use them, and which failures look like app bugs.]]></content:encoded>
             <category>Platforms &amp; Engineering</category>
             <category>Explainer</category>
-            <category>Observability</category>
-        </item>
-        <item>
-            <title><![CDATA[CDN - Under the Hood]]></title>
-            <link>https://jitendersharma.dev/insights/cdn-under-the-hood</link>
-            <guid>https://jitendersharma.dev/insights/cdn-under-the-hood</guid>
-            <pubDate>Tue, 14 Jul 2026 00:00:00 GMT</pubDate>
-            <description><![CDATA[A CDN is a cache-and-route fabric at the edge: PoPs, origin, cache keys, TTL, anycast, and the hit/miss path. Why delivery scales, and which failures people mislabel as app or network.]]></description>
-            <content:encoded><![CDATA[A CDN is a cache-and-route fabric at the edge: PoPs, origin, cache keys, TTL, anycast, and the hit/miss path. Why delivery scales, and which failures people mislabel as app or network.]]></content:encoded>
-            <category>Platforms &amp; Engineering</category>
-            <category>Explainer</category>
+            <category>Under the Hood</category>
             <category>Observability</category>
         </item>
         <item>
@@ -39,6 +80,19 @@
             <content:encoded><![CDATA[TCP is a reliable byte stream with handshake, ACKs, and congestion control. UDP is datagrams with no delivery guarantee. Components, steps, use cases, and which failures people mislabel as app bugs.]]></content:encoded>
             <category>Platforms &amp; Engineering</category>
             <category>Explainer</category>
+            <category>Under the Hood</category>
+            <category>Observability</category>
+        </item>
+        <item>
+            <title><![CDATA[CDN - Under the Hood]]></title>
+            <link>https://jitendersharma.dev/insights/cdn-under-the-hood</link>
+            <guid>https://jitendersharma.dev/insights/cdn-under-the-hood</guid>
+            <pubDate>Tue, 14 Jul 2026 00:00:00 GMT</pubDate>
+            <description><![CDATA[A CDN is a cache-and-route fabric at the edge: PoPs, origin, cache keys, TTL, anycast, and the hit/miss path. Why delivery scales, and which failures people mislabel as app or network.]]></description>
+            <content:encoded><![CDATA[A CDN is a cache-and-route fabric at the edge: PoPs, origin, cache keys, TTL, anycast, and the hit/miss path. Why delivery scales, and which failures people mislabel as app or network.]]></content:encoded>
+            <category>Platforms &amp; Engineering</category>
+            <category>Explainer</category>
+            <category>Under the Hood</category>
             <category>Observability</category>
         </item>
         <item>
@@ -50,6 +104,7 @@
             <content:encoded><![CDATA[DNS is a globally distributed, hierarchical, eventually consistent naming database. Stub, recursive resolver, root, TLD, authoritative name server, caching, TTL, and anycast.]]></content:encoded>
             <category>Platforms &amp; Engineering</category>
             <category>Explainer</category>
+            <category>Under the Hood</category>
             <category>Observability</category>
         </item>
         <item>

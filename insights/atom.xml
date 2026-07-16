@@ -2,11 +2,78 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://jitendersharma.dev/insights</id>
     <title>Jitender Sharma Blog</title>
-    <updated>2026-07-14T00:00:00.000Z</updated>
+    <updated>2026-07-17T00:00:00.000Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://jitendersharma.dev/insights"/>
     <subtitle>Jitender Sharma Blog</subtitle>
     <icon>https://jitendersharma.dev/img/favicon.ico</icon>
+    <entry>
+        <title type="html"><![CDATA[LLM Hosting Options for Regulated Industries]]></title>
+        <id>https://jitendersharma.dev/insights/model-hosting-options-regulated-industries</id>
+        <link href="https://jitendersharma.dev/insights/model-hosting-options-regulated-industries"/>
+        <updated>2026-07-17T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[From public SaaS to air-gapped on-prem: a practical ladder of LLM hosting options, and how to choose based on regulatory pressure and engineering maturity.]]></summary>
+        <content type="html"><![CDATA[From public SaaS to air-gapped on-prem: a practical ladder of LLM hosting options, and how to choose based on regulatory pressure and engineering maturity.]]></content>
+        <author>
+            <name>Jitender Sharma</name>
+            <uri>https://jitendersharma.dev</uri>
+        </author>
+        <category label="AI &amp; Intelligence" term="AI &amp; Intelligence"/>
+        <category label="Architecture" term="Architecture"/>
+        <category label="LLM" term="LLM"/>
+        <category label="Compliance" term="Compliance"/>
+        <category label="G.A.I.N" term="G.A.I.N"/>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[HTTPS Encryption Lifecycle - Under the Hood]]></title>
+        <id>https://jitendersharma.dev/insights/https-encryption-lifecycle-under-the-hood</id>
+        <link href="https://jitendersharma.dev/insights/https-encryption-lifecycle-under-the-hood"/>
+        <updated>2026-07-16T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[One HTTPS call from TCP open through TLS handshake, session keys, AEAD records, and teardown. Where asymmetric trust ends and symmetric bulk encryption begins.]]></summary>
+        <content type="html"><![CDATA[One HTTPS call from TCP open through TLS handshake, session keys, AEAD records, and teardown. Where asymmetric trust ends and symmetric bulk encryption begins.]]></content>
+        <author>
+            <name>Jitender Sharma</name>
+            <uri>https://jitendersharma.dev</uri>
+        </author>
+        <category label="Platforms &amp; Engineering" term="Platforms &amp; Engineering"/>
+        <category label="Explainer" term="Explainer"/>
+        <category label="Under the Hood" term="Under the Hood"/>
+        <category label="Observability" term="Observability"/>
+        <category label="Compliance" term="Compliance"/>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[HTTP vs HTTPS - Under the Hood]]></title>
+        <id>https://jitendersharma.dev/insights/http-vs-https-under-the-hood</id>
+        <link href="https://jitendersharma.dev/insights/http-vs-https-under-the-hood"/>
+        <updated>2026-07-15T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[HTTP is the application protocol for requests and responses. HTTPS is HTTP over TLS. Methods, status, headers, the TLS wrap, certificates, and which failures people mislabel as network or app.]]></summary>
+        <content type="html"><![CDATA[HTTP is the application protocol for requests and responses. HTTPS is HTTP over TLS. Methods, status, headers, the TLS wrap, certificates, and which failures people mislabel as network or app.]]></content>
+        <author>
+            <name>Jitender Sharma</name>
+            <uri>https://jitendersharma.dev</uri>
+        </author>
+        <category label="Platforms &amp; Engineering" term="Platforms &amp; Engineering"/>
+        <category label="Explainer" term="Explainer"/>
+        <category label="Under the Hood" term="Under the Hood"/>
+        <category label="Observability" term="Observability"/>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Symmetric vs Asymmetric Encryption - Under the Hood]]></title>
+        <id>https://jitendersharma.dev/insights/symmetric-vs-asymmetric-encryption-under-the-hood</id>
+        <link href="https://jitendersharma.dev/insights/symmetric-vs-asymmetric-encryption-under-the-hood"/>
+        <updated>2026-07-15T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[Symmetric crypto shares one secret for speed. Asymmetric uses key pairs for trust and key exchange. Where each appears in TLS, APIs, data at rest, and which mistakes look like security.]]></summary>
+        <content type="html"><![CDATA[Symmetric crypto shares one secret for speed. Asymmetric uses key pairs for trust and key exchange. Where each appears in TLS, APIs, data at rest, and which mistakes look like security.]]></content>
+        <author>
+            <name>Jitender Sharma</name>
+            <uri>https://jitendersharma.dev</uri>
+        </author>
+        <category label="Platforms &amp; Engineering" term="Platforms &amp; Engineering"/>
+        <category label="Explainer" term="Explainer"/>
+        <category label="Under the Hood" term="Under the Hood"/>
+        <category label="Observability" term="Observability"/>
+        <category label="Compliance" term="Compliance"/>
+    </entry>
     <entry>
         <title type="html"><![CDATA[Anycast vs Unicast - Under the Hood]]></title>
         <id>https://jitendersharma.dev/insights/anycast-vs-unicast-under-the-hood</id>
@@ -20,21 +87,7 @@
         </author>
         <category label="Platforms &amp; Engineering" term="Platforms &amp; Engineering"/>
         <category label="Explainer" term="Explainer"/>
-        <category label="Observability" term="Observability"/>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[CDN - Under the Hood]]></title>
-        <id>https://jitendersharma.dev/insights/cdn-under-the-hood</id>
-        <link href="https://jitendersharma.dev/insights/cdn-under-the-hood"/>
-        <updated>2026-07-14T00:00:00.000Z</updated>
-        <summary type="html"><![CDATA[A CDN is a cache-and-route fabric at the edge: PoPs, origin, cache keys, TTL, anycast, and the hit/miss path. Why delivery scales, and which failures people mislabel as app or network.]]></summary>
-        <content type="html"><![CDATA[A CDN is a cache-and-route fabric at the edge: PoPs, origin, cache keys, TTL, anycast, and the hit/miss path. Why delivery scales, and which failures people mislabel as app or network.]]></content>
-        <author>
-            <name>Jitender Sharma</name>
-            <uri>https://jitendersharma.dev</uri>
-        </author>
-        <category label="Platforms &amp; Engineering" term="Platforms &amp; Engineering"/>
-        <category label="Explainer" term="Explainer"/>
+        <category label="Under the Hood" term="Under the Hood"/>
         <category label="Observability" term="Observability"/>
     </entry>
     <entry>
@@ -50,6 +103,23 @@
         </author>
         <category label="Platforms &amp; Engineering" term="Platforms &amp; Engineering"/>
         <category label="Explainer" term="Explainer"/>
+        <category label="Under the Hood" term="Under the Hood"/>
+        <category label="Observability" term="Observability"/>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[CDN - Under the Hood]]></title>
+        <id>https://jitendersharma.dev/insights/cdn-under-the-hood</id>
+        <link href="https://jitendersharma.dev/insights/cdn-under-the-hood"/>
+        <updated>2026-07-14T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[A CDN is a cache-and-route fabric at the edge: PoPs, origin, cache keys, TTL, anycast, and the hit/miss path. Why delivery scales, and which failures people mislabel as app or network.]]></summary>
+        <content type="html"><![CDATA[A CDN is a cache-and-route fabric at the edge: PoPs, origin, cache keys, TTL, anycast, and the hit/miss path. Why delivery scales, and which failures people mislabel as app or network.]]></content>
+        <author>
+            <name>Jitender Sharma</name>
+            <uri>https://jitendersharma.dev</uri>
+        </author>
+        <category label="Platforms &amp; Engineering" term="Platforms &amp; Engineering"/>
+        <category label="Explainer" term="Explainer"/>
+        <category label="Under the Hood" term="Under the Hood"/>
         <category label="Observability" term="Observability"/>
     </entry>
     <entry>
@@ -65,6 +135,7 @@
         </author>
         <category label="Platforms &amp; Engineering" term="Platforms &amp; Engineering"/>
         <category label="Explainer" term="Explainer"/>
+        <category label="Under the Hood" term="Under the Hood"/>
         <category label="Observability" term="Observability"/>
     </entry>
     <entry>
