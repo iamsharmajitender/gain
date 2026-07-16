@@ -6,6 +6,7 @@ image: ./anycast-vs-unicast-under-the-hood.png
 tags:
   - platforms-engineering
   - exp
+  - under-the-hood
   - observability
 authors: [iamsharmajitender]
 homepage: false
@@ -25,8 +26,6 @@ import TabItem from '@theme/TabItem';
 Most engineers treat an IP as a single machine. For classic apps that is often true (**unicast**). For public DNS resolvers and many CDN edges it is not: the same IP is alive in many places at once (**anycast**).
 
 Mixing the two up produces the wrong incident story: "the app is slow in Sydney," "failover did not flip," or "traceroute shows a random PoP" when routing, not application code, chose the destination.
-
-This is an **explainer** in the **Under the Hood** series: what unicast and anycast are, how a packet reaches each, where DNS and CDNs use them, and which failure modes belong to routing. Companions: DNS Under the Hood / CDN Under the Hood (coming soon).
 
 :::tip[THE CLAIM]
 **Unicast is one IP → one place. Anycast is one IP → many places, with BGP (or equivalent) picking the path.** Same address on the stub or DNS answer; different number of hosts advertising it. Cloud edges did not invent this. They productised it.
@@ -190,7 +189,3 @@ Ask before you blame the app: is this IP unicast or anycast? How many places adv
 "One IP, one server" is a beginner default. Architects need the cast model.
 
 **Unicast** pins a destination to one place. **Anycast** shares a destination identity across many places and lets the network pick. DNS resolvers and CDN edges use that so configuration stays simple while capacity stays global. Treat cast type as part of the **control plane for reachability**, same seriousness you give DNS names and CDN cache keys.
-
-:::info[Builds on]
-Under the Hood series: DNS Under the Hood (coming soon) · CDN Under the Hood (coming soon) · The First Principles of Technology (coming soon)
-:::

@@ -6,6 +6,7 @@ image: ./dns-under-the-hood.png
 tags:
   - platforms-engineering
   - exp
+  - under-the-hood
   - observability
 authors: [iamsharmajitender]
 homepage: false
@@ -25,8 +26,6 @@ import TabItem from '@theme/TabItem';
 Most engineers know DNS as the service that converts a domain name into an IP address: `google.com` → `142.250.66.46`. That explanation is correct. It barely scratches the surface.
 
 DNS is not a lookup table. It is a globally distributed, fault-tolerant, hierarchical, eventually consistent database that handles hundreds of billions of queries every day while remaining one of the fastest systems on the Internet.
-
-This is an **explainer** in the **Under the Hood** series: how a lookup works (stub → recursive resolver → root → TLD → authoritative name server), why it scales, and which design principles modern cloud platforms still borrow from it.
 
 :::tip[THE CLAIM]
 **DNS is one of the largest distributed systems ever built, and it is still on every critical path.** It separates identity from location through hierarchical delegation, aggressive multi-layer caching, stateless queries, geographic anycast, and eventual consistency. Cloud and Kubernetes platforms did not replace those ideas. They reused them.
@@ -243,7 +242,3 @@ Ask before you ignore DNS: who runs each **authoritative name server**, which na
 DNS is often called "the Internet's phone book." Useful for beginners. Incomplete for architects.
 
 A lookup is always the same chain: **stub → recursive resolver → root name server → TLD name server → authoritative name server → IP**. On top of that sit caching, TTL, anycast, and delegation. Treat DNS as a **control plane for names**. Design zones, recursive resolvers, and TTL with the same seriousness you give service boundaries. Cloud platforms still depend on it.
-
-:::info[Builds on]
-Under the Hood series: CDN Under the Hood (coming soon) · The First Principles of Technology (coming soon)
-:::

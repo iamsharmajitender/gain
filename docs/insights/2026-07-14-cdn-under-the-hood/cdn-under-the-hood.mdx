@@ -6,6 +6,7 @@ image: ./cdn-under-the-hood.png
 tags:
   - platforms-engineering
   - exp
+  - under-the-hood
   - observability
 authors: [iamsharmajitender]
 homepage: false
@@ -25,8 +26,6 @@ import TabItem from '@theme/TabItem';
 Most engineers know a CDN as "a cache that makes websites faster." That explanation is correct. It barely scratches the surface.
 
 A CDN is not a bucket of files closer to users. It is a globally distributed cache-and-route fabric: many PoPs, one anycast or geo-mapped front door, aggressive multi-layer caching, TTL contracts, and eventual consistency across edges. Origin stays off the hot path until something misses.
-
-This is an **explainer** in the **Under the Hood** series: how a request works (client → edge PoP → cache → origin), why delivery scales, and which failure modes people mislabel as "the app" or "the network." Companion: DNS Under the Hood (coming soon).
 
 :::tip[THE CLAIM]
 **A CDN is a control plane for delivery, not "fast storage."** It keeps origin capacity off the critical path through geographic PoPs, cache keys, TTL-bounded staleness, and anycast (or equivalent) steering to a nearby healthy edge. Cloud front doors and API gateways reuse the same ideas.
@@ -261,7 +260,3 @@ Ask before you treat the CDN as "just infra": what is the **cache key**, what is
 A CDN is often called "a cache near the user." Useful for beginners. Incomplete for architects.
 
 A request is always the same chain: **client → DNS/anycast → edge PoP → cache hit or origin pull → response**. On top of that sit cache keys, TTL, purge, TLS, and optional WAF. Treat the CDN as a **control plane for delivery**. Design PoPs (via your provider), cache keys, and freshness with the same seriousness you give origin capacity. Platforms still depend on it.
-
-:::info[Builds on]
-Under the Hood series: DNS Under the Hood (coming soon) · The First Principles of Technology (coming soon)
-:::

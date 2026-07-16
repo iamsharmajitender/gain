@@ -14,6 +14,14 @@ export interface LatestInsight {
 
 export const latestInsights: readonly LatestInsight[] = [
   {
+    "title": "LLM Hosting Options for Regulated Industries",
+    "date": "2026-07-17",
+    "readTime": 13,
+    "description": "From public SaaS to air-gapped on-prem: a practical ladder of LLM hosting options, and how to choose based on regulatory pressure and engineering maturity.",
+    "typeTag": "arch",
+    "to": "/insights/model-hosting-options-regulated-industries"
+  },
+  {
     "title": "The Blueprint Before Training an LLM",
     "date": "2026-07-08",
     "readTime": 10,
@@ -68,13 +76,5 @@ export const latestInsights: readonly LatestInsight[] = [
     "description": "Proposal is not permission. Agents propose tool calls; governance decides whether they run. An architecture breakdown of runtime trust boundaries for production agent systems in regulated industries.",
     "typeTag": "arch",
     "to": "/insights/policy-governed-agent-runtime"
-  },
-  {
-    "title": "AI Observability In Enterprise",
-    "date": "2026-06-18",
-    "readTime": 7,
-    "description": "AI observability is not a dashboard. It is a capture-and-retention architecture with five signals, five retention policies, and four consumers.",
-    "typeTag": "arch",
-    "to": "/insights/ai-observability-in-enterprise"
   }
 ];

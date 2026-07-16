@@ -67,3 +67,7 @@ hallucinations:
 compliance:
   label: Compliance
   description: Regulatory patterns, audit readiness, and production controls in governed environments.
+
+under-the-hood:
+  label: Under the Hood
+  description: Step-by-step explainers of foundational mechanisms — protocols, crypto, models, and how the wire actually works.

@@ -14,7 +14,7 @@ Source of truth: `docs/insights/tags.yml`. Use **only** tag IDs defined there. D
 | --- | --- | --- |
 | **Domain** | **exactly 1**  | `system-architecture` · `platforms-engineering` · `ai-intelligence` · `governance-trust` |
 | **Voice** | **exactly 1** | `pov` · `arch` · `lrn` · `exp` |
-| **Topic** | **1+** | `gain` · `agents` · `observability` · `policy` · `llm` · `rag` · `hallucinations` · `compliance` |
+| **Topic** | **1+** | `gain` · `agents` · `observability` · `policy` · `llm` · `rag` · `hallucinations` · `compliance` · `under-the-hood` |
 
 **Frontmatter order:** domain tag first, then voice, then topic tag(s).
 
@@ -65,6 +65,7 @@ Add every subject the article materially covers. Common clusters:
 | `compliance` | audit, residency, regulated industries |
 | `hallucinations` | grounding failures, validation, system design |
 | `gain` | article explicitly maps to G.A.I.N framework pillars |
+| `under-the-hood` | staged explainers of foundations (DNS, TLS, LLM lifecycle, …) |
 
 Skip `gain` when the piece is topical but not framework-grounded.
 
