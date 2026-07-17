@@ -315,6 +315,14 @@ button.gain-sidebar__link {
   margin-bottom: 1rem;
 }
 
+/* Divider under every content H2 (docs, insights, standalone pages) */
+.theme-doc-markdown h2,
+.blog-post-page .gain-insights-page__main .markdown h2,
+.standalone-page__content h2 {
+  padding-bottom: 0.65rem;
+  border-bottom: 1px solid var(--gain-border);
+}
+
 /* ── Content tables ── */
 .gain-table-wrap {
   overflow-x: auto;
@@ -334,34 +342,64 @@ button.gain-sidebar__link {
 }
 
 .gain-table-wrap table {
+  /* Override Infima table { display: block } so width:100% fills the card. */
+  display: table;
   width: 100%;
-  min-width: 28rem;
+  min-width: 100%;
+  table-layout: auto;
   border-collapse: separate;
   border-spacing: 0;
   margin: 0;
   font-size: 0.9375rem;
-  line-height: 1.55;
+  line-height: 1.5;
   background: transparent;
+  overflow: visible;
 }
 
 .gain-table-wrap thead {
+  display: table-header-group;
   background: linear-gradient(180deg, #f8fafc 0%, #eef2f7 100%);
+}
+
+.gain-table-wrap tbody {
+  display: table-row-group;
+}
+
+.gain-table-wrap tr {
+  display: table-row;
 }
 
 [data-theme='dark'] .gain-table-wrap thead {
   background: rgba(148, 163, 184, 0.12);
 }
 
+.gain-table-wrap th,
+.gain-table-wrap td {
+  display: table-cell;
+  /* Reset Infima full-box borders; use our grid lines only. */
+  border: none;
+  border-right: 1px solid var(--gain-border);
+  border-bottom: 1px solid var(--gain-border);
+  padding: 0.65rem 1rem;
+  text-align: left;
+  vertical-align: top;
+  word-break: normal;
+  overflow-wrap: break-word;
+}
+
+.gain-table-wrap th:last-child,
+.gain-table-wrap td:last-child {
+  border-right: none;
+}
+
 .gain-table-wrap th {
-  padding: 0.8rem 1.25rem;
   font-size: 0.6875rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.06em;
   color: var(--gain-blue-dark);
-  text-align: left;
-  vertical-align: bottom;
-  border-bottom: 1px solid var(--gain-border);
+  vertical-align: middle;
+  background: transparent;
 }
 
 [data-theme='dark'] .gain-table-wrap th {
@@ -369,9 +407,6 @@ button.gain-sidebar__link {
 }
 
 .gain-table-wrap td {
-  padding: 0.9rem 1.25rem;
-  vertical-align: top;
-  border-bottom: 1px solid var(--gain-border);
   color: var(--gain-text);
 }
 
@@ -406,7 +441,7 @@ button.gain-sidebar__link {
 @media (max-width: 576px) {
   .gain-table-wrap th,
   .gain-table-wrap td {
-    padding: 0.7rem 0.875rem;
+    padding: 0.55rem 0.75rem;
     font-size: 0.875rem;
   }
 
@@ -428,7 +463,22 @@ button.gain-sidebar__link {
   white-space: nowrap;
 }
 
-/* Three-column comparison tables (e.g. database vs RAG) */
+/* 2-column tables: give the need/label column a bit more room */
+.gain-table-wrap.gain-table-cols-2 table {
+  table-layout: fixed;
+}
+
+.gain-table-wrap.gain-table-cols-2 thead th:first-child,
+.gain-table-wrap.gain-table-cols-2 tbody td:first-child {
+  width: 58%;
+}
+
+.gain-table-wrap.gain-table-cols-2 thead th:last-child,
+.gain-table-wrap.gain-table-cols-2 tbody td:last-child {
+  width: 42%;
+}
+
+/* Three-column comparison tables */
 .gain-table-wrap.gain-table-compare {
   width: 100%;
 }
@@ -439,29 +489,103 @@ button.gain-sidebar__link {
   table-layout: fixed;
 }
 
-.gain-table-wrap.gain-table-compare thead th:first-child {
-  width: 14%;
-}
-
-.gain-table-wrap.gain-table-compare thead th:nth-child(2),
-.gain-table-wrap.gain-table-compare thead th:nth-child(3) {
-  width: 43%;
-}
-
-.gain-table-wrap.gain-table-compare tbody td:first-child {
-  width: 14%;
+/* Only when the table truly has exactly 3 columns */
+.gain-table-wrap.gain-table-compare:has(thead tr > :nth-child(3):last-child) thead th:first-child,
+.gain-table-wrap.gain-table-compare:has(thead tr > :nth-child(3):last-child) tbody td:first-child {
+  width: 22%;
   white-space: normal;
 }
 
-.gain-table-wrap.gain-table-compare tbody td:nth-child(2),
-.gain-table-wrap.gain-table-compare tbody td:nth-child(3) {
-  width: 43%;
+.gain-table-wrap.gain-table-compare:has(thead tr > :nth-child(3):last-child) thead th:nth-child(2),
+.gain-table-wrap.gain-table-compare:has(thead tr > :nth-child(3):last-child) tbody td:nth-child(2),
+.gain-table-wrap.gain-table-compare:has(thead tr > :nth-child(3):last-child) thead th:nth-child(3),
+.gain-table-wrap.gain-table-compare:has(thead tr > :nth-child(3):last-child) tbody td:nth-child(3) {
+  width: 39%;
 }
 
 .blog-post-page .gain-insights-page__main .markdown .gain-table-wrap.gain-table-compare,
 .theme-doc-markdown .gain-table-wrap.gain-table-compare {
   width: 100%;
   max-width: none;
+}
+
+/* Four-column tables: short middle cols, wider prose cols */
+.gain-table-wrap.gain-table-cols-4 table {
+  table-layout: fixed;
+}
+
+.gain-table-wrap.gain-table-cols-4 thead th:nth-child(1),
+.gain-table-wrap.gain-table-cols-4 tbody td:nth-child(1) {
+  width: 24%;
+}
+
+.gain-table-wrap.gain-table-cols-4 thead th:nth-child(2),
+.gain-table-wrap.gain-table-cols-4 tbody td:nth-child(2) {
+  width: 12%;
+}
+
+.gain-table-wrap.gain-table-cols-4 thead th:nth-child(3),
+.gain-table-wrap.gain-table-cols-4 tbody td:nth-child(3) {
+  width: 40%;
+}
+
+.gain-table-wrap.gain-table-cols-4 thead th:nth-child(4),
+.gain-table-wrap.gain-table-cols-4 tbody td:nth-child(4) {
+  width: 24%;
+}
+
+/* Robust: size by actual column count even if an old compare class is still on the wrap */
+.gain-table-wrap:has(thead tr > :nth-child(4):last-child) table,
+.gain-table-wrap.gain-table-compare:has(thead tr > :nth-child(4)) table {
+  table-layout: fixed;
+}
+
+.gain-table-wrap:has(thead tr > :nth-child(4):last-child) thead th:nth-child(1),
+.gain-table-wrap:has(thead tr > :nth-child(4):last-child) tbody td:nth-child(1),
+.gain-table-wrap.gain-table-compare:has(thead tr > :nth-child(4)) thead th:nth-child(1),
+.gain-table-wrap.gain-table-compare:has(thead tr > :nth-child(4)) tbody td:nth-child(1) {
+  width: 22% !important;
+}
+
+.gain-table-wrap:has(thead tr > :nth-child(4):last-child) thead th:nth-child(2),
+.gain-table-wrap:has(thead tr > :nth-child(4):last-child) tbody td:nth-child(2),
+.gain-table-wrap.gain-table-compare:has(thead tr > :nth-child(4)) thead th:nth-child(2),
+.gain-table-wrap.gain-table-compare:has(thead tr > :nth-child(4)) tbody td:nth-child(2) {
+  width: 12% !important;
+}
+
+.gain-table-wrap:has(thead tr > :nth-child(4):last-child) thead th:nth-child(3),
+.gain-table-wrap:has(thead tr > :nth-child(4):last-child) tbody td:nth-child(3),
+.gain-table-wrap.gain-table-compare:has(thead tr > :nth-child(4)) thead th:nth-child(3),
+.gain-table-wrap.gain-table-compare:has(thead tr > :nth-child(4)) tbody td:nth-child(3) {
+  width: 42% !important;
+}
+
+.gain-table-wrap:has(thead tr > :nth-child(4):last-child) thead th:nth-child(4),
+.gain-table-wrap:has(thead tr > :nth-child(4):last-child) tbody td:nth-child(4),
+.gain-table-wrap.gain-table-compare:has(thead tr > :nth-child(4)) thead th:nth-child(4),
+.gain-table-wrap.gain-table-compare:has(thead tr > :nth-child(4)) tbody td:nth-child(4) {
+  width: 24% !important;
+}
+
+.gain-table-wrap:has(thead tr > :nth-child(2):last-child) table {
+  table-layout: fixed;
+}
+
+.gain-table-wrap:has(thead tr > :nth-child(2):last-child) thead th:first-child,
+.gain-table-wrap:has(thead tr > :nth-child(2):last-child) tbody td:first-child {
+  width: 58%;
+}
+
+.gain-table-wrap:has(thead tr > :nth-child(2):last-child) thead th:last-child,
+.gain-table-wrap:has(thead tr > :nth-child(2):last-child) tbody td:last-child {
+  width: 42%;
+}
+
+/* 5+ columns: keep readable min width; wrap scrolls horizontally */
+.gain-table-wrap.gain-table-cols-wide table {
+  table-layout: auto;
+  min-width: 40rem;
 }
 
 /* Four-column tables with a short numeric "Example" column */
@@ -476,35 +600,18 @@ button.gain-sidebar__link {
 
 .gain-table-wrap.gain-table-narrow-col2 thead th:nth-child(2),
 .gain-table-wrap.gain-table-narrow-col2 tbody td:nth-child(2) {
-  width: 5%;
+  width: 8%;
   min-width: 2.5rem;
 }
 
 .gain-table-wrap.gain-table-narrow-col2 thead th:nth-child(3),
 .gain-table-wrap.gain-table-narrow-col2 tbody td:nth-child(3) {
-  width: 40%;
+  width: 38%;
 }
 
 .gain-table-wrap.gain-table-narrow-col2 thead th:nth-child(4),
 .gain-table-wrap.gain-table-narrow-col2 tbody td:nth-child(4) {
-  width: 40%;
-}
-
-/* gain-table-compare also applies to 4-col tables — need higher specificity */
-.gain-table-wrap.gain-table-compare.gain-table-narrow-col2 thead th:nth-child(2),
-.gain-table-wrap.gain-table-compare.gain-table-narrow-col2 tbody td:nth-child(2) {
-  width: 5%;
-  min-width: 2.5rem;
-}
-
-.gain-table-wrap.gain-table-compare.gain-table-narrow-col2 thead th:nth-child(3),
-.gain-table-wrap.gain-table-compare.gain-table-narrow-col2 tbody td:nth-child(3) {
-  width: 40%;
-}
-
-.gain-table-wrap.gain-table-compare.gain-table-narrow-col2 thead th:nth-child(4),
-.gain-table-wrap.gain-table-compare.gain-table-narrow-col2 tbody td:nth-child(4) {
-  width: 40%;
+  width: 39%;
 }
 
 .gain-section-lead {

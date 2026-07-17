@@ -71,3 +71,7 @@ compliance:
 under-the-hood:
   label: Under the Hood
   description: Step-by-step explainers of foundational mechanisms — protocols, crypto, models, and how the wire actually works.
+
+system-design:
+  label: System Design
+  description: Large-scale system design case studies — pipelines, tradeoffs, and how production architectures fit together end to end.

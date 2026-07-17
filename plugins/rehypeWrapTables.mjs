@@ -25,8 +25,17 @@ export default function rehypeWrapTables() {
         const columnCount = headerCells.length;
 
         const className = ['gain-table-wrap'];
-        if (columnCount >= 3) {
+
+        // Column-count classes drive width recipes. Do not apply the 3-col
+        // compare recipe to 4+ col tables (it wastes space and forces wrapping).
+        if (columnCount === 2) {
+          className.push('gain-table-cols-2');
+        } else if (columnCount === 3) {
           className.push('gain-table-compare');
+        } else if (columnCount === 4) {
+          className.push('gain-table-cols-4');
+        } else if (columnCount >= 5) {
+          className.push('gain-table-cols-wide');
         }
 
         const secondHeader = textContent(headerCells[1]).trim().toLowerCase();
