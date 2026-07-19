@@ -16,11 +16,17 @@ import {backToInsights} from '@site/src/data/contextualBackLinks';
 import InsightsTagsNav from '@site/src/components/InsightsTagsNav';
 import InsightsBlogPaginator from '@site/src/components/InsightsBlogPaginator';
 
+const TAG_SOCIAL_IMAGES: Record<string, string> = {
+  '/insights/tags/under-the-hood': 'img/insights/under-the-hood-social.png',
+};
+
 function BlogTagsPostsPageMetadata({tag}: Props): ReactNode {
   const title = useBlogTagsPostsPageTitle(tag);
+  const image = TAG_SOCIAL_IMAGES[tag.permalink];
+
   return (
     <>
-      <PageMetadata title={title} description={tag.description} />
+      <PageMetadata title={title} description={tag.description} image={image} />
       <SearchMetadata tag="blog_tags_posts" />
     </>
   );
