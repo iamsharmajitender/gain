@@ -2,11 +2,75 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://jitendersharma.dev/insights</id>
     <title>Jitender Sharma Blog</title>
-    <updated>2026-07-17T00:00:00.000Z</updated>
+    <updated>2026-07-19T00:00:00.000Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://jitendersharma.dev/insights"/>
     <subtitle>Jitender Sharma Blog</subtitle>
     <icon>https://jitendersharma.dev/img/favicon.ico</icon>
+    <entry>
+        <title type="html"><![CDATA[REST vs gRPC - Under the Hood]]></title>
+        <id>https://jitendersharma.dev/insights/rest-vs-grpc-under-the-hood</id>
+        <link href="https://jitendersharma.dev/insights/rest-vs-grpc-under-the-hood"/>
+        <updated>2026-07-19T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[Resource APIs over HTTP/JSON versus function calls over HTTP/2 and protobuf. Stack placement, streaming, and when enterprises use both.]]></summary>
+        <content type="html"><![CDATA[Resource APIs over HTTP/JSON versus function calls over HTTP/2 and protobuf. Stack placement, streaming, and when enterprises use both.]]></content>
+        <author>
+            <name>Jitender Sharma</name>
+            <uri>https://jitendersharma.dev</uri>
+        </author>
+        <category label="Platforms &amp; Engineering" term="Platforms &amp; Engineering"/>
+        <category label="Explainer" term="Explainer"/>
+        <category label="Under the Hood" term="Under the Hood"/>
+        <category label="Observability" term="Observability"/>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[HTTP/1.1 vs HTTP/2 vs HTTP/3 - Under the Hood]]></title>
+        <id>https://jitendersharma.dev/insights/http-1-vs-http-2-vs-http-3-under-the-hood</id>
+        <link href="https://jitendersharma.dev/insights/http-1-vs-http-2-vs-http-3-under-the-hood"/>
+        <updated>2026-07-18T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[One HTTP application model, three wire contracts: text + TCP, multiplexed binary on TLS/TCP, and HTTP over QUIC on UDP. Head-of-line blocking, streams, and when each wins.]]></summary>
+        <content type="html"><![CDATA[One HTTP application model, three wire contracts: text + TCP, multiplexed binary on TLS/TCP, and HTTP over QUIC on UDP. Head-of-line blocking, streams, and when each wins.]]></content>
+        <author>
+            <name>Jitender Sharma</name>
+            <uri>https://jitendersharma.dev</uri>
+        </author>
+        <category label="Platforms &amp; Engineering" term="Platforms &amp; Engineering"/>
+        <category label="Explainer" term="Explainer"/>
+        <category label="Under the Hood" term="Under the Hood"/>
+        <category label="Observability" term="Observability"/>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Load Balancer - Under the Hood]]></title>
+        <id>https://jitendersharma.dev/insights/load-balancer-under-the-hood</id>
+        <link href="https://jitendersharma.dev/insights/load-balancer-under-the-hood"/>
+        <updated>2026-07-18T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[Layer 4 vs Layer 7 load balancing: what each sees on the wire, network vs application load balancers, algorithms, health checks, and when to use which.]]></summary>
+        <content type="html"><![CDATA[Layer 4 vs Layer 7 load balancing: what each sees on the wire, network vs application load balancers, algorithms, health checks, and when to use which.]]></content>
+        <author>
+            <name>Jitender Sharma</name>
+            <uri>https://jitendersharma.dev</uri>
+        </author>
+        <category label="Platforms &amp; Engineering" term="Platforms &amp; Engineering"/>
+        <category label="Explainer" term="Explainer"/>
+        <category label="Under the Hood" term="Under the Hood"/>
+        <category label="Observability" term="Observability"/>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[SQL vs NoSQL - Under the Hood]]></title>
+        <id>https://jitendersharma.dev/insights/sql-vs-nosql-under-the-hood</id>
+        <link href="https://jitendersharma.dev/insights/sql-vs-nosql-under-the-hood"/>
+        <updated>2026-07-18T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[Relational tables, document stores, key-value, graph, vector, and time-series: what each model is, when to use it, when not to, and the tradeoffs under the hood.]]></summary>
+        <content type="html"><![CDATA[Relational tables, document stores, key-value, graph, vector, and time-series: what each model is, when to use it, when not to, and the tradeoffs under the hood.]]></content>
+        <author>
+            <name>Jitender Sharma</name>
+            <uri>https://jitendersharma.dev</uri>
+        </author>
+        <category label="Platforms &amp; Engineering" term="Platforms &amp; Engineering"/>
+        <category label="Explainer" term="Explainer"/>
+        <category label="Under the Hood" term="Under the Hood"/>
+        <category label="RAG" term="RAG"/>
+    </entry>
     <entry>
         <title type="html"><![CDATA[LLM Hosting Options for Regulated Industries]]></title>
         <id>https://jitendersharma.dev/insights/model-hosting-options-regulated-industries</id>
@@ -75,12 +139,12 @@
         <category label="Compliance" term="Compliance"/>
     </entry>
     <entry>
-        <title type="html"><![CDATA[Anycast vs Unicast - Under the Hood]]></title>
-        <id>https://jitendersharma.dev/insights/anycast-vs-unicast-under-the-hood</id>
-        <link href="https://jitendersharma.dev/insights/anycast-vs-unicast-under-the-hood"/>
+        <title type="html"><![CDATA[CDN - Under the Hood]]></title>
+        <id>https://jitendersharma.dev/insights/cdn-under-the-hood</id>
+        <link href="https://jitendersharma.dev/insights/cdn-under-the-hood"/>
         <updated>2026-07-14T00:00:00.000Z</updated>
-        <summary type="html"><![CDATA[Unicast maps one IP to one place. Anycast maps one IP to many places and lets BGP pick the path. How both work, where DNS and CDNs use them, and which failures look like app bugs.]]></summary>
-        <content type="html"><![CDATA[Unicast maps one IP to one place. Anycast maps one IP to many places and lets BGP pick the path. How both work, where DNS and CDNs use them, and which failures look like app bugs.]]></content>
+        <summary type="html"><![CDATA[A CDN is a cache-and-route fabric at the edge: PoPs, origin, cache keys, TTL, anycast, and the hit/miss path. Why delivery scales, and which failures people mislabel as app or network.]]></summary>
+        <content type="html"><![CDATA[A CDN is a cache-and-route fabric at the edge: PoPs, origin, cache keys, TTL, anycast, and the hit/miss path. Why delivery scales, and which failures people mislabel as app or network.]]></content>
         <author>
             <name>Jitender Sharma</name>
             <uri>https://jitendersharma.dev</uri>
@@ -107,12 +171,12 @@
         <category label="Observability" term="Observability"/>
     </entry>
     <entry>
-        <title type="html"><![CDATA[CDN - Under the Hood]]></title>
-        <id>https://jitendersharma.dev/insights/cdn-under-the-hood</id>
-        <link href="https://jitendersharma.dev/insights/cdn-under-the-hood"/>
-        <updated>2026-07-14T00:00:00.000Z</updated>
-        <summary type="html"><![CDATA[A CDN is a cache-and-route fabric at the edge: PoPs, origin, cache keys, TTL, anycast, and the hit/miss path. Why delivery scales, and which failures people mislabel as app or network.]]></summary>
-        <content type="html"><![CDATA[A CDN is a cache-and-route fabric at the edge: PoPs, origin, cache keys, TTL, anycast, and the hit/miss path. Why delivery scales, and which failures people mislabel as app or network.]]></content>
+        <title type="html"><![CDATA[Anycast vs Unicast - Under the Hood]]></title>
+        <id>https://jitendersharma.dev/insights/anycast-vs-unicast-under-the-hood</id>
+        <link href="https://jitendersharma.dev/insights/anycast-vs-unicast-under-the-hood"/>
+        <updated>2026-07-13T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[Unicast maps one IP to one place. Anycast maps one IP to many places and lets BGP pick the path. How both work, where DNS and CDNs use them, and which failures look like app bugs.]]></summary>
+        <content type="html"><![CDATA[Unicast maps one IP to one place. Anycast maps one IP to many places and lets BGP pick the path. How both work, where DNS and CDNs use them, and which failures look like app bugs.]]></content>
         <author>
             <name>Jitender Sharma</name>
             <uri>https://jitendersharma.dev</uri>
@@ -270,36 +334,5 @@
         <category label="Architecture" term="Architecture"/>
         <category label="G.A.I.N" term="G.A.I.N"/>
         <category label="Observability" term="Observability"/>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[Hallucinations Is a System Design Problem]]></title>
-        <id>https://jitendersharma.dev/insights/hallucinations-is-a-system-design-problem-not-model-problem</id>
-        <link href="https://jitendersharma.dev/insights/hallucinations-is-a-system-design-problem-not-model-problem"/>
-        <updated>2026-06-16T00:00:00.000Z</updated>
-        <summary type="html"><![CDATA[Hallucination is not the model failing. It is the model succeeding at the wrong objective in a system that never gave it the right one.]]></summary>
-        <content type="html"><![CDATA[Hallucination is not the model failing. It is the model succeeding at the wrong objective in a system that never gave it the right one.]]></content>
-        <author>
-            <name>Jitender Sharma</name>
-            <uri>https://jitendersharma.dev</uri>
-        </author>
-        <category label="AI &amp; Intelligence" term="AI &amp; Intelligence"/>
-        <category label="Point of View" term="Point of View"/>
-        <category label="LLM" term="LLM"/>
-        <category label="Hallucinations" term="Hallucinations"/>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[How LLM Works Under the Hood]]></title>
-        <id>https://jitendersharma.dev/insights/how-llm-works-under-the-hood</id>
-        <link href="https://jitendersharma.dev/insights/how-llm-works-under-the-hood"/>
-        <updated>2026-06-09T00:00:00.000Z</updated>
-        <summary type="html"><![CDATA[A 20,000-ft view of the LLM lifecycle and why understanding the four stages matters for enterprise architecture.]]></summary>
-        <content type="html"><![CDATA[A 20,000-ft view of the LLM lifecycle and why understanding the four stages matters for enterprise architecture.]]></content>
-        <author>
-            <name>Jitender Sharma</name>
-            <uri>https://jitendersharma.dev</uri>
-        </author>
-        <category label="Strategy &amp; Architecture" term="Strategy &amp; Architecture"/>
-        <category label="Explainer" term="Explainer"/>
-        <category label="LLM" term="LLM"/>
     </entry>
 </feed>

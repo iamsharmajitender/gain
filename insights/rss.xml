@@ -4,10 +4,58 @@
         <title>Jitender Sharma Blog</title>
         <link>https://jitendersharma.dev/insights</link>
         <description>Jitender Sharma Blog</description>
-        <lastBuildDate>Fri, 17 Jul 2026 00:00:00 GMT</lastBuildDate>
+        <lastBuildDate>Sun, 19 Jul 2026 00:00:00 GMT</lastBuildDate>
         <docs>https://validator.w3.org/feed/docs/rss2.html</docs>
         <generator>https://github.com/jpmonette/feed</generator>
         <language>en</language>
+        <item>
+            <title><![CDATA[REST vs gRPC - Under the Hood]]></title>
+            <link>https://jitendersharma.dev/insights/rest-vs-grpc-under-the-hood</link>
+            <guid>https://jitendersharma.dev/insights/rest-vs-grpc-under-the-hood</guid>
+            <pubDate>Sun, 19 Jul 2026 00:00:00 GMT</pubDate>
+            <description><![CDATA[Resource APIs over HTTP/JSON versus function calls over HTTP/2 and protobuf. Stack placement, streaming, and when enterprises use both.]]></description>
+            <content:encoded><![CDATA[Resource APIs over HTTP/JSON versus function calls over HTTP/2 and protobuf. Stack placement, streaming, and when enterprises use both.]]></content:encoded>
+            <category>Platforms &amp; Engineering</category>
+            <category>Explainer</category>
+            <category>Under the Hood</category>
+            <category>Observability</category>
+        </item>
+        <item>
+            <title><![CDATA[HTTP/1.1 vs HTTP/2 vs HTTP/3 - Under the Hood]]></title>
+            <link>https://jitendersharma.dev/insights/http-1-vs-http-2-vs-http-3-under-the-hood</link>
+            <guid>https://jitendersharma.dev/insights/http-1-vs-http-2-vs-http-3-under-the-hood</guid>
+            <pubDate>Sat, 18 Jul 2026 00:00:00 GMT</pubDate>
+            <description><![CDATA[One HTTP application model, three wire contracts: text + TCP, multiplexed binary on TLS/TCP, and HTTP over QUIC on UDP. Head-of-line blocking, streams, and when each wins.]]></description>
+            <content:encoded><![CDATA[One HTTP application model, three wire contracts: text + TCP, multiplexed binary on TLS/TCP, and HTTP over QUIC on UDP. Head-of-line blocking, streams, and when each wins.]]></content:encoded>
+            <category>Platforms &amp; Engineering</category>
+            <category>Explainer</category>
+            <category>Under the Hood</category>
+            <category>Observability</category>
+        </item>
+        <item>
+            <title><![CDATA[Load Balancer - Under the Hood]]></title>
+            <link>https://jitendersharma.dev/insights/load-balancer-under-the-hood</link>
+            <guid>https://jitendersharma.dev/insights/load-balancer-under-the-hood</guid>
+            <pubDate>Sat, 18 Jul 2026 00:00:00 GMT</pubDate>
+            <description><![CDATA[Layer 4 vs Layer 7 load balancing: what each sees on the wire, network vs application load balancers, algorithms, health checks, and when to use which.]]></description>
+            <content:encoded><![CDATA[Layer 4 vs Layer 7 load balancing: what each sees on the wire, network vs application load balancers, algorithms, health checks, and when to use which.]]></content:encoded>
+            <category>Platforms &amp; Engineering</category>
+            <category>Explainer</category>
+            <category>Under the Hood</category>
+            <category>Observability</category>
+        </item>
+        <item>
+            <title><![CDATA[SQL vs NoSQL - Under the Hood]]></title>
+            <link>https://jitendersharma.dev/insights/sql-vs-nosql-under-the-hood</link>
+            <guid>https://jitendersharma.dev/insights/sql-vs-nosql-under-the-hood</guid>
+            <pubDate>Sat, 18 Jul 2026 00:00:00 GMT</pubDate>
+            <description><![CDATA[Relational tables, document stores, key-value, graph, vector, and time-series: what each model is, when to use it, when not to, and the tradeoffs under the hood.]]></description>
+            <content:encoded><![CDATA[Relational tables, document stores, key-value, graph, vector, and time-series: what each model is, when to use it, when not to, and the tradeoffs under the hood.]]></content:encoded>
+            <category>Platforms &amp; Engineering</category>
+            <category>Explainer</category>
+            <category>Under the Hood</category>
+            <category>RAG</category>
+        </item>
         <item>
             <title><![CDATA[LLM Hosting Options for Regulated Industries]]></title>
             <link>https://jitendersharma.dev/insights/model-hosting-options-regulated-industries</link>
@@ -60,12 +108,12 @@
             <category>Compliance</category>
         </item>
         <item>
-            <title><![CDATA[Anycast vs Unicast - Under the Hood]]></title>
-            <link>https://jitendersharma.dev/insights/anycast-vs-unicast-under-the-hood</link>
-            <guid>https://jitendersharma.dev/insights/anycast-vs-unicast-under-the-hood</guid>
+            <title><![CDATA[CDN - Under the Hood]]></title>
+            <link>https://jitendersharma.dev/insights/cdn-under-the-hood</link>
+            <guid>https://jitendersharma.dev/insights/cdn-under-the-hood</guid>
             <pubDate>Tue, 14 Jul 2026 00:00:00 GMT</pubDate>
-            <description><![CDATA[Unicast maps one IP to one place. Anycast maps one IP to many places and lets BGP pick the path. How both work, where DNS and CDNs use them, and which failures look like app bugs.]]></description>
-            <content:encoded><![CDATA[Unicast maps one IP to one place. Anycast maps one IP to many places and lets BGP pick the path. How both work, where DNS and CDNs use them, and which failures look like app bugs.]]></content:encoded>
+            <description><![CDATA[A CDN is a cache-and-route fabric at the edge: PoPs, origin, cache keys, TTL, anycast, and the hit/miss path. Why delivery scales, and which failures people mislabel as app or network.]]></description>
+            <content:encoded><![CDATA[A CDN is a cache-and-route fabric at the edge: PoPs, origin, cache keys, TTL, anycast, and the hit/miss path. Why delivery scales, and which failures people mislabel as app or network.]]></content:encoded>
             <category>Platforms &amp; Engineering</category>
             <category>Explainer</category>
             <category>Under the Hood</category>
@@ -84,12 +132,12 @@
             <category>Observability</category>
         </item>
         <item>
-            <title><![CDATA[CDN - Under the Hood]]></title>
-            <link>https://jitendersharma.dev/insights/cdn-under-the-hood</link>
-            <guid>https://jitendersharma.dev/insights/cdn-under-the-hood</guid>
-            <pubDate>Tue, 14 Jul 2026 00:00:00 GMT</pubDate>
-            <description><![CDATA[A CDN is a cache-and-route fabric at the edge: PoPs, origin, cache keys, TTL, anycast, and the hit/miss path. Why delivery scales, and which failures people mislabel as app or network.]]></description>
-            <content:encoded><![CDATA[A CDN is a cache-and-route fabric at the edge: PoPs, origin, cache keys, TTL, anycast, and the hit/miss path. Why delivery scales, and which failures people mislabel as app or network.]]></content:encoded>
+            <title><![CDATA[Anycast vs Unicast - Under the Hood]]></title>
+            <link>https://jitendersharma.dev/insights/anycast-vs-unicast-under-the-hood</link>
+            <guid>https://jitendersharma.dev/insights/anycast-vs-unicast-under-the-hood</guid>
+            <pubDate>Mon, 13 Jul 2026 00:00:00 GMT</pubDate>
+            <description><![CDATA[Unicast maps one IP to one place. Anycast maps one IP to many places and lets BGP pick the path. How both work, where DNS and CDNs use them, and which failures look like app bugs.]]></description>
+            <content:encoded><![CDATA[Unicast maps one IP to one place. Anycast maps one IP to many places and lets BGP pick the path. How both work, where DNS and CDNs use them, and which failures look like app bugs.]]></content:encoded>
             <category>Platforms &amp; Engineering</category>
             <category>Explainer</category>
             <category>Under the Hood</category>
@@ -207,29 +255,6 @@
             <category>Architecture</category>
             <category>G.A.I.N</category>
             <category>Observability</category>
-        </item>
-        <item>
-            <title><![CDATA[Hallucinations Is a System Design Problem]]></title>
-            <link>https://jitendersharma.dev/insights/hallucinations-is-a-system-design-problem-not-model-problem</link>
-            <guid>https://jitendersharma.dev/insights/hallucinations-is-a-system-design-problem-not-model-problem</guid>
-            <pubDate>Tue, 16 Jun 2026 00:00:00 GMT</pubDate>
-            <description><![CDATA[Hallucination is not the model failing. It is the model succeeding at the wrong objective in a system that never gave it the right one.]]></description>
-            <content:encoded><![CDATA[Hallucination is not the model failing. It is the model succeeding at the wrong objective in a system that never gave it the right one.]]></content:encoded>
-            <category>AI &amp; Intelligence</category>
-            <category>Point of View</category>
-            <category>LLM</category>
-            <category>Hallucinations</category>
-        </item>
-        <item>
-            <title><![CDATA[How LLM Works Under the Hood]]></title>
-            <link>https://jitendersharma.dev/insights/how-llm-works-under-the-hood</link>
-            <guid>https://jitendersharma.dev/insights/how-llm-works-under-the-hood</guid>
-            <pubDate>Tue, 09 Jun 2026 00:00:00 GMT</pubDate>
-            <description><![CDATA[A 20,000-ft view of the LLM lifecycle and why understanding the four stages matters for enterprise architecture.]]></description>
-            <content:encoded><![CDATA[A 20,000-ft view of the LLM lifecycle and why understanding the four stages matters for enterprise architecture.]]></content:encoded>
-            <category>Strategy &amp; Architecture</category>
-            <category>Explainer</category>
-            <category>LLM</category>
         </item>
     </channel>
 </rss>
