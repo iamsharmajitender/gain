@@ -4,10 +4,66 @@
         <title>Jitender Sharma Blog</title>
         <link>https://jitendersharma.dev/insights</link>
         <description>Jitender Sharma Blog</description>
-        <lastBuildDate>Sun, 19 Jul 2026 00:00:00 GMT</lastBuildDate>
+        <lastBuildDate>Wed, 29 Jul 2026 00:00:00 GMT</lastBuildDate>
         <docs>https://validator.w3.org/feed/docs/rss2.html</docs>
         <generator>https://github.com/jpmonette/feed</generator>
         <language>en</language>
+        <item>
+            <title><![CDATA[After Training an LLM: From Frozen Weights to Token-by-Token Inference]]></title>
+            <link>https://jitendersharma.dev/insights/after-training-an-llm</link>
+            <guid>https://jitendersharma.dev/insights/after-training-an-llm</guid>
+            <pubDate>Wed, 29 Jul 2026 00:00:00 GMT</pubDate>
+            <description><![CDATA[What happens once training stops: frozen weights, prefill vs decode, sampling, the KV cache, and the serving tricks that make inference faster without changing what the model knows.]]></description>
+            <content:encoded><![CDATA[What happens once training stops: frozen weights, prefill vs decode, sampling, the KV cache, and the serving tricks that make inference faster without changing what the model knows.]]></content:encoded>
+            <category>Strategy &amp; Architecture</category>
+            <category>Explainer</category>
+            <category>LLM</category>
+        </item>
+        <item>
+            <title><![CDATA[Aligning an LLM: From Autocomplete to Assistant]]></title>
+            <link>https://jitendersharma.dev/insights/aligning-an-llm</link>
+            <guid>https://jitendersharma.dev/insights/aligning-an-llm</guid>
+            <pubDate>Mon, 27 Jul 2026 00:00:00 GMT</pubDate>
+            <description><![CDATA[How SFT and preference tuning (RLHF/DPO) turn a pre-trained next-token model into a helpful assistant: same training loop, different data, thin layer that shapes behavior not knowledge.]]></description>
+            <content:encoded><![CDATA[How SFT and preference tuning (RLHF/DPO) turn a pre-trained next-token model into a helpful assistant: same training loop, different data, thin layer that shapes behavior not knowledge.]]></content:encoded>
+            <category>Strategy &amp; Architecture</category>
+            <category>Explainer</category>
+            <category>LLM</category>
+        </item>
+        <item>
+            <title><![CDATA[During Training an LLM: From Random Weights to a Working Model]]></title>
+            <link>https://jitendersharma.dev/insights/during-training-an-llm</link>
+            <guid>https://jitendersharma.dev/insights/during-training-an-llm</guid>
+            <pubDate>Sat, 25 Jul 2026 00:00:00 GMT</pubDate>
+            <description><![CDATA[What happens inside the weight tensors as an LLM trains: random initialisation, the four-step training loop (forward, loss, backprop, optimizer), and what each component learns as a next-token model.]]></description>
+            <content:encoded><![CDATA[What happens inside the weight tensors as an LLM trains: random initialisation, the four-step training loop (forward, loss, backprop, optimizer), and what each component learns as a next-token model.]]></content:encoded>
+            <category>Strategy &amp; Architecture</category>
+            <category>Explainer</category>
+            <category>LLM</category>
+        </item>
+        <item>
+            <title><![CDATA[Adaptive Video Streaming Explained: How Netflix Streams One Chunk at a Time]]></title>
+            <link>https://jitendersharma.dev/insights/adaptive-video-streaming-explained</link>
+            <guid>https://jitendersharma.dev/insights/adaptive-video-streaming-explained</guid>
+            <pubDate>Tue, 21 Jul 2026 00:00:00 GMT</pubDate>
+            <description><![CDATA[Netflix does not stream one file. Chunks, quality ladders, manifests, ABR decisions, buffering, seeking, and CDN caching, one segment at a time.]]></description>
+            <content:encoded><![CDATA[Netflix does not stream one file. Chunks, quality ladders, manifests, ABR decisions, buffering, seeking, and CDN caching, one segment at a time.]]></content:encoded>
+            <category>Platforms &amp; Engineering</category>
+            <category>Explainer</category>
+            <category>System Design</category>
+        </item>
+        <item>
+            <title><![CDATA[Netflix Video Processing Pipeline: From Studio Upload to Global Streaming]]></title>
+            <link>https://jitendersharma.dev/insights/netflix-video-processing-pipeline</link>
+            <guid>https://jitendersharma.dev/insights/netflix-video-processing-pipeline</guid>
+            <pubDate>Tue, 21 Jul 2026 00:00:00 GMT</pubDate>
+            <description><![CDATA[How Netflix turns a studio mezzanine into globally streamed ABR assets: Cosmos microservices, encoding, quality, packaging, and Open Connect delivery.]]></description>
+            <content:encoded><![CDATA[How Netflix turns a studio mezzanine into globally streamed ABR assets: Cosmos microservices, encoding, quality, packaging, and Open Connect delivery.]]></content:encoded>
+            <category>Platforms &amp; Engineering</category>
+            <category>Architecture</category>
+            <category>System Design</category>
+            <category>Observability</category>
+        </item>
         <item>
             <title><![CDATA[REST vs gRPC - Under the Hood]]></title>
             <link>https://jitendersharma.dev/insights/rest-vs-grpc-under-the-hood</link>
@@ -156,7 +212,7 @@
             <category>Observability</category>
         </item>
         <item>
-            <title><![CDATA[The Blueprint Before Training an LLM]]></title>
+            <title><![CDATA[Before Training an LLM: From Design Dials to a Frozen Shape]]></title>
             <link>https://jitendersharma.dev/insights/before-training-an-llm</link>
             <guid>https://jitendersharma.dev/insights/before-training-an-llm</guid>
             <pubDate>Wed, 08 Jul 2026 00:00:00 GMT</pubDate>
@@ -192,69 +248,6 @@
             <category>RAG</category>
             <category>Policy</category>
             <category>Agents</category>
-        </item>
-        <item>
-            <title><![CDATA[How to Design an Intent Router for Agentic AI]]></title>
-            <link>https://jitendersharma.dev/insights/design-intent-router</link>
-            <guid>https://jitendersharma.dev/insights/design-intent-router</guid>
-            <pubDate>Thu, 02 Jul 2026 00:00:00 GMT</pubDate>
-            <description><![CDATA[A practical design guide for intent routing — route tables, layered classification, confidence thresholds, session stickiness, eval gates, and wiring dispatch into the agentic app before the model loop runs.]]></description>
-            <content:encoded><![CDATA[A practical design guide for intent routing — route tables, layered classification, confidence thresholds, session stickiness, eval gates, and wiring dispatch into the agentic app before the model loop runs.]]></content:encoded>
-            <category>AI &amp; Intelligence</category>
-            <category>Architecture</category>
-            <category>Agents</category>
-            <category>G.A.I.N</category>
-            <category>Observability</category>
-        </item>
-        <item>
-            <title><![CDATA[What Is an Intent Router — and Why It Matters in Agentic AI]]></title>
-            <link>https://jitendersharma.dev/insights/what-is-intent-router</link>
-            <guid>https://jitendersharma.dev/insights/what-is-intent-router</guid>
-            <pubDate>Thu, 02 Jul 2026 00:00:00 GMT</pubDate>
-            <description><![CDATA[An intent router is the first deterministic decision in an agent stack. It maps user requests to the right workflow, agent, and tool manifest before the model loop runs — and when it fails, every downstream stage can execute perfectly and still miss the user’s goal.]]></description>
-            <content:encoded><![CDATA[An intent router is the first deterministic decision in an agent stack. It maps user requests to the right workflow, agent, and tool manifest before the model loop runs — and when it fails, every downstream stage can execute perfectly and still miss the user’s goal.]]></content:encoded>
-            <category>AI &amp; Intelligence</category>
-            <category>Architecture</category>
-            <category>Agents</category>
-            <category>G.A.I.N</category>
-            <category>LLM</category>
-        </item>
-        <item>
-            <title><![CDATA[RAG Is Not a Database]]></title>
-            <link>https://jitendersharma.dev/insights/rag-is-not-a-database</link>
-            <guid>https://jitendersharma.dev/insights/rag-is-not-a-database</guid>
-            <pubDate>Sat, 27 Jun 2026 00:00:00 GMT</pubDate>
-            <description><![CDATA[RAG is runtime context construction at query time, not a storage layer you bolt onto an LLM.]]></description>
-            <content:encoded><![CDATA[RAG is runtime context construction at query time, not a storage layer you bolt onto an LLM.]]></content:encoded>
-            <category>AI &amp; Intelligence</category>
-            <category>Learner</category>
-            <category>RAG</category>
-        </item>
-        <item>
-            <title><![CDATA[Policy-Governed Agent Runtime]]></title>
-            <link>https://jitendersharma.dev/insights/policy-governed-agent-runtime</link>
-            <guid>https://jitendersharma.dev/insights/policy-governed-agent-runtime</guid>
-            <pubDate>Thu, 25 Jun 2026 00:00:00 GMT</pubDate>
-            <description><![CDATA[Proposal is not permission. Agents propose tool calls; governance decides whether they run. An architecture breakdown of runtime trust boundaries for production agent systems in regulated industries.]]></description>
-            <content:encoded><![CDATA[Proposal is not permission. Agents propose tool calls; governance decides whether they run. An architecture breakdown of runtime trust boundaries for production agent systems in regulated industries.]]></content:encoded>
-            <category>Governance &amp; Trust</category>
-            <category>Architecture</category>
-            <category>Policy</category>
-            <category>Compliance</category>
-            <category>Agents</category>
-            <category>LLM</category>
-        </item>
-        <item>
-            <title><![CDATA[AI Observability In Enterprise]]></title>
-            <link>https://jitendersharma.dev/insights/ai-observability-in-enterprise</link>
-            <guid>https://jitendersharma.dev/insights/ai-observability-in-enterprise</guid>
-            <pubDate>Thu, 18 Jun 2026 00:00:00 GMT</pubDate>
-            <description><![CDATA[AI observability is not a dashboard. It is a capture-and-retention architecture with five signals, five retention policies, and four consumers.]]></description>
-            <content:encoded><![CDATA[AI observability is not a dashboard. It is a capture-and-retention architecture with five signals, five retention policies, and four consumers.]]></content:encoded>
-            <category>Platforms &amp; Engineering</category>
-            <category>Architecture</category>
-            <category>G.A.I.N</category>
-            <category>Observability</category>
         </item>
     </channel>
 </rss>

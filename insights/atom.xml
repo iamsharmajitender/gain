@@ -2,11 +2,87 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://jitendersharma.dev/insights</id>
     <title>Jitender Sharma Blog</title>
-    <updated>2026-07-19T00:00:00.000Z</updated>
+    <updated>2026-07-29T00:00:00.000Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://jitendersharma.dev/insights"/>
     <subtitle>Jitender Sharma Blog</subtitle>
     <icon>https://jitendersharma.dev/img/favicon.ico</icon>
+    <entry>
+        <title type="html"><![CDATA[After Training an LLM: From Frozen Weights to Token-by-Token Inference]]></title>
+        <id>https://jitendersharma.dev/insights/after-training-an-llm</id>
+        <link href="https://jitendersharma.dev/insights/after-training-an-llm"/>
+        <updated>2026-07-29T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[What happens once training stops: frozen weights, prefill vs decode, sampling, the KV cache, and the serving tricks that make inference faster without changing what the model knows.]]></summary>
+        <content type="html"><![CDATA[What happens once training stops: frozen weights, prefill vs decode, sampling, the KV cache, and the serving tricks that make inference faster without changing what the model knows.]]></content>
+        <author>
+            <name>Jitender Sharma</name>
+            <uri>https://jitendersharma.dev</uri>
+        </author>
+        <category label="Strategy &amp; Architecture" term="Strategy &amp; Architecture"/>
+        <category label="Explainer" term="Explainer"/>
+        <category label="LLM" term="LLM"/>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Aligning an LLM: From Autocomplete to Assistant]]></title>
+        <id>https://jitendersharma.dev/insights/aligning-an-llm</id>
+        <link href="https://jitendersharma.dev/insights/aligning-an-llm"/>
+        <updated>2026-07-27T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[How SFT and preference tuning (RLHF/DPO) turn a pre-trained next-token model into a helpful assistant: same training loop, different data, thin layer that shapes behavior not knowledge.]]></summary>
+        <content type="html"><![CDATA[How SFT and preference tuning (RLHF/DPO) turn a pre-trained next-token model into a helpful assistant: same training loop, different data, thin layer that shapes behavior not knowledge.]]></content>
+        <author>
+            <name>Jitender Sharma</name>
+            <uri>https://jitendersharma.dev</uri>
+        </author>
+        <category label="Strategy &amp; Architecture" term="Strategy &amp; Architecture"/>
+        <category label="Explainer" term="Explainer"/>
+        <category label="LLM" term="LLM"/>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[During Training an LLM: From Random Weights to a Working Model]]></title>
+        <id>https://jitendersharma.dev/insights/during-training-an-llm</id>
+        <link href="https://jitendersharma.dev/insights/during-training-an-llm"/>
+        <updated>2026-07-25T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[What happens inside the weight tensors as an LLM trains: random initialisation, the four-step training loop (forward, loss, backprop, optimizer), and what each component learns as a next-token model.]]></summary>
+        <content type="html"><![CDATA[What happens inside the weight tensors as an LLM trains: random initialisation, the four-step training loop (forward, loss, backprop, optimizer), and what each component learns as a next-token model.]]></content>
+        <author>
+            <name>Jitender Sharma</name>
+            <uri>https://jitendersharma.dev</uri>
+        </author>
+        <category label="Strategy &amp; Architecture" term="Strategy &amp; Architecture"/>
+        <category label="Explainer" term="Explainer"/>
+        <category label="LLM" term="LLM"/>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Adaptive Video Streaming Explained: How Netflix Streams One Chunk at a Time]]></title>
+        <id>https://jitendersharma.dev/insights/adaptive-video-streaming-explained</id>
+        <link href="https://jitendersharma.dev/insights/adaptive-video-streaming-explained"/>
+        <updated>2026-07-21T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[Netflix does not stream one file. Chunks, quality ladders, manifests, ABR decisions, buffering, seeking, and CDN caching, one segment at a time.]]></summary>
+        <content type="html"><![CDATA[Netflix does not stream one file. Chunks, quality ladders, manifests, ABR decisions, buffering, seeking, and CDN caching, one segment at a time.]]></content>
+        <author>
+            <name>Jitender Sharma</name>
+            <uri>https://jitendersharma.dev</uri>
+        </author>
+        <category label="Platforms &amp; Engineering" term="Platforms &amp; Engineering"/>
+        <category label="Explainer" term="Explainer"/>
+        <category label="System Design" term="System Design"/>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Netflix Video Processing Pipeline: From Studio Upload to Global Streaming]]></title>
+        <id>https://jitendersharma.dev/insights/netflix-video-processing-pipeline</id>
+        <link href="https://jitendersharma.dev/insights/netflix-video-processing-pipeline"/>
+        <updated>2026-07-21T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[How Netflix turns a studio mezzanine into globally streamed ABR assets: Cosmos microservices, encoding, quality, packaging, and Open Connect delivery.]]></summary>
+        <content type="html"><![CDATA[How Netflix turns a studio mezzanine into globally streamed ABR assets: Cosmos microservices, encoding, quality, packaging, and Open Connect delivery.]]></content>
+        <author>
+            <name>Jitender Sharma</name>
+            <uri>https://jitendersharma.dev</uri>
+        </author>
+        <category label="Platforms &amp; Engineering" term="Platforms &amp; Engineering"/>
+        <category label="Architecture" term="Architecture"/>
+        <category label="System Design" term="System Design"/>
+        <category label="Observability" term="Observability"/>
+    </entry>
     <entry>
         <title type="html"><![CDATA[REST vs gRPC - Under the Hood]]></title>
         <id>https://jitendersharma.dev/insights/rest-vs-grpc-under-the-hood</id>
@@ -203,7 +279,7 @@
         <category label="Observability" term="Observability"/>
     </entry>
     <entry>
-        <title type="html"><![CDATA[The Blueprint Before Training an LLM]]></title>
+        <title type="html"><![CDATA[Before Training an LLM: From Design Dials to a Frozen Shape]]></title>
         <id>https://jitendersharma.dev/insights/before-training-an-llm</id>
         <link href="https://jitendersharma.dev/insights/before-training-an-llm"/>
         <updated>2026-07-08T00:00:00.000Z</updated>
@@ -251,88 +327,5 @@
         <category label="RAG" term="RAG"/>
         <category label="Policy" term="Policy"/>
         <category label="Agents" term="Agents"/>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[How to Design an Intent Router for Agentic AI]]></title>
-        <id>https://jitendersharma.dev/insights/design-intent-router</id>
-        <link href="https://jitendersharma.dev/insights/design-intent-router"/>
-        <updated>2026-07-02T00:00:00.000Z</updated>
-        <summary type="html"><![CDATA[A practical design guide for intent routing — route tables, layered classification, confidence thresholds, session stickiness, eval gates, and wiring dispatch into the agentic app before the model loop runs.]]></summary>
-        <content type="html"><![CDATA[A practical design guide for intent routing — route tables, layered classification, confidence thresholds, session stickiness, eval gates, and wiring dispatch into the agentic app before the model loop runs.]]></content>
-        <author>
-            <name>Jitender Sharma</name>
-            <uri>https://jitendersharma.dev</uri>
-        </author>
-        <category label="AI &amp; Intelligence" term="AI &amp; Intelligence"/>
-        <category label="Architecture" term="Architecture"/>
-        <category label="Agents" term="Agents"/>
-        <category label="G.A.I.N" term="G.A.I.N"/>
-        <category label="Observability" term="Observability"/>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[What Is an Intent Router — and Why It Matters in Agentic AI]]></title>
-        <id>https://jitendersharma.dev/insights/what-is-intent-router</id>
-        <link href="https://jitendersharma.dev/insights/what-is-intent-router"/>
-        <updated>2026-07-02T00:00:00.000Z</updated>
-        <summary type="html"><![CDATA[An intent router is the first deterministic decision in an agent stack. It maps user requests to the right workflow, agent, and tool manifest before the model loop runs — and when it fails, every downstream stage can execute perfectly and still miss the user’s goal.]]></summary>
-        <content type="html"><![CDATA[An intent router is the first deterministic decision in an agent stack. It maps user requests to the right workflow, agent, and tool manifest before the model loop runs — and when it fails, every downstream stage can execute perfectly and still miss the user’s goal.]]></content>
-        <author>
-            <name>Jitender Sharma</name>
-            <uri>https://jitendersharma.dev</uri>
-        </author>
-        <category label="AI &amp; Intelligence" term="AI &amp; Intelligence"/>
-        <category label="Architecture" term="Architecture"/>
-        <category label="Agents" term="Agents"/>
-        <category label="G.A.I.N" term="G.A.I.N"/>
-        <category label="LLM" term="LLM"/>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[RAG Is Not a Database]]></title>
-        <id>https://jitendersharma.dev/insights/rag-is-not-a-database</id>
-        <link href="https://jitendersharma.dev/insights/rag-is-not-a-database"/>
-        <updated>2026-06-27T00:00:00.000Z</updated>
-        <summary type="html"><![CDATA[RAG is runtime context construction at query time, not a storage layer you bolt onto an LLM.]]></summary>
-        <content type="html"><![CDATA[RAG is runtime context construction at query time, not a storage layer you bolt onto an LLM.]]></content>
-        <author>
-            <name>Jitender Sharma</name>
-            <uri>https://jitendersharma.dev</uri>
-        </author>
-        <category label="AI &amp; Intelligence" term="AI &amp; Intelligence"/>
-        <category label="Learner" term="Learner"/>
-        <category label="RAG" term="RAG"/>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[Policy-Governed Agent Runtime]]></title>
-        <id>https://jitendersharma.dev/insights/policy-governed-agent-runtime</id>
-        <link href="https://jitendersharma.dev/insights/policy-governed-agent-runtime"/>
-        <updated>2026-06-25T00:00:00.000Z</updated>
-        <summary type="html"><![CDATA[Proposal is not permission. Agents propose tool calls; governance decides whether they run. An architecture breakdown of runtime trust boundaries for production agent systems in regulated industries.]]></summary>
-        <content type="html"><![CDATA[Proposal is not permission. Agents propose tool calls; governance decides whether they run. An architecture breakdown of runtime trust boundaries for production agent systems in regulated industries.]]></content>
-        <author>
-            <name>Jitender Sharma</name>
-            <uri>https://jitendersharma.dev</uri>
-        </author>
-        <category label="Governance &amp; Trust" term="Governance &amp; Trust"/>
-        <category label="Architecture" term="Architecture"/>
-        <category label="Policy" term="Policy"/>
-        <category label="Compliance" term="Compliance"/>
-        <category label="Agents" term="Agents"/>
-        <category label="LLM" term="LLM"/>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[AI Observability In Enterprise]]></title>
-        <id>https://jitendersharma.dev/insights/ai-observability-in-enterprise</id>
-        <link href="https://jitendersharma.dev/insights/ai-observability-in-enterprise"/>
-        <updated>2026-06-18T00:00:00.000Z</updated>
-        <summary type="html"><![CDATA[AI observability is not a dashboard. It is a capture-and-retention architecture with five signals, five retention policies, and four consumers.]]></summary>
-        <content type="html"><![CDATA[AI observability is not a dashboard. It is a capture-and-retention architecture with five signals, five retention policies, and four consumers.]]></content>
-        <author>
-            <name>Jitender Sharma</name>
-            <uri>https://jitendersharma.dev</uri>
-        </author>
-        <category label="Platforms &amp; Engineering" term="Platforms &amp; Engineering"/>
-        <category label="Architecture" term="Architecture"/>
-        <category label="G.A.I.N" term="G.A.I.N"/>
-        <category label="Observability" term="Observability"/>
     </entry>
 </feed>
