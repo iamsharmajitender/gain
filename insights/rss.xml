@@ -77,18 +77,6 @@
             <category>Observability</category>
         </item>
         <item>
-            <title><![CDATA[HTTP/1.1 vs HTTP/2 vs HTTP/3 - Under the Hood]]></title>
-            <link>https://jitendersharma.dev/insights/http-1-vs-http-2-vs-http-3-under-the-hood</link>
-            <guid>https://jitendersharma.dev/insights/http-1-vs-http-2-vs-http-3-under-the-hood</guid>
-            <pubDate>Sat, 18 Jul 2026 00:00:00 GMT</pubDate>
-            <description><![CDATA[One HTTP application model, three wire contracts: text + TCP, multiplexed binary on TLS/TCP, and HTTP over QUIC on UDP. Head-of-line blocking, streams, and when each wins.]]></description>
-            <content:encoded><![CDATA[One HTTP application model, three wire contracts: text + TCP, multiplexed binary on TLS/TCP, and HTTP over QUIC on UDP. Head-of-line blocking, streams, and when each wins.]]></content:encoded>
-            <category>Platforms &amp; Engineering</category>
-            <category>Explainer</category>
-            <category>Under the Hood</category>
-            <category>Observability</category>
-        </item>
-        <item>
             <title><![CDATA[Load Balancer - Under the Hood]]></title>
             <link>https://jitendersharma.dev/insights/load-balancer-under-the-hood</link>
             <guid>https://jitendersharma.dev/insights/load-balancer-under-the-hood</guid>
@@ -111,6 +99,18 @@
             <category>Explainer</category>
             <category>Under the Hood</category>
             <category>RAG</category>
+        </item>
+        <item>
+            <title><![CDATA[HTTP/1.1 vs HTTP/2 vs HTTP/3 - Under the Hood]]></title>
+            <link>https://jitendersharma.dev/insights/http-1-vs-http-2-vs-http-3-under-the-hood</link>
+            <guid>https://jitendersharma.dev/insights/http-1-vs-http-2-vs-http-3-under-the-hood</guid>
+            <pubDate>Sat, 18 Jul 2026 00:00:00 GMT</pubDate>
+            <description><![CDATA[One HTTP application model, three wire contracts: text + TCP, multiplexed binary on TLS/TCP, and HTTP over QUIC on UDP. Head-of-line blocking, streams, and when each wins.]]></description>
+            <content:encoded><![CDATA[One HTTP application model, three wire contracts: text + TCP, multiplexed binary on TLS/TCP, and HTTP over QUIC on UDP. Head-of-line blocking, streams, and when each wins.]]></content:encoded>
+            <category>Platforms &amp; Engineering</category>
+            <category>Explainer</category>
+            <category>Under the Hood</category>
+            <category>Observability</category>
         </item>
         <item>
             <title><![CDATA[LLM Hosting Options for Regulated Industries]]></title>

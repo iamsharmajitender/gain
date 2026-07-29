@@ -100,22 +100,6 @@
         <category label="Observability" term="Observability"/>
     </entry>
     <entry>
-        <title type="html"><![CDATA[HTTP/1.1 vs HTTP/2 vs HTTP/3 - Under the Hood]]></title>
-        <id>https://jitendersharma.dev/insights/http-1-vs-http-2-vs-http-3-under-the-hood</id>
-        <link href="https://jitendersharma.dev/insights/http-1-vs-http-2-vs-http-3-under-the-hood"/>
-        <updated>2026-07-18T00:00:00.000Z</updated>
-        <summary type="html"><![CDATA[One HTTP application model, three wire contracts: text + TCP, multiplexed binary on TLS/TCP, and HTTP over QUIC on UDP. Head-of-line blocking, streams, and when each wins.]]></summary>
-        <content type="html"><![CDATA[One HTTP application model, three wire contracts: text + TCP, multiplexed binary on TLS/TCP, and HTTP over QUIC on UDP. Head-of-line blocking, streams, and when each wins.]]></content>
-        <author>
-            <name>Jitender Sharma</name>
-            <uri>https://jitendersharma.dev</uri>
-        </author>
-        <category label="Platforms &amp; Engineering" term="Platforms &amp; Engineering"/>
-        <category label="Explainer" term="Explainer"/>
-        <category label="Under the Hood" term="Under the Hood"/>
-        <category label="Observability" term="Observability"/>
-    </entry>
-    <entry>
         <title type="html"><![CDATA[Load Balancer - Under the Hood]]></title>
         <id>https://jitendersharma.dev/insights/load-balancer-under-the-hood</id>
         <link href="https://jitendersharma.dev/insights/load-balancer-under-the-hood"/>
@@ -146,6 +130,22 @@
         <category label="Explainer" term="Explainer"/>
         <category label="Under the Hood" term="Under the Hood"/>
         <category label="RAG" term="RAG"/>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[HTTP/1.1 vs HTTP/2 vs HTTP/3 - Under the Hood]]></title>
+        <id>https://jitendersharma.dev/insights/http-1-vs-http-2-vs-http-3-under-the-hood</id>
+        <link href="https://jitendersharma.dev/insights/http-1-vs-http-2-vs-http-3-under-the-hood"/>
+        <updated>2026-07-18T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[One HTTP application model, three wire contracts: text + TCP, multiplexed binary on TLS/TCP, and HTTP over QUIC on UDP. Head-of-line blocking, streams, and when each wins.]]></summary>
+        <content type="html"><![CDATA[One HTTP application model, three wire contracts: text + TCP, multiplexed binary on TLS/TCP, and HTTP over QUIC on UDP. Head-of-line blocking, streams, and when each wins.]]></content>
+        <author>
+            <name>Jitender Sharma</name>
+            <uri>https://jitendersharma.dev</uri>
+        </author>
+        <category label="Platforms &amp; Engineering" term="Platforms &amp; Engineering"/>
+        <category label="Explainer" term="Explainer"/>
+        <category label="Under the Hood" term="Under the Hood"/>
+        <category label="Observability" term="Observability"/>
     </entry>
     <entry>
         <title type="html"><![CDATA[LLM Hosting Options for Regulated Industries]]></title>
