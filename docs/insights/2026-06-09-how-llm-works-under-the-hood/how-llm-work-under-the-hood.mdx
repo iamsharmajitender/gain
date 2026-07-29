@@ -20,6 +20,7 @@ Most discussions about LLMs focus on prompts, tools, and frameworks. However, fe
 This is a 20,000-ft view of the LLM lifecycle in four stages.
 
 ## The big picture: one model, four stages.
+
 A model's whole life is just four stages. The shape and vocabulary are fixed first; training only fills in the values, and inference is read-only and never learns.
 
 ```mermaid
@@ -41,14 +42,12 @@ flowchart LR
     class after stage4
 ```
 
-<br/>
-
 | Stage | What happens | Key ideas |
 |---|---|---|
-| Before | Decide the blueprint | Architecture dials set the shape, tokenizer builds the vocabulary, and parameter count is fixed. |
-| During | Fill in the values | Random weights become meaningful through training: a four-step loop run millions or trillions of times. |
-| Alignment | Make it helpful | Show good examples (SFT) and teach which answers are better (RLHF/DPO). |
-| After | Run it, read-only | Weights are frozen (no learning); inference traverses the model geometry one token at a time. |
+| [Before](/insights/before-training-an-llm) | Decide the blueprint | Architecture dials set the shape, tokenizer builds the vocabulary, and parameter count is fixed. |
+| [During](/insights/during-training-an-llm) | Fill in the values | Random weights become meaningful through training: a four-step loop run millions or trillions of times. |
+| [Alignment](/insights/aligning-an-llm) | Make it helpful | Show good examples (SFT) and teach which answers are better (RLHF/DPO). |
+| [After](/insights/after-training-an-llm) | Run it, read-only | Weights are frozen (no learning); inference traverses the model geometry one token at a time. |
 
 :::tip[TAKEAWAY]
 
