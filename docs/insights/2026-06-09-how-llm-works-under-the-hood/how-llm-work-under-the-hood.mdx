@@ -64,7 +64,7 @@ Two human decisions are baked in before any gradient is computed.
 - **Architecture dials** - hidden size, layers, heads, FFN width, vocab size.
 - **Tokenizer vocabulary** - the integer alphabet the model reads and writes.
 
-Deep dive: *The Blueprint Before Training* (coming soon): hyperparameter math, 7B parameter walkthrough, context window, and tokenizer steps.
+Deep dive: [Before Training an LLM: From Design Dials to a Frozen Shape](/insights/before-training-an-llm): hyperparameter math, 7B parameter walkthrough, context window, and tokenizer steps.
 
 A "7B" model is 7B because of these dials. Training never grows it, and most parameters live in the FFN, not attention.
 
@@ -86,6 +86,8 @@ The model is fully sized and described before it sees a single token.
 :::
 
 ## Stage 2 - During training
+
+Deep dive: [During Training an LLM: From Random Weights to a Working Model](/insights/during-training-an-llm): the four-step loop, what each component learns, and the pre-trained base before alignment.
 
 Learning is one four-step loop, repeated hundreds of thousands to millions of times.
 
@@ -159,6 +161,9 @@ No one designs these roles; training gradually turns them into specialist roles 
 
 
 ## Stage 3 - Alignment
+
+Deep dive: [Aligning an LLM: From Autocomplete to Assistant](/insights/aligning-an-llm): SFT, preference tuning (RLHF/DPO), and why alignment is a thin behavior layer.
+
 A raw pre-trained model is a brilliant autocomplete, not yet a helpful assistant. Alignment is a thin, cheap layer on top of pre-training that shapes behavior.
 
 |  | Main training| Polish (alignment)| 
@@ -176,6 +181,8 @@ Alignment turns a raw model into a helpful assistant: it shapes behavior; it doe
 :::
 
 ## Stage 4 - After training
+
+Deep dive: [After Training an LLM: From Frozen Weights to Token-by-Token Inference](/insights/after-training-an-llm): frozen weights, prefill vs decode, sampling, KV cache, and serving tricks.
 
 Once training stops, **weights are frozen**: no learning, no gradients. The model is a fixed function `f(tokens) -> next token probabilities`.
 

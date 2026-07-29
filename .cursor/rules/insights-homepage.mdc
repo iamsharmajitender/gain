@@ -6,28 +6,34 @@ alwaysApply: false
 
 # Insights homepage cards
 
-Homepage “latest insights” come from `src/data/latestInsights.generated.ts`, written by `scripts/sync-published-routes.mjs`.
+Homepage “latest insights” come from `src/data/latestInsights.generated.ts`, written by `scripts/sync-published-routes.mjs`. The homepage renders them as tabs: **All**, **System Design**, **Under the Hood** (`latestInsightsByTab`), up to 8 cards each.
+
+## Tab behavior (important)
+
+- **All tab** = curated strip. Respects both `draft: true` and `homepage: false`.
+- **Series tabs** (`system-design`, `under-the-hood`) = latest posts carrying that topic tag. They **exclude drafts** but **include `homepage: false`** posts. This is deliberate: `homepage: false` keeps a post off the flat All strip, while still letting it surface under its dedicated series tab.
+- `latestInsights` remains exported as an alias of the All tab for back-compat.
 
 ## Do not put these on the homepage
 
-1. **Drafts** (`draft: true`) — never homepage cards. The sync script skips them for `latestInsights` even if you pass `--include-drafts`.
-2. **Under the Hood (Internet foundations) series** and any insight that should stay off the home strip — set:
+1. **Drafts** (`draft: true`) — never appear in any tab. The sync script skips them even if you pass `--include-drafts`.
+2. **Under the Hood (Internet foundations) series** and any insight that should stay off the flat All strip — set:
 
 ```yaml
 homepage: false
 ```
 
-Use for: DNS / CDN / Anycast / TCP vs UDP Under the Hood (and similar primers meant for dig/series reading, not homepage promotion).
+Use for: DNS / CDN / Anycast / TCP vs UDP Under the Hood (and similar primers meant for dig/series reading, not All-strip promotion). Note: with `homepage: false` these still appear under the **Under the Hood** tab if tagged `under-the-hood`.
 
 ## Agent rules
 
 - When creating or editing Under the Hood Internet-foundations insights, include `homepage: false` in frontmatter (alongside `draft: true` until published).
-- Do **not** expect `--include-drafts` to preview those cards on the homepage. It may still refresh other published-route data; homepage cards stay published-only and respect `homepage: false`.
-- After insight create/rename, run `node scripts/sync-published-routes.mjs` (add `--include-drafts` only if you need draft routes elsewhere). Confirm new Under the Hood slugs are **absent** from `latestInsights.generated.ts`.
+- Do **not** expect `--include-drafts` to preview those cards on the homepage. It may still refresh other published-route data; the All tab stays published-only and respects `homepage: false`.
+- After insight create/rename, run `node scripts/sync-published-routes.mjs` (add `--include-drafts` only if you need draft routes elsewhere). Confirm new Under the Hood slugs are **absent** from the `all` tab in `latestInsights.generated.ts` (they may appear under the `under-the-hood` tab).
 - Do not hand-edit `latestInsights.generated.ts` to force a draft onto the homepage.
 
 ## Related
 
-- Generator: `scripts/sync-published-routes.mjs` (`scanLatestInsights`, `isHomepageExcluded`)
+- Generator: `scripts/sync-published-routes.mjs` (`scanLatestPosts`, `buildLatestInsightsByTab`, `isHomepageExcluded`)
 - UI: `src/components/HomepageBottom/index.tsx`
 - Authoring: `.cursor/skills/write-insight/SKILL.md`

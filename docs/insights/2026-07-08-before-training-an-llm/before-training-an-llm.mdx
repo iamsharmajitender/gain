@@ -1,6 +1,6 @@
 ---
 slug: before-training-an-llm
-title: The Blueprint Before Training an LLM
+title: "Before Training an LLM: From Design Dials to a Frozen Shape"
 description: "Hyperparameters, vocabulary, and why a 7B model is 7B before day one, how the dials connect, where parameters live, and why the context window is a budgeted choice."
 image: ./before-training-an-llm.png
 tags:
@@ -12,9 +12,9 @@ authors: [iamsharmajitender]
 date: 2026-07-08
 ---
 
-![The Blueprint Before Training](./before-training-an-llm.png)
+![Before Training an LLM: From Design Dials to a Frozen Shape](./before-training-an-llm.png)
 
-# The Blueprint Before Training
+# Before Training an LLM: From Design Dials to a Frozen Shape
 
 *Hyperparameters, vocabulary, and why a 7B model is 7B before day one.*
 
@@ -226,5 +226,5 @@ Pre-training fills in the values. Alignment shapes behavior. Inference navigates
 :::tip[TAKEAWAY]
 **Shape + vocabulary are fixed first.** Training only fills the values. A 7B model is 7B because of dials you set on day zero, and most of those parameters live in the FFN, not attention.
 
-Continue the lifecycle: [How LLM Works Under the Hood](/insights/how-llm-works-under-the-hood) (Stages 2-4: training, alignment, inference).
+Continue the lifecycle: [How LLM Works Under the Hood](/insights/how-llm-works-under-the-hood) (Stages 2-4). Deep dives: [During Training an LLM](/insights/during-training-an-llm), [Aligning an LLM](/insights/aligning-an-llm), [After Training an LLM](/insights/after-training-an-llm).
 :::

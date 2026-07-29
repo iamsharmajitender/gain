@@ -3,6 +3,8 @@
 
 import type {TypeTagId} from '@site/src/data/insightTags';
 
+export type InsightTabId = 'all' | 'system-design' | 'under-the-hood';
+
 export interface LatestInsight {
   title: string;
   date: string;
@@ -12,69 +14,158 @@ export interface LatestInsight {
   to: string;
 }
 
-export const latestInsights: readonly LatestInsight[] = [
-  {
-    "title": "LLM Hosting Options for Regulated Industries",
-    "date": "2026-07-17",
-    "readTime": 13,
-    "description": "From public SaaS to air-gapped on-prem: a practical ladder of LLM hosting options, and how to choose based on regulatory pressure and engineering maturity.",
-    "typeTag": "arch",
-    "to": "/insights/model-hosting-options-regulated-industries"
-  },
-  {
-    "title": "The Blueprint Before Training an LLM",
-    "date": "2026-07-08",
-    "readTime": 10,
-    "description": "Hyperparameters, vocabulary, and why a 7B model is 7B before day one, how the dials connect, where parameters live, and why the context window is a budgeted choice.",
-    "typeTag": "lrn",
-    "to": "/insights/before-training-an-llm"
-  },
-  {
-    "title": "Is MCP Really Necessary for Business Agents in Large Regulated Enterprises?",
-    "date": "2026-07-05",
-    "readTime": 10,
-    "description": "MCP is a valuable standard for AI tool interoperability. For regulated business agents, the question is whether its benefits outweigh operational cost for your use case, not whether MCP is good.",
-    "typeTag": "pov",
-    "to": "/insights/mcp-for-enterprise-business-agents"
-  },
-  {
-    "title": "Retrieval Is a Governed Action",
-    "date": "2026-07-04",
-    "readTime": 12,
-    "description": "Retrieval is not a database query; it is a governed action. How Policy-Governed Agent Runtime applies to RAG when context construction must be scoped, auditable, and enforced before inference.",
-    "typeTag": "arch",
-    "to": "/insights/retrieval-is-a-governed-action"
-  },
-  {
-    "title": "How to Design an Intent Router for Agentic AI",
-    "date": "2026-07-02",
-    "readTime": 12,
-    "description": "A practical design guide for intent routing — route tables, layered classification, confidence thresholds, session stickiness, eval gates, and wiring dispatch into the agentic app before the model loop runs.",
-    "typeTag": "arch",
-    "to": "/insights/design-intent-router"
-  },
-  {
-    "title": "What Is an Intent Router — and Why It Matters in Agentic AI",
-    "date": "2026-07-02",
-    "readTime": 9,
-    "description": "An intent router is the first deterministic decision in an agent stack. It maps user requests to the right workflow, agent, and tool manifest before the model loop runs — and when it fails, every downstream stage can execute perfectly and still miss the user’s goal.",
-    "typeTag": "arch",
-    "to": "/insights/what-is-intent-router"
-  },
-  {
-    "title": "RAG Is Not a Database",
-    "date": "2026-06-27",
-    "readTime": 7,
-    "description": "RAG is runtime context construction at query time, not a storage layer you bolt onto an LLM.",
-    "typeTag": "lrn",
-    "to": "/insights/rag-is-not-a-database"
-  },
-  {
-    "title": "Policy-Governed Agent Runtime",
-    "date": "2026-06-25",
-    "readTime": 16,
-    "description": "Proposal is not permission. Agents propose tool calls; governance decides whether they run. An architecture breakdown of runtime trust boundaries for production agent systems in regulated industries.",
-    "typeTag": "arch",
-    "to": "/insights/policy-governed-agent-runtime"
-  }
-];
+export const latestInsightsByTab: Record<InsightTabId, readonly LatestInsight[]> = {
+  "all": [
+    {
+      "title": "After Training an LLM: From Frozen Weights to Token-by-Token Inference",
+      "date": "2026-07-29",
+      "readTime": 11,
+      "description": "What happens once training stops: frozen weights, prefill vs decode, sampling, the KV cache, and the serving tricks that make inference faster without changing what the model knows.",
+      "typeTag": "exp",
+      "to": "/insights/after-training-an-llm"
+    },
+    {
+      "title": "Aligning an LLM: From Autocomplete to Assistant",
+      "date": "2026-07-27",
+      "readTime": 6,
+      "description": "How SFT and preference tuning (RLHF/DPO) turn a pre-trained next-token model into a helpful assistant: same training loop, different data, thin layer that shapes behavior not knowledge.",
+      "typeTag": "exp",
+      "to": "/insights/aligning-an-llm"
+    },
+    {
+      "title": "During Training an LLM: From Random Weights to a Working Model",
+      "date": "2026-07-25",
+      "readTime": 29,
+      "description": "What happens inside the weight tensors as an LLM trains: random initialisation, the four-step training loop (forward, loss, backprop, optimizer), and what each component learns as a next-token model.",
+      "typeTag": "exp",
+      "to": "/insights/during-training-an-llm"
+    },
+    {
+      "title": "Adaptive Video Streaming Explained: How Netflix Streams One Chunk at a Time",
+      "date": "2026-07-21",
+      "readTime": 9,
+      "description": "Netflix does not stream one file. Chunks, quality ladders, manifests, ABR decisions, buffering, seeking, and CDN caching, one segment at a time.",
+      "typeTag": "exp",
+      "to": "/insights/adaptive-video-streaming-explained"
+    },
+    {
+      "title": "Netflix Video Processing Pipeline: From Studio Upload to Global Streaming",
+      "date": "2026-07-21",
+      "readTime": 12,
+      "description": "How Netflix turns a studio mezzanine into globally streamed ABR assets: Cosmos microservices, encoding, quality, packaging, and Open Connect delivery.",
+      "typeTag": "arch",
+      "to": "/insights/netflix-video-processing-pipeline"
+    },
+    {
+      "title": "LLM Hosting Options for Regulated Industries",
+      "date": "2026-07-17",
+      "readTime": 13,
+      "description": "From public SaaS to air-gapped on-prem: a practical ladder of LLM hosting options, and how to choose based on regulatory pressure and engineering maturity.",
+      "typeTag": "arch",
+      "to": "/insights/model-hosting-options-regulated-industries"
+    },
+    {
+      "title": "Before Training an LLM: From Design Dials to a Frozen Shape",
+      "date": "2026-07-08",
+      "readTime": 10,
+      "description": "Hyperparameters, vocabulary, and why a 7B model is 7B before day one, how the dials connect, where parameters live, and why the context window is a budgeted choice.",
+      "typeTag": "lrn",
+      "to": "/insights/before-training-an-llm"
+    },
+    {
+      "title": "Is MCP Really Necessary for Business Agents in Large Regulated Enterprises?",
+      "date": "2026-07-05",
+      "readTime": 10,
+      "description": "MCP is a valuable standard for AI tool interoperability. For regulated business agents, the question is whether its benefits outweigh operational cost for your use case, not whether MCP is good.",
+      "typeTag": "pov",
+      "to": "/insights/mcp-for-enterprise-business-agents"
+    }
+  ],
+  "system-design": [
+    {
+      "title": "Adaptive Video Streaming Explained: How Netflix Streams One Chunk at a Time",
+      "date": "2026-07-21",
+      "readTime": 9,
+      "description": "Netflix does not stream one file. Chunks, quality ladders, manifests, ABR decisions, buffering, seeking, and CDN caching, one segment at a time.",
+      "typeTag": "exp",
+      "to": "/insights/adaptive-video-streaming-explained"
+    },
+    {
+      "title": "Netflix Video Processing Pipeline: From Studio Upload to Global Streaming",
+      "date": "2026-07-21",
+      "readTime": 12,
+      "description": "How Netflix turns a studio mezzanine into globally streamed ABR assets: Cosmos microservices, encoding, quality, packaging, and Open Connect delivery.",
+      "typeTag": "arch",
+      "to": "/insights/netflix-video-processing-pipeline"
+    }
+  ],
+  "under-the-hood": [
+    {
+      "title": "REST vs gRPC - Under the Hood",
+      "date": "2026-07-19",
+      "readTime": 8,
+      "description": "Resource APIs over HTTP/JSON versus function calls over HTTP/2 and protobuf. Stack placement, streaming, and when enterprises use both.",
+      "typeTag": "exp",
+      "to": "/insights/rest-vs-grpc-under-the-hood"
+    },
+    {
+      "title": "HTTP/1.1 vs HTTP/2 vs HTTP/3 - Under the Hood",
+      "date": "2026-07-18",
+      "readTime": 9,
+      "description": "One HTTP application model, three wire contracts: text + TCP, multiplexed binary on TLS/TCP, and HTTP over QUIC on UDP. Head-of-line blocking, streams, and when each wins.",
+      "typeTag": "exp",
+      "to": "/insights/http-1-vs-http-2-vs-http-3-under-the-hood"
+    },
+    {
+      "title": "Load Balancer - Under the Hood",
+      "date": "2026-07-18",
+      "readTime": 12,
+      "description": "Layer 4 vs Layer 7 load balancing: what each sees on the wire, network vs application load balancers, algorithms, health checks, and when to use which.",
+      "typeTag": "exp",
+      "to": "/insights/load-balancer-under-the-hood"
+    },
+    {
+      "title": "SQL vs NoSQL - Under the Hood",
+      "date": "2026-07-18",
+      "readTime": 16,
+      "description": "Relational tables, document stores, key-value, graph, vector, and time-series: what each model is, when to use it, when not to, and the tradeoffs under the hood.",
+      "typeTag": "exp",
+      "to": "/insights/sql-vs-nosql-under-the-hood"
+    },
+    {
+      "title": "HTTPS Encryption Lifecycle - Under the Hood",
+      "date": "2026-07-16",
+      "readTime": 11,
+      "description": "One HTTPS call from TCP open through TLS handshake, session keys, AEAD records, and teardown. Where asymmetric trust ends and symmetric bulk encryption begins.",
+      "typeTag": "exp",
+      "to": "/insights/https-encryption-lifecycle-under-the-hood"
+    },
+    {
+      "title": "HTTP vs HTTPS - Under the Hood",
+      "date": "2026-07-15",
+      "readTime": 8,
+      "description": "HTTP is the application protocol for requests and responses. HTTPS is HTTP over TLS. Methods, status, headers, the TLS wrap, certificates, and which failures people mislabel as network or app.",
+      "typeTag": "exp",
+      "to": "/insights/http-vs-https-under-the-hood"
+    },
+    {
+      "title": "Symmetric vs Asymmetric Encryption - Under the Hood",
+      "date": "2026-07-15",
+      "readTime": 13,
+      "description": "Symmetric crypto shares one secret for speed. Asymmetric uses key pairs for trust and key exchange. Where each appears in TLS, APIs, data at rest, and which mistakes look like security.",
+      "typeTag": "exp",
+      "to": "/insights/symmetric-vs-asymmetric-encryption-under-the-hood"
+    },
+    {
+      "title": "CDN - Under the Hood",
+      "date": "2026-07-14",
+      "readTime": 11,
+      "description": "A CDN is a cache-and-route fabric at the edge: PoPs, origin, cache keys, TTL, anycast, and the hit/miss path. Why delivery scales, and which failures people mislabel as app or network.",
+      "typeTag": "exp",
+      "to": "/insights/cdn-under-the-hood"
+    }
+  ]
+};
+
+// Back-compat: the curated "All" strip.
+export const latestInsights: readonly LatestInsight[] = latestInsightsByTab.all;

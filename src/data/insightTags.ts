@@ -1,4 +1,4 @@
-export type TagGroupId = 'domain' | 'type' | 'framework' | 'topic';
+export type TagGroupId = 'domain' | 'type' | 'series' | 'framework' | 'topic';
 
 export interface TagNavItem {
   id: string;
@@ -45,6 +45,15 @@ export const TYPE_TAG_COLORS: Record<TypeTagId, string> = {
   exp: 'orange',
 };
 
+/** Series tags shown as their own filter row on the insights page. */
+export const SERIES_TAG_IDS = ['system-design', 'under-the-hood'] as const;
+export type SeriesTagId = (typeof SERIES_TAG_IDS)[number];
+
+export const SERIES_TAG_LABELS: Record<SeriesTagId, string> = {
+  'system-design': 'System Design',
+  'under-the-hood': 'Under the Hood',
+};
+
 function tagTo(id: string): string {
   return `/insights/tags/${id}`;
 }
@@ -69,6 +78,14 @@ export const INSIGHT_TAG_GROUPS: TagGroup[] = [
       {id: 'arch', label: 'ARC', to: tagTo('arch')},
       {id: 'lrn', label: 'LRN', to: tagTo('lrn')},
       {id: 'exp', label: 'EXP', to: tagTo('exp')},
+    ],
+  },
+  {
+    id: 'series',
+    heading: 'Series',
+    tags: [
+      {id: 'system-design', label: 'System Design', to: tagTo('system-design')},
+      {id: 'under-the-hood', label: 'Under the Hood', to: tagTo('under-the-hood')},
     ],
   },
   {

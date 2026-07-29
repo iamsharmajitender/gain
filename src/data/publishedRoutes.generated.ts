@@ -26,3 +26,8 @@ export const publishedInsightTypeTags = [
   "lrn",
   "exp"
 ] as const;
+
+export const publishedInsightSeriesTags = [
+  "system-design",
+  "under-the-hood"
+] as const;
