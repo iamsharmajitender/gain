@@ -6,6 +6,9 @@ import rehypeWrapTables from './plugins/rehypeWrapTables.mjs';
 import createFeedItems from './plugins/createFeedItems.mjs';
 import {getFooterFrameworkLinks} from './docusaurus.footer';
 
+/** Intent docs are local-only: available under `npm start`, omitted from production builds. */
+const isDev = process.env.NODE_ENV !== 'production';
+
 const config: Config = {
   title: 'Jitender Sharma',
   tagline:
@@ -111,6 +114,19 @@ const config: Config = {
         rehypePlugins: [rehypeWrapTables],
       },
     ],
+    ...(isDev
+      ? [
+          [
+            '@docusaurus/plugin-content-docs',
+            {
+              id: 'intent',
+              path: 'docs/intent',
+              routeBasePath: 'intent',
+              rehypePlugins: [rehypeWrapTables],
+            },
+          ],
+        ]
+      : []),
   ],
 
   themes: [
@@ -122,7 +138,12 @@ const config: Config = {
         language: ['en'],
         indexDocs: true,
         indexBlog: true,
-        docsRouteBasePath: ['frameworks', 'blueprints', 'playbooks'],
+        docsRouteBasePath: [
+          'frameworks',
+          'blueprints',
+          'playbooks',
+          ...(isDev ? ['intent'] : []),
+        ],
         docsPluginIdForPreferredVersion: 'frameworks',
         blogRouteBasePath: ['insights'],
         blogDir: ['docs/insights'],
