@@ -33,6 +33,12 @@ export const advisoryServices: AdvisoryService[] = [
       'Multi-cloud and hybrid transformation, application modernization at portfolio scale, and platform resilience in regulated environments.',
   },
   {
+    icon: '▦',
+    title: 'System Design',
+    description:
+      'End-to-end system design for scale, reliability, and operability — capacity, failure modes, data and event flows, and trade-offs that hold up in production.',
+  },
+  {
     icon: '⬡',
     title: 'Architecture Governance & Design Authority',
     description:
