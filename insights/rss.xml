@@ -42,17 +42,6 @@
             <category>LLM</category>
         </item>
         <item>
-            <title><![CDATA[Adaptive Video Streaming Explained: How Netflix Streams One Chunk at a Time]]></title>
-            <link>https://jitendersharma.dev/insights/adaptive-video-streaming-explained</link>
-            <guid>https://jitendersharma.dev/insights/adaptive-video-streaming-explained</guid>
-            <pubDate>Tue, 21 Jul 2026 00:00:00 GMT</pubDate>
-            <description><![CDATA[Netflix does not stream one file. Chunks, quality ladders, manifests, ABR decisions, buffering, seeking, and CDN caching, one segment at a time.]]></description>
-            <content:encoded><![CDATA[Netflix does not stream one file. Chunks, quality ladders, manifests, ABR decisions, buffering, seeking, and CDN caching, one segment at a time.]]></content:encoded>
-            <category>Platforms &amp; Engineering</category>
-            <category>Explainer</category>
-            <category>System Design</category>
-        </item>
-        <item>
             <title><![CDATA[Netflix Video Processing Pipeline: From Studio Upload to Global Streaming]]></title>
             <link>https://jitendersharma.dev/insights/netflix-video-processing-pipeline</link>
             <guid>https://jitendersharma.dev/insights/netflix-video-processing-pipeline</guid>
@@ -63,6 +52,17 @@
             <category>Architecture</category>
             <category>System Design</category>
             <category>Observability</category>
+        </item>
+        <item>
+            <title><![CDATA[Adaptive Video Streaming Explained: How Netflix Streams One Chunk at a Time]]></title>
+            <link>https://jitendersharma.dev/insights/adaptive-video-streaming-explained</link>
+            <guid>https://jitendersharma.dev/insights/adaptive-video-streaming-explained</guid>
+            <pubDate>Tue, 21 Jul 2026 00:00:00 GMT</pubDate>
+            <description><![CDATA[Netflix does not stream one file. Chunks, quality ladders, manifests, ABR decisions, buffering, seeking, and CDN caching, one segment at a time.]]></description>
+            <content:encoded><![CDATA[Netflix does not stream one file. Chunks, quality ladders, manifests, ABR decisions, buffering, seeking, and CDN caching, one segment at a time.]]></content:encoded>
+            <category>Platforms &amp; Engineering</category>
+            <category>Explainer</category>
+            <category>System Design</category>
         </item>
         <item>
             <title><![CDATA[REST vs gRPC - Under the Hood]]></title>
