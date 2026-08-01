@@ -53,21 +53,6 @@
         <category label="LLM" term="LLM"/>
     </entry>
     <entry>
-        <title type="html"><![CDATA[Adaptive Video Streaming Explained: How Netflix Streams One Chunk at a Time]]></title>
-        <id>https://jitendersharma.dev/insights/adaptive-video-streaming-explained</id>
-        <link href="https://jitendersharma.dev/insights/adaptive-video-streaming-explained"/>
-        <updated>2026-07-21T00:00:00.000Z</updated>
-        <summary type="html"><![CDATA[Netflix does not stream one file. Chunks, quality ladders, manifests, ABR decisions, buffering, seeking, and CDN caching, one segment at a time.]]></summary>
-        <content type="html"><![CDATA[Netflix does not stream one file. Chunks, quality ladders, manifests, ABR decisions, buffering, seeking, and CDN caching, one segment at a time.]]></content>
-        <author>
-            <name>Jitender Sharma</name>
-            <uri>https://jitendersharma.dev</uri>
-        </author>
-        <category label="Platforms &amp; Engineering" term="Platforms &amp; Engineering"/>
-        <category label="Explainer" term="Explainer"/>
-        <category label="System Design" term="System Design"/>
-    </entry>
-    <entry>
         <title type="html"><![CDATA[Netflix Video Processing Pipeline: From Studio Upload to Global Streaming]]></title>
         <id>https://jitendersharma.dev/insights/netflix-video-processing-pipeline</id>
         <link href="https://jitendersharma.dev/insights/netflix-video-processing-pipeline"/>
@@ -84,28 +69,27 @@
         <category label="Observability" term="Observability"/>
     </entry>
     <entry>
-        <title type="html"><![CDATA[REST vs gRPC - Under the Hood]]></title>
-        <id>https://jitendersharma.dev/insights/rest-vs-grpc-under-the-hood</id>
-        <link href="https://jitendersharma.dev/insights/rest-vs-grpc-under-the-hood"/>
-        <updated>2026-07-19T00:00:00.000Z</updated>
-        <summary type="html"><![CDATA[Resource APIs over HTTP/JSON versus function calls over HTTP/2 and protobuf. Stack placement, streaming, and when enterprises use both.]]></summary>
-        <content type="html"><![CDATA[Resource APIs over HTTP/JSON versus function calls over HTTP/2 and protobuf. Stack placement, streaming, and when enterprises use both.]]></content>
+        <title type="html"><![CDATA[Adaptive Video Streaming Explained: How Netflix Streams One Chunk at a Time]]></title>
+        <id>https://jitendersharma.dev/insights/adaptive-video-streaming-explained</id>
+        <link href="https://jitendersharma.dev/insights/adaptive-video-streaming-explained"/>
+        <updated>2026-07-21T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[Netflix does not stream one file. Chunks, quality ladders, manifests, ABR decisions, buffering, seeking, and CDN caching, one segment at a time.]]></summary>
+        <content type="html"><![CDATA[Netflix does not stream one file. Chunks, quality ladders, manifests, ABR decisions, buffering, seeking, and CDN caching, one segment at a time.]]></content>
         <author>
             <name>Jitender Sharma</name>
             <uri>https://jitendersharma.dev</uri>
         </author>
         <category label="Platforms &amp; Engineering" term="Platforms &amp; Engineering"/>
         <category label="Explainer" term="Explainer"/>
-        <category label="Under the Hood" term="Under the Hood"/>
-        <category label="Observability" term="Observability"/>
+        <category label="System Design" term="System Design"/>
     </entry>
     <entry>
-        <title type="html"><![CDATA[HTTP/1.1 vs HTTP/2 vs HTTP/3 - Under the Hood]]></title>
-        <id>https://jitendersharma.dev/insights/http-1-vs-http-2-vs-http-3-under-the-hood</id>
-        <link href="https://jitendersharma.dev/insights/http-1-vs-http-2-vs-http-3-under-the-hood"/>
-        <updated>2026-07-18T00:00:00.000Z</updated>
-        <summary type="html"><![CDATA[One HTTP application model, three wire contracts: text + TCP, multiplexed binary on TLS/TCP, and HTTP over QUIC on UDP. Head-of-line blocking, streams, and when each wins.]]></summary>
-        <content type="html"><![CDATA[One HTTP application model, three wire contracts: text + TCP, multiplexed binary on TLS/TCP, and HTTP over QUIC on UDP. Head-of-line blocking, streams, and when each wins.]]></content>
+        <title type="html"><![CDATA[REST vs gRPC - Under the Hood]]></title>
+        <id>https://jitendersharma.dev/insights/rest-vs-grpc-under-the-hood</id>
+        <link href="https://jitendersharma.dev/insights/rest-vs-grpc-under-the-hood"/>
+        <updated>2026-07-19T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[Resource APIs over HTTP/JSON versus function calls over HTTP/2 and protobuf. Stack placement, streaming, and when enterprises use both.]]></summary>
+        <content type="html"><![CDATA[Resource APIs over HTTP/JSON versus function calls over HTTP/2 and protobuf. Stack placement, streaming, and when enterprises use both.]]></content>
         <author>
             <name>Jitender Sharma</name>
             <uri>https://jitendersharma.dev</uri>
@@ -130,6 +114,22 @@
         <category label="Explainer" term="Explainer"/>
         <category label="Under the Hood" term="Under the Hood"/>
         <category label="RAG" term="RAG"/>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[HTTP/1.1 vs HTTP/2 vs HTTP/3 - Under the Hood]]></title>
+        <id>https://jitendersharma.dev/insights/http-1-vs-http-2-vs-http-3-under-the-hood</id>
+        <link href="https://jitendersharma.dev/insights/http-1-vs-http-2-vs-http-3-under-the-hood"/>
+        <updated>2026-07-18T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[One HTTP application model, three wire contracts: text + TCP, multiplexed binary on TLS/TCP, and HTTP over QUIC on UDP. Head-of-line blocking, streams, and when each wins.]]></summary>
+        <content type="html"><![CDATA[One HTTP application model, three wire contracts: text + TCP, multiplexed binary on TLS/TCP, and HTTP over QUIC on UDP. Head-of-line blocking, streams, and when each wins.]]></content>
+        <author>
+            <name>Jitender Sharma</name>
+            <uri>https://jitendersharma.dev</uri>
+        </author>
+        <category label="Platforms &amp; Engineering" term="Platforms &amp; Engineering"/>
+        <category label="Explainer" term="Explainer"/>
+        <category label="Under the Hood" term="Under the Hood"/>
+        <category label="Observability" term="Observability"/>
     </entry>
     <entry>
         <title type="html"><![CDATA[Load Balancer - Under the Hood]]></title>
@@ -182,22 +182,6 @@
         <category label="Compliance" term="Compliance"/>
     </entry>
     <entry>
-        <title type="html"><![CDATA[HTTP vs HTTPS - Under the Hood]]></title>
-        <id>https://jitendersharma.dev/insights/http-vs-https-under-the-hood</id>
-        <link href="https://jitendersharma.dev/insights/http-vs-https-under-the-hood"/>
-        <updated>2026-07-15T00:00:00.000Z</updated>
-        <summary type="html"><![CDATA[HTTP is the application protocol for requests and responses. HTTPS is HTTP over TLS. Methods, status, headers, the TLS wrap, certificates, and which failures people mislabel as network or app.]]></summary>
-        <content type="html"><![CDATA[HTTP is the application protocol for requests and responses. HTTPS is HTTP over TLS. Methods, status, headers, the TLS wrap, certificates, and which failures people mislabel as network or app.]]></content>
-        <author>
-            <name>Jitender Sharma</name>
-            <uri>https://jitendersharma.dev</uri>
-        </author>
-        <category label="Platforms &amp; Engineering" term="Platforms &amp; Engineering"/>
-        <category label="Explainer" term="Explainer"/>
-        <category label="Under the Hood" term="Under the Hood"/>
-        <category label="Observability" term="Observability"/>
-    </entry>
-    <entry>
         <title type="html"><![CDATA[Symmetric vs Asymmetric Encryption - Under the Hood]]></title>
         <id>https://jitendersharma.dev/insights/symmetric-vs-asymmetric-encryption-under-the-hood</id>
         <link href="https://jitendersharma.dev/insights/symmetric-vs-asymmetric-encryption-under-the-hood"/>
@@ -213,6 +197,22 @@
         <category label="Under the Hood" term="Under the Hood"/>
         <category label="Observability" term="Observability"/>
         <category label="Compliance" term="Compliance"/>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[HTTP vs HTTPS - Under the Hood]]></title>
+        <id>https://jitendersharma.dev/insights/http-vs-https-under-the-hood</id>
+        <link href="https://jitendersharma.dev/insights/http-vs-https-under-the-hood"/>
+        <updated>2026-07-15T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[HTTP is the application protocol for requests and responses. HTTPS is HTTP over TLS. Methods, status, headers, the TLS wrap, certificates, and which failures people mislabel as network or app.]]></summary>
+        <content type="html"><![CDATA[HTTP is the application protocol for requests and responses. HTTPS is HTTP over TLS. Methods, status, headers, the TLS wrap, certificates, and which failures people mislabel as network or app.]]></content>
+        <author>
+            <name>Jitender Sharma</name>
+            <uri>https://jitendersharma.dev</uri>
+        </author>
+        <category label="Platforms &amp; Engineering" term="Platforms &amp; Engineering"/>
+        <category label="Explainer" term="Explainer"/>
+        <category label="Under the Hood" term="Under the Hood"/>
+        <category label="Observability" term="Observability"/>
     </entry>
     <entry>
         <title type="html"><![CDATA[CDN - Under the Hood]]></title>
@@ -247,12 +247,12 @@
         <category label="Observability" term="Observability"/>
     </entry>
     <entry>
-        <title type="html"><![CDATA[Anycast vs Unicast - Under the Hood]]></title>
-        <id>https://jitendersharma.dev/insights/anycast-vs-unicast-under-the-hood</id>
-        <link href="https://jitendersharma.dev/insights/anycast-vs-unicast-under-the-hood"/>
+        <title type="html"><![CDATA[DNS - Under the Hood]]></title>
+        <id>https://jitendersharma.dev/insights/dns-under-the-hood</id>
+        <link href="https://jitendersharma.dev/insights/dns-under-the-hood"/>
         <updated>2026-07-13T00:00:00.000Z</updated>
-        <summary type="html"><![CDATA[Unicast maps one IP to one place. Anycast maps one IP to many places and lets BGP pick the path. How both work, where DNS and CDNs use them, and which failures look like app bugs.]]></summary>
-        <content type="html"><![CDATA[Unicast maps one IP to one place. Anycast maps one IP to many places and lets BGP pick the path. How both work, where DNS and CDNs use them, and which failures look like app bugs.]]></content>
+        <summary type="html"><![CDATA[DNS is a globally distributed, hierarchical, eventually consistent naming database. Stub, recursive resolver, root, TLD, authoritative name server, caching, TTL, and anycast.]]></summary>
+        <content type="html"><![CDATA[DNS is a globally distributed, hierarchical, eventually consistent naming database. Stub, recursive resolver, root, TLD, authoritative name server, caching, TTL, and anycast.]]></content>
         <author>
             <name>Jitender Sharma</name>
             <uri>https://jitendersharma.dev</uri>
@@ -263,12 +263,12 @@
         <category label="Observability" term="Observability"/>
     </entry>
     <entry>
-        <title type="html"><![CDATA[DNS - Under the Hood]]></title>
-        <id>https://jitendersharma.dev/insights/dns-under-the-hood</id>
-        <link href="https://jitendersharma.dev/insights/dns-under-the-hood"/>
+        <title type="html"><![CDATA[Anycast vs Unicast - Under the Hood]]></title>
+        <id>https://jitendersharma.dev/insights/anycast-vs-unicast-under-the-hood</id>
+        <link href="https://jitendersharma.dev/insights/anycast-vs-unicast-under-the-hood"/>
         <updated>2026-07-13T00:00:00.000Z</updated>
-        <summary type="html"><![CDATA[DNS is a globally distributed, hierarchical, eventually consistent naming database. Stub, recursive resolver, root, TLD, authoritative name server, caching, TTL, and anycast.]]></summary>
-        <content type="html"><![CDATA[DNS is a globally distributed, hierarchical, eventually consistent naming database. Stub, recursive resolver, root, TLD, authoritative name server, caching, TTL, and anycast.]]></content>
+        <summary type="html"><![CDATA[Unicast maps one IP to one place. Anycast maps one IP to many places and lets BGP pick the path. How both work, where DNS and CDNs use them, and which failures look like app bugs.]]></summary>
+        <content type="html"><![CDATA[Unicast maps one IP to one place. Anycast maps one IP to many places and lets BGP pick the path. How both work, where DNS and CDNs use them, and which failures look like app bugs.]]></content>
         <author>
             <name>Jitender Sharma</name>
             <uri>https://jitendersharma.dev</uri>
