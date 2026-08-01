@@ -17,7 +17,7 @@ Two-phase workflow. **Phase 1 proposes only — no files created.** Phase 2 runs
 
 **Insights only.** Creates and scaffolds articles under `docs/insights/`. Cross-links in proposals and scaffolds are **`/insights/…` only** — scan `docs/insights/**/*.mdx` for companions, series pairs, and `:::info[Builds on]` targets.
 
-**Folder convention:** `{YYYY-MM-DD}-{slug}/` on disk (e.g. `2026-07-02-what-is-agentic-loop/`). URL and frontmatter `slug:` stay **without** the date prefix (`what-is-agentic-loop` → `/insights/what-is-agentic-loop`).
+**Folder convention:** `{YYYY-MM-DD}-{slug}/` on disk (e.g. `2026-07-02-what-is-agentic-loop/`). Series nesting: `system-design` → `docs/insights/system-design/…`; `under-the-hood` → `docs/insights/under-the-hood/…`. If both series tags are present, prefer `system-design`. URL and frontmatter `slug:` stay **without** the date or series prefix (`what-is-agentic-loop` → `/insights/what-is-agentic-loop`).
 
 **Rule = shape.** Read `.cursor/rules/insights-article-structure.mdc` for article types and open/close requirements. This skill orchestrates creation; it does not duplicate that rule.
 
@@ -77,7 +77,7 @@ When unsure: **architecture breakdown** for trace/wire articles; **decision guid
 
 **Date:** `YYYY-MM-DD` for frontmatter `date:` and the folder prefix. Use today's date unless the user specifies another publish date.
 
-**Folder:** `docs/insights/{YYYY-MM-DD}-{slug}/` (e.g. `docs/insights/2026-07-02-what-is-agentic-loop/`)
+**Folder:** `docs/insights/{YYYY-MM-DD}-{slug}/` (e.g. `docs/insights/2026-07-02-what-is-agentic-loop/`). Series: `system-design` → `docs/insights/system-design/{YYYY-MM-DD}-{slug}/`; `under-the-hood` → `docs/insights/under-the-hood/{YYYY-MM-DD}-{slug}/` (`system-design` wins if both).
 
 **File:** `{slug}.mdx` inside the dated folder (filename matches slug only; same basename as PNG)
 
@@ -280,7 +280,7 @@ If the user says **`abort`**, **`cancel`**, **`quit`**, **`exit`**, or **`never 
 
 Only when the user sends **`approve`** (after any requested edits are reflected in the proposal).
 
-1. **Create folder** `docs/insights/{YYYY-MM-DD}-{slug}/` if it does not exist (date from approved proposal frontmatter).
+1. **Create folder** `docs/insights/{YYYY-MM-DD}-{slug}/` if it does not exist (date from approved proposal frontmatter). If tags include `system-design`, use `docs/insights/system-design/{YYYY-MM-DD}-{slug}/`. Else if tags include `under-the-hood`, use `docs/insights/under-the-hood/{YYYY-MM-DD}-{slug}/`.
 2. **Write `{slug}.mdx`** inside that folder using [template.mdx](template.mdx), filled from the approved proposal. For type-specific section placeholders, follow [examples/decision-guide.mdx](examples/decision-guide.mdx) or [examples/concept-primer.mdx](examples/concept-primer.mdx) as appropriate.
 3. **Add `import Details from '@theme/Details';`** after frontmatter if the scaffold includes fenced code blocks.
 4. **Generate hero PNG** (required on every new insight):

@@ -149,7 +149,7 @@ All `T` predictions are computed in one pass, not token by token. Token-by-token
 
 ### Step 2: compute the loss
 
-The model's prediction is compared against the actual next token in the training data, using the cross-entropy loss.
+The model's prediction is compared against the actual next token in the training data, using the cross-entropy loss. One forward pass over a batch is not one guess: every token position is its own next-token quiz, graded in parallel, then averaged into a single scalar.
 
 <div className="gain-diagram-wrap">
 
@@ -169,6 +169,24 @@ flowchart LR
 
 </div>
 <br/>
+
+:::important[One pass, many comparisons]
+A sequence of length `T` yields `T` predictions in that one forward pass, not one. Labels are the inputs shifted left by one, so each position is compared to the real token that follows it:
+
+```text
+Inputs:  The  cat  sat  on   the  mat
+Targets: cat  sat  on   the  mat  <EOS>
+```
+
+| Position sees | Predicts | Compared to |
+| --- | --- | --- |
+| The | cat | cat |
+| The cat | sat | sat |
+| The cat sat | on | on |
+| … | … | … |
+
+Each position gets its own loss (`-log p(correct next token)`). Those losses are averaged into one number for the whole batch. A `B × T` batch (e.g. about 4 M tokens) means about `B × T` such comparisons per step, then one averaged loss and one weight update. The batch is not re-run word by word.
+:::
 
 <Details summary="The simplest way to see it">
 

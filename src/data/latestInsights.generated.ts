@@ -35,7 +35,7 @@ export const latestInsightsByTab: Record<InsightTabId, readonly LatestInsight[]>
     {
       "title": "During Training an LLM: From Random Weights to a Working Model",
       "date": "2026-07-25",
-      "readTime": 29,
+      "readTime": 30,
       "description": "What happens inside the weight tensors as an LLM trains: random initialisation, the four-step training loop (forward, loss, backprop, optimizer), and what each component learns as a next-token model.",
       "typeTag": "exp",
       "to": "/insights/during-training-an-llm"

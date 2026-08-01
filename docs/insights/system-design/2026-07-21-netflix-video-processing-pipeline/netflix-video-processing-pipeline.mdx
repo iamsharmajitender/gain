@@ -33,12 +33,12 @@ This is an **architecture breakdown** of that path, grounded in Netflix Engineer
 
 ```mermaid
 flowchart LR
-    U["Ingest"] --> I["VIS"]
-    I --> E["VES"]
-    E --> Q["VQS"]
-    Q --> P["Packaging"]
-    P --> C["Open Connect"]
-    C --> Pl["Player"]
+    U["1. Ingest"] --> I["2. VIS"]
+    I --> E["3. VES"]
+    E --> Q["4. VQS"]
+    Q --> P["5. Packaging"]
+    P --> C["6. Open Connect"]
+    C --> Pl["7. Player"]
 
     classDef a fill:#fef3c7,stroke:#fcd34d,color:#1e293b
     classDef b fill:#dbeafe,stroke:#93c5fd,color:#1e293b
@@ -52,15 +52,15 @@ flowchart LR
 ```
 <br/>
 
-| Component | What it does | Failure if skipped |
+| # Component | What it does | Failure if skipped |
 | --- | --- | --- |
-| **Ingest** (mezzanine / IMF) | Accept the high-quality studio source package | Garbage in, expensive garbage out |
-| **VIS** (Video Inspection Service) | Validate conformance and basic source quality | Bad masters pollute every ladder rung |
-| **VES** (Video Encoding Service) | Chunked parallel encode into codec/bitrate ladders | Latency and cost explode; devices cannot adapt |
-| **VQS** (Video Quality Service) | Score encodes (e.g. VMAF); feed analytics | Blind bitrates; bad viewer experience |
-| **Packaging** | Segment + manifest for HLS/DASH (plus audio/text) | Players cannot switch quality |
-| **Open Connect** (OCA edges) | Pre-position assets; serve ABR near the member | Origin melts; startup and rebuffer suffer |
-| **Player** | ABR: pick the next chunk from buffer and bandwidth | No playback or constant rebuffer |
+| **1. Ingest** (mezzanine / IMF) | Accept the high-quality studio source package | Garbage in, expensive garbage out |
+| **2. VIS** (Video Inspection Service) | Validate conformance and basic source quality | Bad masters pollute every ladder rung |
+| **3. VES** (Video Encoding Service) | Chunked parallel encode into codec/bitrate ladders | Latency and cost explode; devices cannot adapt |
+| **4. VQS** (Video Quality Service) | Score encodes (e.g. VMAF); feed analytics | Blind bitrates; bad viewer experience |
+| **5. Packaging** | Segment + manifest for HLS/DASH (plus audio/text) | Players cannot switch quality |
+| **6. Open Connect** (OCA edges) | Pre-position assets; serve ABR near the member | Origin melts; startup and rebuffer suffer |
+| **7. Player** | ABR: pick the next chunk from buffer and bandwidth | No playback or constant rebuffer |
 
 ---
 
@@ -83,7 +83,7 @@ Treat published Netflix names (Cosmos, VES, VQS, Open Connect) as **reference ar
 
 ---
 
-## Ingest and inspection
+## 1-2. Ingest and inspection
 
 ### What arrives from the studio
 
@@ -146,7 +146,7 @@ flowchart LR
 
 ---
 
-## Encoding at scale (VES)
+## 3. Encoding at scale (VES)
 
 ### Chunked parallel encoding
 
@@ -196,7 +196,7 @@ Member devices need a **ladder**: multiple resolutions/bitrates and often multip
 
 ---
 
-## Quality as a first-class service (VQS)
+## 4. Quality as a first-class service (VQS)
 
 Encoding without measurement is hope. **VQS** scores encodes and feeds Netflix data pipelines for monitoring and analytics. **VMAF** (Video Multi-Method Assessment Fusion), which Netflix open-sourced, is widely used as a perceptual quality metric in this ecosystem.
 
@@ -210,7 +210,7 @@ Separating **VES** (make bits) from **VQS** (judge bits) keeps innovation on enc
 
 ---
 
-## Audio, timed text, and packaging
+## 5. Audio, timed text, and packaging
 
 Video is only one plane. Streaming orchestrators also drive:
 
@@ -222,7 +222,7 @@ Adaptive bitrate streaming means the player fetches short segments (often a few 
 
 ---
 
-## Global delivery: Open Connect
+## 6. Global delivery: Open Connect
 
 After packaging, members should not pull every byte from a single origin region. Netflix's **Open Connect** CDN places **Open Connect Appliances (OCAs)** deep in ISP networks and **pre-positions** popular titles so playback is mostly a local hit.
 
