@@ -394,8 +394,10 @@ export const profilePhotoUrl = '/img/jitender-sharma-profile.jpg';
 
 export const profileName = 'Jitender Sharma';
 
+/** Homepage hero supporting line: one sharp claim, not a résumé digest. */
 export const profileHeroBio =
-  'Principal-level enterprise architect and technical leader with 18+ years delivering transformation across banking, aviation, and critical infrastructure in Australia, the UAE, and India. Focused on cloud modernization, operational resilience, and regulator-aligned AI adoption.';
+  'I help enterprises modernize platforms and ship governed AI that holds up under regulatory scrutiny.';
 
+/** Homepage profile card: current role and context. */
 export const profileCardBio =
-  'Principal-level enterprise architect with 18+ years across banking, aviation, and critical infrastructure in Australia, the UAE, and India. Focused on cloud modernization, operational resilience, and regulator-aligned AI adoption.';
+  'Enterprise Architect at NAB. Cloud modernization, platform architecture, and governed GenAI in regulated banking.';

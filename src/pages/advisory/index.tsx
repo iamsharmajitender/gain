@@ -89,7 +89,7 @@ function CaseStudiesTab(): ReactNode {
       </div>
       <p className={styles.caseStudyFootnote}>
         More background on{' '}
-        <Link to="/about?tab=career-highlights">About → Career Highlights</Link>.
+        <Link to="/about?tab=background">About → Background</Link>.
       </p>
     </div>
   );

@@ -7,6 +7,7 @@ import HomepagePillars from '@site/src/components/HomepagePillars';
 import HomepageBottom from '@site/src/components/HomepageBottom';
 import {
   profileCardBio,
+  profileHeroBio,
   profileName,
   profilePhotoUrl,
 } from '@site/src/data/aboutProfile';
@@ -16,7 +17,7 @@ export default function Home(): ReactNode {
   return (
     <Layout
       title={siteConfig.title}
-      description="Advisor and technical leader with 18+ years in enterprise architecture across banking, aviation, cloud modernization, and governed production AI. Building in public at jitendersharma.dev.">
+      description="Advisor and technical leader for enterprise platforms and governed AI. Building in public at jitendersharma.dev.">
       <header className="gain-hero">
         <div className="container">
           <div className="gain-hero__grid">
@@ -25,10 +26,8 @@ export default function Home(): ReactNode {
                 Advisor and technical leader for enterprise platforms and AI.
               </h1>
               <p className="gain-hero__subtitle">
-                18+ years leading architecture in banking, aviation, and regulated enterprise, from
-                cloud modernization and distributed systems to governed agents, RAG, and production AI.
-                G.A.I.N (Governed AI-Native Systems) is the operating model I use to align strategy,
-                architecture, and delivery.
+                {profileHeroBio} G.A.I.N (Governed AI-Native Systems) is the operating model I use to
+                align strategy, architecture, and delivery.
               </p>
               <div className="gain-hero__buttons">
                 <Link className="gain-btn-primary" to="/insights">

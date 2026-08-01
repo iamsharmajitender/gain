@@ -1,30 +1,31 @@
 import {useEffect, type ReactNode} from 'react';
 import {useHistory} from '@docusaurus/router';
+import type {AboutTabId} from '@site/src/data/sectionNav';
 
-function AboutTabRedirect({tab}: {tab: string}): ReactNode {
+function AboutTabRedirect({tab}: {tab: AboutTabId}): ReactNode {
   const history = useHistory();
 
   useEffect(() => {
-    history.replace(`/about?tab=${tab}`);
+    history.replace(tab === 'about' ? '/about' : `/about?tab=${tab}`);
   }, [history, tab]);
 
   return null;
 }
 
 export function AboutHowILeadRedirect(): ReactNode {
-  return <AboutTabRedirect tab="how-i-lead" />;
+  return <AboutTabRedirect tab="about" />;
 }
 
 export function AboutWhatIBuildRedirect(): ReactNode {
-  return <AboutTabRedirect tab="what-i-build" />;
+  return <AboutTabRedirect tab="work" />;
 }
 
 export function AboutIndustriesRedirect(): ReactNode {
-  return <AboutTabRedirect tab="industries" />;
+  return <AboutTabRedirect tab="work" />;
 }
 
 export function AboutCareerHighlightsRedirect(): ReactNode {
-  return <AboutTabRedirect tab="career-highlights" />;
+  return <AboutTabRedirect tab="background" />;
 }
 
 export function AboutBackgroundRedirect(): ReactNode {
@@ -36,5 +37,5 @@ export function AboutCredentialsRedirect(): ReactNode {
 }
 
 export function AboutWhyThisExistsRedirect(): ReactNode {
-  return <AboutTabRedirect tab="why-this-exists" />;
+  return <AboutTabRedirect tab="about" />;
 }

@@ -12,7 +12,7 @@ const isDev = process.env.NODE_ENV !== 'production';
 const config: Config = {
   title: 'Jitender Sharma',
   tagline:
-    'Advisor & technical leader · Enterprise architecture, platforms & governed AI',
+    'Advisor & technical leader · Platforms, modernization & governed AI',
   favicon: 'img/favicon.ico',
 
   url: 'https://jitendersharma.dev',

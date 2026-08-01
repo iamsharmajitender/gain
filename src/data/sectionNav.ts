@@ -1,20 +1,16 @@
 import type {SectionNavItem} from '@site/src/components/SectionPageLayout';
 
 export const aboutSubtitle =
-  'Principal-level enterprise architect and advisor with 18+ years across banking, aviation, and critical infrastructure. Cloud modernization, operational resilience, and regulator-aligned AI adoption in Australia, the UAE, and India.';
+  'I lead through design authority and operating models: strategy, platforms, and regulator-aligned AI for teams that need architecture to hold up in production.';
 
 export const advisorySubtitle =
-  'Principal-level advisory for enterprise architecture, cloud and application modernization, and governed AI in regulated banking, aviation, and critical infrastructure across Australia, the UAE, and India.';
+  'Advisory for CIOs, CTOs, and transformation leaders who need architecture decisions that survive production, regulation, and scale.';
 
 export const aboutTabs = [
-  {id: 'philosophy', label: 'Philosophy'},
-  {id: 'how-i-lead', label: 'How I Lead'},
-  {id: 'what-i-build', label: 'What I Build'},
-  {id: 'industries', label: 'Industries'},
-  {id: 'career-highlights', label: 'Career Highlights'},
+  {id: 'about', label: 'About'},
+  {id: 'work', label: 'Work'},
   {id: 'background', label: 'Background'},
   {id: 'credentials', label: 'Credentials'},
-  {id: 'why-this-exists', label: 'Why This Exists'},
 ] as const;
 
 export type AboutTabId = (typeof aboutTabs)[number]['id'];
@@ -22,7 +18,7 @@ export type AboutTabId = (typeof aboutTabs)[number]['id'];
 /** @deprecated About uses in-page tabs; use `/about?tab=<id>` instead. */
 export const aboutNav: SectionNavItem[] = aboutTabs.map((tab) => ({
   label: tab.label,
-  href: tab.id === 'philosophy' ? '/about' : `/about?tab=${tab.id}`,
+  href: tab.id === 'about' ? '/about' : `/about?tab=${tab.id}`,
 }));
 
 export const advisoryTabs = [

@@ -65,7 +65,7 @@ export const advisoryServices: AdvisoryService[] = [
 ];
 
 export const approachIntro =
-  'I work from first principles: understanding the business problem, constraints, and success criteria before defining architecture. Every engagement balances speed with governance, especially in regulated environments. Engagements draw on 18+ years across banking, aviation, critical infrastructure, and digital consulting in Australia, the UAE, and India.';
+  'I work from first principles: understanding the business problem, constraints, and success criteria before defining architecture. Every engagement balances speed with governance, especially where risk, compliance, and security are in the room from day one.';
 
 export const approachPrinciples: string[] = [
   'Start with the problem, not the technology',
