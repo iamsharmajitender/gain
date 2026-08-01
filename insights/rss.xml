@@ -42,6 +42,17 @@
             <category>LLM</category>
         </item>
         <item>
+            <title><![CDATA[Adaptive Video Streaming Explained: How Netflix Streams One Chunk at a Time]]></title>
+            <link>https://jitendersharma.dev/insights/adaptive-video-streaming-explained</link>
+            <guid>https://jitendersharma.dev/insights/adaptive-video-streaming-explained</guid>
+            <pubDate>Tue, 21 Jul 2026 00:00:00 GMT</pubDate>
+            <description><![CDATA[Netflix does not stream one file. Chunks, quality ladders, manifests, ABR decisions, buffering, seeking, and CDN caching, one segment at a time.]]></description>
+            <content:encoded><![CDATA[Netflix does not stream one file. Chunks, quality ladders, manifests, ABR decisions, buffering, seeking, and CDN caching, one segment at a time.]]></content:encoded>
+            <category>Platforms &amp; Engineering</category>
+            <category>Explainer</category>
+            <category>System Design</category>
+        </item>
+        <item>
             <title><![CDATA[Netflix Video Processing Pipeline: From Studio Upload to Global Streaming]]></title>
             <link>https://jitendersharma.dev/insights/netflix-video-processing-pipeline</link>
             <guid>https://jitendersharma.dev/insights/netflix-video-processing-pipeline</guid>
@@ -54,17 +65,6 @@
             <category>Observability</category>
         </item>
         <item>
-            <title><![CDATA[Adaptive Video Streaming Explained: How Netflix Streams One Chunk at a Time]]></title>
-            <link>https://jitendersharma.dev/insights/adaptive-video-streaming-explained</link>
-            <guid>https://jitendersharma.dev/insights/adaptive-video-streaming-explained</guid>
-            <pubDate>Tue, 21 Jul 2026 00:00:00 GMT</pubDate>
-            <description><![CDATA[Netflix does not stream one file. Chunks, quality ladders, manifests, ABR decisions, buffering, seeking, and CDN caching, one segment at a time.]]></description>
-            <content:encoded><![CDATA[Netflix does not stream one file. Chunks, quality ladders, manifests, ABR decisions, buffering, seeking, and CDN caching, one segment at a time.]]></content:encoded>
-            <category>Platforms &amp; Engineering</category>
-            <category>Explainer</category>
-            <category>System Design</category>
-        </item>
-        <item>
             <title><![CDATA[REST vs gRPC - Under the Hood]]></title>
             <link>https://jitendersharma.dev/insights/rest-vs-grpc-under-the-hood</link>
             <guid>https://jitendersharma.dev/insights/rest-vs-grpc-under-the-hood</guid>
@@ -75,18 +75,6 @@
             <category>Explainer</category>
             <category>Under the Hood</category>
             <category>Observability</category>
-        </item>
-        <item>
-            <title><![CDATA[SQL vs NoSQL - Under the Hood]]></title>
-            <link>https://jitendersharma.dev/insights/sql-vs-nosql-under-the-hood</link>
-            <guid>https://jitendersharma.dev/insights/sql-vs-nosql-under-the-hood</guid>
-            <pubDate>Sat, 18 Jul 2026 00:00:00 GMT</pubDate>
-            <description><![CDATA[Relational tables, document stores, key-value, graph, vector, and time-series: what each model is, when to use it, when not to, and the tradeoffs under the hood.]]></description>
-            <content:encoded><![CDATA[Relational tables, document stores, key-value, graph, vector, and time-series: what each model is, when to use it, when not to, and the tradeoffs under the hood.]]></content:encoded>
-            <category>Platforms &amp; Engineering</category>
-            <category>Explainer</category>
-            <category>Under the Hood</category>
-            <category>RAG</category>
         </item>
         <item>
             <title><![CDATA[HTTP/1.1 vs HTTP/2 vs HTTP/3 - Under the Hood]]></title>
@@ -111,6 +99,18 @@
             <category>Explainer</category>
             <category>Under the Hood</category>
             <category>Observability</category>
+        </item>
+        <item>
+            <title><![CDATA[SQL vs NoSQL - Under the Hood]]></title>
+            <link>https://jitendersharma.dev/insights/sql-vs-nosql-under-the-hood</link>
+            <guid>https://jitendersharma.dev/insights/sql-vs-nosql-under-the-hood</guid>
+            <pubDate>Sat, 18 Jul 2026 00:00:00 GMT</pubDate>
+            <description><![CDATA[Relational tables, document stores, key-value, graph, vector, and time-series: what each model is, when to use it, when not to, and the tradeoffs under the hood.]]></description>
+            <content:encoded><![CDATA[Relational tables, document stores, key-value, graph, vector, and time-series: what each model is, when to use it, when not to, and the tradeoffs under the hood.]]></content:encoded>
+            <category>Platforms &amp; Engineering</category>
+            <category>Explainer</category>
+            <category>Under the Hood</category>
+            <category>RAG</category>
         </item>
         <item>
             <title><![CDATA[LLM Hosting Options for Regulated Industries]]></title>
@@ -139,6 +139,18 @@
             <category>Compliance</category>
         </item>
         <item>
+            <title><![CDATA[HTTP vs HTTPS - Under the Hood]]></title>
+            <link>https://jitendersharma.dev/insights/http-vs-https-under-the-hood</link>
+            <guid>https://jitendersharma.dev/insights/http-vs-https-under-the-hood</guid>
+            <pubDate>Wed, 15 Jul 2026 00:00:00 GMT</pubDate>
+            <description><![CDATA[HTTP is the application protocol for requests and responses. HTTPS is HTTP over TLS. Methods, status, headers, the TLS wrap, certificates, and which failures people mislabel as network or app.]]></description>
+            <content:encoded><![CDATA[HTTP is the application protocol for requests and responses. HTTPS is HTTP over TLS. Methods, status, headers, the TLS wrap, certificates, and which failures people mislabel as network or app.]]></content:encoded>
+            <category>Platforms &amp; Engineering</category>
+            <category>Explainer</category>
+            <category>Under the Hood</category>
+            <category>Observability</category>
+        </item>
+        <item>
             <title><![CDATA[Symmetric vs Asymmetric Encryption - Under the Hood]]></title>
             <link>https://jitendersharma.dev/insights/symmetric-vs-asymmetric-encryption-under-the-hood</link>
             <guid>https://jitendersharma.dev/insights/symmetric-vs-asymmetric-encryption-under-the-hood</guid>
@@ -150,18 +162,6 @@
             <category>Under the Hood</category>
             <category>Observability</category>
             <category>Compliance</category>
-        </item>
-        <item>
-            <title><![CDATA[HTTP vs HTTPS - Under the Hood]]></title>
-            <link>https://jitendersharma.dev/insights/http-vs-https-under-the-hood</link>
-            <guid>https://jitendersharma.dev/insights/http-vs-https-under-the-hood</guid>
-            <pubDate>Wed, 15 Jul 2026 00:00:00 GMT</pubDate>
-            <description><![CDATA[HTTP is the application protocol for requests and responses. HTTPS is HTTP over TLS. Methods, status, headers, the TLS wrap, certificates, and which failures people mislabel as network or app.]]></description>
-            <content:encoded><![CDATA[HTTP is the application protocol for requests and responses. HTTPS is HTTP over TLS. Methods, status, headers, the TLS wrap, certificates, and which failures people mislabel as network or app.]]></content:encoded>
-            <category>Platforms &amp; Engineering</category>
-            <category>Explainer</category>
-            <category>Under the Hood</category>
-            <category>Observability</category>
         </item>
         <item>
             <title><![CDATA[CDN - Under the Hood]]></title>
@@ -188,24 +188,24 @@
             <category>Observability</category>
         </item>
         <item>
-            <title><![CDATA[DNS - Under the Hood]]></title>
-            <link>https://jitendersharma.dev/insights/dns-under-the-hood</link>
-            <guid>https://jitendersharma.dev/insights/dns-under-the-hood</guid>
-            <pubDate>Mon, 13 Jul 2026 00:00:00 GMT</pubDate>
-            <description><![CDATA[DNS is a globally distributed, hierarchical, eventually consistent naming database. Stub, recursive resolver, root, TLD, authoritative name server, caching, TTL, and anycast.]]></description>
-            <content:encoded><![CDATA[DNS is a globally distributed, hierarchical, eventually consistent naming database. Stub, recursive resolver, root, TLD, authoritative name server, caching, TTL, and anycast.]]></content:encoded>
-            <category>Platforms &amp; Engineering</category>
-            <category>Explainer</category>
-            <category>Under the Hood</category>
-            <category>Observability</category>
-        </item>
-        <item>
             <title><![CDATA[Anycast vs Unicast - Under the Hood]]></title>
             <link>https://jitendersharma.dev/insights/anycast-vs-unicast-under-the-hood</link>
             <guid>https://jitendersharma.dev/insights/anycast-vs-unicast-under-the-hood</guid>
             <pubDate>Mon, 13 Jul 2026 00:00:00 GMT</pubDate>
             <description><![CDATA[Unicast maps one IP to one place. Anycast maps one IP to many places and lets BGP pick the path. How both work, where DNS and CDNs use them, and which failures look like app bugs.]]></description>
             <content:encoded><![CDATA[Unicast maps one IP to one place. Anycast maps one IP to many places and lets BGP pick the path. How both work, where DNS and CDNs use them, and which failures look like app bugs.]]></content:encoded>
+            <category>Platforms &amp; Engineering</category>
+            <category>Explainer</category>
+            <category>Under the Hood</category>
+            <category>Observability</category>
+        </item>
+        <item>
+            <title><![CDATA[DNS - Under the Hood]]></title>
+            <link>https://jitendersharma.dev/insights/dns-under-the-hood</link>
+            <guid>https://jitendersharma.dev/insights/dns-under-the-hood</guid>
+            <pubDate>Mon, 13 Jul 2026 00:00:00 GMT</pubDate>
+            <description><![CDATA[DNS is a globally distributed, hierarchical, eventually consistent naming database. Stub, recursive resolver, root, TLD, authoritative name server, caching, TTL, and anycast.]]></description>
+            <content:encoded><![CDATA[DNS is a globally distributed, hierarchical, eventually consistent naming database. Stub, recursive resolver, root, TLD, authoritative name server, caching, TTL, and anycast.]]></content:encoded>
             <category>Platforms &amp; Engineering</category>
             <category>Explainer</category>
             <category>Under the Hood</category>
