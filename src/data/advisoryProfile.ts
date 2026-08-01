@@ -39,7 +39,7 @@ export const advisoryServices: AdvisoryService[] = [
     icon: '☁',
     title: 'Cloud & platform modernization',
     description:
-      'When portfolio modernization stalls under risk and delivery pressure, I set the target architecture and operating model so programs can move across hybrid and multi-cloud.',
+      'When portfolio modernization slows under risk and delivery constraints, I help set the target architecture and operating model so programs can move across hybrid and multi-cloud.',
   },
   {
     icon: '⬡',
