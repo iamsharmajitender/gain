@@ -18,6 +18,8 @@ import {
   contactIntro,
   contactLocation,
   servicesLead,
+  servicesProofOutcomes,
+  servicesWhenToEngage,
 } from '@site/src/data/advisoryProfile';
 import {
   advisorySubtitle,
@@ -42,6 +44,18 @@ function ServicesTab(): ReactNode {
     <div className={styles.tabBox}>
       <h2 className={styles.tabBoxTitle}>How I Work With Leaders</h2>
       <p className={styles.lead}>{servicesLead}</p>
+      <p className={styles.whenToEngage}>{servicesWhenToEngage}</p>
+      <div className={styles.proofBlock}>
+        <h3 className={styles.proofTitle}>Selected outcomes</h3>
+        <ul className={styles.proofList}>
+          {servicesProofOutcomes.map((outcome) => (
+            <li key={outcome}>{outcome}</li>
+          ))}
+        </ul>
+        <Link to="/advisory?tab=case-studies" className={styles.proofLink}>
+          See more outcomes →
+        </Link>
+      </div>
       <div className={styles.helpList}>
         {advisoryServices.map((service) => (
           <div key={service.title} className={styles.helpItem}>

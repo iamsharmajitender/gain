@@ -23,44 +23,41 @@ export type AdvisoryEngagementModel = {
 };
 
 export const servicesLead =
-  'I advise CIOs, CTOs, and transformation leaders on architecture decisions that must hold up in production, under regulatory scrutiny, and at enterprise scale.';
+  'I advise CIOs, CTOs, and transformation leaders when architecture decisions must hold up in production, under regulatory scrutiny, and at enterprise scale.';
+
+export const servicesWhenToEngage =
+  'Engage when modernization is stalled, design authority is unclear, or GenAI needs a path that risk and security will accept.';
+
+export const servicesProofOutcomes: string[] = [
+  'Cloud-aligned modernization across 2,000+ enterprise applications',
+  'Multi-cloud governance aligned with APRA (CPS 232/230)',
+  'Emirates.com replatform to AWS: first in the GCC',
+];
 
 export const advisoryServices: AdvisoryService[] = [
   {
     icon: '☁',
-    title: 'Cloud & Application Modernization',
+    title: 'Cloud & platform modernization',
     description:
-      'Multi-cloud and hybrid transformation, application modernization at portfolio scale, and platform resilience in regulated environments.',
-  },
-  {
-    icon: '▦',
-    title: 'System Design & Distributed-Systems',
-    description:
-      'End-to-end system and distributed-systems design for scale, reliability, and operability — capacity, failure modes, data and event flows, and trade-offs that hold up in production.',
+      'When portfolio modernization stalls under risk and delivery pressure, I set the target architecture and operating model so programs can move across hybrid and multi-cloud.',
   },
   {
     icon: '⬡',
-    title: 'Architecture Governance & Design Authority',
+    title: 'Architecture governance & design authority',
     description:
-      'Architecture review boards, design authority operating models, and regulator-aligned standards across delivery portfolios.',
-  },
-  {
-    icon: '⇄',
-    title: 'API, Microservices & Event-Driven Platforms',
-    description:
-      'Enterprise integration patterns, API and microservices standards, and event-driven architecture for mission-critical services.',
+      'I establish review boards, standards, and decision rights so delivery portfolios stay aligned to resilience and regulatory expectations, without slowing the work that matters.',
   },
   {
     icon: '◎',
-    title: 'Architecture & AI Strategy',
+    title: 'Governed AI & GenAI adoption',
     description:
-      'Align leadership on roadmaps, platform readiness, and responsible GenAI adoption at enterprise scale, including G.A.I.N patterns where appropriate.',
+      'I help leadership adopt production AI with clear readiness, patterns, and governance, so agents and RAG sit on foundations the enterprise can trust.',
   },
   {
-    icon: '◉',
-    title: 'Team Enablement',
+    icon: '▦',
+    title: 'System design for scale & resilience',
     description:
-      'Patterns, playbooks, reusable assets, and architecture capability building without engineering people management.',
+      'End-to-end distributed-system design for capacity, failure modes, and operability, including APIs, microservices, and event-driven platforms where they earn their place.',
   },
 ];
 
@@ -164,7 +161,7 @@ export const advisoryEngagementModels: AdvisoryEngagementModel[] = [
 ];
 
 export const advisoryCtaText =
-  'I advise on cloud modernization, platform & system architecture, and governed AI. Reach out to discuss your context.';
+  'I advise on cloud modernization, platform architecture, and governed AI. Tell me your context and we can decide if a short conversation is useful.';
 
 export const contactIntro =
   'Interested in advisory work or an architecture conversation? Reach out with your context.';

@@ -30,14 +30,11 @@ export default function Home(): ReactNode {
                 align strategy, architecture, and delivery.
               </p>
               <div className="gain-hero__buttons">
-                <Link className="gain-btn-primary" to="/insights">
-                  Latest Insights
+                <Link className="gain-btn-primary" to="/advisory">
+                  Advisory
                 </Link>
                 <Link className="gain-btn-outline" to="/about">
                   About me
-                </Link>
-                <Link className="gain-btn-outline" to="/advisory">
-                  Advisory
                 </Link>
               </div>
               <p className="gain-hero__footnote">
