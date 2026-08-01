@@ -92,6 +92,12 @@ export const advisoryCaseStudies: AdvisoryCaseStudy[] = [
     domain: 'regulatory',
   },
   {
+    title: 'AI-Assisted Regulatory Document Review',
+    outcome:
+      'Designed & architected AI-assisted review engine for the full regulatory document estate',
+    domain: 'regulatory',
+  },
+  {
     title: 'API & Microservices Practice',
     outcome:
       'Built enterprise Microservices and API working groups; practice-level savings ~AUD 10M annually',

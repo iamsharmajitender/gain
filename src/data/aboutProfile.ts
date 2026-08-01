@@ -121,6 +121,7 @@ export function getCredentialsByTab(
 export const careerHighlights: string[] = [
   'Led cloud-aligned modernization across 2,000+ enterprise applications',
   'Created multi-cloud governance framework aligned with APRA (CPS 232/230)',
+  'Designed and architected AI-assisted review engine for the full regulatory document estate',
   'Built enterprise Microservices and API working groups; practice-level savings ~AUD 10M annually',
   'Designed Mortgage Factory: unconditional approval turnaround from days to ~1 hour',
   'Re-architected Enterprise Notification Platform to 700-1,000 TPS with priority-lane design',
