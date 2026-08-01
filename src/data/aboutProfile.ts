@@ -123,7 +123,7 @@ export const careerHighlights: string[] = [
   'Created multi-cloud governance framework aligned with APRA (CPS 232/230)',
   'Built enterprise Microservices and API working groups; practice-level savings ~AUD 10M annually',
   'Designed Mortgage Factory: unconditional approval turnaround from days to ~1 hour',
-  'Re-architected CCOM notification platform to 700-1,000 TPS with priority-lane design',
+  'Re-architected Enterprise Notification Platform to 700-1,000 TPS with priority-lane design',
   'Led white-label enterprise data platform uplift (100+ inputs/outputs, multi-cloud)',
   'Led replatform of Emirates.com in 2015 to AWS cloud and container technology: first in the GCC region',
   'Mentored 20+ engineers and architects through GROW, Star Camp, and hands-on programs',
@@ -132,7 +132,7 @@ export const careerHighlights: string[] = [
 export const backgroundEntries: BackgroundEntry[] = [
   {
     period: 'Dec 2020 – Present',
-    role: 'Enterprise Architect, Cloud & Application Modernization',
+    role: 'Enterprise Architect, Cloud & Application Modernization (Strategy and Architecture)',
     context: 'National Australia Bank (NAB), Melbourne',
     timeline: {yearStart: 2020, yearEnd: null, org: 'NAB', tier: 'enterprise'},
     highlights: [
@@ -145,11 +145,11 @@ export const backgroundEntries: BackgroundEntry[] = [
   },
   {
     period: 'Aug 2019 – Dec 2020',
-    role: 'Senior Architect, Software Engineering & Distributed Systems',
+    role: 'Senior Architect, Software Engineering & Distributed Systems (Strategy and Architecture)',
     context: 'National Australia Bank (NAB), Melbourne',
     timeline: {yearStart: 2019, yearEnd: 2020, org: 'NAB', tier: 'architect'},
     highlights: [
-      'Defined enterprise engineering patterns and 10+ reusable libraries and quickstarts, saving approximately AUD 100K per implementation',
+      'Defined enterprise engineering patterns and 10+ reusable libraries and quickstarts, saving ~AUD 100K per implementation + Led API, microservices, and event-driven communities of practice',
       'Led API, microservices, and event-driven architecture communities of practice',
       'Provided distributed systems architecture leadership for critical banking services and modernization programs',
     ],
@@ -162,6 +162,7 @@ export const backgroundEntries: BackgroundEntry[] = [
     highlights: [
       'Event-driven and microservice architecture for mission-critical energy platforms',
       'Legacy-to-hybrid-cloud migration (Azure & on-prem), DevOps and CI/CD adoption',
+      'Provided technical leadership and mentoring to development teams',
       'Aligned platform strategy with business outcomes alongside senior stakeholders',
     ],
   },

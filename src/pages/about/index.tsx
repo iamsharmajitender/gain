@@ -129,9 +129,9 @@ function WhyThisExistsTab(): ReactNode {
         and insights from 18+ years of enterprise architecture work.
       </p>
       <p>
-        I publish for architects, engineering leaders, and transformation teams navigating AI and
-        platform modernization. If my perspective resonates, Advisory is how we work together;
-        Insights is how I share what I learn.
+        I publish for architects, engineering leaders, and transformation teams navigating AI,
+        platform modernization, system design, and distributed systems. If my perspective resonates,
+        Advisory is how we work together; Insights is how I share what I learn.
       </p>
     </div>
   );

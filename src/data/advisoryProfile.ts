@@ -34,9 +34,9 @@ export const advisoryServices: AdvisoryService[] = [
   },
   {
     icon: '▦',
-    title: 'System Design',
+    title: 'System Design & Distributed-Systems',
     description:
-      'End-to-end system design for scale, reliability, and operability — capacity, failure modes, data and event flows, and trade-offs that hold up in production.',
+      'End-to-end system and distributed-systems design for scale, reliability, and operability — capacity, failure modes, data and event flows, and trade-offs that hold up in production.',
   },
   {
     icon: '⬡',
@@ -81,18 +81,18 @@ export const caseStudiesIntro =
 
 export const advisoryCaseStudies: AdvisoryCaseStudy[] = [
   {
-    title: 'Enterprise cloud modernization',
+    title: 'Enterprise Cloud Modernization',
     outcome: 'Led cloud-aligned modernization across 2,000+ enterprise applications',
     domain: 'banking',
   },
   {
-    title: 'Multi-cloud governance',
+    title: 'Multi-cloud Governance',
     outcome:
       'Created multi-cloud governance framework aligned with APRA(CPS 232/230)',
     domain: 'regulatory',
   },
   {
-    title: 'API & microservices practice',
+    title: 'API & Microservices Practice',
     outcome:
       'Built enterprise Microservices and API working groups; practice-level savings ~AUD 10M annually',
     domain: 'platform',
@@ -103,18 +103,18 @@ export const advisoryCaseStudies: AdvisoryCaseStudy[] = [
     domain: 'banking',
   },
   {
-    title: 'CCOM notification platform',
+    title: 'Enterprise Notification Platform',
     outcome: 'Re-architected enterprise notification platform to 700-1,000 TPS with priority-lane design',
     domain: 'banking',
   },
   {
-    title: 'Enterprise data platform',
+    title: 'White-label Data Platform Design & Architecture',
     outcome:
       'Led white-label enterprise data platform uplift (100+ inputs/outputs, multi-cloud)',
     domain: 'data',
   },
   {
-    title: 'Emirates.com replatform',
+    title: 'Emirates.com Replatform',
     outcome:
       'Led replatform of Emirates.com to AWS cloud and container technology: first in the GCC region',
     domain: 'aviation',
@@ -133,7 +133,7 @@ export const advisoryEngagementModels: AdvisoryEngagementModel[] = [
   {
     title: 'Architecture reviews',
     description:
-      'Structured assessment with actionable recommendations, including ARB readiness and regulatory alignment checks',
+      'Structured assessment of system and platform architecture with actionable recommendations, including distributed-system risks, ARB readiness, and regulatory alignment',
   },
   {
     title: 'Strategy workshops',
@@ -143,12 +143,12 @@ export const advisoryEngagementModels: AdvisoryEngagementModel[] = [
   {
     title: 'Fractional leadership',
     description:
-      'Hands-on design authority during cloud and application modernization programs',
+      'Hands-on design authority embedded in cloud, application, and platform modernization programs',
   },
   {
     title: 'Design authority',
     description:
-      'Ongoing advisory for cloud, API, event-driven, and AI architecture decisions',
+      'Ongoing advisory for cloud, API, event-driven, distributed-system, and AI architecture decisions',
   },
   {
     title: 'Capability uplift',
