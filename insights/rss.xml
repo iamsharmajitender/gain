@@ -89,18 +89,6 @@
             <category>Observability</category>
         </item>
         <item>
-            <title><![CDATA[Load Balancer - Under the Hood]]></title>
-            <link>https://jitendersharma.dev/insights/load-balancer-under-the-hood</link>
-            <guid>https://jitendersharma.dev/insights/load-balancer-under-the-hood</guid>
-            <pubDate>Sat, 18 Jul 2026 00:00:00 GMT</pubDate>
-            <description><![CDATA[Layer 4 vs Layer 7 load balancing: what each sees on the wire, network vs application load balancers, algorithms, health checks, and when to use which.]]></description>
-            <content:encoded><![CDATA[Layer 4 vs Layer 7 load balancing: what each sees on the wire, network vs application load balancers, algorithms, health checks, and when to use which.]]></content:encoded>
-            <category>Platforms &amp; Engineering</category>
-            <category>Explainer</category>
-            <category>Under the Hood</category>
-            <category>Observability</category>
-        </item>
-        <item>
             <title><![CDATA[SQL vs NoSQL - Under the Hood]]></title>
             <link>https://jitendersharma.dev/insights/sql-vs-nosql-under-the-hood</link>
             <guid>https://jitendersharma.dev/insights/sql-vs-nosql-under-the-hood</guid>
@@ -111,6 +99,18 @@
             <category>Explainer</category>
             <category>Under the Hood</category>
             <category>RAG</category>
+        </item>
+        <item>
+            <title><![CDATA[Load Balancer - Under the Hood]]></title>
+            <link>https://jitendersharma.dev/insights/load-balancer-under-the-hood</link>
+            <guid>https://jitendersharma.dev/insights/load-balancer-under-the-hood</guid>
+            <pubDate>Sat, 18 Jul 2026 00:00:00 GMT</pubDate>
+            <description><![CDATA[Layer 4 vs Layer 7 load balancing: what each sees on the wire, network vs application load balancers, algorithms, health checks, and when to use which.]]></description>
+            <content:encoded><![CDATA[Layer 4 vs Layer 7 load balancing: what each sees on the wire, network vs application load balancers, algorithms, health checks, and when to use which.]]></content:encoded>
+            <category>Platforms &amp; Engineering</category>
+            <category>Explainer</category>
+            <category>Under the Hood</category>
+            <category>Observability</category>
         </item>
         <item>
             <title><![CDATA[LLM Hosting Options for Regulated Industries]]></title>
