@@ -17,6 +17,22 @@ export interface LatestInsight {
 export const latestInsightsByTab: Record<InsightTabId, readonly LatestInsight[]> = {
   "all": [
     {
+      "title": "Inverted Index Search Explained: Spotify Music Discovery",
+      "date": "2026-07-30",
+      "readTime": 17,
+      "description": "System design of inverted index search with a Spotify worked example: catalog vs index, title artist album lyrics postings, autocomplete, fuzzy match, ranking, and play hydration.",
+      "typeTag": "arch",
+      "to": "/insights/music-search-inverted-index"
+    },
+    {
+      "title": "Spotify Music Streaming Pipeline: From Upload to Search and Play",
+      "date": "2026-07-30",
+      "readTime": 19,
+      "description": "How a Spotify-class stack turns a master upload into searchable catalog and playable audio: ingest, multi-bitrate encode, search index, multi-CDN delivery, and client ABR over HTTP range requests.",
+      "typeTag": "arch",
+      "to": "/insights/spotify-music-streaming-pipeline"
+    },
+    {
       "title": "After Training an LLM: From Frozen Weights to Token-by-Token Inference",
       "date": "2026-07-29",
       "readTime": 11,
@@ -63,25 +79,25 @@ export const latestInsightsByTab: Record<InsightTabId, readonly LatestInsight[]>
       "description": "From public SaaS to air-gapped on-prem: a practical ladder of LLM hosting options, and how to choose based on regulatory pressure and engineering maturity.",
       "typeTag": "arch",
       "to": "/insights/model-hosting-options-regulated-industries"
-    },
-    {
-      "title": "Before Training an LLM: From Design Dials to a Frozen Shape",
-      "date": "2026-07-08",
-      "readTime": 10,
-      "description": "Hyperparameters, vocabulary, and why a 7B model is 7B before day one, how the dials connect, where parameters live, and why the context window is a budgeted choice.",
-      "typeTag": "lrn",
-      "to": "/insights/before-training-an-llm"
-    },
-    {
-      "title": "Is MCP Really Necessary for Business Agents in Large Regulated Enterprises?",
-      "date": "2026-07-05",
-      "readTime": 10,
-      "description": "MCP is a valuable standard for AI tool interoperability. For regulated business agents, the question is whether its benefits outweigh operational cost for your use case, not whether MCP is good.",
-      "typeTag": "pov",
-      "to": "/insights/mcp-for-enterprise-business-agents"
     }
   ],
   "system-design": [
+    {
+      "title": "Inverted Index Search Explained: Spotify Music Discovery",
+      "date": "2026-07-30",
+      "readTime": 17,
+      "description": "System design of inverted index search with a Spotify worked example: catalog vs index, title artist album lyrics postings, autocomplete, fuzzy match, ranking, and play hydration.",
+      "typeTag": "arch",
+      "to": "/insights/music-search-inverted-index"
+    },
+    {
+      "title": "Spotify Music Streaming Pipeline: From Upload to Search and Play",
+      "date": "2026-07-30",
+      "readTime": 19,
+      "description": "How a Spotify-class stack turns a master upload into searchable catalog and playable audio: ingest, multi-bitrate encode, search index, multi-CDN delivery, and client ABR over HTTP range requests.",
+      "typeTag": "arch",
+      "to": "/insights/spotify-music-streaming-pipeline"
+    },
     {
       "title": "Adaptive Video Streaming Explained: How Netflix Streams One Chunk at a Time",
       "date": "2026-07-21",
