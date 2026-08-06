@@ -4,10 +4,33 @@
         <title>Jitender Sharma Blog</title>
         <link>https://jitendersharma.dev/insights</link>
         <description>Jitender Sharma Blog</description>
-        <lastBuildDate>Wed, 29 Jul 2026 00:00:00 GMT</lastBuildDate>
+        <lastBuildDate>Wed, 05 Aug 2026 00:00:00 GMT</lastBuildDate>
         <docs>https://validator.w3.org/feed/docs/rss2.html</docs>
         <generator>https://github.com/jpmonette/feed</generator>
         <language>en</language>
+        <item>
+            <title><![CDATA[Spotify Music Streaming Pipeline: From Upload to Search and Play]]></title>
+            <link>https://jitendersharma.dev/insights/spotify-music-streaming-pipeline</link>
+            <guid>https://jitendersharma.dev/insights/spotify-music-streaming-pipeline</guid>
+            <pubDate>Wed, 05 Aug 2026 00:00:00 GMT</pubDate>
+            <description><![CDATA[How a Spotify-class stack turns a master upload into searchable catalog and playable audio: ingest, multi-bitrate encode, search index, multi-CDN delivery, and client ABR over HTTP range requests.]]></description>
+            <content:encoded><![CDATA[How a Spotify-class stack turns a master upload into searchable catalog and playable audio: ingest, multi-bitrate encode, search index, multi-CDN delivery, and client ABR over HTTP range requests.]]></content:encoded>
+            <category>Platforms &amp; Engineering</category>
+            <category>Architecture</category>
+            <category>System Design</category>
+            <category>Observability</category>
+        </item>
+        <item>
+            <title><![CDATA[Spotify Music Discovery: Inverted Index Search Explained]]></title>
+            <link>https://jitendersharma.dev/insights/music-search-inverted-index</link>
+            <guid>https://jitendersharma.dev/insights/music-search-inverted-index</guid>
+            <pubDate>Wed, 05 Aug 2026 00:00:00 GMT</pubDate>
+            <description><![CDATA[System design of inverted index search with a Spotify worked example: catalog vs index, title artist album lyrics postings, autocomplete, fuzzy match, ranking, and play hydration.]]></description>
+            <content:encoded><![CDATA[System design of inverted index search with a Spotify worked example: catalog vs index, title artist album lyrics postings, autocomplete, fuzzy match, ranking, and play hydration.]]></content:encoded>
+            <category>Platforms &amp; Engineering</category>
+            <category>Architecture</category>
+            <category>System Design</category>
+        </item>
         <item>
             <title><![CDATA[After Training an LLM: From Frozen Weights to Token-by-Token Inference]]></title>
             <link>https://jitendersharma.dev/insights/after-training-an-llm</link>
@@ -42,17 +65,6 @@
             <category>LLM</category>
         </item>
         <item>
-            <title><![CDATA[Adaptive Video Streaming Explained: How Netflix Streams One Chunk at a Time]]></title>
-            <link>https://jitendersharma.dev/insights/adaptive-video-streaming-explained</link>
-            <guid>https://jitendersharma.dev/insights/adaptive-video-streaming-explained</guid>
-            <pubDate>Tue, 21 Jul 2026 00:00:00 GMT</pubDate>
-            <description><![CDATA[Netflix does not stream one file. Chunks, quality ladders, manifests, ABR decisions, buffering, seeking, and CDN caching, one segment at a time.]]></description>
-            <content:encoded><![CDATA[Netflix does not stream one file. Chunks, quality ladders, manifests, ABR decisions, buffering, seeking, and CDN caching, one segment at a time.]]></content:encoded>
-            <category>Platforms &amp; Engineering</category>
-            <category>Explainer</category>
-            <category>System Design</category>
-        </item>
-        <item>
             <title><![CDATA[Netflix Video Processing Pipeline: From Studio Upload to Global Streaming]]></title>
             <link>https://jitendersharma.dev/insights/netflix-video-processing-pipeline</link>
             <guid>https://jitendersharma.dev/insights/netflix-video-processing-pipeline</guid>
@@ -63,6 +75,17 @@
             <category>Architecture</category>
             <category>System Design</category>
             <category>Observability</category>
+        </item>
+        <item>
+            <title><![CDATA[Adaptive Video Streaming Explained: How Netflix Streams One Chunk at a Time]]></title>
+            <link>https://jitendersharma.dev/insights/adaptive-video-streaming-explained</link>
+            <guid>https://jitendersharma.dev/insights/adaptive-video-streaming-explained</guid>
+            <pubDate>Tue, 21 Jul 2026 00:00:00 GMT</pubDate>
+            <description><![CDATA[Netflix does not stream one file. Chunks, quality ladders, manifests, ABR decisions, buffering, seeking, and CDN caching, one segment at a time.]]></description>
+            <content:encoded><![CDATA[Netflix does not stream one file. Chunks, quality ladders, manifests, ABR decisions, buffering, seeking, and CDN caching, one segment at a time.]]></content:encoded>
+            <category>Platforms &amp; Engineering</category>
+            <category>Explainer</category>
+            <category>System Design</category>
         </item>
         <item>
             <title><![CDATA[REST vs gRPC - Under the Hood]]></title>
@@ -222,32 +245,6 @@
             <category>Explainer</category>
             <category>LLM</category>
             <category>Learner</category>
-        </item>
-        <item>
-            <title><![CDATA[Is MCP Really Necessary for Business Agents in Large Regulated Enterprises?]]></title>
-            <link>https://jitendersharma.dev/insights/mcp-for-enterprise-business-agents</link>
-            <guid>https://jitendersharma.dev/insights/mcp-for-enterprise-business-agents</guid>
-            <pubDate>Sun, 05 Jul 2026 00:00:00 GMT</pubDate>
-            <description><![CDATA[MCP is a valuable standard for AI tool interoperability. For regulated business agents, the question is whether its benefits outweigh operational cost for your use case, not whether MCP is good.]]></description>
-            <content:encoded><![CDATA[MCP is a valuable standard for AI tool interoperability. For regulated business agents, the question is whether its benefits outweigh operational cost for your use case, not whether MCP is good.]]></content:encoded>
-            <category>Strategy &amp; Architecture</category>
-            <category>Point of View</category>
-            <category>Agents</category>
-            <category>Compliance</category>
-            <category>G.A.I.N</category>
-        </item>
-        <item>
-            <title><![CDATA[Retrieval Is a Governed Action]]></title>
-            <link>https://jitendersharma.dev/insights/retrieval-is-a-governed-action</link>
-            <guid>https://jitendersharma.dev/insights/retrieval-is-a-governed-action</guid>
-            <pubDate>Sat, 04 Jul 2026 00:00:00 GMT</pubDate>
-            <description><![CDATA[Retrieval is not a database query; it is a governed action. How Policy-Governed Agent Runtime applies to RAG when context construction must be scoped, auditable, and enforced before inference.]]></description>
-            <content:encoded><![CDATA[Retrieval is not a database query; it is a governed action. How Policy-Governed Agent Runtime applies to RAG when context construction must be scoped, auditable, and enforced before inference.]]></content:encoded>
-            <category>Governance &amp; Trust</category>
-            <category>Architecture</category>
-            <category>RAG</category>
-            <category>Policy</category>
-            <category>Agents</category>
         </item>
     </channel>
 </rss>
