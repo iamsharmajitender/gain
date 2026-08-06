@@ -1,0 +1,1644 @@
+---
+slug: enterprise-ai-workflow-patterns-autonomy-vs-control
+title: "Enterprise AI Workflow Patterns: Autonomy vs Control"
+description: "Choose between single inference, fully autonomous agents, deterministic workflows, and guided hybrid agents. Comparison matrix, JSON contracts, and when to escalate from one call to a full agent."
+image: ./enterprise-ai-workflow-patterns-autonomy-vs-control.png
+tags:
+  - ai-intelligence
+  - arch
+  - agents
+  - policy
+  - compliance
+  - gain
+authors: [iamsharmajitender]
+draft: true
+date: 2026-08-05
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+<br/>
+
+![Enterprise AI workflow patterns: single inference, autonomous loop, deterministic chain, and guided hybrid stages](./enterprise-ai-workflow-patterns-autonomy-vs-control.png)
+
+# Enterprise AI Workflow Patterns: Autonomy vs Control
+
+When designing enterprise AI systems, the hard question is not "should we use an agent?" It is **how much autonomy the model gets versus how much control the business process requires**. Four patterns cover most production designs, starting with a baseline that is **not an agent at all**: a single inference call through the agentic service. Pick wrong and you either overbuild an agent runtime for summarize/Q&A, lose auditability on an open loop, or waste a flexible model on a fixed pipeline.
+
+This is a **decision guide**: Pattern 0 (single inference), Pattern 1 (fully autonomous), Pattern 2 (deterministic), and Pattern 3 (guided hybrid), with comparison criteria and JSON-shaped contracts. It builds on [How to Design an Intent Router](/insights/design-intent-router) and [Policy-Governed Agent Runtime](/insights/policy-governed-agent-runtime).
+
+:::tip[THE CLAIM]
+**Not every LLM feature is an agent. Start at single inference.** Escalate only when you need tools, fixed multi-step process, or staged autonomy. Fix the business stages when process control matters; give the LLM autonomy inside each stage only when exploration is the product.
+:::
+
+<!-- truncate -->
+
+## The bottom line first
+
+- **Four patterns, one axis:** who decides the next step (nobody beyond one call, the LLM, the workflow designer, or both at different layers).
+- **Pattern 0** is one LLM call through the [agentic app](/playbooks/pgar-runtime/boundary/agentic-app) (summarize, Q&A, extract). No tool loop. Not an agent.
+- **Pattern 1** fits research, coding, and investigation when the path is unknown.
+- **Pattern 2** fits payments, KYC, claims, and any flow where order and side effects must be fixed.
+- **Pattern 3** fits contract review, regulatory analysis, and enterprise copilots: fixed stages, flexible tools inside a stage.
+- **Governance lives in contracts and checkpoints**, not in hoping the prompt "behaves."
+
+## The autonomy vs control spectrum
+
+```mermaid
+flowchart LR
+    P0["Pattern 0<br/>Single inference"]
+    P2["Pattern 2<br/>Deterministic"]
+    P3["Pattern 3<br/>Guided hybrid"]
+    P1["Pattern 1<br/>Autonomous"]
+
+    P0 -->|"more autonomy"| P2
+    P2 -->|"more autonomy"| P3
+    P3 -->|"more autonomy"| P1
+
+    classDef oneshot fill:#ecfdf5,stroke:#10b981,color:#1e293b,stroke-width:2px
+    classDef fixed fill:#ede9fe,stroke:#8b5cf6,color:#1e293b,stroke-width:2px
+    classDef hybrid fill:#ffedd5,stroke:#f97316,color:#1e293b,stroke-width:2px
+    classDef flex fill:#dbeafe,stroke:#3b82f6,color:#1e293b,stroke-width:2px
+
+    class P0 oneshot
+    class P2 fixed
+    class P3 hybrid
+    class P1 flex
+```
+
+<br/>
+
+| Layer | Pattern 0 | Pattern 1 | Pattern 2 | Pattern 3 |
+| --- | --- | --- | --- | --- |
+| Business process | One step | Open | Fixed | Fixed |
+| Tool sequence | None | LLM chooses | Designer chooses | Fixed stages; LLM chooses inside a stage |
+| Is it an agent? | No | Yes | Workflow + LLM steps | Hybrid agent |
+| Primary risk | Thin context / hallucination | Unpredictable path | Brittleness | Extra architecture |
+
+Use the tabs under each pattern. Every pattern has **two examples**. Each example uses **Route** plus the artifacts it references (**Workflow**, **Manifest**, **Prompt**, **Output**, **Eval**, and **Trace** when useful).
+
+## Pattern 0: Single inference (not an agent)
+
+### How it works
+
+The [intent router](/insights/what-is-intent-router) (if present) selects a route contract. The [agentic app](/playbooks/pgar-runtime/boundary/agentic-app) assembles the prompt (plus optional context), makes **one** LLM call, and returns the completion. There is no Observe → Decide → Tool cycle and no multi-stage workflow. The model does not choose the next action. Clients do not call the LLM API directly; the agentic service owns session, model profile, and output handling.
+
+```mermaid
+flowchart LR
+    Input[Input + route contract] --> App[Agentic app]
+    App --> LLM[Single LLM call]
+    LLM --> App
+    App --> Output[Summary / answer / extract]
+
+    classDef oneshot fill:#ecfdf5,stroke:#10b981,color:#1e293b,stroke-width:2px
+    class Input,App,LLM,Output oneshot
+```
+
+<br/>
+
+Optional RAG or deterministic pre/post processing can sit **around** the call in the agentic app without making this Pattern 1-3. **RAG prefetch is not an agent**: if the agentic app runs retrieval before the LLM and the model never chooses tools, you are still on Pattern 0 (or Pattern 2 if you model `retrieve → generate` as an explicit fixed two-stage workflow).
+
+**Examples**
+
+| Job | Shape |
+| --- | --- |
+| Summarize this email | route → agentic app → completion |
+| Answer from a pasted policy | route → agentic app → completion |
+| Extract fields from a form | route → agentic app → structured JSON |
+| Rewrite tone / translate | route → agentic app → completion |
+| Classify intent (cheap router model) | route → agentic app → label |
+
+### Contracts (JSON)
+
+A [route contract](/insights/design-intent-router) stays lean. Prompt, output schema, and offline eval suite are separate artifacts the agentic app loads by id.
+
+**Example A: email summarize**
+
+<Tabs groupId="pattern-0-summarize">
+  <TabItem value="route" label="Route" default>
+
+No tools. No stages. One inference via the agentic app.
+
+```json
+{
+  "route_id": "email_summarize",
+  "intent": "summarize_email",
+  "model_profile": "fast-chat",
+  "tool_manifest": "none",
+  "policy_profile": "read_only_standard",
+  "prompt_id": "email_summarize_v2",
+  "output_schema_id": "exec_bullets_v1",
+  "eval_suite_id": "email_summarize_golden"
+}
+```
+
+
+  </TabItem>
+  <TabItem value="prompt" label="Prompt">
+
+```json
+{
+  "prompt_id": "email_summarize_v2",
+  "system": "Summarize for an executive in 5 bullets. Do not invent facts.",
+  "user": "{{email_body}}"
+}
+```
+
+
+  </TabItem>
+  <TabItem value="output" label="Output">
+
+```json
+{
+  "output_schema_id": "exec_bullets_v1",
+  "type": "object",
+  "required": ["bullets"],
+  "properties": {
+    "bullets": { "type": "array", "items": { "type": "string" }, "maxItems": 5 }
+  }
+}
+```
+
+
+  </TabItem>
+  <TabItem value="eval" label="Eval">
+
+```json
+{
+  "eval_suite_id": "email_summarize_golden",
+  "when": "offline_ci",
+  "checks": ["faithfulness_to_input", "max_bullet_count"]
+}
+```
+
+
+  </TabItem>
+</Tabs>
+
+**Example B: grounded Q&A with deterministic prefetch**
+
+Retrieval runs in the agentic app before the LLM call. The model does not choose tools.
+
+<Tabs groupId="pattern-0-policy-qa">
+  <TabItem value="route" label="Route" default>
+
+```json
+{
+  "route_id": "policy_qa",
+  "intent": "policy_question",
+  "model_profile": "fast-chat",
+  "tool_manifest": "none",
+  "policy_profile": "read_only_standard",
+  "retrieval": { "mode": "deterministic_prefetch", "scope": ["policy"] },
+  "prompt_id": "policy_qa_grounded_v1",
+  "output_schema_id": "cited_answer_v1",
+  "eval_suite_id": "policy_qa_golden"
+}
+```
+
+
+  </TabItem>
+  <TabItem value="prompt" label="Prompt">
+
+```json
+{
+  "prompt_id": "policy_qa_grounded_v1",
+  "system": "Answer only from the provided chunks. Cite chunk ids. If unknown, say you do not know.",
+  "user": "{{user_question}}",
+  "context_chunks": ["{{chunk_1}}", "{{chunk_2}}"]
+}
+```
+
+
+  </TabItem>
+  <TabItem value="output" label="Output">
+
+```json
+{
+  "output_schema_id": "cited_answer_v1",
+  "type": "object",
+  "required": ["answer", "citations"],
+  "properties": {
+    "answer": { "type": "string" },
+    "citations": { "type": "array", "items": { "type": "string" } }
+  }
+}
+```
+
+
+  </TabItem>
+  <TabItem value="eval" label="Eval">
+
+```json
+{
+  "eval_suite_id": "policy_qa_golden",
+  "when": "offline_ci",
+  "checks": ["groundedness", "citation_present"]
+}
+```
+
+
+  </TabItem>
+</Tabs>
+
+### Pros and cons
+
+| Pros | Cons |
+| --- | --- |
+| Cheapest, fastest, easiest to audit | No multi-step reasoning over tools |
+| Easy to eval and cache | Weak when the task needs search + act |
+| Clear SLOs and cost | Hallucination risk if context is thin |
+| Ideal behind an intent route that only needs text | Cannot perform side effects via LLM-chosen tools |
+
+### Best use cases
+
+Summarization · Q&A over provided context · Extraction · Classification · Rewriting · Simple generation · Cheap classifier inside an intent router
+
+## Pattern 1: Fully autonomous agent
+
+### How it works
+
+The router (if any) selects a route and provides the **allowed tools**. The agent decides everything else: which tool next, when to stop, how to recover from a failed observation.
+
+```mermaid
+flowchart TB
+    Goal[Goal] --> Decide[LLM decides next action]
+    Decide --> Tool[Tool call]
+    Tool --> Observe[Observe result]
+    Observe --> Decide
+    Decide --> Done[Goal complete]
+
+    classDef loop fill:#dbeafe,stroke:#3b82f6,color:#1e293b,stroke-width:2px
+    class Goal,Decide,Tool,Observe,Done loop
+```
+
+<br/>
+
+The sequence of tool calls is **not fixed**. Two runs with the same goal can take different paths and both be valid.
+
+**Example: contract investigation (same goal, different paths)**
+
+| Run | Path |
+| --- | --- |
+| Run 1 | OCR → Clause Search → Policy Search → Memo |
+| Run 2 | OCR → Policy Search → Risk Engine → Clause Search → Memo |
+
+### Contracts (JSON)
+
+Same route shape as Pattern 0, plus a tool manifest. Path order is not fixed; eval checks goal completion and policy, not a single tool sequence.
+
+:::note[`max_loop_steps` is a run budget]
+`max_loop_steps: 12` caps the **whole** autonomous loop (decide → tool → observe), across all tools combined. It is not “each tool may run 12 times.” One `clause_search` plus one `policy_search` counts as **2** steps toward 12. When the cap is hit, the agentic app stops even if the model wants another call. Pattern 3 uses `max_tool_calls` **per stage** for the same idea inside a fixed outer workflow.
+:::
+
+**Example A: contract investigation**
+
+<Tabs groupId="pattern-1-contract">
+  <TabItem value="route" label="Route" default>
+
+```json
+{
+  "route_id": "contract_investigation",
+  "intent": "contract_investigate",
+  "model_profile": "reasoning-standard",
+  "tool_manifest": "contract_investigate_v1",
+  "policy_profile": "read_only_standard",
+  "prompt_id": "contract_investigate_v1",
+  "output_schema_id": "risk_memo_v1",
+  "eval_suite_id": "contract_investigate_golden",
+  "max_loop_steps": 12
+}
+```
+
+
+  </TabItem>
+  <TabItem value="manifest" label="Manifest">
+
+Loaded by `tool_manifest`. The agent may call these tools in any order; it cannot invent tools outside this list.
+
+```json
+{
+  "manifest_id": "contract_investigate_v1",
+  "manifest_version": "2026.08.1",
+  "description": "Contract investigation tools (read-only + memo draft)",
+  "tools": [
+    {
+      "name": "ocr_extract",
+      "description": "Extract text from a document id",
+      "schema": {
+        "type": "object",
+        "required": ["doc_id"],
+        "properties": { "doc_id": { "type": "string" } }
+      },
+      "pdp_action": "ocr_extract",
+      "risk_tier": "low"
+    },
+    {
+      "name": "clause_search",
+      "description": "Search extracted text for clause topics",
+      "schema": {
+        "type": "object",
+        "required": ["topics"],
+        "properties": {
+          "topics": { "type": "array", "items": { "type": "string" } }
+        }
+      },
+      "pdp_action": "clause_search",
+      "risk_tier": "low"
+    },
+    {
+      "name": "policy_search",
+      "description": "Search the legal playbook",
+      "schema": {
+        "type": "object",
+        "required": ["policy_set"],
+        "properties": { "policy_set": { "type": "string" } }
+      },
+      "pdp_action": "policy_search",
+      "risk_tier": "low"
+    },
+    {
+      "name": "risk_engine",
+      "description": "Score risk from extracted clauses",
+      "schema": {
+        "type": "object",
+        "required": ["score_profile"],
+        "properties": { "score_profile": { "type": "string" } }
+      },
+      "pdp_action": "risk_engine",
+      "risk_tier": "medium"
+    },
+    {
+      "name": "draft_memo",
+      "description": "Draft counsel-ready memo from investigation context",
+      "schema": {
+        "type": "object",
+        "required": ["audience"],
+        "properties": { "audience": { "type": "string" } }
+      },
+      "pdp_action": "draft_memo",
+      "risk_tier": "medium"
+    }
+  ]
+}
+```
+
+
+  </TabItem>
+  <TabItem value="prompt" label="Prompt">
+
+```json
+{
+  "prompt_id": "contract_investigate_v1",
+  "system": "Investigate the document using only allowed tools. Prefer evidence over speculation. Stop when risk is assessed or budget is exhausted.",
+  "user": "{{goal}}"
+}
+```
+
+
+  </TabItem>
+  <TabItem value="output" label="Output">
+
+```json
+{
+  "output_schema_id": "risk_memo_v1",
+  "type": "object",
+  "required": ["summary", "risks", "citations"],
+  "properties": {
+    "summary": { "type": "string" },
+    "risks": { "type": "array", "items": { "type": "string" } },
+    "citations": { "type": "array", "items": { "type": "string" } }
+  }
+}
+```
+
+
+  </TabItem>
+  <TabItem value="eval" label="Eval">
+
+```json
+{
+  "eval_suite_id": "contract_investigate_golden",
+  "when": "offline_ci",
+  "checks": ["goal_completed", "tools_in_manifest_only", "citation_present"]
+}
+```
+
+
+  </TabItem>
+  <TabItem value="trace" label="Trace">
+
+Same `goal` and allowed tools. Different `tool_calls` order. Both succeed.
+
+```json
+{
+  "route_id": "contract_investigation",
+  "goal": "Assess termination and indemnity risk for MSA-4821",
+  "runs": [
+    {
+      "run_id": "run_1",
+      "tool_calls": [
+        { "step": 1, "tool": "ocr_extract" },
+        { "step": 2, "tool": "clause_search" },
+        { "step": 3, "tool": "policy_search" },
+        { "step": 4, "tool": "draft_memo" }
+      ]
+    },
+    {
+      "run_id": "run_2",
+      "tool_calls": [
+        { "step": 1, "tool": "ocr_extract" },
+        { "step": 2, "tool": "policy_search" },
+        { "step": 3, "tool": "risk_engine" },
+        { "step": 4, "tool": "clause_search" },
+        { "step": 5, "tool": "draft_memo" }
+      ]
+    }
+  ]
+}
+```
+
+
+  </TabItem>
+</Tabs>
+
+**Example B: research assistant**
+
+<Tabs groupId="pattern-1-research">
+  <TabItem value="route" label="Route" default>
+
+```json
+{
+  "route_id": "research_assistant",
+  "intent": "research_topic",
+  "model_profile": "reasoning-standard",
+  "tool_manifest": "research_assistant_v1",
+  "policy_profile": "read_only_standard",
+  "prompt_id": "research_assistant_v1",
+  "output_schema_id": "research_brief_v1",
+  "eval_suite_id": "research_assistant_golden",
+  "max_loop_steps": 16
+}
+```
+
+
+  </TabItem>
+  <TabItem value="manifest" label="Manifest">
+
+```json
+{
+  "manifest_id": "research_assistant_v1",
+  "manifest_version": "2026.08.1",
+  "description": "Open-ended research tools",
+  "tools": [
+    {
+      "name": "web_search",
+      "description": "Search the web for sources",
+      "schema": {
+        "type": "object",
+        "required": ["query"],
+        "properties": { "query": { "type": "string" } }
+      },
+      "pdp_action": "web_search",
+      "risk_tier": "low"
+    },
+    {
+      "name": "fetch_url",
+      "description": "Fetch and extract text from a URL",
+      "schema": {
+        "type": "object",
+        "required": ["url"],
+        "properties": { "url": { "type": "string" } }
+      },
+      "pdp_action": "fetch_url",
+      "risk_tier": "low"
+    },
+    {
+      "name": "note_store",
+      "description": "Save a research note for later synthesis",
+      "schema": {
+        "type": "object",
+        "required": ["note"],
+        "properties": { "note": { "type": "string" } }
+      },
+      "pdp_action": "note_store",
+      "risk_tier": "low"
+    },
+    {
+      "name": "draft_brief",
+      "description": "Draft a research brief from gathered notes",
+      "schema": {
+        "type": "object",
+        "required": ["audience"],
+        "properties": { "audience": { "type": "string" } }
+      },
+      "pdp_action": "draft_brief",
+      "risk_tier": "medium"
+    }
+  ]
+}
+```
+
+
+  </TabItem>
+  <TabItem value="prompt" label="Prompt">
+
+```json
+{
+  "prompt_id": "research_assistant_v1",
+  "system": "Research the topic using only allowed tools. Prefer primary sources. Stop when the brief is evidence-backed or budget is exhausted.",
+  "user": "{{goal}}"
+}
+```
+
+
+  </TabItem>
+  <TabItem value="output" label="Output">
+
+```json
+{
+  "output_schema_id": "research_brief_v1",
+  "type": "object",
+  "required": ["brief", "sources"],
+  "properties": {
+    "brief": { "type": "string" },
+    "sources": { "type": "array", "items": { "type": "string" } }
+  }
+}
+```
+
+
+  </TabItem>
+  <TabItem value="eval" label="Eval">
+
+```json
+{
+  "eval_suite_id": "research_assistant_golden",
+  "when": "offline_ci",
+  "checks": ["goal_completed", "tools_in_manifest_only", "sources_present"]
+}
+```
+
+
+  </TabItem>
+  <TabItem value="trace" label="Trace">
+
+Same goal, different tool paths. Both valid under Pattern 1.
+
+```json
+{
+  "route_id": "research_assistant",
+  "goal": "Summarize recent guidance on MSA indemnity clauses",
+  "runs": [
+    {
+      "run_id": "run_1",
+      "tool_calls": [
+        { "step": 1, "tool": "web_search" },
+        { "step": 2, "tool": "fetch_url" },
+        { "step": 3, "tool": "draft_brief" }
+      ]
+    },
+    {
+      "run_id": "run_2",
+      "tool_calls": [
+        { "step": 1, "tool": "web_search" },
+        { "step": 2, "tool": "fetch_url" },
+        { "step": 3, "tool": "note_store" },
+        { "step": 4, "tool": "web_search" },
+        { "step": 5, "tool": "draft_brief" }
+      ]
+    }
+  ]
+}
+```
+
+
+  </TabItem>
+</Tabs>
+
+### Pros and cons
+
+| Pros | Cons |
+| --- | --- |
+| Maximum flexibility | Harder to audit |
+| Adapts to unexpected situations | Harder to predict |
+| Strong for research and discovery | Needs strong checkpointing |
+| Handles unknown paths well | More difficult to govern |
+
+### Best use cases
+
+Research assistants · Coding agents · Investigation · Data analysis · Document review (exploratory) · Knowledge discovery
+
+## Pattern 2: Deterministic AI workflow
+
+### How it works
+
+The workflow is **fixed**. The LLM performs only the work assigned to each step. Every execution follows the same sequence.
+
+```mermaid
+flowchart TB
+    OCR[OCR] --> Clause[Clause Search]
+    Clause --> Policy[Policy Search]
+    Policy --> Risk[Risk Engine]
+    Risk --> Memo[Memo]
+
+    classDef fixed fill:#ede9fe,stroke:#8b5cf6,color:#1e293b,stroke-width:2px
+    class OCR,Clause,Policy,Risk,Memo fixed
+```
+
+<br/>
+
+There is no "LLM decides next action" between stages. Branching, if any, is explicit in the workflow definition (approval gates, error handlers), not inventable by the model.
+
+### Contracts (JSON)
+
+Route points at a fixed `workflow_id`. Stage order lives in the **Workflow** artifact; the **Manifest** holds tool schemas for PEP. The LLM does not pick the next tool.
+
+:::note[No `max_tool_calls` here]
+Pattern 2 has no open tool-choice loop inside a stage. Each stage already names the tool (or a fixed `branch`), so the budget is the stage list itself, plus retries / timeouts. Use `max_tool_calls` on Pattern 3 (and `max_loop_steps` on Pattern 1), where the LLM can call several tools before a stage or goal completes.
+:::
+
+**Example A: MSA risk review**
+
+<Tabs groupId="pattern-2-msa">
+  <TabItem value="route" label="Route" default>
+
+```json
+{
+  "route_id": "msa_risk_review",
+  "intent": "msa_risk_review",
+  "model_profile": "reasoning-standard",
+  "tool_manifest": "msa_risk_review_v1",
+  "policy_profile": "read_only_standard",
+  "workflow_id": "msa_risk_review_v1",
+  "prompt_id": "msa_risk_review_v1",
+  "output_schema_id": "msa_memo_v1",
+  "eval_suite_id": "msa_risk_review_golden"
+}
+```
+
+
+  </TabItem>
+  <TabItem value="workflow" label="Workflow">
+
+Stage order is authoritative. The model cannot reorder stages. `llm_role` scopes what the model may do inside a stage.
+
+```json
+{
+  "workflow_id": "msa_risk_review_v1",
+  "stages": [
+    { "id": "ocr", "tool": "ocr_extract", "llm_role": "none" },
+    { "id": "clause_search", "tool": "clause_search", "llm_role": "query_formulation" },
+    { "id": "policy_search", "tool": "policy_search", "llm_role": "query_formulation" },
+    { "id": "risk_engine", "tool": "risk_engine", "llm_role": "none" },
+    { "id": "memo", "tool": "draft_memo", "llm_role": "synthesis" }
+  ]
+}
+```
+
+
+  </TabItem>
+  <TabItem value="manifest" label="Manifest">
+
+Loaded by `tool_manifest`. Used for schemas and PEP; the workflow picks which tool runs, not the LLM.
+
+```json
+{
+  "manifest_id": "msa_risk_review_v1",
+  "manifest_version": "2026.08.1",
+  "description": "Fixed MSA risk review tools",
+  "tools": [
+    {
+      "name": "ocr_extract",
+      "description": "Extract text from a document id",
+      "schema": {
+        "type": "object",
+        "required": ["doc_id"],
+        "properties": { "doc_id": { "type": "string" } }
+      },
+      "pdp_action": "ocr_extract",
+      "risk_tier": "low"
+    },
+    {
+      "name": "clause_search",
+      "description": "Search extracted text for clause topics",
+      "schema": {
+        "type": "object",
+        "required": ["topics"],
+        "properties": {
+          "topics": { "type": "array", "items": { "type": "string" } }
+        }
+      },
+      "pdp_action": "clause_search",
+      "risk_tier": "low"
+    },
+    {
+      "name": "policy_search",
+      "description": "Search the legal playbook",
+      "schema": {
+        "type": "object",
+        "required": ["policy_set"],
+        "properties": { "policy_set": { "type": "string" } }
+      },
+      "pdp_action": "policy_search",
+      "risk_tier": "low"
+    },
+    {
+      "name": "risk_engine",
+      "description": "Score risk from extracted clauses",
+      "schema": {
+        "type": "object",
+        "required": ["score_profile"],
+        "properties": { "score_profile": { "type": "string" } }
+      },
+      "pdp_action": "risk_engine",
+      "risk_tier": "medium"
+    },
+    {
+      "name": "draft_memo",
+      "description": "Draft counsel-ready memo from stage outputs",
+      "schema": {
+        "type": "object",
+        "required": ["audience"],
+        "properties": { "audience": { "type": "string" } }
+      },
+      "pdp_action": "draft_memo",
+      "risk_tier": "medium"
+    }
+  ]
+}
+```
+
+
+  </TabItem>
+  <TabItem value="prompt" label="Prompt">
+
+```json
+{
+  "prompt_id": "msa_risk_review_v1",
+  "stages": {
+    "clause_search": {
+      "system": "Formulate a precise clause search query. Do not invent clause text."
+    },
+    "policy_search": {
+      "system": "Formulate a policy search query against the legal playbook."
+    },
+    "memo": {
+      "system": "Draft a counsel-ready memo from stage outputs only. Cite sources."
+    }
+  }
+}
+```
+
+
+  </TabItem>
+  <TabItem value="output" label="Output">
+
+```json
+{
+  "output_schema_id": "msa_memo_v1",
+  "type": "object",
+  "required": ["memo", "risk_score"],
+  "properties": {
+    "memo": { "type": "string" },
+    "risk_score": { "type": "string", "enum": ["low", "medium", "high"] }
+  }
+}
+```
+
+
+  </TabItem>
+  <TabItem value="eval" label="Eval">
+
+```json
+{
+  "eval_suite_id": "msa_risk_review_golden",
+  "when": "offline_ci",
+  "checks": ["stage_order_fixed", "all_required_stages", "memo_grounded"]
+}
+```
+
+
+  </TabItem>
+</Tabs>
+
+**Example B: payment / KYC onboarding**
+
+Order and approvals matter. `branch` is a deterministic next-stage map from the risk score, not an LLM choice. Side-effect stages are gated.
+
+<Tabs groupId="pattern-2-kyc">
+  <TabItem value="route" label="Route" default>
+
+```json
+{
+  "route_id": "kyc_onboarding",
+  "intent": "kyc_onboard",
+  "model_profile": "reasoning-standard",
+  "tool_manifest": "kyc_onboarding_v2",
+  "policy_profile": "high_risk_step_up",
+  "workflow_id": "kyc_onboarding_v2",
+  "prompt_id": "kyc_onboarding_v2",
+  "output_schema_id": "kyc_result_v1",
+  "eval_suite_id": "kyc_onboarding_golden"
+}
+```
+
+
+  </TabItem>
+  <TabItem value="workflow" label="Workflow">
+
+```json
+{
+  "workflow_id": "kyc_onboarding_v2",
+  "stages": [
+    { "id": "collect_docs", "tool": "doc_intake" },
+    { "id": "identity_check", "tool": "id_verify" },
+    { "id": "sanctions_screen", "tool": "sanctions_api" },
+    {
+      "id": "risk_score",
+      "tool": "kyc_risk_engine",
+      "branch": { "high": "manual_review", "low": "activate_account" }
+    },
+    { "id": "manual_review", "type": "human_gate" },
+    {
+      "id": "activate_account",
+      "tool": "account_activate",
+      "side_effect": true,
+      "requires_approval": true
+    }
+  ]
+}
+```
+
+
+  </TabItem>
+  <TabItem value="manifest" label="Manifest">
+
+```json
+{
+  "manifest_id": "kyc_onboarding_v2",
+  "manifest_version": "2026.08.1",
+  "description": "KYC onboarding tools with gated account activation",
+  "tools": [
+    {
+      "name": "doc_intake",
+      "description": "Collect and store onboarding documents",
+      "schema": {
+        "type": "object",
+        "required": ["customer_id"],
+        "properties": { "customer_id": { "type": "string" } }
+      },
+      "pdp_action": "doc_intake",
+      "risk_tier": "low"
+    },
+    {
+      "name": "id_verify",
+      "description": "Verify identity documents",
+      "schema": {
+        "type": "object",
+        "required": ["customer_id"],
+        "properties": { "customer_id": { "type": "string" } }
+      },
+      "pdp_action": "id_verify",
+      "risk_tier": "medium"
+    },
+    {
+      "name": "sanctions_api",
+      "description": "Screen customer against sanctions lists",
+      "schema": {
+        "type": "object",
+        "required": ["customer_id"],
+        "properties": { "customer_id": { "type": "string" } }
+      },
+      "pdp_action": "sanctions_screen",
+      "risk_tier": "high"
+    },
+    {
+      "name": "kyc_risk_engine",
+      "description": "Score KYC risk as low or high",
+      "schema": {
+        "type": "object",
+        "required": ["customer_id"],
+        "properties": { "customer_id": { "type": "string" } }
+      },
+      "pdp_action": "kyc_risk_score",
+      "risk_tier": "medium"
+    },
+    {
+      "name": "account_activate",
+      "description": "Activate customer account after approvals",
+      "schema": {
+        "type": "object",
+        "required": ["customer_id"],
+        "properties": { "customer_id": { "type": "string" } }
+      },
+      "pdp_action": "account_activate",
+      "risk_tier": "high"
+    }
+  ]
+}
+```
+
+
+  </TabItem>
+  <TabItem value="prompt" label="Prompt">
+
+Most KYC stages are tool-only. Prompt is used when a stage needs LLM help (for example summarizing a manual-review packet).
+
+```json
+{
+  "prompt_id": "kyc_onboarding_v2",
+  "stages": {
+    "manual_review": {
+      "system": "Summarize KYC evidence for a human reviewer. Do not recommend activation."
+    }
+  }
+}
+```
+
+
+  </TabItem>
+  <TabItem value="output" label="Output">
+
+```json
+{
+  "output_schema_id": "kyc_result_v1",
+  "type": "object",
+  "required": ["status", "risk"],
+  "properties": {
+    "status": {
+      "type": "string",
+      "enum": ["pending_review", "activated", "rejected"]
+    },
+    "risk": { "type": "string", "enum": ["low", "high"] }
+  }
+}
+```
+
+
+  </TabItem>
+  <TabItem value="eval" label="Eval">
+
+```json
+{
+  "eval_suite_id": "kyc_onboarding_golden",
+  "when": "offline_ci",
+  "checks": [
+    "stage_order_fixed",
+    "branch_high_to_manual_review",
+    "branch_low_to_activate",
+    "activate_requires_approval"
+  ]
+}
+```
+
+
+  </TabItem>
+</Tabs>
+
+### Pros and cons
+
+| Pros | Cons |
+| --- | --- |
+| Easy to audit | Less flexible |
+| Easy to resume | Cannot adapt easily |
+| Predictable | Workflow changes need design changes |
+| Excellent governance | Weak on unknown scenarios |
+| Ideal for regulated industries | |
+
+### Best use cases
+
+Payments · Loan processing · Insurance claims · Customer onboarding · Compliance workflows · KYC
+
+## Pattern 3: Guided agent (hybrid)
+
+### How it works
+
+The **workflow is fixed**. The **reasoning inside each step is flexible**. The process never invents new stages; inside a stage such as Analyse, the agent chooses which allowed tools to call and in what order.
+
+```mermaid
+flowchart TB
+    Extract[Extract] --> Analyse[Analyse]
+    Analyse --> Report[Generate Report]
+
+    subgraph analyse_flex["Inside Analyse (flexible)"]
+        direction TB
+        A1[Clause Search]
+        A2[Policy Search]
+        A3[Risk Engine]
+    end
+
+    Analyse -.-> analyse_flex
+
+    classDef stage fill:#ffedd5,stroke:#f97316,color:#1e293b,stroke-width:2px
+    classDef flex fill:#dbeafe,stroke:#3b82f6,color:#1e293b,stroke-width:1px
+    class Extract,Analyse,Report stage
+    class A1,A2,A3 flex
+```
+
+<br/>
+
+**Example A (simple Analyse):** Clause Search → Done
+
+**Example B (deeper Analyse):** Clause Search → Policy Search → Risk Engine → Done
+
+The outer workflow stays `Extract → Analyse → Generate Report`. Only the internal path changes.
+
+### Contracts (JSON)
+
+Route picks the capability; **Workflow** fixes outer stages; **Manifest** holds tool schemas; each stage has an allowlist. Prompt / output / eval can be stage-scoped.
+
+**Example A: legal contract review**
+
+Outer workflow stays `Extract → Analyse → Generate Report`. Inside Analyse, tool order can vary.
+
+<Tabs groupId="pattern-3-contract">
+  <TabItem value="route" label="Route" default>
+
+```json
+{
+  "route_id": "legal_contract_review",
+  "intent": "contract_review",
+  "model_profile": "reasoning-standard",
+  "tool_manifest": "contract_review_staged_v3",
+  "policy_profile": "read_only_standard",
+  "workflow_id": "contract_review_v3",
+  "prompt_id": "contract_review_v3",
+  "output_schema_id": "counsel_memo_v1",
+  "eval_suite_id": "contract_review_golden"
+}
+```
+
+
+  </TabItem>
+  <TabItem value="workflow" label="Workflow">
+
+```json
+{
+  "workflow_id": "contract_review_v3",
+  "stages": [
+    {
+      "id": "extract",
+      "allowed_tools": ["ocr_extract", "pdf_parser", "metadata_enrich"],
+      "max_tool_calls": 4
+    },
+    {
+      "id": "analyse",
+      "allowed_tools": ["clause_search", "policy_search", "risk_engine", "citation_lookup"],
+      "max_tool_calls": 12
+    },
+    {
+      "id": "generate_report",
+      "allowed_tools": ["draft_memo", "format_citations"],
+      "max_tool_calls": 3,
+      "side_effect_tools": ["draft_memo"]
+    }
+  ]
+}
+```
+
+
+  </TabItem>
+  <TabItem value="manifest" label="Manifest">
+
+Full tool schemas for PEP. At runtime the agentic app exposes only the **current stage** allowlist to the LLM.
+
+```json
+{
+  "manifest_id": "contract_review_staged_v3",
+  "manifest_version": "2026.08.1",
+  "description": "Staged contract review tools",
+  "tools": [
+    {
+      "name": "ocr_extract",
+      "description": "Extract text from a document id",
+      "schema": {
+        "type": "object",
+        "required": ["doc_id"],
+        "properties": { "doc_id": { "type": "string" } }
+      },
+      "pdp_action": "ocr_extract",
+      "risk_tier": "low"
+    },
+    {
+      "name": "pdf_parser",
+      "description": "Parse PDF structure and pages",
+      "schema": {
+        "type": "object",
+        "required": ["doc_id"],
+        "properties": { "doc_id": { "type": "string" } }
+      },
+      "pdp_action": "pdf_parser",
+      "risk_tier": "low"
+    },
+    {
+      "name": "metadata_enrich",
+      "description": "Enrich document metadata",
+      "schema": {
+        "type": "object",
+        "required": ["doc_id"],
+        "properties": { "doc_id": { "type": "string" } }
+      },
+      "pdp_action": "metadata_enrich",
+      "risk_tier": "low"
+    },
+    {
+      "name": "clause_search",
+      "description": "Search for clause topics",
+      "schema": {
+        "type": "object",
+        "required": ["topics"],
+        "properties": {
+          "topics": { "type": "array", "items": { "type": "string" } }
+        }
+      },
+      "pdp_action": "clause_search",
+      "risk_tier": "low"
+    },
+    {
+      "name": "policy_search",
+      "description": "Search the legal playbook",
+      "schema": {
+        "type": "object",
+        "required": ["policy_set"],
+        "properties": { "policy_set": { "type": "string" } }
+      },
+      "pdp_action": "policy_search",
+      "risk_tier": "low"
+    },
+    {
+      "name": "risk_engine",
+      "description": "Score risk from clauses",
+      "schema": {
+        "type": "object",
+        "required": ["score_profile"],
+        "properties": { "score_profile": { "type": "string" } }
+      },
+      "pdp_action": "risk_engine",
+      "risk_tier": "medium"
+    },
+    {
+      "name": "citation_lookup",
+      "description": "Resolve citation ids",
+      "schema": {
+        "type": "object",
+        "required": ["citation_id"],
+        "properties": { "citation_id": { "type": "string" } }
+      },
+      "pdp_action": "citation_lookup",
+      "risk_tier": "low"
+    },
+    {
+      "name": "draft_memo",
+      "description": "Draft counsel-ready memo",
+      "schema": {
+        "type": "object",
+        "required": ["audience"],
+        "properties": { "audience": { "type": "string" } }
+      },
+      "pdp_action": "draft_memo",
+      "risk_tier": "medium"
+    },
+    {
+      "name": "format_citations",
+      "description": "Format citation list for the memo",
+      "schema": {
+        "type": "object",
+        "required": ["citation_ids"],
+        "properties": {
+          "citation_ids": { "type": "array", "items": { "type": "string" } }
+        }
+      },
+      "pdp_action": "format_citations",
+      "risk_tier": "low"
+    }
+  ]
+}
+```
+
+
+  </TabItem>
+  <TabItem value="prompt" label="Prompt">
+
+```json
+{
+  "prompt_id": "contract_review_v3",
+  "stages": {
+    "extract": {
+      "system": "Normalize the document. Use only extract tools. Stop when text and metadata are ready."
+    },
+    "analyse": {
+      "system": "Identify material risk clauses and score against policy. Stay inside Analyse tools."
+    },
+    "generate_report": {
+      "system": "Produce a counsel-ready memo with citations from Analyse outputs only."
+    }
+  }
+}
+```
+
+
+  </TabItem>
+  <TabItem value="output" label="Output">
+
+```json
+{
+  "output_schema_id": "counsel_memo_v1",
+  "type": "object",
+  "required": ["memo", "risk_summary", "citations"],
+  "properties": {
+    "memo": { "type": "string" },
+    "risk_summary": { "type": "string" },
+    "citations": { "type": "array", "items": { "type": "string" } }
+  }
+}
+```
+
+
+  </TabItem>
+  <TabItem value="eval" label="Eval">
+
+```json
+{
+  "eval_suite_id": "contract_review_golden",
+  "when": "offline_ci",
+  "checks": [
+    "outer_stage_order_fixed",
+    "tools_within_stage_allowlist",
+    "citation_present",
+    "no_cross_stage_tools"
+  ]
+}
+```
+
+
+  </TabItem>
+  <TabItem value="trace" label="Trace">
+
+Same workflow. Analyse depth differs; outer stages stay fixed.
+
+```json
+{
+  "workflow_id": "contract_review_v3",
+  "current_stage": "analyse",
+  "variants": [
+    { "label": "simple", "tool_calls": ["clause_search"] },
+    {
+      "label": "deep",
+      "tool_calls": ["clause_search", "policy_search", "risk_engine"]
+    }
+  ]
+}
+```
+
+
+  </TabItem>
+</Tabs>
+
+**Example B: regulatory impact analysis**
+
+Same hybrid shape: fixed stages, flexible tools inside Analyse.
+
+<Tabs groupId="pattern-3-regulatory">
+  <TabItem value="route" label="Route" default>
+
+```json
+{
+  "route_id": "regulatory_impact",
+  "intent": "regulatory_analysis",
+  "model_profile": "reasoning-standard",
+  "tool_manifest": "regulatory_impact_v1",
+  "policy_profile": "read_only_standard",
+  "workflow_id": "regulatory_impact_v1",
+  "prompt_id": "regulatory_impact_v1",
+  "output_schema_id": "reg_impact_memo_v1",
+  "eval_suite_id": "regulatory_impact_golden"
+}
+```
+
+
+  </TabItem>
+  <TabItem value="workflow" label="Workflow">
+
+```json
+{
+  "workflow_id": "regulatory_impact_v1",
+  "stages": [
+    {
+      "id": "extract",
+      "allowed_tools": ["doc_parse", "reg_index_lookup"],
+      "max_tool_calls": 4
+    },
+    {
+      "id": "analyse",
+      "allowed_tools": ["obligation_search", "control_map", "gap_score"],
+      "max_tool_calls": 10
+    },
+    {
+      "id": "generate_report",
+      "allowed_tools": ["draft_impact_memo"],
+      "max_tool_calls": 2,
+      "side_effect_tools": ["draft_impact_memo"]
+    }
+  ]
+}
+```
+
+
+  </TabItem>
+  <TabItem value="manifest" label="Manifest">
+
+```json
+{
+  "manifest_id": "regulatory_impact_v1",
+  "manifest_version": "2026.08.1",
+  "description": "Staged regulatory impact tools",
+  "tools": [
+    {
+      "name": "doc_parse",
+      "description": "Parse regulation or policy text",
+      "schema": {
+        "type": "object",
+        "required": ["doc_id"],
+        "properties": { "doc_id": { "type": "string" } }
+      },
+      "pdp_action": "doc_parse",
+      "risk_tier": "low"
+    },
+    {
+      "name": "reg_index_lookup",
+      "description": "Lookup related regulations in the index",
+      "schema": {
+        "type": "object",
+        "required": ["query"],
+        "properties": { "query": { "type": "string" } }
+      },
+      "pdp_action": "reg_index_lookup",
+      "risk_tier": "low"
+    },
+    {
+      "name": "obligation_search",
+      "description": "Find obligations in extracted text",
+      "schema": {
+        "type": "object",
+        "required": ["topics"],
+        "properties": {
+          "topics": { "type": "array", "items": { "type": "string" } }
+        }
+      },
+      "pdp_action": "obligation_search",
+      "risk_tier": "low"
+    },
+    {
+      "name": "control_map",
+      "description": "Map obligations to existing controls",
+      "schema": {
+        "type": "object",
+        "required": ["control_set"],
+        "properties": { "control_set": { "type": "string" } }
+      },
+      "pdp_action": "control_map",
+      "risk_tier": "medium"
+    },
+    {
+      "name": "gap_score",
+      "description": "Score control gaps",
+      "schema": {
+        "type": "object",
+        "required": ["profile"],
+        "properties": { "profile": { "type": "string" } }
+      },
+      "pdp_action": "gap_score",
+      "risk_tier": "medium"
+    },
+    {
+      "name": "draft_impact_memo",
+      "description": "Draft regulatory impact memo",
+      "schema": {
+        "type": "object",
+        "required": ["audience"],
+        "properties": { "audience": { "type": "string" } }
+      },
+      "pdp_action": "draft_impact_memo",
+      "risk_tier": "medium"
+    }
+  ]
+}
+```
+
+
+  </TabItem>
+  <TabItem value="prompt" label="Prompt">
+
+```json
+{
+  "prompt_id": "regulatory_impact_v1",
+  "stages": {
+    "extract": {
+      "system": "Extract obligations and related regs. Use only extract tools."
+    },
+    "analyse": {
+      "system": "Map obligations to controls and score gaps. Stay inside Analyse tools."
+    },
+    "generate_report": {
+      "system": "Draft an impact memo from Analyse outputs only. Cite obligations."
+    }
+  }
+}
+```
+
+
+  </TabItem>
+  <TabItem value="output" label="Output">
+
+```json
+{
+  "output_schema_id": "reg_impact_memo_v1",
+  "type": "object",
+  "required": ["memo", "gaps", "citations"],
+  "properties": {
+    "memo": { "type": "string" },
+    "gaps": { "type": "array", "items": { "type": "string" } },
+    "citations": { "type": "array", "items": { "type": "string" } }
+  }
+}
+```
+
+
+  </TabItem>
+  <TabItem value="eval" label="Eval">
+
+```json
+{
+  "eval_suite_id": "regulatory_impact_golden",
+  "when": "offline_ci",
+  "checks": [
+    "outer_stage_order_fixed",
+    "tools_within_stage_allowlist",
+    "citation_present",
+    "no_cross_stage_tools"
+  ]
+}
+```
+
+
+  </TabItem>
+  <TabItem value="trace" label="Trace">
+
+```json
+{
+  "workflow_id": "regulatory_impact_v1",
+  "current_stage": "analyse",
+  "variants": [
+    { "label": "simple", "tool_calls": ["obligation_search"] },
+    {
+      "label": "deep",
+      "tool_calls": ["obligation_search", "control_map", "gap_score"]
+    }
+  ]
+}
+```
+
+
+  </TabItem>
+</Tabs>
+
+### Pros and cons
+
+| Pros | Cons |
+| --- | --- |
+| Strong governance | More architecture |
+| Flexible reasoning | Needs workflow + agent runtime |
+| Easier auditing than Pattern 1 | Slightly more complex to implement |
+| Good balance of control and autonomy | |
+| Enterprise friendly | |
+
+### Best use cases
+
+Legal review · Contract review · Medical review · Financial advice · Regulatory analysis · Enterprise copilots
+
+## What triggers a route change
+
+All four patterns share the same versioning rule: the **route table** is versioned platform config; workflows, manifests, prompts, schemas, and eval suites are separate versioned artifacts the route **references**. See [How to Design an Intent Router](/insights/design-intent-router) and [Route table lifecycle](/playbooks/router/intent-router/route-table-lifecycle).
+
+Bump **`route_table_version`** when a **route row** changes (pointers or policy fields), not on every artifact publish behind a stable id.
+
+| Change | Bump `route_table_version`? | What else |
+| --- | --- | --- |
+| New or removed `route_id` | Yes | Golden routing set |
+| Row points at a new `workflow_id` (e.g. `…_v1` → `…_v2`) | Yes | Pattern 2 and 3 |
+| Row points at a different `tool_manifest`, `prompt_id`, `output_schema_id`, or `eval_suite_id` | Yes | All patterns that use that field |
+| `model_profile`, `policy_profile`, `max_loop_steps`, or entitlements on the row | Yes | CI + audit |
+| New `manifest_version` under the **same** `manifest_id` | Often no | Promote manifest; pin `manifest_version` on session |
+| Prompt / eval content bump while the route still references the same artifact id | Often no | Promote that artifact; eval CI for the suite |
+| In-place overwrite of `workflow_id` content without a new id | Avoid in prod | Prefer `v2` + row ref update |
+
+**Session pin:** at route decision (or session open), pin `route_table_version` and `manifest_version` (and the workflow id those imply). Mid-session promote must not swap an in-flight run without explicit policy.
+
+**Pattern-specific refs that force a table bump when the pointer changes:**
+
+| Pattern | Typical row refs |
+| --- | --- |
+| **0** | `prompt_id`, `output_schema_id`, `eval_suite_id` (`tool_manifest: "none"`) |
+| **1** | `tool_manifest`, `prompt_id`, `max_loop_steps`, eval / output ids |
+| **2** | `workflow_id`, `tool_manifest`, plus prompt / output / eval ids |
+| **3** | `workflow_id` (with stage allowlists), `tool_manifest`, plus prompt / output / eval ids |
+
+## Comparison matrix
+
+| Capability | Pattern 0: Single inference | Pattern 1: Autonomous | Pattern 2: Deterministic | Pattern 3: Guided |
+| --- | --- | --- | --- | --- |
+| Is an agent | No | Yes | No (fixed workflow) | Yes (within stages) |
+| Workflow fixed | N/A (one step) | No | Yes | Yes |
+| Tool sequence fixed | N/A (no tools) | No | Yes | No (within a step) |
+| LLM decides next action | No | Yes | No | Yes (inside each step) |
+| Easy to audit | Excellent | No | Yes | Yes |
+| Easy recovery | Excellent (retry call) | Medium | Excellent | Excellent |
+| Flexibility | Low | High | Low | Medium-High |
+| Enterprise governance | Excellent | Medium | Excellent | Excellent |
+| Complexity | Lowest | Medium | Low | High |
+| Agent-to-agent calls | No | Yes (dynamic) | Yes (fixed handoffs only) | Yes (stage-scoped) |
+
+## Note: agent-to-agent calls
+
+Not every pattern supports one agent invoking another. The distinction matters when you split capabilities across specialist agents instead of tools.
+
+**Pattern 0: No.** There is no agent loop. The agentic app makes one inference call and cannot delegate to another agent.
+
+**Pattern 1: Yes (dynamic).** The running agent can treat another agent as a tool or sub-agent and decide when to invoke it. Any specialist may run in any order. Maximum flexibility, weakest predictability for which agents run.
+
+**Pattern 2: Yes (fixed orchestration only).** You can wire agents as explicit workflow stages: Agent A completes, then Agent B runs. The workflow designer defines the handoff, not the model. Good for audit; no exploratory delegation.
+
+**Pattern 3: Yes (governed).** The usual enterprise shape. A stage host agent may call specialist agents only if they are on that stage's allowlist, or each stage is owned by a dedicated agent with fixed handoffs between stages. Multi-agent capability without open-ended spawning.
+
+| Need | Prefer |
+| --- | --- |
+| Dynamic "call another agent when needed" | Pattern 1 |
+| Fixed "stage 1 agent → stage 2 agent" pipeline | Pattern 2 or 3 |
+| Governed specialist delegation inside a stage | Pattern 3 |
+
+:::info[Related]
+For when to split agents vs routes on one runtime, see One Agent with Routes vs Specialized Agents (coming soon).
+:::
+
+## Which should you choose?
+
+### Choose Pattern 0 if...
+
+- One reasoning pass is enough.
+- No tools (or only deterministic pre/post handled by the agentic app around the call).
+- No side effects driven by the LLM.
+- Latency and cost matter more than multi-step investigation.
+
+Examples: summarization, Q&A over provided context, extraction, classification, rewriting.
+
+### Choose Pattern 1 if...
+
+- The problem is exploratory.
+- You do not know the execution path in advance.
+- The AI needs maximum autonomy.
+
+Examples: research, coding, investigation, knowledge assistants.
+
+### Choose Pattern 2 if...
+
+- Every step is mandatory.
+- Order matters.
+- Compliance is critical.
+- Side effects (payments, writes) must be tightly controlled.
+
+Examples: payments, loan approvals, insurance processing, KYC.
+
+### Choose Pattern 3 if...
+
+- The business process is fixed.
+- Reasoning within each stage is complex and varies.
+- You need both governance and AI flexibility.
+
+Examples: contract review, regulatory compliance, due diligence, financial document analysis, enterprise legal assistants.
+
+Quick filter:
+
+| Signal | Prefer |
+| --- | --- |
+| One call is enough (summarize, Q&A, extract) | Pattern 0 |
+| Unknown path is the product | Pattern 1 |
+| Side effects + mandatory order | Pattern 2 |
+| Fixed stages, variable depth of analysis | Pattern 3 |
+
+**Escalate from Pattern 0 when** the model needs to search, call APIs, or iterate (Pattern 1 or 3), or when the business requires mandatory ordered stages with side effects (Pattern 2).
+
+## Key takeaways
+
+- **Choose on the autonomy axis**, not on whether "agents are cool."
+- **Pattern 0** when one call through the agentic app is enough; it is not an agent.
+- **Pattern 1** when the path is the discovery; accept weaker predictability.
+- **Pattern 2** when order and side effects are non-negotiable.
+- **Pattern 3** when the process is fixed but stage-level reasoning must flex.
+- **Agent-to-agent calls:** Pattern 1 for dynamic delegation; Pattern 2 or 3 for fixed or governed multi-agent handoffs; Pattern 0 does not apply.
+- **Encode contracts as JSON** and only add agent or checkpoint machinery when the pattern needs it.
+
+:::info[Builds on]
+[What Is an Intent Router](/insights/what-is-intent-router) · [How to Design an Intent Router](/insights/design-intent-router) · [Policy-Governed Agent Runtime](/insights/policy-governed-agent-runtime) · [MCP for Enterprise Business Agents](/insights/mcp-for-enterprise-business-agents)
+:::
