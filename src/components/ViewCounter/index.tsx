@@ -33,8 +33,13 @@ function resolvePath(pageSlug?: string): string {
 }
 
 async function fetchCount(path: string): Promise<string | null> {
-  // rnd helps when intermediaries cache the JSON (GoatCounter docs mention rnd as a cache buster).
-  const url = `https://${GOATCOUNTER_CODE}.goatcounter.com/counter/${encodeURIComponent(path)}.json?rnd=${Date.now()}`;
+  // Explicit start date: (1) all-time totals, (2) different cache key than the
+  // default URL, which GoatCounter CDN can leave stale for hours.
+  const params = new URLSearchParams({
+    start: '2020-01-01',
+    rnd: String(Date.now()),
+  });
+  const url = `https://${GOATCOUNTER_CODE}.goatcounter.com/counter/${encodeURIComponent(path)}.json?${params}`;
   const res = await fetch(url, {cache: 'no-store'});
   const data = (await res.json().catch(() => null)) as {count?: string} | null;
   if (data && typeof data.count === 'string') {
