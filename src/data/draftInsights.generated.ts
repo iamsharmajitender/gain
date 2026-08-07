@@ -15,135 +15,116 @@ export const draftInsightPages: readonly DraftInsightPage[] = [
     "title": "Agent Identity: Why the Robot Needs Its Own Badge",
     "date": "2026-08-06",
     "description": "User identity answers who is asking; agent identity answers which software is acting. Least privilege, audit, revoke, and dual gateway checks for real-time and batch.",
-    "slug": "agent-identity",
-    "href": "/insights/agent-identity"
+    "slug": "agent-identity"
   },
   {
     "title": "Enterprise AI Workflow Patterns: Autonomy vs Control",
     "date": "2026-08-05",
     "description": "Choose between single inference, fully autonomous agents, deterministic workflows, and guided hybrid agents. Comparison matrix, JSON contracts, and when to escalate from one call to a full agent.",
-    "slug": "enterprise-ai-workflow-patterns-autonomy-vs-control",
-    "href": "/insights/enterprise-ai-workflow-patterns-autonomy-vs-control"
+    "slug": "enterprise-ai-workflow-patterns-autonomy-vs-control"
   },
   {
     "title": "One Agent with Routes vs Specialized Agents: When to Split",
     "date": "2026-08-05",
     "description": "Enterprise agent architecture: when a shared runtime with governed routes is enough, and when different execution boundaries require specialized agents.",
-    "slug": "one-agent-routes-vs-specialized-agents",
-    "href": "/insights/one-agent-routes-vs-specialized-agents"
+    "slug": "one-agent-routes-vs-specialized-agents"
   },
   {
     "title": "Active Token Concurrency: Turning a Spike into a Pace",
     "date": "2026-08-04",
     "description": "System design of active booking tokens: only a few thousand users enter hold and pay at once, token TTL and drain rate, and why a queue position is not a seat.",
-    "slug": "active-token-concurrency-control",
-    "href": "/insights/active-token-concurrency-control"
+    "slug": "active-token-concurrency-control"
   },
   {
     "title": "Redis Atomic Inventory: DECR for Scarce Seats",
     "date": "2026-08-04",
     "description": "System design of hot-path seat inventory in Redis: atomic DECR or Lua guard, hold TTL release, shard by train and date, and why Postgres stays the source of truth for confirmed tickets.",
-    "slug": "redis-atomic-inventory-counters",
-    "href": "/insights/redis-atomic-inventory-counters"
+    "slug": "redis-atomic-inventory-counters"
   },
   {
     "title": "Virtual Waiting Room: Absorbing the Open-Second Stampede",
     "date": "2026-08-04",
     "description": "System design of a virtual waiting room: edge admission before booking, Redis-backed queue position, shed under overload, and why 2M users must never hit the book path directly.",
-    "slug": "virtual-waiting-room-system-design",
-    "href": "/insights/virtual-waiting-room-system-design"
+    "slug": "virtual-waiting-room-system-design"
   },
   {
     "title": "CUDA Architecture : How a GPU Actually Runs Your Model",
     "date": "2026-07-31",
     "description": "A learner's pass through the CUDA stack: SMs, warps, and the memory hierarchy that decides performance, why most kernels are memory bound, and what that means for LLM training and inference.",
-    "slug": "cuda-architecture-under-the-hood",
-    "href": "/insights/cuda-architecture-under-the-hood"
+    "slug": "cuda-architecture-under-the-hood"
   },
   {
     "title": "Encoder vs Decoder LLM Architecture: How Attention Direction Decides the Job",
     "date": "2026-07-31",
     "description": "Encoder-only, decoder-only, and encoder-decoder are three attention contracts, not three intelligence tiers. What each can see, what each is for, and when to pick which.",
-    "slug": "encoder-vs-decoder-llm-architecture",
-    "href": "/insights/encoder-vs-decoder-llm-architecture"
+    "slug": "encoder-vs-decoder-llm-architecture"
   },
   {
     "title": "Reasoning vs General vs Coding Models: How They Differ",
     "date": "2026-07-31",
     "description": "Three model families built from the same transformer: what changes in the data, the post-training objective, and the inference budget, and how to route work between them.",
-    "slug": "reasoning-vs-general-vs-coding-models",
-    "href": "/insights/reasoning-vs-general-vs-coding-models"
+    "slug": "reasoning-vs-general-vs-coding-models"
   },
   {
     "title": "Transformer Architecture: The Block Every Modern LLM Is Built From",
     "date": "2026-07-31",
     "description": "A learner's pass through the transformer: embeddings, attention, FFN, and residual stack, with a short map of the other model architectures you will still hear about.",
-    "slug": "transformer-architecture-under-the-hood",
-    "href": "/insights/transformer-architecture-under-the-hood"
+    "slug": "transformer-architecture-under-the-hood"
   },
   {
     "title": "HTTP vs WebSocket vs SSE - Under the Hood",
     "date": "2026-07-30",
     "description": "Three ways to move data after the first request: client-initiated request and response, a full duplex upgraded socket, and a one way server stream over plain HTTP. Handshakes, reconnects, and proxy reality.",
-    "slug": "http-vs-websocket-vs-sse-under-the-hood",
-    "href": "/insights/http-vs-websocket-vs-sse-under-the-hood"
+    "slug": "http-vs-websocket-vs-sse-under-the-hood"
   },
   {
     "title": "ZooKeeper - Under the Hood",
     "date": "2026-07-30",
     "description": "What a coordination service actually does: znodes, ephemeral nodes, watches, and quorum writes. Then how Kafka used ZooKeeper for a decade, why KRaft replaced it, and where etcd and Consul fit.",
-    "slug": "zookeeper-under-the-hood",
-    "href": "/insights/zookeeper-under-the-hood"
+    "slug": "zookeeper-under-the-hood"
   },
   {
     "title": "Google Document AI Under the Hood: OCR, Parsers, Processors, and Enterprise Document Intelligence",
     "date": "2026-07-22",
     "description": "How Google Cloud Document AI goes beyond OCR: a staged look at image processing, OCR, layout analysis, reading order, and the processor families that turn invoices, passports, and forms into structured business data.",
-    "slug": "google-document-ai-under-the-hood",
-    "href": "/insights/google-document-ai-under-the-hood"
+    "slug": "google-document-ai-under-the-hood"
   },
   {
     "title": "Building a Centralized AI Routing Service with Java and Amazon Bedrock",
     "date": "2026-07-21",
     "description": "How to build a centralized AI routing service in Java and Spring Boot that classifies intent and dispatches to the right Amazon Bedrock Agent, so applications stay decoupled from agent IDs and routing logic.",
-    "slug": "centralized-ai-routing-service-bedrock",
-    "href": "/insights/centralized-ai-routing-service-bedrock"
+    "slug": "centralized-ai-routing-service-bedrock"
   },
   {
     "title": "Building a Unified Observability Framework",
     "date": "2026-07-07",
     "description": "Business, service, and infrastructure observability in large regulated enterprises. A three-layer model where every business outcome traces to system behaviour and infrastructure state.",
-    "slug": "unified-observability-framework",
-    "href": "/insights/unified-observability-framework"
+    "slug": "unified-observability-framework"
   },
   {
     "title": "The First Principles of Technology",
     "date": "2026-07-06",
     "description": "First principles differ by decision layer. Five levels from business strategy to software engineering, and why applying the right principles at the right level matters.",
-    "slug": "first-principles-of-technology",
-    "href": "/insights/first-principles-of-technology"
+    "slug": "first-principles-of-technology"
   },
   {
     "title": "LangChain vs LangGraph — When to Use What in Production Agents",
     "date": "2026-07-03",
     "description": "LangChain and LangGraph are not rivals — they are layers of the same stack. This guide explains when to use chains, agents, or graphs; pseudo-code for both paths; and how memory, validation, and LLM selection fit a governed agentic loop.",
-    "slug": "langchain-vs-langgraph",
-    "href": "/insights/langchain-vs-langgraph"
+    "slug": "langchain-vs-langgraph"
   },
   {
     "title": "What Is the Agentic Loop — and How It Works End to End",
     "date": "2026-07-02",
     "description": "The agentic loop is the plan → act → observe cycle that turns a user goal into a completed workflow. This breakdown walks every stage — ingress, routing, proposal, policy, execution, validation, synthesis — and what each one owns in production.",
-    "slug": "what-is-agentic-loop",
-    "href": "/insights/what-is-agentic-loop"
+    "slug": "what-is-agentic-loop"
   },
   {
     "title": "Eval Engineering: The Control System for Trustworthy AI",
     "date": "2026-07-01",
     "description": "Testing tells you the AI ran. Evals tell you it behaved. For non-deterministic systems, evaluation is the control system that turns AI risk into a managed, measurable, board-defensible discipline.",
-    "slug": "eval-engineering",
-    "href": "/insights/eval-engineering"
+    "slug": "eval-engineering"
   }
 ];
 
-export const draftInsightsLinkable = true;
+export const draftInsightsLinkable = false;

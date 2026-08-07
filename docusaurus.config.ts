@@ -26,6 +26,17 @@ const config: Config = {
 
   clientModules: [require.resolve('./src/clientModules/diagramZoom.ts')],
 
+  // GoatCounter: production only so local `npm start` does not inflate page counts
+  scripts: isDev
+    ? []
+    : [
+        {
+          src: 'https://gc.zgo.at/count.js',
+          async: true,
+          'data-goatcounter': 'https://jitendersharma.goatcounter.com/count',
+        },
+      ],
+
   onBrokenLinks: 'throw',
 
   i18n: {

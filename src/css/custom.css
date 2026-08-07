@@ -4419,18 +4419,20 @@ html.gain-zoom-open {
 
 /* Section tab pages (Advisory, About, Sitemap): flush tabs and panels with page header */
 .gain-insights-page__main .theme-tabs-container {
-  --ifm-tabs-padding-horizontal: 0;
+  --ifm-tabs-padding-horizontal: 0.75rem;
   padding-inline: 0;
   margin-inline: 0;
 }
 
 .gain-insights-page__main .theme-tabs-container > .tabs {
+  /* Pull first tab text flush; equal horizontal padding keeps hover boxes even */
+  margin-inline-start: -0.75rem;
   padding-inline-start: 0;
-  margin-inline-start: 0;
 }
 
+/* Space between tabs via margin (outside hover/active background), not padding */
 .gain-insights-page__main .theme-tabs-container .tabs__item:not(:first-child) {
-  padding-inline-start: 1rem;
+  margin-inline-start: 0.25rem;
 }
 
 .gain-insights-page__main .theme-tabs-container > .margin-top--md,
