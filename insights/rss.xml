@@ -9,6 +9,17 @@
         <generator>https://github.com/jpmonette/feed</generator>
         <language>en</language>
         <item>
+            <title><![CDATA[Spotify Music Discovery: Inverted Index Search Explained]]></title>
+            <link>https://jitendersharma.dev/insights/music-search-inverted-index</link>
+            <guid>https://jitendersharma.dev/insights/music-search-inverted-index</guid>
+            <pubDate>Wed, 05 Aug 2026 00:00:00 GMT</pubDate>
+            <description><![CDATA[System design of inverted index search with a Spotify worked example: catalog vs index, title artist album lyrics postings, autocomplete, fuzzy match, ranking, and play hydration.]]></description>
+            <content:encoded><![CDATA[System design of inverted index search with a Spotify worked example: catalog vs index, title artist album lyrics postings, autocomplete, fuzzy match, ranking, and play hydration.]]></content:encoded>
+            <category>Platforms &amp; Engineering</category>
+            <category>Architecture</category>
+            <category>System Design</category>
+        </item>
+        <item>
             <title><![CDATA[Spotify Music Streaming Pipeline: From Upload to Search and Play]]></title>
             <link>https://jitendersharma.dev/insights/spotify-music-streaming-pipeline</link>
             <guid>https://jitendersharma.dev/insights/spotify-music-streaming-pipeline</guid>
@@ -19,17 +30,6 @@
             <category>Architecture</category>
             <category>System Design</category>
             <category>Observability</category>
-        </item>
-        <item>
-            <title><![CDATA[Spotify Music Discovery: Inverted Index Search Explained]]></title>
-            <link>https://jitendersharma.dev/insights/music-search-inverted-index</link>
-            <guid>https://jitendersharma.dev/insights/music-search-inverted-index</guid>
-            <pubDate>Wed, 05 Aug 2026 00:00:00 GMT</pubDate>
-            <description><![CDATA[System design of inverted index search with a Spotify worked example: catalog vs index, title artist album lyrics postings, autocomplete, fuzzy match, ranking, and play hydration.]]></description>
-            <content:encoded><![CDATA[System design of inverted index search with a Spotify worked example: catalog vs index, title artist album lyrics postings, autocomplete, fuzzy match, ranking, and play hydration.]]></content:encoded>
-            <category>Platforms &amp; Engineering</category>
-            <category>Architecture</category>
-            <category>System Design</category>
         </item>
         <item>
             <title><![CDATA[After Training an LLM: From Frozen Weights to Token-by-Token Inference]]></title>
@@ -112,18 +112,6 @@
             <category>Observability</category>
         </item>
         <item>
-            <title><![CDATA[Load Balancer - Under the Hood]]></title>
-            <link>https://jitendersharma.dev/insights/load-balancer-under-the-hood</link>
-            <guid>https://jitendersharma.dev/insights/load-balancer-under-the-hood</guid>
-            <pubDate>Sat, 18 Jul 2026 00:00:00 GMT</pubDate>
-            <description><![CDATA[Layer 4 vs Layer 7 load balancing: what each sees on the wire, network vs application load balancers, algorithms, health checks, and when to use which.]]></description>
-            <content:encoded><![CDATA[Layer 4 vs Layer 7 load balancing: what each sees on the wire, network vs application load balancers, algorithms, health checks, and when to use which.]]></content:encoded>
-            <category>Platforms &amp; Engineering</category>
-            <category>Explainer</category>
-            <category>Under the Hood</category>
-            <category>Observability</category>
-        </item>
-        <item>
             <title><![CDATA[SQL vs NoSQL - Under the Hood]]></title>
             <link>https://jitendersharma.dev/insights/sql-vs-nosql-under-the-hood</link>
             <guid>https://jitendersharma.dev/insights/sql-vs-nosql-under-the-hood</guid>
@@ -134,6 +122,18 @@
             <category>Explainer</category>
             <category>Under the Hood</category>
             <category>RAG</category>
+        </item>
+        <item>
+            <title><![CDATA[Load Balancer - Under the Hood]]></title>
+            <link>https://jitendersharma.dev/insights/load-balancer-under-the-hood</link>
+            <guid>https://jitendersharma.dev/insights/load-balancer-under-the-hood</guid>
+            <pubDate>Sat, 18 Jul 2026 00:00:00 GMT</pubDate>
+            <description><![CDATA[Layer 4 vs Layer 7 load balancing: what each sees on the wire, network vs application load balancers, algorithms, health checks, and when to use which.]]></description>
+            <content:encoded><![CDATA[Layer 4 vs Layer 7 load balancing: what each sees on the wire, network vs application load balancers, algorithms, health checks, and when to use which.]]></content:encoded>
+            <category>Platforms &amp; Engineering</category>
+            <category>Explainer</category>
+            <category>Under the Hood</category>
+            <category>Observability</category>
         </item>
         <item>
             <title><![CDATA[LLM Hosting Options for Regulated Industries]]></title>
