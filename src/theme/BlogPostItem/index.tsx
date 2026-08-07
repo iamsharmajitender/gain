@@ -8,7 +8,6 @@ import BlogPostItemContent from '@theme/BlogPostItem/Content';
 import BlogPostItemFooter from '@theme/BlogPostItem/Footer';
 import type {Props} from '@theme/BlogPostItem';
 import {findTypeTag, TYPE_TAG_LABELS} from '@site/src/data/insightTags';
-import ViewCounter from '@site/src/components/ViewCounter';
 
 const DRAFT_THUMBNAIL = '/img/draft.svg';
 
@@ -63,7 +62,6 @@ function BlogPostItemListView({className}: Pick<Props, 'className'>): ReactNode 
               dateTime={new Date(date).toISOString()}>
               {formatInsightDate(date)}
             </time>
-            <ViewCounter pageSlug={permalink} withSpacer className="gain-insight-card__date" />
             {isDraft && (
               <span className="gain-insight-card__draft" aria-label="Draft article">
                 Draft

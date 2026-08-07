@@ -20,22 +20,22 @@ function formatViewsLabel(count: string): string {
   return numeric === 1 ? '1 view' : `${count} views`;
 }
 
-function resolvePath(pageSlug?: string): string {
-  if (typeof window !== 'undefined') {
-    const tracked = window.goatcounter?.get_data?.()?.p;
-    if (tracked) {
-      return tracked.replace(/\/$/, '') || '/';
-    }
-  }
+function parseCount(count: string): number | null {
+  const numeric = Number(String(count).replace(/,/g, ''));
+  return Number.isFinite(numeric) ? numeric : null;
+}
 
+/** Prefer the canonical permalink/pathname — not SPA get_data() which can include search/hash. */
+function resolvePath(pageSlug?: string): string {
   const rawPath =
     pageSlug || (typeof window !== 'undefined' ? window.location.pathname : '/');
   return rawPath.replace(/\/$/, '') || '/';
 }
 
 async function fetchCount(path: string): Promise<string | null> {
-  const url = `https://${GOATCOUNTER_CODE}.goatcounter.com/counter/${encodeURIComponent(path)}.json`;
-  const res = await fetch(url);
+  // rnd helps when intermediaries cache the JSON (GoatCounter docs mention rnd as a cache buster).
+  const url = `https://${GOATCOUNTER_CODE}.goatcounter.com/counter/${encodeURIComponent(path)}.json?rnd=${Date.now()}`;
+  const res = await fetch(url, {cache: 'no-store'});
   const data = (await res.json().catch(() => null)) as {count?: string} | null;
   if (data && typeof data.count === 'string') {
     return data.count;
@@ -50,8 +50,8 @@ async function fetchCount(path: string): Promise<string | null> {
  * Public GoatCounter pageview count for the current (or given) path.
  * Tracking script is loaded from docusaurus.config.ts on production builds.
  *
- * GoatCounter returns HTTP 404 with `{ count: "0" }` for paths that are not
- * in the dashboard yet — still treat that body as a valid count.
+ * Hidden until the count is at least 1. GoatCounter may cache public counter
+ * JSON for up to ~4 hours, so the dashboard can briefly lead the on-page number.
  */
 export default function ViewCounter({
   pageSlug,
@@ -62,9 +62,9 @@ export default function ViewCounter({
 
   useEffect(() => {
     let cancelled = false;
+    const path = resolvePath(pageSlug);
 
     const load = async () => {
-      const path = resolvePath(pageSlug);
       const count = await fetchCount(path);
       if (!cancelled && count !== null) {
         setViews(count);
@@ -73,18 +73,30 @@ export default function ViewCounter({
 
     void load();
 
-    // Counter API can lag briefly after the first hit; refresh once.
     const retry = window.setTimeout(() => {
       void load();
-    }, 2500);
+    }, 4000);
+
+    const onFocus = () => {
+      void load();
+    };
+    window.addEventListener('focus', onFocus);
+    document.addEventListener('visibilitychange', onFocus);
 
     return () => {
       cancelled = true;
       window.clearTimeout(retry);
+      window.removeEventListener('focus', onFocus);
+      document.removeEventListener('visibilitychange', onFocus);
     };
   }, [pageSlug]);
 
   if (views === null) {
+    return null;
+  }
+
+  const numeric = parseCount(views);
+  if (numeric === null || numeric < 1) {
     return null;
   }
 
