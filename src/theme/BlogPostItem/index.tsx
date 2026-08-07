@@ -8,6 +8,7 @@ import BlogPostItemContent from '@theme/BlogPostItem/Content';
 import BlogPostItemFooter from '@theme/BlogPostItem/Footer';
 import type {Props} from '@theme/BlogPostItem';
 import {findTypeTag, TYPE_TAG_LABELS} from '@site/src/data/insightTags';
+import ViewCounter from '@site/src/components/ViewCounter';
 
 const DRAFT_THUMBNAIL = '/img/draft.svg';
 
@@ -75,7 +76,7 @@ function BlogPostItemListView({className}: Pick<Props, 'className'>): ReactNode 
 }
 
 export default function BlogPostItem({children, className}: Props): ReactNode {
-  const {isBlogPostPage} = useBlogPost();
+  const {isBlogPostPage, metadata} = useBlogPost();
 
   if (!isBlogPostPage) {
     return <BlogPostItemListView className={className} />;
@@ -84,6 +85,9 @@ export default function BlogPostItem({children, className}: Props): ReactNode {
   return (
     <BlogPostItemContainer className={className}>
       <BlogPostItemHeader />
+      <div className="gain-view-counter">
+        <ViewCounter pageSlug={metadata.permalink} />
+      </div>
       <BlogPostItemContent>{children}</BlogPostItemContent>
       <BlogPostItemFooter />
     </BlogPostItemContainer>

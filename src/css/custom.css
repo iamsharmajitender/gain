@@ -4613,6 +4613,10 @@ html.gain-zoom-open {
   line-height: 1.15;
 }
 
+.gain-view-counter {
+  margin: 0.5rem 0 1.25rem;
+}
+
 .blog-post-page .gain-insights-page__main .markdown {
   max-width: 900px;
   font-size: 1rem;

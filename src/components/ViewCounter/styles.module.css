@@ -1,0 +1,7 @@
+.counter {
+  display: inline-block;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--gain-text-muted);
+}

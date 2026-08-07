@@ -12,6 +12,7 @@ import DocItemContent from '@theme/DocItem/Content';
 import DocBreadcrumbs from '@theme/DocBreadcrumbs';
 import ContentVisibility from '@theme/ContentVisibility';
 import ContextualBackLink from '@site/src/components/ContextualBackLink';
+import ViewCounter from '@site/src/components/ViewCounter';
 import {backToFrameworks} from '@site/src/data/contextualBackLinks';
 import type {Props} from '@theme/DocItem/Layout';
 
@@ -64,6 +65,9 @@ export default function DocItemLayout({children}: Props): ReactNode {
             <FrameworkBackLink />
             <DocBreadcrumbs />
             <DocVersionBadge />
+            <div className="gain-view-counter">
+              <ViewCounter pageSlug={metadata.permalink} />
+            </div>
             {docTOC.mobile}
             <DocItemContent>{children}</DocItemContent>
             <DocItemFooter />
