@@ -8,21 +8,6 @@
     <subtitle>Jitender Sharma Blog</subtitle>
     <icon>https://jitendersharma.dev/img/favicon.ico</icon>
     <entry>
-        <title type="html"><![CDATA[Spotify Music Discovery: Inverted Index Search Explained]]></title>
-        <id>https://jitendersharma.dev/insights/music-search-inverted-index</id>
-        <link href="https://jitendersharma.dev/insights/music-search-inverted-index"/>
-        <updated>2026-08-05T00:00:00.000Z</updated>
-        <summary type="html"><![CDATA[System design of inverted index search with a Spotify worked example: catalog vs index, title artist album lyrics postings, autocomplete, fuzzy match, ranking, and play hydration.]]></summary>
-        <content type="html"><![CDATA[System design of inverted index search with a Spotify worked example: catalog vs index, title artist album lyrics postings, autocomplete, fuzzy match, ranking, and play hydration.]]></content>
-        <author>
-            <name>Jitender Sharma</name>
-            <uri>https://jitendersharma.dev</uri>
-        </author>
-        <category label="Platforms &amp; Engineering" term="Platforms &amp; Engineering"/>
-        <category label="Architecture" term="Architecture"/>
-        <category label="System Design" term="System Design"/>
-    </entry>
-    <entry>
         <title type="html"><![CDATA[Spotify Music Streaming Pipeline: From Upload to Search and Play]]></title>
         <id>https://jitendersharma.dev/insights/spotify-music-streaming-pipeline</id>
         <link href="https://jitendersharma.dev/insights/spotify-music-streaming-pipeline"/>
@@ -37,6 +22,21 @@
         <category label="Architecture" term="Architecture"/>
         <category label="System Design" term="System Design"/>
         <category label="Observability" term="Observability"/>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Spotify Music Discovery: Inverted Index Search Explained]]></title>
+        <id>https://jitendersharma.dev/insights/music-search-inverted-index</id>
+        <link href="https://jitendersharma.dev/insights/music-search-inverted-index"/>
+        <updated>2026-08-05T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[System design of inverted index search with a Spotify worked example: catalog vs index, title artist album lyrics postings, autocomplete, fuzzy match, ranking, and play hydration.]]></summary>
+        <content type="html"><![CDATA[System design of inverted index search with a Spotify worked example: catalog vs index, title artist album lyrics postings, autocomplete, fuzzy match, ranking, and play hydration.]]></content>
+        <author>
+            <name>Jitender Sharma</name>
+            <uri>https://jitendersharma.dev</uri>
+        </author>
+        <category label="Platforms &amp; Engineering" term="Platforms &amp; Engineering"/>
+        <category label="Architecture" term="Architecture"/>
+        <category label="System Design" term="System Design"/>
     </entry>
     <entry>
         <title type="html"><![CDATA[After Training an LLM: From Frozen Weights to Token-by-Token Inference]]></title>
@@ -84,21 +84,6 @@
         <category label="LLM" term="LLM"/>
     </entry>
     <entry>
-        <title type="html"><![CDATA[Adaptive Video Streaming Explained: How Netflix Streams One Chunk at a Time]]></title>
-        <id>https://jitendersharma.dev/insights/adaptive-video-streaming-explained</id>
-        <link href="https://jitendersharma.dev/insights/adaptive-video-streaming-explained"/>
-        <updated>2026-07-21T00:00:00.000Z</updated>
-        <summary type="html"><![CDATA[Netflix does not stream one file. Chunks, quality ladders, manifests, ABR decisions, buffering, seeking, and CDN caching, one segment at a time.]]></summary>
-        <content type="html"><![CDATA[Netflix does not stream one file. Chunks, quality ladders, manifests, ABR decisions, buffering, seeking, and CDN caching, one segment at a time.]]></content>
-        <author>
-            <name>Jitender Sharma</name>
-            <uri>https://jitendersharma.dev</uri>
-        </author>
-        <category label="Platforms &amp; Engineering" term="Platforms &amp; Engineering"/>
-        <category label="Explainer" term="Explainer"/>
-        <category label="System Design" term="System Design"/>
-    </entry>
-    <entry>
         <title type="html"><![CDATA[Netflix Video Processing Pipeline: From Studio Upload to Global Streaming]]></title>
         <id>https://jitendersharma.dev/insights/netflix-video-processing-pipeline</id>
         <link href="https://jitendersharma.dev/insights/netflix-video-processing-pipeline"/>
@@ -113,6 +98,21 @@
         <category label="Architecture" term="Architecture"/>
         <category label="System Design" term="System Design"/>
         <category label="Observability" term="Observability"/>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Adaptive Video Streaming Explained: How Netflix Streams One Chunk at a Time]]></title>
+        <id>https://jitendersharma.dev/insights/adaptive-video-streaming-explained</id>
+        <link href="https://jitendersharma.dev/insights/adaptive-video-streaming-explained"/>
+        <updated>2026-07-21T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[Netflix does not stream one file. Chunks, quality ladders, manifests, ABR decisions, buffering, seeking, and CDN caching, one segment at a time.]]></summary>
+        <content type="html"><![CDATA[Netflix does not stream one file. Chunks, quality ladders, manifests, ABR decisions, buffering, seeking, and CDN caching, one segment at a time.]]></content>
+        <author>
+            <name>Jitender Sharma</name>
+            <uri>https://jitendersharma.dev</uri>
+        </author>
+        <category label="Platforms &amp; Engineering" term="Platforms &amp; Engineering"/>
+        <category label="Explainer" term="Explainer"/>
+        <category label="System Design" term="System Design"/>
     </entry>
     <entry>
         <title type="html"><![CDATA[REST vs gRPC - Under the Hood]]></title>
