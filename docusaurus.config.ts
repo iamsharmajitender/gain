@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import {themes as prismThemes} from 'prism-react-renderer';
 import type {Config} from '@docusaurus/types';
 import type * as Preset from '@docusaurus/preset-classic';
@@ -127,6 +128,15 @@ const config: Config = {
           ],
         ]
       : []),
+    [
+      'posthog-docusaurus',
+      {
+        // Automatically grabs the key from your local .env file when building
+        apiKey: process.env.POSTHOG_KEY || '',
+        appUrl: 'https://us.i.posthog.com',
+        enableInDevelopment: false,
+      },
+    ],
   ],
 
   themes: [

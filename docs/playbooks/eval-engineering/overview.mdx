@@ -1,0 +1,98 @@
+---
+slug: /eval-engineering
+title: "Eval Engineering Playbooks"
+sidebar_label: Overview
+description: Hub for eval engineering playbooks — golden datasets, synthetic generation, online scoring, human review, LLM-as-judge, and per-plane recipes.
+tags:
+  - ai-intelligence
+  - arch
+  - gain
+  - observability
+---
+
+# Eval Engineering Playbooks
+
+[Playbooks](/playbooks) · **Eval engineering overview** · [Golden datasets →](/playbooks/eval-engineering/golden-datasets)
+
+Implementation guides for the [Eval Blueprint](/blueprints/eval-blueprint). [G.A.I.N Evaluation](/frameworks/gain-evaluation) covers principles. These playbooks are the **how**: data sources, scorers, and plane-specific gates.
+
+:::tip[THE CLAIM]
+**Eval is a control system, not a scoreboard.** Build golden cases first, score every plane that can fail, and promote production signals back into the dataset. One end-of-pipeline number is not enough.
+:::
+
+<!-- truncate -->
+
+## Two playbook groups
+
+| Group | Overview | What you build |
+| --- | --- | --- |
+| **Methods** | [Golden datasets →](/playbooks/eval-engineering/golden-datasets) | Datasets, synthetic coverage, online/dynamic scoring, human review, LLM-as-judge |
+| **Planes** | [Input →](/playbooks/eval-engineering/plane-input) | Per-plane gates from Input ① through Outcome ⑧ |
+
+Plus [Further reading (external)](/playbooks/eval-engineering/further-reading) for third-party eval tools and guides mapped to this series.
+
+## Recommended path
+
+```mermaid
+flowchart TB
+  G[Golden datasets]
+  S[Synthetic generation]
+  H[Human review]
+  J[LLM-as-judge]
+  P[Plane playbooks]
+  O[Online and dynamic]
+
+  G --> S
+  G --> H
+  H --> J
+  G --> P
+  J --> P
+  P --> O
+  O --> G
+```
+<br/>
+
+1. **[Golden datasets](/playbooks/eval-engineering/golden-datasets):** versioned, plane-tagged cases before automation
+2. **[Synthetic generation](/playbooks/eval-engineering/synthetic-generation)** and **[Human review](/playbooks/eval-engineering/human-review):** expand coverage and calibrate rubrics
+3. **[LLM-as-judge](/playbooks/eval-engineering/llm-as-judge):** scale scoring once humans set ground truth
+4. **Plane playbooks:** gate each plane your system actually owns (start with failure modes you already see)
+5. **[Online & dynamic](/playbooks/eval-engineering/online-dynamic):** score live traffic and feed incidents back into goldens
+
+Bridge reading: [Eval Blueprint](/blueprints/eval-blueprint) · [G.A.I.N Evaluation](/frameworks/gain-evaluation).
+
+## Method playbooks at a glance
+
+| Playbook | One-line purpose |
+| --- | --- |
+| [Golden datasets](/playbooks/eval-engineering/golden-datasets) | Versioned, plane-tagged, risk-tiered case libraries |
+| [Synthetic generation](/playbooks/eval-engineering/synthetic-generation) | Edge and adversarial coverage without polluting goldens |
+| [Online & dynamic](/playbooks/eval-engineering/online-dynamic) | Live sampling, shadow scoring, drift, promote-back loops |
+| [Human review](/playbooks/eval-engineering/human-review) | Sampling, rubrics, adjudication that anchors automation |
+| [LLM-as-judge](/playbooks/eval-engineering/llm-as-judge) | Scaled judging with bias controls and human calibration |
+
+## Plane playbooks at a glance
+
+| # | Playbook | One-line purpose |
+| --- | --- | --- |
+| ① | [Input](/playbooks/eval-engineering/plane-input) | Parsing, intent, injection resistance, PII before inference |
+| ② | [Data](/playbooks/eval-engineering/plane-data) | Source freshness, lineage, access boundaries |
+| ③ | [Context](/playbooks/eval-engineering/plane-context) | Retrieval precision, ranking, packing, abstention |
+| ④ | [Reasoning](/playbooks/eval-engineering/plane-reasoning) | Faithfulness, conclusion quality, multi-step logic |
+| ⑤ | [Tool](/playbooks/eval-engineering/plane-tool) | Selection, arguments, idempotency, schema compliance |
+| ⑥ | [Memory](/playbooks/eval-engineering/plane-memory) | Session scope, TTL, cross-session leakage |
+| ⑦ | [Action](/playbooks/eval-engineering/plane-action) | Policy enforcement, authorization, audit before side effects |
+| ⑧ | [Outcome](/playbooks/eval-engineering/plane-outcome) | Task success, clarity, usefulness, trust in the final response |
+
+## Who should read what
+
+| Role | Start with | Then |
+| --- | --- | --- |
+| **AI platform** | [Golden datasets](/playbooks/eval-engineering/golden-datasets), [LLM-as-judge](/playbooks/eval-engineering/llm-as-judge) | [Online & dynamic](/playbooks/eval-engineering/online-dynamic), relevant plane playbooks |
+| **Domain squad** | [Golden datasets](/playbooks/eval-engineering/golden-datasets), [Human review](/playbooks/eval-engineering/human-review) | Plane playbooks for your surface (e.g. [Context](/playbooks/eval-engineering/plane-context), [Tool](/playbooks/eval-engineering/plane-tool)) |
+| **Governance / risk** | [Human review](/playbooks/eval-engineering/human-review), [Action](/playbooks/eval-engineering/plane-action) | [Input](/playbooks/eval-engineering/plane-input), [Outcome](/playbooks/eval-engineering/plane-outcome) |
+| **RAG / knowledge** | [Data](/playbooks/eval-engineering/plane-data), [Context](/playbooks/eval-engineering/plane-context) | [Eval Blueprint](/blueprints/eval-blueprint) |
+| **Agent / PGAR teams** | [Tool](/playbooks/eval-engineering/plane-tool), [Action](/playbooks/eval-engineering/plane-action) | [PGAR Runtime](/playbooks/pgar-runtime), [Memory](/playbooks/eval-engineering/plane-memory) |
+
+## Read next
+
+**[Golden datasets →](/playbooks/eval-engineering/golden-datasets)**

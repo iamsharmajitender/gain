@@ -46,7 +46,9 @@ export const sitemapTabs = [
   {id: 'blueprints', label: 'Blueprints'},
   {id: 'playbooks', label: 'Playbooks'},
   {id: 'insights', label: 'Insights'},
-  {id: 'site', label: 'About & Advisory'},
+  {id: 'about', label: 'About'},
+  {id: 'advisory', label: 'Advisory'},
+  {id: 'drafts', label: 'Drafts'},
 ] as const;
 
 export type SitemapTabId = (typeof sitemapTabs)[number]['id'];

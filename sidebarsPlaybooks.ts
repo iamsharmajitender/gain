@@ -8,6 +8,7 @@ const sidebars: SidebarsConfig = {
       label: 'Eval Engineering',
       collapsed: true,
       items: [
+        'eval-engineering/overview',
         'eval-engineering/golden-datasets',
         'eval-engineering/synthetic-generation',
         'eval-engineering/online-dynamic',

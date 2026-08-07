@@ -5,6 +5,7 @@ import TabItem from '@theme/TabItem';
 import SectionPageLayout from '@site/src/components/SectionPageLayout';
 import SitemapSectionBlock from '@site/src/components/SitemapSection';
 import {
+  getDraftsSitemapSection,
   getHandbookSection,
   getSiteSection,
   handbookSections,
@@ -47,11 +48,27 @@ function OverviewTab(): ReactNode {
               ))}
               <tr>
                 <td>
-                  <Link to="/sitemap?tab=site" className={styles.overviewSectionLink}>
-                    About &amp; Advisory
+                  <Link to="/sitemap?tab=about" className={styles.overviewSectionLink}>
+                    About
                   </Link>
                 </td>
-                <td>Who builds this and how to engage</td>
+                <td>Who builds this handbook</td>
+              </tr>
+              <tr>
+                <td>
+                  <Link to="/sitemap?tab=advisory" className={styles.overviewSectionLink}>
+                    Advisory
+                  </Link>
+                </td>
+                <td>How to engage for architecture and governed AI</td>
+              </tr>
+              <tr>
+                <td>
+                  <Link to="/sitemap?tab=drafts" className={styles.overviewSectionLink}>
+                    Drafts
+                  </Link>
+                </td>
+                <td>Work in progress across the handbook</td>
               </tr>
             </tbody>
           </table>
@@ -87,7 +104,9 @@ const sitemapTabContent: Record<SitemapTabId, () => ReactNode> = {
   blueprints: () => <SitemapSectionBlock section={getHandbookSection('blueprints')} />,
   playbooks: () => <SitemapSectionBlock section={getHandbookSection('playbooks')} />,
   insights: InsightsSitemapTab,
-  site: () => <SitemapSectionBlock section={getSiteSection('site')} />,
+  about: () => <SitemapSectionBlock section={getSiteSection('about')} />,
+  advisory: () => <SitemapSectionBlock section={getSiteSection('advisory')} />,
+  drafts: () => <SitemapSectionBlock section={getDraftsSitemapSection()} />,
 };
 
 export default function Sitemap(): ReactNode {

@@ -4,25 +4,34 @@
 }
 
 .tabBox {
-  padding: 1.5rem;
-  background: #ffffff;
+  padding: 1.5rem 1.5rem 1.5rem 1.375rem;
+  background:
+    linear-gradient(180deg, var(--gain-blue-light) 0%, transparent 42%),
+    #ffffff;
   border: 1px solid var(--gain-border);
+  border-left: 3px solid var(--gain-blue);
   border-radius: 8px;
 }
 
 [data-theme='dark'] .tabBox {
-  background: var(--ifm-background-surface-color);
+  background:
+    linear-gradient(180deg, var(--gain-blue-light) 0%, transparent 42%),
+    var(--ifm-background-surface-color);
 }
 
 .tabBox h2.tabBoxTitle {
   font-size: 1.375rem;
   font-weight: 700;
   margin: 0 0 1.25rem;
+  color: var(--gain-text);
 }
 
 .tabSectionTitle {
-  font-size: 1.0625rem;
-  font-weight: 700;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--gain-blue);
   margin: 1.75rem 0 0.75rem;
 }
 
@@ -121,4 +130,9 @@
 .aboutTabs :global(.tabs__item) {
   font-size: 0.875rem;
   font-weight: 600;
+}
+
+.aboutTabs :global(.tabs__item--active) {
+  color: var(--gain-blue);
+  border-bottom-color: var(--gain-blue);
 }

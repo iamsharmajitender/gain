@@ -4,6 +4,7 @@ import clsx from 'clsx';
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 import SectionPageLayout from '@site/src/components/SectionPageLayout';
+import {profilePhotoUrl} from '@site/src/data/aboutProfile';
 import {
   advisoryCaseStudies,
   advisoryCtaText,
@@ -163,6 +164,7 @@ export default function Advisory(): ReactNode {
       subtitle={advisorySubtitle}
       sectionLabel="Advisory"
       hideNav
+      profileImage={{src: profilePhotoUrl, alt: 'Jitender Sharma'}}
     >
       <Tabs queryString="tab" defaultValue="services" className={styles.advisoryTabs}>
         {advisoryTabs.map((tab) => {

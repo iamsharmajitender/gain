@@ -71,9 +71,11 @@ export default function SitemapSectionBlock({
         <h2 id={section.id} className={styles.sectionTitle}>
           {section.title}
         </h2>
-        <Link to={section.href} className={styles.sectionLink}>
-          Go to section →
-        </Link>
+        {section.href && (
+          <Link to={section.href} className={styles.sectionLink}>
+            Go to section →
+          </Link>
+        )}
       </div>
       <p className={styles.sectionQuestion}>{section.question}</p>
       <p className={styles.sectionDescription}>{section.description}</p>

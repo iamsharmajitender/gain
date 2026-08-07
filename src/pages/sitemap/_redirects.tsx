@@ -28,5 +28,17 @@ export function SitemapPlaybooksRedirect(): ReactNode {
 }
 
 export function SitemapSiteRedirect(): ReactNode {
-  return <SitemapTabRedirect tab="site" />;
+  return <SitemapTabRedirect tab="about" />;
+}
+
+export function SitemapAboutRedirect(): ReactNode {
+  return <SitemapTabRedirect tab="about" />;
+}
+
+export function SitemapAdvisoryRedirect(): ReactNode {
+  return <SitemapTabRedirect tab="advisory" />;
+}
+
+export function SitemapDraftsRedirect(): ReactNode {
+  return <SitemapTabRedirect tab="drafts" />;
 }

@@ -4,6 +4,7 @@ import {
   insightTagHref,
   insightTypeTagHref,
 } from '@site/src/data/publishedRoutes';
+import {draftInsightPages} from '@site/src/data/draftInsights.generated';
 import type {DomainTagId} from '@site/src/data/depthDomainTags';
 import {DOMAIN_TAG_LABELS} from '@site/src/data/depthDomainTags';
 import {
@@ -31,7 +32,7 @@ export type SitemapSection = {
   title: string;
   question: string;
   description: string;
-  href: string;
+  href?: string;
   links: SitemapLink[];
   featuredLink?: SitemapLink;
   linkGroups?: SitemapLinkGroup[];
@@ -91,9 +92,10 @@ export const handbookSections: SitemapSection[] = [
     href: '/blueprints',
     links: [
       {label: 'Overview', href: '/blueprints'},
-      {label: 'Router Blueprint', href: '/blueprints/router-blueprint', draft: true},
-      {label: 'Eval Blueprint', href: '/blueprints/eval-blueprint', draft: true},
-      {label: 'PGAR Blueprint', href: '/blueprints/pgar-blueprint', draft: true},
+      {label: 'Router Blueprint', href: '/blueprints/router-blueprint'},
+      {label: 'Eval Blueprint', href: '/blueprints/eval-blueprint'},
+      {label: 'Observability Blueprint', href: '/blueprints/observability-blueprint'},
+      {label: 'PGAR Blueprint', href: '/blueprints/pgar-blueprint'},
     ],
   },
   {
@@ -105,10 +107,11 @@ export const handbookSections: SitemapSection[] = [
     href: '/playbooks',
     links: [
       {label: 'Overview', href: '/playbooks'},
-      {label: 'Router', href: '/playbooks/router', draft: true},
-      {label: 'Intent router (Plane ①)', href: '/playbooks/router/intent-router', draft: true},
-      {label: 'Eval Engineering', href: '/playbooks/eval-engineering/golden-datasets', draft: true},
-      {label: 'PGAR Runtime', href: '/playbooks/pgar-runtime', draft: true},
+      {label: 'Router', href: '/playbooks/router'},
+      {label: 'Intent router (Plane ①)', href: '/playbooks/router/intent-router'},
+      {label: 'Eval Engineering', href: '/playbooks/eval-engineering'},
+      {label: 'PGAR Runtime', href: '/playbooks/pgar-runtime'},
+      {label: 'Unified Observability', href: '/playbooks/observability'},
     ],
   },
   {
@@ -141,23 +144,102 @@ export const handbookSections: SitemapSection[] = [
 
 export const siteSections: SitemapSection[] = [
   {
-    id: 'site',
-    title: 'About & Advisory',
-    question: 'Who builds this and how to engage',
+    id: 'about',
+    title: 'About',
+    question: 'Who builds this handbook',
     description:
-      'Who builds this handbook, what they work on, career background and credentials, plus advisory services for enterprise architecture, platform modernization, and governed AI.',
+      'Who builds this handbook, what they work on, career background, and credentials.',
     href: '/about',
     links: [
       {label: 'About', href: '/about'},
       {label: 'Work', href: '/about?tab=work'},
       {label: 'Background', href: '/about?tab=background'},
       {label: 'Credentials', href: '/about?tab=credentials'},
+    ],
+  },
+  {
+    id: 'advisory',
+    title: 'Advisory',
+    question: 'How to engage for architecture and governed AI',
+    description:
+      'Advisory services for enterprise architecture, platform modernization, and governed AI.',
+    href: '/advisory',
+    links: [
       {label: 'Advisory', href: '/advisory'},
       {label: 'Approach', href: '/advisory?tab=approach'},
+      {label: 'Case Studies', href: '/advisory?tab=case-studies'},
+      {label: 'Engagement', href: '/advisory?tab=engagement'},
       {label: 'Contact', href: '/advisory?tab=contact'},
     ],
   },
 ];
+
+function draftLinksFromSection(section: SitemapSection): SitemapLink[] {
+  const fromLinks = section.links.filter((link) => link.draft);
+  const fromGroups =
+    section.linkGroups?.flatMap((group) => group.links.filter((link) => link.draft)) ?? [];
+  return [...fromLinks, ...fromGroups];
+}
+
+function formatDraftDate(isoDate: string): string {
+  return new Date(`${isoDate}T00:00:00.000Z`).toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+    timeZone: 'UTC',
+  });
+}
+
+function insightDraftLinks(): SitemapLink[] {
+  return draftInsightPages.map((page) => ({
+    label: page.title,
+    description: formatDraftDate(page.date),
+    draft: true,
+    ...(page.href ? {href: page.href} : {}),
+  }));
+}
+
+/** Aggregated drafts across handbook sections for the Sitemap Drafts tab. */
+export function getDraftsSitemapSection(): SitemapSection {
+  const linkGroups: SitemapLinkGroup[] = [];
+
+  for (const section of handbookSections) {
+    if (section.id === 'insights') {
+      continue;
+    }
+
+    const links = draftLinksFromSection(section);
+    if (links.length === 0) {
+      continue;
+    }
+
+    linkGroups.push({
+      heading: section.title,
+      description: section.question,
+      links,
+    });
+  }
+
+  const insights = insightDraftLinks();
+  if (insights.length > 0) {
+    linkGroups.push({
+      heading: 'Insights',
+      description:
+        'Articles with draft: true in frontmatter. Links work in local preview; production lists titles only until publish.',
+      links: insights,
+    });
+  }
+
+  return {
+    id: 'drafts',
+    title: 'Drafts',
+    question: 'Work in progress across the handbook',
+    description:
+      'Insight articles with draft: true, plus any handbook entries not yet published. Insight links work under local preview; production lists titles only until publish.',
+    links: [],
+    linkGroups,
+  };
+}
 
 export function getHandbookSection(id: string): SitemapSection {
   const section = handbookSections.find((item) => item.id === id);
@@ -176,8 +258,5 @@ export function getSiteSection(id: string): SitemapSection {
 }
 
 export function sitemapPageHref(sectionId: string): string {
-  if (sectionId === 'site') {
-    return '/sitemap?tab=site';
-  }
   return `/sitemap?tab=${sectionId}`;
 }
