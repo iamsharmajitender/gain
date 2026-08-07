@@ -33,10 +33,11 @@ function resolvePath(pageSlug?: string): string {
 }
 
 async function fetchCount(path: string): Promise<string | null> {
-  // Explicit start date: (1) all-time totals, (2) different cache key than the
-  // default URL, which GoatCounter CDN can leave stale for hours.
+  // Use start=year (not a fixed date): GoatCounter's default JSON URL is often
+  // stuck on a stale CDN value, and some fixed start= dates have returned the
+  // same count for different paths. Relatives like year/month are correct per path.
   const params = new URLSearchParams({
-    start: '2020-01-01',
+    start: 'year',
     rnd: String(Date.now()),
   });
   const url = `https://${GOATCOUNTER_CODE}.goatcounter.com/counter/${encodeURIComponent(path)}.json?${params}`;
