@@ -4556,11 +4556,11 @@ html.gain-zoom-open {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0;
 }
 
 .gain-insight-card__date {
-  display: block;
+  display: inline;
   margin: 0;
   font-size: 0.75rem;
   font-weight: 600;
@@ -4570,6 +4570,7 @@ html.gain-zoom-open {
 }
 
 .gain-insight-card__draft {
+  margin-left: 0.5rem;
   font-size: 0.6875rem;
   font-weight: 600;
   text-transform: uppercase;
@@ -4611,10 +4612,6 @@ html.gain-zoom-open {
   font-size: 2.5rem;
   letter-spacing: -0.02em;
   line-height: 1.15;
-}
-
-.gain-view-counter {
-  margin: 0.5rem 0 1.25rem;
 }
 
 .blog-post-page .gain-insights-page__main .markdown {

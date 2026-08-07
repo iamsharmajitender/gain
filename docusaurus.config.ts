@@ -24,7 +24,10 @@ const config: Config = {
   projectName: 'gain',
   deploymentBranch: 'gh-pages',
 
-  clientModules: [require.resolve('./src/clientModules/diagramZoom.ts')],
+  clientModules: [
+    require.resolve('./src/clientModules/diagramZoom.ts'),
+    require.resolve('./src/clientModules/goatcounter.ts'),
+  ],
 
   // GoatCounter: production only so local `npm start` does not inflate page counts
   scripts: isDev

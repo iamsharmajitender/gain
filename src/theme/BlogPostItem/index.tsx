@@ -63,6 +63,7 @@ function BlogPostItemListView({className}: Pick<Props, 'className'>): ReactNode 
               dateTime={new Date(date).toISOString()}>
               {formatInsightDate(date)}
             </time>
+            <ViewCounter pageSlug={permalink} withSpacer className="gain-insight-card__date" />
             {isDraft && (
               <span className="gain-insight-card__draft" aria-label="Draft article">
                 Draft
@@ -76,7 +77,7 @@ function BlogPostItemListView({className}: Pick<Props, 'className'>): ReactNode 
 }
 
 export default function BlogPostItem({children, className}: Props): ReactNode {
-  const {isBlogPostPage, metadata} = useBlogPost();
+  const {isBlogPostPage} = useBlogPost();
 
   if (!isBlogPostPage) {
     return <BlogPostItemListView className={className} />;
@@ -85,9 +86,6 @@ export default function BlogPostItem({children, className}: Props): ReactNode {
   return (
     <BlogPostItemContainer className={className}>
       <BlogPostItemHeader />
-      <div className="gain-view-counter">
-        <ViewCounter pageSlug={metadata.permalink} />
-      </div>
       <BlogPostItemContent>{children}</BlogPostItemContent>
       <BlogPostItemFooter />
     </BlogPostItemContainer>
