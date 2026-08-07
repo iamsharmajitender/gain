@@ -9,17 +9,6 @@
         <generator>https://github.com/jpmonette/feed</generator>
         <language>en</language>
         <item>
-            <title><![CDATA[Spotify Music Discovery: Inverted Index Search Explained]]></title>
-            <link>https://jitendersharma.dev/insights/music-search-inverted-index</link>
-            <guid>https://jitendersharma.dev/insights/music-search-inverted-index</guid>
-            <pubDate>Wed, 05 Aug 2026 00:00:00 GMT</pubDate>
-            <description><![CDATA[System design of inverted index search with a Spotify worked example: catalog vs index, title artist album lyrics postings, autocomplete, fuzzy match, ranking, and play hydration.]]></description>
-            <content:encoded><![CDATA[System design of inverted index search with a Spotify worked example: catalog vs index, title artist album lyrics postings, autocomplete, fuzzy match, ranking, and play hydration.]]></content:encoded>
-            <category>Platforms &amp; Engineering</category>
-            <category>Architecture</category>
-            <category>System Design</category>
-        </item>
-        <item>
             <title><![CDATA[Spotify Music Streaming Pipeline: From Upload to Search and Play]]></title>
             <link>https://jitendersharma.dev/insights/spotify-music-streaming-pipeline</link>
             <guid>https://jitendersharma.dev/insights/spotify-music-streaming-pipeline</guid>
@@ -30,6 +19,17 @@
             <category>Architecture</category>
             <category>System Design</category>
             <category>Observability</category>
+        </item>
+        <item>
+            <title><![CDATA[Spotify Music Discovery: Inverted Index Search Explained]]></title>
+            <link>https://jitendersharma.dev/insights/music-search-inverted-index</link>
+            <guid>https://jitendersharma.dev/insights/music-search-inverted-index</guid>
+            <pubDate>Wed, 05 Aug 2026 00:00:00 GMT</pubDate>
+            <description><![CDATA[System design of inverted index search with a Spotify worked example: catalog vs index, title artist album lyrics postings, autocomplete, fuzzy match, ranking, and play hydration.]]></description>
+            <content:encoded><![CDATA[System design of inverted index search with a Spotify worked example: catalog vs index, title artist album lyrics postings, autocomplete, fuzzy match, ranking, and play hydration.]]></content:encoded>
+            <category>Platforms &amp; Engineering</category>
+            <category>Architecture</category>
+            <category>System Design</category>
         </item>
         <item>
             <title><![CDATA[After Training an LLM: From Frozen Weights to Token-by-Token Inference]]></title>
@@ -162,6 +162,18 @@
             <category>Compliance</category>
         </item>
         <item>
+            <title><![CDATA[HTTP vs HTTPS - Under the Hood]]></title>
+            <link>https://jitendersharma.dev/insights/http-vs-https-under-the-hood</link>
+            <guid>https://jitendersharma.dev/insights/http-vs-https-under-the-hood</guid>
+            <pubDate>Wed, 15 Jul 2026 00:00:00 GMT</pubDate>
+            <description><![CDATA[HTTP is the application protocol for requests and responses. HTTPS is HTTP over TLS. Methods, status, headers, the TLS wrap, certificates, and which failures people mislabel as network or app.]]></description>
+            <content:encoded><![CDATA[HTTP is the application protocol for requests and responses. HTTPS is HTTP over TLS. Methods, status, headers, the TLS wrap, certificates, and which failures people mislabel as network or app.]]></content:encoded>
+            <category>Platforms &amp; Engineering</category>
+            <category>Explainer</category>
+            <category>Under the Hood</category>
+            <category>Observability</category>
+        </item>
+        <item>
             <title><![CDATA[Symmetric vs Asymmetric Encryption - Under the Hood]]></title>
             <link>https://jitendersharma.dev/insights/symmetric-vs-asymmetric-encryption-under-the-hood</link>
             <guid>https://jitendersharma.dev/insights/symmetric-vs-asymmetric-encryption-under-the-hood</guid>
@@ -173,18 +185,6 @@
             <category>Under the Hood</category>
             <category>Observability</category>
             <category>Compliance</category>
-        </item>
-        <item>
-            <title><![CDATA[HTTP vs HTTPS - Under the Hood]]></title>
-            <link>https://jitendersharma.dev/insights/http-vs-https-under-the-hood</link>
-            <guid>https://jitendersharma.dev/insights/http-vs-https-under-the-hood</guid>
-            <pubDate>Wed, 15 Jul 2026 00:00:00 GMT</pubDate>
-            <description><![CDATA[HTTP is the application protocol for requests and responses. HTTPS is HTTP over TLS. Methods, status, headers, the TLS wrap, certificates, and which failures people mislabel as network or app.]]></description>
-            <content:encoded><![CDATA[HTTP is the application protocol for requests and responses. HTTPS is HTTP over TLS. Methods, status, headers, the TLS wrap, certificates, and which failures people mislabel as network or app.]]></content:encoded>
-            <category>Platforms &amp; Engineering</category>
-            <category>Explainer</category>
-            <category>Under the Hood</category>
-            <category>Observability</category>
         </item>
         <item>
             <title><![CDATA[CDN - Under the Hood]]></title>
