@@ -19,7 +19,7 @@ export const latestInsightsByTab: Record<InsightTabId, readonly LatestInsight[]>
     {
       "title": "Spotify Music Discovery: Inverted Index Search Explained",
       "date": "2026-08-05",
-      "readTime": 17,
+      "readTime": 19,
       "description": "System design of inverted index search with a Spotify worked example: catalog vs index, title artist album lyrics postings, autocomplete, fuzzy match, ranking, and play hydration.",
       "typeTag": "arch",
       "to": "/insights/music-search-inverted-index"
@@ -85,7 +85,7 @@ export const latestInsightsByTab: Record<InsightTabId, readonly LatestInsight[]>
     {
       "title": "Spotify Music Discovery: Inverted Index Search Explained",
       "date": "2026-08-05",
-      "readTime": 17,
+      "readTime": 19,
       "description": "System design of inverted index search with a Spotify worked example: catalog vs index, title artist album lyrics postings, autocomplete, fuzzy match, ranking, and play hydration.",
       "typeTag": "arch",
       "to": "/insights/music-search-inverted-index"

@@ -419,34 +419,36 @@ Suggest postings → candidates → rank → **hydrate from catalog** (artwork a
     "bliss n eso",
     "blinded by the light"
   ],
-  "candidates": ["t42", "a91", "t42b", "e14"],
-  "rank": ["t42", "a91", "t42b", "e14"],
-  "hydrate_from_catalog": [
-    {
-      "id": "t42",
-      "type": "track",
-      "title": "Blinding Lights",
-      "subtitle": "Song • The Weeknd"
-    },
-    {
-      "id": "a91",
-      "type": "artist",
-      "title": "Blippi",
-      "subtitle": "Artist"
-    },
-    {
-      "id": "t42b",
-      "type": "track",
-      "title": "Blinding Lights",
-      "subtitle": "Song • The Weeknd"
-    },
-    {
-      "id": "e14",
-      "type": "episode",
-      "title": "A blind date",
-      "subtitle": "Episode • 1 min • Jordan & Salich"
-    }
-  ]
+  "results": {
+    "candidates": ["t42", "a91", "t42b", "e14"],
+    "rank": ["t42", "a91", "t42b", "e14"],
+    "hydrate_from_catalog": [
+      {
+        "id": "t42",
+        "type": "track",
+        "title": "Blinding Lights",
+        "subtitle": "Song • The Weeknd"
+      },
+      {
+        "id": "a91",
+        "type": "artist",
+        "title": "Blippi",
+        "subtitle": "Artist"
+      },
+      {
+        "id": "t42b",
+        "type": "track",
+        "title": "Blinding Lights",
+        "subtitle": "Song • The Weeknd"
+      },
+      {
+        "id": "e14",
+        "type": "episode",
+        "title": "A blind date",
+        "subtitle": "Episode • 1 min • Jordan & Salich"
+      }
+    ]
+  }
 }
 ```
 
@@ -489,61 +491,64 @@ Analyze → exact match → score with field boosts → stage-1 top-N → stage-
     "blinding": { "field": "title", "boost": "high" },
     "lights": { "field": "title", "boost": "high" }
   },
-  "stage1_top_n": ["t42", "a07", "p11", "p22", "t88", "t55", "e09", "p33"],
-  "stage2": ["locale", "taste", "market_filter"],
-  "hydrate_from_catalog": [
-    {
-      "id": "t42",
-      "type": "track",
-      "title": "Blinding Lights",
-      "subtitle": "Song • The Weeknd",
-      "more_releases": true
-    },
-    {
-      "id": "a07",
-      "type": "artist",
-      "title": "The Weeknd",
-      "subtitle": "Artist",
-      "verified": true
-    },
-    {
-      "id": "p11",
-      "type": "playlist",
-      "title": "Top 100 most streamed songs on...",
-      "subtitle": "Playlist"
-    },
-    {
-      "id": "p22",
-      "type": "playlist",
-      "title": "🇮🇳 Indian remix 🇮🇳 🥘",
-      "subtitle": "Playlist"
-    },
-    {
-      "id": "t88",
-      "type": "track",
-      "title": "Believer",
-      "subtitle": "Song • Imagine Dragons"
-    },
-    {
-      "id": "t55",
-      "type": "track",
-      "title": "Dance Monkey",
-      "subtitle": "Song • Tones And I"
-    },
-    {
-      "id": "e09",
-      "type": "episode",
-      "title": "MINION TAMPONS?",
-      "subtitle": "Episode • MEMES"
-    },
-    {
-      "id": "p33",
-      "type": "playlist",
-      "title": "Fishy On Me",
-      "subtitle": "Playlist"
-    }
-  ],
-  "play": "resolve t42 via control plane → CDN + license"
+  "results": {
+    "candidates": ["t42", "a07", "p11", "p22", "t88", "t55", "e09", "p33"],
+    "rank": ["t42", "a07", "p11", "p22", "t88", "t55", "e09", "p33"],
+    "stage2": ["locale", "taste", "market_filter"],
+    "hydrate_from_catalog": [
+      {
+        "id": "t42",
+        "type": "track",
+        "title": "Blinding Lights",
+        "subtitle": "Song • The Weeknd",
+        "more_releases": true
+      },
+      {
+        "id": "a07",
+        "type": "artist",
+        "title": "The Weeknd",
+        "subtitle": "Artist",
+        "verified": true
+      },
+      {
+        "id": "p11",
+        "type": "playlist",
+        "title": "Top 100 most streamed songs on...",
+        "subtitle": "Playlist"
+      },
+      {
+        "id": "p22",
+        "type": "playlist",
+        "title": "🇮🇳 Indian remix 🇮🇳 🥘",
+        "subtitle": "Playlist"
+      },
+      {
+        "id": "t88",
+        "type": "track",
+        "title": "Believer",
+        "subtitle": "Song • Imagine Dragons"
+      },
+      {
+        "id": "t55",
+        "type": "track",
+        "title": "Dance Monkey",
+        "subtitle": "Song • Tones And I"
+      },
+      {
+        "id": "e09",
+        "type": "episode",
+        "title": "MINION TAMPONS?",
+        "subtitle": "Episode • MEMES"
+      },
+      {
+        "id": "p33",
+        "type": "playlist",
+        "title": "Fishy On Me",
+        "subtitle": "Playlist"
+      }
+    ],
+    "play": "resolve t42 via control plane → CDN + license"
+  }
 }
 ```
 
