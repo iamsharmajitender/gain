@@ -389,64 +389,166 @@ flowchart LR
 ```
 <br/>
 
-Keystroke `bli`: suggest postings → candidates → rank → **hydrate from catalog** (artwork and display strings, not index-only ghosts). Uses suggest (edge n-grams), not fuzzy.
+### Autocomplete: `bli`
+
+Suggest postings → candidates → rank → **hydrate from catalog** (artwork and display strings, not index-only ghosts). Uses suggest (edge n-grams), not fuzzy.
 
 <Tabs groupId="typeahead-bli">
-  <TabItem value="json" label="JSON" default>
+  <TabItem value="request" label="Request" default>
+
+```json
+{
+  "query": "bli",
+  "path": "suggest",
+  "lookup": "bli"
+}
+```
+
+  </TabItem>
+  <TabItem value="response" label="Response">
 
 ```json
 {
   "query": "bli",
   "path": "suggest",
   "lookup": "bli",
-  "candidates": ["t42"],
-  "rank": ["t42"],
-  "hydrate_from_catalog": {
-    "track_id": "t42",
-    "title": "Blinding Lights",
-    "artist": "The Weeknd"
-  }
+  "completions": [
+    "blippi",
+    "blinding lights",
+    "blink-182",
+    "bliss n eso",
+    "blinded by the light"
+  ],
+  "candidates": ["t42", "a91", "t42b", "e14"],
+  "rank": ["t42", "a91", "t42b", "e14"],
+  "hydrate_from_catalog": [
+    {
+      "id": "t42",
+      "type": "track",
+      "title": "Blinding Lights",
+      "subtitle": "Song • The Weeknd"
+    },
+    {
+      "id": "a91",
+      "type": "artist",
+      "title": "Blippi",
+      "subtitle": "Artist"
+    },
+    {
+      "id": "t42b",
+      "type": "track",
+      "title": "Blinding Lights",
+      "subtitle": "Song • The Weeknd"
+    },
+    {
+      "id": "e14",
+      "type": "episode",
+      "title": "A blind date",
+      "subtitle": "Episode • 1 min • Jordan & Salich"
+    }
+  ]
 }
 ```
 
   </TabItem>
-  <TabItem value="screenshot" label="Screenshot">
+  <TabItem value="image" label="Image">
 
 ![Spotify search typeahead for bli showing suggest completions and hydrated Blinding Lights catalog cards](./typeahead-bli.png)
 
   </TabItem>
 </Tabs>
 
-Full submit path: analyze → exact (or fuzzy on typo) → score with field boosts → stage-1 top-N → stage-2 locale/taste/market → hydrate from catalog. Play resolves `track_id` outside search. Search returns IDs only; catalog and control plane finish the UI and audio.
+### Full retrieval: `blinding lights`
 
-Screenshot below is a clean submit (`blinding lights`). JSON shows the **typo rescue** variant (`blindng lights`) so you see fuzzy expand when exact miss.
+Analyze → exact match → score with field boosts → stage-1 top-N → stage-2 locale/taste/market → hydrate mixed entity cards. Play resolves the chosen `track_id` outside search. Search returns IDs only; catalog and control plane finish the UI and audio.
 
 <Tabs groupId="submit-blinding-lights">
-  <TabItem value="json" label="JSON (typo path)" default>
+  <TabItem value="request" label="Request" default>
 
 ```json
 {
-  "query": "blindng lights",
-  "analyzed": ["blindng", "lights"],
-  "exact": { "blindng": [] },
-  "fuzzy_expand": { "blindng": ["blinding"] },
+  "query": "blinding lights",
+  "path": "submit",
+  "analyzed": ["blinding", "lights"]
+}
+```
+
+  </TabItem>
+  <TabItem value="response" label="Response">
+
+```json
+{
+  "query": "blinding lights",
+  "path": "submit",
+  "analyzed": ["blinding", "lights"],
+  "exact": {
+    "blinding": ["t42"],
+    "lights": ["t42"]
+  },
   "score": {
     "blinding": { "field": "title", "boost": "high" },
     "lights": { "field": "title", "boost": "high" }
   },
-  "stage1_top_n": ["t42"],
+  "stage1_top_n": ["t42", "a07", "p11", "p22", "t88", "t55", "e09", "p33"],
   "stage2": ["locale", "taste", "market_filter"],
-  "hydrate_from_catalog": {
-    "track_id": "t42",
-    "title": "Blinding Lights",
-    "artist": "The Weeknd"
-  },
+  "hydrate_from_catalog": [
+    {
+      "id": "t42",
+      "type": "track",
+      "title": "Blinding Lights",
+      "subtitle": "Song • The Weeknd",
+      "more_releases": true
+    },
+    {
+      "id": "a07",
+      "type": "artist",
+      "title": "The Weeknd",
+      "subtitle": "Artist",
+      "verified": true
+    },
+    {
+      "id": "p11",
+      "type": "playlist",
+      "title": "Top 100 most streamed songs on...",
+      "subtitle": "Playlist"
+    },
+    {
+      "id": "p22",
+      "type": "playlist",
+      "title": "🇮🇳 Indian remix 🇮🇳 🥘",
+      "subtitle": "Playlist"
+    },
+    {
+      "id": "t88",
+      "type": "track",
+      "title": "Believer",
+      "subtitle": "Song • Imagine Dragons"
+    },
+    {
+      "id": "t55",
+      "type": "track",
+      "title": "Dance Monkey",
+      "subtitle": "Song • Tones And I"
+    },
+    {
+      "id": "e09",
+      "type": "episode",
+      "title": "MINION TAMPONS?",
+      "subtitle": "Episode • MEMES"
+    },
+    {
+      "id": "p33",
+      "type": "playlist",
+      "title": "Fishy On Me",
+      "subtitle": "Playlist"
+    }
+  ],
   "play": "resolve t42 via control plane → CDN + license"
 }
 ```
 
   </TabItem>
-  <TabItem value="screenshot" label="Screenshot (clean submit)">
+  <TabItem value="image" label="Image">
 
 ![Spotify search submit for blinding lights with top song artist and mixed catalog results](./submit-blinding-lights.png)
 
@@ -455,15 +557,30 @@ Screenshot below is a clean submit (`blinding lights`). JSON shows the **typo re
 
 ---
 
-## Indexing pipeline and freshness
+## Freshness: searchable as a release gate
+
+Two checks before a release is "done":
+
+1. **Playable** — audio is on the CDN and the catalog has rights + object keys
+2. **Searchable** — the inverted index has postings for that `track_id`, so typing the title finds it
+
+Catalog commit alone only satisfies (1). Search still has to catch up.
+
+**How it is done:**
+
+1. Catalog write commits `t42` (title, artist, rights, CDN keys)
+2. A thin `track.upserted` event lands on the **index queue**
+3. A **near-real-time indexer** (not a nightly batch for hot releases) analyzes title/artist/album/lyrics and writes postings onto the **primary shard** that owns `t42`
+4. **Replicas** copy that shard so every search node can serve the new terms
+5. Ops treat **index lag** (time from catalog commit → searchable) as a release SLO: big drops must clear within minutes
 
 ```mermaid
 flowchart LR
     W["Catalog write"] --> Q["Index queue"]
-    Q --> B["Batch / near-real-time indexer"]
+    Q --> B["Near-real-time indexer"]
     B --> P["Primary shards"]
     P --> R["Replicas"]
-    Rel["New release SLA"] -.-> B
+    Rel["Freshness SLO"] -.-> B
 
     classDef a fill:#fef3c7,stroke:#fcd34d,color:#1e293b
     classDef b fill:#dbeafe,stroke:#93c5fd,color:#1e293b
@@ -476,12 +593,12 @@ flowchart LR
 
 | Concern | Design implication |
 | --- | --- |
-| **Freshness SLA** | Tentpole releases need near-real-time indexing, not nightly batch only |
-| **Deletes / take-downs** | Tombstones must propagate as fast as legal requires |
-| **Partial failure** | Catalog success + index lag is a visible product bug ("I uploaded but can't find it") |
-| **Backfill** | Analyzer or mapping changes need reindex strategy without search downtime |
+| **Freshness** | New releases must appear in search within minutes |
+| **Deletes** | Removed tracks must disappear from search as fast as legal requires |
+| **Partial failure** | If catalog write succeeds but search lags, users see "uploaded but can't find it" |
+| **Backfill** | Analyzer changes need a reindex plan that keeps search online |
 
-Treat **searchable** as a release gate next to **playable**. A track live on CDN but missing from the index is a failed launch for discovery-led traffic.
+If the track is playable on CDN but missing from the index, discovery traffic fails the launch even when Play would work from a deep link.
 
 ---
 
@@ -489,29 +606,34 @@ Treat **searchable** as a release gate next to **playable**. A track live on CDN
 
 | Pressure | Common response |
 | --- | --- |
-| **Catalog + index size** | Shard both by `hash(track_id)` (or routing key); replicate shards for read |
-| **Hot terms** | Cache popular queries; careful with fuzzy expand on stop-ish tokens |
-| **Lyrics volume** | Separate index or field; optional query path; watch heap and merge cost |
-| **Typeahead QPS** | Dedicated suggest tier; aggressive client debounce |
-| **Multi-entity results** | Parallel queries for track / artist / album / playlist; merge in the API |
+| **Huge catalog** | Split by `hash(track_id)` into shards; keep replicas for reads |
+| **Popular queries** | Cache common searches; avoid fuzzy on every keystroke |
+| **Lyrics size** | Keep lyrics in a separate field or index; query them only when needed |
+| **Typeahead load** | Separate suggest service; debounce on the client |
+| **Mixed results** | Query track, artist, album, playlist in parallel; merge in the API |
 
-Search is sharded the same way as the catalog slice: **`hash(track_id) → shard`**. `t42` and `t91` can live on different shards; each shard only stores postings for its own tracks (`blinding → [t42]` on shard 0, `blinding → [t91]` on shard 1). At query time the coordinator **fans out** to shards, **merges** partial hits, then ranks globally. Indexer events for a track route to the same shard that owns that `track_id`.
+Sharding: `hash(track_id) → shard`. `t42` and `t91` can sit on different shards. Each shard only knows its own tracks (`blinding → [t42]` on shard 0, `blinding → [t91]` on shard 1). On query, a coordinator asks every shard, merges hits, then ranks. Index updates for a track go to that track's shard only.
 
-Operations need the usual search SLOs: p99 query latency, index lag, refresh interval, merge backlog, and "zero-result rate" as a product signal (often a ranking or analyzer bug, not empty catalog).
+:::note[Sharding in one line]
+One term can live on many shards. Each shard holds only the track IDs it owns. Search fans out, merges, then ranks.
+:::
 
 ---
 
 ## Lexical vs dense retrieval
 
-Inverted indexes excel at **keyword and typo-tolerant** discovery. They struggle when the user describes a vibe ("upbeat 90s workout") with no shared tokens.
+**Lexical** search matches words you type to words in the index. Great for names and typos. Weak when you describe a feeling ("upbeat 90s workout") that never appears in the title.
+
+**Dense** search matches meaning with embeddings. Better for natural language and topic-style queries. Weaker when you need the exact song title, and more expensive to run.
 
 | Path | Strength | Weakness |
 | --- | --- | --- |
-| **Lexical (inverted index)** | Precise names, prefixes, lyrics phrases | Semantic / vibe queries |
-| **Dense (embeddings + ANN)** | Natural language, podcast topical search | Cold-start terms, exact title precision, ops cost |
+| **Lexical (word match)** | Exact names, prefixes, lyric lines | Vibe / "describe it" queries |
+| **Dense (meaning match)** | Natural language, topical podcast search | Exact titles, new terms, higher cost |
 
-Production systems often **hybrid**: lexical candidates plus dense candidates, then a fusion / re-ranker. Dense retrieval does not replace the catalog or the inverted index for "play Blinding Lights." It extends recall for queries that never share tokens with the metadata.
-
+:::note[Hybrid in practice]
+Most production systems do **both**: word-match hits plus meaning-match hits, then merge and re-rank. Dense search does not replace the inverted index for "play Blinding Lights." It helps when the query shares no words with the metadata.
+:::
 ---
 
 ## Design lessons (what to steal)
