@@ -18,6 +18,7 @@ export type CredentialIssuerKey =
   | 'aws'
   | 'google'
   | 'microsoft'
+  | 'nvidia'
   | 'databricks'
   | 'linux-foundation'
   | 'hashicorp';
@@ -27,6 +28,7 @@ export const credentialIssuerOrder: CredentialIssuerKey[] = [
   'aws',
   'microsoft',
   'google',
+  'nvidia',
   'databricks',
   'linux-foundation',
   'hashicorp',
@@ -51,6 +53,10 @@ export const credentialIssuers: Record<
   microsoft: {
     name: 'Microsoft',
     logo: '/img/credentials/microsoft.svg',
+  },
+  nvidia: {
+    name: 'NVIDIA',
+    logo: '/img/credentials/nvidia.svg',
   },
   databricks: {
     name: 'Databricks',
@@ -337,6 +343,14 @@ export const credentials: Credential[] = [
     status: 'current',
     issued: 'Oct 2025',
     expires: 'Oct 2028',
+  },
+  {
+    title: 'NVIDIA-Certified Associate: Generative AI LLMs',
+    issuerKey: 'nvidia',
+    area: 'ai',
+    status: 'current',
+    issued: 'Aug 2026',
+    expires: 'Aug 2028',
   },
   {
     title: 'Academy Accreditation – AI Agent Fundamentals',

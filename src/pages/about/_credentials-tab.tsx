@@ -4,7 +4,6 @@ import clsx from 'clsx';
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 import {
-  credentialIssuerOrder,
   credentialIssuers,
   credentialTabs,
   credentials,
@@ -24,41 +23,91 @@ const areaLabels: Record<CredentialArea, string> = {
   platform: 'Platform',
 };
 
+const monthIndex: Record<string, number> = {
+  Jan: 0,
+  Feb: 1,
+  Mar: 2,
+  Apr: 3,
+  May: 4,
+  Jun: 5,
+  Jul: 6,
+  Aug: 7,
+  Sep: 8,
+  Oct: 9,
+  Nov: 10,
+  Dec: 11,
+};
+
+/** Parse "Aug 2026" style dates; missing/invalid sorts last. */
+function issuedTimestamp(issued: string | undefined): number {
+  if (!issued) {
+    return Number.NEGATIVE_INFINITY;
+  }
+
+  const [monthLabel, yearLabel] = issued.split(' ');
+  const month = monthIndex[monthLabel];
+  const year = Number(yearLabel);
+
+  if (month === undefined || !Number.isFinite(year)) {
+    return Number.NEGATIVE_INFINITY;
+  }
+
+  return Date.UTC(year, month, 1);
+}
+
+function compareByLatestIssued(left: Credential, right: Credential): number {
+  if (left.status !== right.status) {
+    return left.status === 'current' ? -1 : 1;
+  }
+
+  const issuedDiff = issuedTimestamp(right.issued) - issuedTimestamp(left.issued);
+
+  if (issuedDiff !== 0) {
+    return issuedDiff;
+  }
+
+  return left.title.localeCompare(right.title);
+}
+
 function sortCredentials(items: Credential[]): Credential[] {
-  return [...items].sort((left, right) => {
-    if (left.status !== right.status) {
-      return left.status === 'current' ? -1 : 1;
-    }
-
-    const leftIssuer = credentialIssuerOrder.indexOf(left.issuerKey);
-    const rightIssuer = credentialIssuerOrder.indexOf(right.issuerKey);
-
-    if (leftIssuer !== rightIssuer) {
-      return leftIssuer - rightIssuer;
-    }
-
-    return left.title.localeCompare(right.title);
-  });
+  return [...items].sort(compareByLatestIssued);
 }
 
 function groupCredentialsByIssuer(items: Credential[]): {
   issuerKey: CredentialIssuerKey;
   credentials: Credential[];
 }[] {
-  const groups: {issuerKey: CredentialIssuerKey; credentials: Credential[]}[] = [];
+  const byIssuer = new Map<CredentialIssuerKey, Credential[]>();
 
-  for (const credential of sortCredentials(items)) {
-    const lastGroup = groups[groups.length - 1];
+  for (const credential of items) {
+    const existing = byIssuer.get(credential.issuerKey);
 
-    if (lastGroup && lastGroup.issuerKey === credential.issuerKey) {
-      lastGroup.credentials.push(credential);
-      continue;
+    if (existing) {
+      existing.push(credential);
+    } else {
+      byIssuer.set(credential.issuerKey, [credential]);
     }
-
-    groups.push({issuerKey: credential.issuerKey, credentials: [credential]});
   }
 
-  return groups;
+  return [...byIssuer.entries()]
+    .map(([issuerKey, issuerCredentials]) => ({
+      issuerKey,
+      credentials: sortCredentials(issuerCredentials),
+    }))
+    .sort((left, right) => {
+      const leftNewest = Math.max(
+        ...left.credentials.map((credential) => issuedTimestamp(credential.issued)),
+      );
+      const rightNewest = Math.max(
+        ...right.credentials.map((credential) => issuedTimestamp(credential.issued)),
+      );
+
+      if (rightNewest !== leftNewest) {
+        return rightNewest - leftNewest;
+      }
+
+      return left.issuerKey.localeCompare(right.issuerKey);
+    });
 }
 
 function formatCredentialDates(credential: Credential): string | null {
@@ -67,11 +116,11 @@ function formatCredentialDates(credential: Credential): string | null {
   }
 
   if (credential.issued && credential.expires) {
-    return `Issued ${credential.issued} · Expires ${credential.expires}`;
+    return `${credential.issued} – ${credential.expires}`;
   }
 
   if (credential.issued) {
-    return `Issued ${credential.issued}`;
+    return credential.issued;
   }
 
   return `Expires ${credential.expires}`;
@@ -102,6 +151,11 @@ function CredentialSummary({tab}: {tab: CredentialTabId}): ReactNode {
 
 function CredentialRow({credential}: {credential: Credential}): ReactNode {
   const dates = formatCredentialDates(credential);
+  const metaParts = [
+    areaLabels[credential.area],
+    dates,
+    credential.credentialId ? `ID ${credential.credentialId}` : null,
+  ].filter(Boolean);
 
   return (
     <li
@@ -111,26 +165,17 @@ function CredentialRow({credential}: {credential: Credential}): ReactNode {
       )}
     >
       <div className={styles.credentialRowMain}>
-        <p className={styles.credentialTitle}>{credential.title}</p>
-        <div className={styles.credentialMeta}>
-          <span
-            className={clsx(
-              styles.statusBadge,
-              credential.status === 'current'
-                ? styles.statusCurrent
-                : styles.statusHistorical,
-            )}
-          >
-            {credential.status === 'current' ? 'Current' : 'Historical'}
-          </span>
-          <span className={clsx(styles.areaBadge, styles[`area_${credential.area}`])}>
-            {areaLabels[credential.area]}
-          </span>
-          {dates ? <span className={styles.credentialDates}>{dates}</span> : null}
-          {credential.credentialId ? (
-            <span className={styles.credentialId}>ID {credential.credentialId}</span>
+        <div className={styles.credentialTitleRow}>
+          <p className={styles.credentialTitle}>{credential.title}</p>
+          {credential.status === 'historical' ? (
+            <span className={clsx(styles.statusBadge, styles.statusHistorical)}>
+              Historical
+            </span>
           ) : null}
         </div>
+        {metaParts.length > 0 ? (
+          <p className={styles.credentialMeta}>{metaParts.join(' · ')}</p>
+        ) : null}
       </div>
     </li>
   );
@@ -162,8 +207,8 @@ function CredentialCards({tab}: {tab: CredentialTabId}): ReactNode {
                   className={styles.issuerLogo}
                   src={issuer.logo}
                   alt=""
-                  width={44}
-                  height={44}
+                  width={32}
+                  height={32}
                   loading="lazy"
                 />
                 <div>
