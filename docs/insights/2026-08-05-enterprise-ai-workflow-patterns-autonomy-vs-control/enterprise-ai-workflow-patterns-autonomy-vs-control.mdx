@@ -17,6 +17,7 @@ date: 2026-08-05
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
+import Details from '@theme/Details';
 
 <br/>
 
@@ -42,6 +43,7 @@ This is a **decision guide**: Pattern 0 (single inference), Pattern 1 (fully aut
 - **Pattern 2** fits payments, KYC, claims, and any flow where order and side effects must be fixed.
 - **Pattern 3** fits contract review, regulatory analysis, and enterprise copilots: fixed stages, flexible tools inside a stage.
 - **Governance lives in contracts and checkpoints**, not in hoping the prompt "behaves."
+- **Memory is route policy + session state**, not a workflow step; long-term facts are retrieved, not stuffed into the prompt.
 
 ## The autonomy vs control spectrum
 
@@ -1544,7 +1546,7 @@ Bump **`route_table_version`** when a **route row** changes (pointers or policy 
 | New or removed `route_id` | Yes | Golden routing set |
 | Row points at a new `workflow_id` (e.g. `…_v1` → `…_v2`) | Yes | Pattern 2 and 3 |
 | Row points at a different `tool_manifest`, `prompt_id`, `output_schema_id`, or `eval_suite_id` | Yes | All patterns that use that field |
-| `model_profile`, `policy_profile`, `max_loop_steps`, or entitlements on the row | Yes | CI + audit |
+| `model_profile`, `policy_profile`, `memory_profile`, `max_loop_steps`, or entitlements on the row | Yes | CI + audit |
 | New `manifest_version` under the **same** `manifest_id` | Often no | Promote manifest; pin `manifest_version` on session |
 | Prompt / eval content bump while the route still references the same artifact id | Often no | Promote that artifact; eval CI for the suite |
 | In-place overwrite of `workflow_id` content without a new id | Avoid in prod | Prefer `v2` + row ref update |
@@ -1560,6 +1562,70 @@ Bump **`route_table_version`** when a **route row** changes (pointers or policy 
 | **2** | `workflow_id`, `tool_manifest`, plus prompt / output / eval ids |
 | **3** | `workflow_id` (with stage allowlists), `tool_manifest`, plus prompt / output / eval ids |
 
+## Memory: route policy, session state
+
+Memory is **not** a workflow step on the route row. The route (or its `policy_profile`) declares **whether** memory is allowed and under what isolation / TTL rules. The [agentic app](/playbooks/pgar-runtime/boundary/agentic-app) owns read, write, and assembly during the session. Treat memory like manifests and prompts: **config and runtime**, not another tool the LLM invents mid-path.
+
+Split memory by lifecycle (same idea as [G.A.I.N Agents](/frameworks/gain-agents)):
+
+| Kind | What it holds | Scoped to | Who owns it |
+| --- | --- | --- | --- |
+| **Conversation** | User / assistant messages | Session | Agentic app (session store) |
+| **Working** | Task slots, route entities, stage outputs | Session (pinned route) | Agentic app |
+| **Loop** | Step count, proposals, observations, checkpoints | Session / run | Agentic app (checkpointer) |
+| **Episodic** | Summaries of past sessions | User / tenant | Your memory service + retrieval |
+| **Long-term** | Prefs, durable facts | User / tenant | Your memory service + retrieval |
+
+**Session pin applies here too.** At route decision, pin the route and manifest versions that define which tools and stages may run. Working and loop memory stay under that pin for the in-flight run. Do not swap mid-session memory contracts without explicit policy.
+
+### How each pattern uses memory
+
+| Pattern | Typical memory | What to avoid |
+| --- | --- | --- |
+| **0** | Optional short conversation or caller-supplied context for one call | Treating chat history as an agent loop |
+| **1** | Conversation + working + loop state across Observe → Decide → Tool | Unbounded history in the prompt; cross-session bleed |
+| **2** | Working / stage outputs along the fixed workflow; loop only inside LLM stages | Letting the model rewrite prior stage outputs as "memory" |
+| **3** | Stage-scoped working memory; clear handoff of allowed slots between stages | Carrying Stage A tool results into Stage B outside the allowlist |
+
+**Long-term and episodic memory are retrieval**, not free context. Load them in [context assembly](/insights/what-is-agentic-loop) or via an allowlisted tool on the manifest. Do not dump every past session into the system prompt.
+
+### Route shape (optional)
+
+Routes stay lean. Prefer a `memory_profile` (or fields on `policy_profile`) over embedding store credentials or raw history rules in the row.
+
+<Details summary="Route memory_profile example (JSON)">
+
+```json
+{
+  "route_id": "legal_contract_review",
+  "intent": "contract_review",
+  "tool_manifest": "contract_review_staged_v3",
+  "workflow_id": "contract_review_stages_v3",
+  "policy_profile": "read_only_standard",
+  "memory_profile": {
+    "conversation": "session",
+    "working": "session",
+    "loop": "checkpoint",
+    "long_term": "retrieve_only",
+    "ttl_hours": 24,
+    "isolation": ["tenant", "user", "session"]
+  },
+  "prompt_id": "contract_review_host_v3",
+  "eval_suite_id": "contract_review_golden"
+}
+```
+
+</Details>
+
+| Field | Meaning |
+| --- | --- |
+| `conversation` / `working` / `loop` | Where that tier lives for this route (`none`, `session`, `checkpoint`) |
+| `long_term` | Usually `retrieve_only` or `none`; write paths need their own policy and tools |
+| `ttl_hours` | Soft lifetime for session-scoped stores |
+| `isolation` | Required partition keys so Session A cannot read Session B |
+
+Bump `route_table_version` when the row's memory policy pointer or inline policy fields change, same as `policy_profile` or entitlements.
+
 ## Comparison matrix
 
 | Capability | Pattern 0: Single inference | Pattern 1: Autonomous | Pattern 2: Deterministic | Pattern 3: Guided |
@@ -1574,6 +1640,7 @@ Bump **`route_table_version`** when a **route row** changes (pointers or policy 
 | Enterprise governance | Excellent | Medium | Excellent | Excellent |
 | Complexity | Lowest | Medium | Low | High |
 | Agent-to-agent calls | No | Yes (dynamic) | Yes (fixed handoffs only) | Yes (stage-scoped) |
+| Memory | Optional context for one call | Session + loop; long-term via retrieve | Stage / working along fixed path | Stage-scoped working; governed handoffs |
 
 ## Note: agent-to-agent calls
 
@@ -1653,7 +1720,8 @@ Quick filter:
 - **Pattern 3** when the process is fixed but stage-level reasoning must flex.
 - **Agent-to-agent calls:** Pattern 1 for dynamic delegation; Pattern 2 or 3 for fixed or governed multi-agent handoffs; Pattern 0 does not apply.
 - **Encode contracts as JSON** and only add agent or checkpoint machinery when the pattern needs it.
+- **Memory:** declare isolation and TTL on the route; keep working/loop state on the session; retrieve long-term memory, do not treat it as a free step in the path.
 
 :::info[Builds on]
-[Autonomy Blueprint](/blueprints/autonomy-blueprint) · [What Is an Intent Router](/insights/what-is-intent-router) · [How to Design an Intent Router](/insights/design-intent-router) · [Policy-Governed Agent Runtime](/insights/policy-governed-agent-runtime) · [MCP for Enterprise Business Agents](/insights/mcp-for-enterprise-business-agents)
+[Autonomy Blueprint](/blueprints/autonomy-blueprint) · [What Is an Intent Router](/insights/what-is-intent-router) · [How to Design an Intent Router](/insights/design-intent-router) · [Policy-Governed Agent Runtime](/insights/policy-governed-agent-runtime) · [MCP for Enterprise Business Agents](/insights/mcp-for-enterprise-business-agents) · [G.A.I.N Agents](/frameworks/gain-agents)
 :::
