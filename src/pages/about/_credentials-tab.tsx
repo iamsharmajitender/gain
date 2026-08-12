@@ -161,7 +161,9 @@ function CredentialRow({credential}: {credential: Credential}): ReactNode {
     <li
       className={clsx(
         styles.credentialRow,
-        credential.status === 'historical' && styles.credentialRowHistorical,
+        credential.status === 'current'
+          ? styles.credentialRowCurrent
+          : styles.credentialRowHistorical,
       )}
     >
       <div className={styles.credentialRowMain}>
