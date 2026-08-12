@@ -278,11 +278,11 @@ The token never enters the LLM request. It stays in the session and attaches to 
     "roles": ["corporate_banking_officer", "payments_initiator"],
     "emt_iat": 1718812800,
     "emt_exp": 1718899200,
-    "emts": {
-      "payments.lookup": true,
-      "payments.validate": true,
-      "payments.wire.initiate": true
-    },
+    "emts": [
+      "payments.lookup",
+      "payments.validate",
+      "payments.wire.initiate"
+    ],
     "limits": {
       "wire.auto_approved": 25000,
       "wire.above_requires": "supervisor_four_eyes"
@@ -356,11 +356,11 @@ The PEP doesn't send natural language to the PDP. It maps session **claims** int
     "roles": ["corporate_banking_officer", "payments_initiator"],
     "emt_iat": 1718812800,
     "emt_exp": 1718899200,
-    "emts": {
-      "payments.lookup": true,
-      "payments.validate": true,
-      "payments.wire.initiate": true
-    },
+    "emts": [
+      "payments.lookup",
+      "payments.validate",
+      "payments.wire.initiate"
+    ],
     "limits": {
       "wire.auto_approved": 25000,
       "wire.above_requires": "supervisor_four_eyes"
@@ -403,7 +403,7 @@ The PDP runs one policy surface. Three outcomes only: **ALLOW**, **DENY**, **STE
       "decision": "DENY",
       "when": {
         "action": ["initiate_wire", "validate_payment"],
-        "subject.emts.payments.wire.initiate": false
+        "subject.emts.excludes": "payments.wire.initiate"
       }
     },
     {
@@ -417,14 +417,14 @@ The PDP runs one policy surface. Three outcomes only: **ALLOW**, **DENY**, **STE
       "decision": "ALLOW",
       "when": {
         "action": "lookup_beneficiary",
-        "subject.emts.payments.lookup": true
+        "subject.emts.includes": "payments.lookup"
       }
     },
     {
       "decision": "ALLOW",
       "when": {
         "action": "validate_payment",
-        "subject.emts.payments.validate": true,
+        "subject.emts.includes": "payments.validate",
         "context.sanctions_status": "clear"
       }
     },

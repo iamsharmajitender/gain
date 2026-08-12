@@ -47,6 +47,18 @@ The **Router Blueprint** covers intent dispatch at ingress, orchestration inside
 
 Playbooks: [Router](/playbooks/router) (Plane ① [Intent router](/playbooks/router/intent-router)) · [PGAR Runtime](/playbooks/pgar-runtime) (Plane ②). Plane ③: [G.A.I.N LLM](/frameworks/gain-llm) (dedicated playbooks planned).
 
+## Autonomy (four patterns)
+
+The **Autonomy Blueprint** standardizes how much next-step freedom a route allows after intent routing: single inference, autonomous loop, deterministic workflow, or guided hybrid. It sits between Router (which route) and PGAR (whether a proposed side effect may run).
+
+| | |
+| --- | --- |
+| **[G.A.I.N Agents](/frameworks/gain-agents)** | Principles, policy gate, orchestration: published |
+| **[Autonomy Blueprint](/blueprints/autonomy-blueprint)** | Four patterns, one axis, contracts, control points: draft |
+| **Enterprise AI Workflow Patterns (decision guide)** | When to choose each pattern: draft (local dev) |
+
+Bridge: [Router Blueprint](/blueprints/router-blueprint) · [PGAR Blueprint](/blueprints/pgar-blueprint). Worked JSON examples stay in the decision guide until published.
+
 ## Unified observability
 
 The **Observability Blueprint** and playbook series cover business, service, and infrastructure layers plus the correlation graph for regulated enterprises. The executive insight is in **draft** (local dev only).

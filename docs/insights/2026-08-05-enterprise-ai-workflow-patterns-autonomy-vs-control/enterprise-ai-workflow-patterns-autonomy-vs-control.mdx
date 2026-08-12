@@ -26,7 +26,7 @@ import TabItem from '@theme/TabItem';
 
 When designing enterprise AI systems, the hard question is not "should we use an agent?" It is **how much autonomy the model gets versus how much control the business process requires**. Four patterns cover most production designs, starting with a baseline that is **not an agent at all**: a single inference call through the agentic service. Pick wrong and you either overbuild an agent runtime for summarize/Q&A, lose auditability on an open loop, or waste a flexible model on a fixed pipeline.
 
-This is a **decision guide**: Pattern 0 (single inference), Pattern 1 (fully autonomous), Pattern 2 (deterministic), and Pattern 3 (guided hybrid), with comparison criteria and JSON-shaped contracts. It builds on [How to Design an Intent Router](/insights/design-intent-router) and [Policy-Governed Agent Runtime](/insights/policy-governed-agent-runtime).
+This is a **decision guide**: Pattern 0 (single inference), Pattern 1 (fully autonomous), Pattern 2 (deterministic), and Pattern 3 (guided hybrid), with comparison criteria and JSON-shaped contracts. The reference design is the [Autonomy Blueprint](/blueprints/autonomy-blueprint). It builds on [How to Design an Intent Router](/insights/design-intent-router) and [Policy-Governed Agent Runtime](/insights/policy-governed-agent-runtime).
 
 :::tip[THE CLAIM]
 **Not every LLM feature is an agent. Start at single inference.** Escalate only when you need tools, fixed multi-step process, or staged autonomy. Fix the business stages when process control matters; give the LLM autonomy inside each stage only when exploration is the product.
@@ -259,23 +259,30 @@ Summarization · Q&A over provided context · Extraction · Classification · Re
 
 ### How it works
 
-The router (if any) selects a route and provides the **allowed tools**. The agent decides everything else: which tool next, when to stop, how to recover from a failed observation.
+The router (if any) selects a route and provides the **allowed tools**. The **agentic app** runs the loop; the **LLM** proposes the next action. The app executes tools, observes results, and feeds them back until the goal is met or the budget is exhausted.
 
 ```mermaid
 flowchart TB
-    Goal[Goal] --> Decide[LLM decides next action]
-    Decide --> Tool[Tool call]
-    Tool --> Observe[Observe result]
-    Observe --> Decide
-    Decide --> Done[Goal complete]
+    Goal[Goal] --> App[Agentic app]
+    App -->|"context + allowed tools"| LLM[LLM]
+    LLM -->|"proposes next action"| App
+    App --> Tool[Tool call]
+    Tool -->|"result"| App
+    App -->|"observe"| LLM
+    App --> Done[Goal complete]
 
-    classDef loop fill:#dbeafe,stroke:#3b82f6,color:#1e293b,stroke-width:2px
-    class Goal,Decide,Tool,Observe,Done loop
+    classDef app fill:#ede9fe,stroke:#8b5cf6,color:#1e293b,stroke-width:2px
+    classDef llm fill:#dbeafe,stroke:#3b82f6,color:#1e293b,stroke-width:2px
+    classDef other fill:#ffedd5,stroke:#f97316,color:#1e293b,stroke-width:2px
+
+    class App app
+    class LLM llm
+    class Goal,Tool,Done other
 ```
 
 <br/>
 
-The sequence of tool calls is **not fixed**. Two runs with the same goal can take different paths and both be valid.
+The sequence of tool calls is **not fixed**. Two runs with the same goal can take different paths and both be valid. The agentic app owns the budget; the LLM only proposes.
 
 **Example: contract investigation (same goal, different paths)**
 
@@ -634,22 +641,30 @@ Research assistants · Coding agents · Investigation · Data analysis · Docume
 
 ### How it works
 
-The workflow is **fixed**. The LLM performs only the work assigned to each step. Every execution follows the same sequence.
+The workflow is **fixed**. The **agentic app** advances stages from the workflow artifact; the **LLM** performs only the work assigned to a stage (`llm_role`). Every execution follows the same sequence.
 
 ```mermaid
 flowchart TB
-    OCR[OCR] --> Clause[Clause Search]
-    Clause --> Policy[Policy Search]
-    Policy --> Risk[Risk Engine]
-    Risk --> Memo[Memo]
+    Input[Input + workflow] --> App[Agentic app]
+    App -->|"next fixed stage"| Tool[Named tool]
+    Tool -->|"result"| App
+    App -->|"llm_role when needed"| LLM[LLM]
+    LLM -->|"query / synthesis"| App
+    App -->|"advance stage"| Tool
+    App --> Done[Done]
 
-    classDef fixed fill:#ede9fe,stroke:#8b5cf6,color:#1e293b,stroke-width:2px
-    class OCR,Clause,Policy,Risk,Memo fixed
+    classDef app fill:#ede9fe,stroke:#8b5cf6,color:#1e293b,stroke-width:2px
+    classDef llm fill:#dbeafe,stroke:#3b82f6,color:#1e293b,stroke-width:2px
+    classDef other fill:#ffedd5,stroke:#f97316,color:#1e293b,stroke-width:2px
+
+    class App app
+    class LLM llm
+    class Input,Tool,Done other
 ```
 
 <br/>
 
-There is no "LLM decides next action" between stages. Branching, if any, is explicit in the workflow definition (approval gates, error handlers), not inventable by the model.
+There is no "LLM decides next action" between stages. Branching, if any, is explicit in the workflow definition (approval gates, error handlers), not inventable by the model. The agentic app owns stage order; the LLM never chooses the next step.
 
 ### Contracts (JSON)
 
@@ -1015,26 +1030,26 @@ Payments · Loan processing · Insurance claims · Customer onboarding · Compli
 
 ### How it works
 
-The **workflow is fixed**. The **reasoning inside each step is flexible**. The process never invents new stages; inside a stage such as Analyse, the agent chooses which allowed tools to call and in what order.
+The **workflow is fixed**. The **reasoning inside each step is flexible**. The **agentic app** advances stages and exposes only the current stage allowlist; the **LLM** proposes which allowed tools to call and in what order. The process never invents new stages.
 
 ```mermaid
 flowchart TB
-    Extract[Extract] --> Analyse[Analyse]
-    Analyse --> Report[Generate Report]
+    Input[Input + workflow] --> App[Agentic app]
+    App -->|"current stage allowlist"| LLM[LLM]
+    LLM -->|"proposes tool inside stage"| App
+    App --> Tool[Tool call]
+    Tool -->|"result"| App
+    App -->|"observe"| LLM
+    App -->|"stage done → next fixed stage"| LLM
+    App --> Done[Done]
 
-    subgraph analyse_flex["Inside Analyse (flexible)"]
-        direction TB
-        A1[Clause Search]
-        A2[Policy Search]
-        A3[Risk Engine]
-    end
+    classDef app fill:#ede9fe,stroke:#8b5cf6,color:#1e293b,stroke-width:2px
+    classDef llm fill:#dbeafe,stroke:#3b82f6,color:#1e293b,stroke-width:2px
+    classDef other fill:#ffedd5,stroke:#f97316,color:#1e293b,stroke-width:2px
 
-    Analyse -.-> analyse_flex
-
-    classDef stage fill:#ffedd5,stroke:#f97316,color:#1e293b,stroke-width:2px
-    classDef flex fill:#dbeafe,stroke:#3b82f6,color:#1e293b,stroke-width:1px
-    class Extract,Analyse,Report stage
-    class A1,A2,A3 flex
+    class App app
+    class LLM llm
+    class Input,Tool,Done other
 ```
 
 <br/>
@@ -1043,7 +1058,7 @@ flowchart TB
 
 **Example B (deeper Analyse):** Clause Search → Policy Search → Risk Engine → Done
 
-The outer workflow stays `Extract → Analyse → Generate Report`. Only the internal path changes.
+The outer workflow stays `Extract → Analyse → Generate Report`. Only the internal path changes. The agentic app owns outer stage order; the LLM owns tool choice only inside a stage.
 
 ### Contracts (JSON)
 
@@ -1640,5 +1655,5 @@ Quick filter:
 - **Encode contracts as JSON** and only add agent or checkpoint machinery when the pattern needs it.
 
 :::info[Builds on]
-[What Is an Intent Router](/insights/what-is-intent-router) · [How to Design an Intent Router](/insights/design-intent-router) · [Policy-Governed Agent Runtime](/insights/policy-governed-agent-runtime) · [MCP for Enterprise Business Agents](/insights/mcp-for-enterprise-business-agents)
+[Autonomy Blueprint](/blueprints/autonomy-blueprint) · [What Is an Intent Router](/insights/what-is-intent-router) · [How to Design an Intent Router](/insights/design-intent-router) · [Policy-Governed Agent Runtime](/insights/policy-governed-agent-runtime) · [MCP for Enterprise Business Agents](/insights/mcp-for-enterprise-business-agents)
 :::

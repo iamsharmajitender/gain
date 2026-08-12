@@ -1,7 +1,7 @@
 ---
 slug: cuda-architecture-under-the-hood
 title: "CUDA Architecture : How a GPU Actually Runs Your Model"
-description: "A learner's pass through the CUDA stack: SMs, warps, and the memory hierarchy that decides performance, why most kernels are memory bound, and what that means for LLM training and inference."
+description: "A learner's pass through the CUDA stack: SMs, warps, memory hierarchy, why most kernels are memory bound, RAPIDS for GPU dataframes and classical ML, and what that means for LLM work."
 image: ./cuda-architecture-under-the-hood.png
 tags:
   - platforms-engineering
@@ -40,9 +40,9 @@ My first misconception was small but consequential: I thought CUDA was a driver,
 | --- | --- | --- |
 | **Programming model** | Kernels, grids, blocks, threads, shared memory, streams | The abstraction you write against, and it maps almost one to one onto hardware |
 | **Compiler and runtime** | `nvcc`, PTX (a virtual instruction set), SASS (the real machine code), the CUDA runtime | PTX is why a binary built years ago still runs on a newer card. It is recompiled to that card's SASS at load time |
-| **Library stack** | cuBLAS, cuDNN, CUTLASS, NCCL, Thrust, and the frameworks above them | Where the performance actually comes from. Almost nobody writing AI code writes raw kernels |
+| **Library stack** | cuBLAS, cuDNN, CUTLASS, NCCL, Thrust, **RAPIDS** (cuDF, cuML, cuGraph), and the frameworks above them | Where the performance actually comes from. Almost nobody writing AI or analytics code writes raw kernels |
 
-That third row is the part worth internalising as an architect. When people say "the CUDA moat", they rarely mean the hardware. They mean that a decade of matrix multiply kernels, convolution algorithms, collective communication routines, and framework integrations are tuned against this one platform. Competing silicon has to reproduce that stack, not just the chip.
+That third row is the part worth internalising as an architect. When people say "the CUDA moat", they rarely mean the hardware. They mean that a decade of matrix multiply kernels, convolution algorithms, collective communication routines, **dataframe and classical ML libraries**, and framework integrations are tuned against this one platform. Competing silicon has to reproduce that stack, not just the chip.
 
 :::tip[TAKEAWAY]
 **CUDA is a programming model plus a library ecosystem.** The silicon is replaceable in principle. The tuned kernel libraries and the frameworks built on them are what make switching expensive.
@@ -87,8 +87,8 @@ That third row is the one people forget. A kernel launch costs a few microsecond
 | Transactional databases | **CPU** | Locking, ordering, and pointer-heavy structures that defeat coalescing |
 | Parsing, regex, serialisation | **CPU** | Data-dependent branching on every byte |
 | Business rules and orchestration | **CPU** | Complex control flow, negligible arithmetic |
-| Tokenisation and data preprocessing | **CPU** | Irregular string work, though it feeds the GPU and must keep up |
-| Graph traversal with irregular access | **CPU**, usually | Pointer chasing produces uncoalesced reads, the GPU's worst case |
+| Tokenisation and data preprocessing | **CPU**, often; **GPU** for bulk tabular prep | Irregular strings stay on the host; large joins, groupbys, and filters are RAPIDS territory |
+| Graph analytics at scale (PageRank, components) | **GPU** with cuGraph when the algorithm parallelises | Classic pointer-chasing walks still hate GPUs; many analytics kernels do not |
 | Dense matrix multiply and linear algebra | **GPU** | The canonical data-parallel operation, and what tensor cores exist for |
 | Neural network training | **GPU** | Mostly large GEMMs, plus collectives across devices |
 | Neural network inference | **GPU** | Same shapes, though decode is bandwidth bound rather than compute bound |
@@ -363,6 +363,123 @@ This is why cluster topology, not just GPU count, decides what is trainable. Eig
 
 ---
 
+## RAPIDS: CUDA for dataframes and classical ML
+
+Deep learning is the loud part of the CUDA story. The quieter part, and the one that convinced me the moat is bigger than cuDNN, is **RAPIDS**: open-source libraries that put familiar data-science APIs on the same GPU memory hierarchy this article has been describing.
+
+(NVIDIA has also been folding this suite under the broader **CUDA-X** data-science branding. The library names you will still meet in code and blogs are RAPIDS / cuDF / cuML / cuGraph.)
+
+I had filed "GPU acceleration" as something you only get after rewriting everything as tensors. RAPIDS is the counterexample: keep thinking in tables, models, and graphs; run the heavy loops on the device.
+
+```mermaid
+flowchart TB
+    subgraph Host["Familiar APIs"]
+      PD["pandas-like code"]
+      SK["scikit-learn-like code"]
+      NX["NetworkX-like code"]
+    end
+
+    subgraph Rapids["RAPIDS on CUDA"]
+      CUDF["cuDF\nDataFrames in HBM"]
+      CUML["cuML\nclassical ML"]
+      CUGR["cuGraph\ngraph analytics"]
+    end
+
+    subgraph Hw["Same machine as before"]
+      HBM["HBM + SMs\nwarps, coalescing, bandwidth"]
+    end
+
+    PD --> CUDF
+    SK --> CUML
+    NX --> CUGR
+    CUDF --> HBM
+    CUML --> HBM
+    CUGR --> HBM
+
+    classDef a fill:#fef3c7,stroke:#fcd34d,color:#1e293b
+    classDef b fill:#dbeafe,stroke:#93c5fd,color:#1e293b
+    classDef c fill:#ede9fe,stroke:#c4b5fd,color:#1e293b
+    class PD,SK,NX a
+    class CUDF,CUML,CUGR b
+    class HBM c
+```
+<br/>
+
+### The main libraries
+
+| Library | Feels like | What it accelerates |
+| --- | --- | --- |
+| **cuDF** | pandas (and accelerators for pandas / Polars-style workflows) | Load, filter, join, groupby, aggregate on columnar data in GPU memory |
+| **cuML** | scikit-learn | Classical ML: linear models, forests, clustering, UMAP-class reductions, and related estimators |
+| **cuGraph** | NetworkX-class graph analytics | PageRank, connected components, shortest paths, and related algorithms when they can run in parallel |
+| **RMM** | (under the hood) | RAPIDS Memory Manager: pooled device allocations so libraries are not calling `cudaMalloc` on every tiny buffer |
+| **Dask-CUDA / dask-cuDF** | Dask on steroids | Same dataframe ideas across multiple GPUs when one card's HBM is not enough |
+
+You still do not write kernels. cuDF's joins and groupbys *are* CUDA kernels, written once by people who care about coalescing. That is the moat pattern again: the value is the tuned library, not your ability to launch a grid.
+
+### A small example: same idea as pandas
+
+<Details summary="cuDF: filter and aggregate on the GPU (pandas-shaped)">
+
+Data lives in device memory. The Python looks familiar on purpose.
+
+```python
+import cudf
+
+df = cudf.read_parquet("events.parquet")
+hot = df[df["amount"] > 100]
+by_user = hot.groupby("user_id").agg({"amount": "sum", "event_id": "count"})
+print(by_user.head())
+```
+
+</Details>
+
+<Details summary="cuML: train a model with a scikit-learn-shaped API">
+
+```python
+from cuml.ensemble import RandomForestClassifier
+from cuml.model_selection import train_test_split
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.8)
+model = RandomForestClassifier(n_estimators=100)
+model.fit(X_train, y_train)
+preds = model.predict(X_test)
+```
+
+</Details>
+
+The point is not the syntax. The point is that **groupbys, joins, and forest training are exactly the kind of regular, bulk work the GPU was built for**, and RAPIDS maps them onto warps and HBM without asking you to think about block sizes.
+
+### Why the earlier lessons still apply
+
+RAPIDS does not escape the architecture. It sits on top of it.
+
+| CUDA lesson from above | How it shows up in RAPIDS |
+| --- | --- |
+| **Bytes beat FLOPs** | A big join or groupby is mostly moving and comparing columnar data. Bandwidth and layout matter more than peak tensor TFLOPs |
+| **PCIe tax** | If you bounce a dataframe to pandas every other line (`df.to_pandas()`), you pay the host round trip and throw away the win |
+| **Keep data on device** | The fast path is cuDF → cuML (or cuGraph) without shipping tables back to the CPU between steps |
+| **HBM size is real** | A 40 GB GPU does not hold an arbitrary warehouse table. Spill, partition, or use dask-cuDF when the working set does not fit |
+| **Irregular work still hurts** | Row-by-row Python UDFs, pathological string logic, and pointer-heavy walks can still be slower on GPU than a tight CPU path |
+
+That last row is the trap I fell into mentally: "GPU dataframes mean everything tabular is faster." Only the parallel, regular parts are. RAPIDS is honest about fallbacks in some accelerator modes; the architecture explains why those fallbacks exist.
+
+### Where RAPIDS fits next to PyTorch
+
+| Path | Typical job | Libraries |
+| --- | --- | --- |
+| **Analytics / classical ML** | Feature tables, ETL-ish prep, forests, clustering, graph metrics | RAPIDS (cuDF, cuML, cuGraph) |
+| **Deep learning** | Training and serving neural nets | PyTorch / JAX / TensorFlow on cuBLAS, cuDNN, NCCL |
+| **Combined pipeline** | Build features on GPU, then train a net | cuDF (and friends) → hand tensors to the DL framework, ideally without a host round trip |
+
+They are not rivals. They are different floors of the same building. RAPIDS is how CUDA shows up when your mental model is still a dataframe, not a transformer block.
+
+:::tip[TAKEAWAY]
+**RAPIDS is the CUDA moat for people who never write a kernel and never open a neural net tutorial.** Same SMs and HBM; pandas-shaped and sklearn-shaped APIs; the performance still comes from keeping bulk, regular work on the device and not ferrying tables across PCIe for sport.
+:::
+
+---
+
 ## What this means for LLM work
 
 Bringing the hardware view back to the model view, the two phases of serving a language model sit on opposite sides of the roofline. [After Training an LLM](/insights/after-training-an-llm) describes prefill and decode from the model's perspective; here is the same split from the GPU's.
@@ -393,6 +510,8 @@ The honest list, since this is a learner's write-up.
 | FlashAttention is a cleverer attention formula | It is exact attention with a better memory access pattern |
 | Quantisation is about fitting the model in memory | Fitting is the obvious benefit. Halving memory traffic is often the larger one |
 | Distributed training is bounded by total GPU count | It is bounded by where the slow links sit in the topology |
+| GPU acceleration means deep learning only | RAPIDS puts the same machine under pandas- and sklearn-shaped APIs for tables, classical ML, and graph analytics |
+| A GPU dataframe always beats pandas | Only while the work stays parallel, fits (or partitions) in HBM, and avoids constant host round trips |
 
 The pattern across all of these is the same. I kept reaching for compute as the explanation, and the answer was almost always data movement.
 
@@ -400,9 +519,9 @@ The pattern across all of these is the same. I kept reaching for compute as the 
 
 ## Final takeaway
 
-CUDA looks like a lot of unfamiliar vocabulary, but it collapses into one idea repeated at every level. Threads are grouped into warps because scheduling 32 lanes together is cheaper than scheduling one. Blocks exist because a group of threads sharing a fast scratchpad beats every thread reaching into HBM. Kernels are fused because a round trip to memory costs more than the arithmetic between trips. Tensor parallelism stays inside a node because NVLink is an order of magnitude faster than the network. Every one of those is the same instruction: **keep the data close, and keep enough work resident to cover the time it takes to move.**
+CUDA looks like a lot of unfamiliar vocabulary, but it collapses into one idea repeated at every level. Threads are grouped into warps because scheduling 32 lanes together is cheaper than scheduling one. Blocks exist because a group of threads sharing a fast scratchpad beats every thread reaching into HBM. Kernels are fused because a round trip to memory costs more than the arithmetic between trips. Tensor parallelism stays inside a node because NVLink is an order of magnitude faster than the network. RAPIDS applies the same rule to joins and forests: keep the table on the device. Every one of those is the same instruction: **keep the data close, and keep enough work resident to cover the time it takes to move.**
 
-> **A GPU is not a faster processor. It is a machine that stays busy while memory catches up, and CUDA is the map from your problem onto that structure. Optimise the bytes, and the FLOPs take care of themselves.**
+> **A GPU is not a faster processor. It is a machine that stays busy while memory catches up, and CUDA is the map from your problem onto that structure. Whether the API says tensor or DataFrame, optimise the bytes, and the FLOPs take care of themselves.**
 
 :::info[Builds on]
 [How LLM Works Under the Hood](/insights/how-llm-works-under-the-hood) · [Before Training an LLM](/insights/before-training-an-llm) · [During Training an LLM](/insights/during-training-an-llm) · [After Training an LLM](/insights/after-training-an-llm) · [Model Hosting Options for Regulated Industries](/insights/model-hosting-options-regulated-industries)
@@ -418,3 +537,4 @@ CUDA looks like a lot of unfamiliar vocabulary, but it collapses into one idea r
 | **FlashAttention** | [FlashAttention: Fast and Memory-Efficient Exact Attention with IO-Awareness](https://arxiv.org/abs/2205.14135) | The clearest worked example of treating memory traffic as the optimisation target |
 | **Collectives** | [NCCL documentation](https://docs.nvidia.com/deeplearning/nccl/user-guide/docs/index.html) | All-reduce and friends, the primitives distributed training is built from |
 | **Serving economics** | [Efficient Memory Management for LLM Serving with PagedAttention](https://arxiv.org/abs/2309.06180) | Why KV cache memory management drives inference throughput |
+| **RAPIDS / CUDA-X data science** | [RAPIDS documentation](https://docs.rapids.ai/) · [CUDA-X for Data Science](https://developer.nvidia.com/topics/ai/data-science/cuda-x-for-data-science) | cuDF, cuML, cuGraph, and how the data-science libraries sit on CUDA |

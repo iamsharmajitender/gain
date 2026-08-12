@@ -30,33 +30,49 @@ Production routing is three connected capabilities on one request path:
 3. **Plane ③ Model:** LLM gateway, capability matrix, task-aware endpoint selection per inference call
 
 ```mermaid
-flowchart TD
+flowchart TB
     User(["User turn"])
-    P1["Plane ① Intent<br/>workflow · manifest"]
-    P2["Plane ② Orchestration<br/>plan · PEP · tools"]
-    P3["Plane ③ Model<br/>capability matrix"]
-    LLM["LLM inference"]
 
-    User --> P1
-    P1 -->|"once per turn"| P2
-    P2 -->|"each inference call"| P3
-    P3 --> LLM
-    LLM --> P2
+    subgraph p1["Plane ① Intent · once per turn"]
+        IR["Intent router<br/>which workflow · manifest · policy"]
+    end
+
+    subgraph p2["Plane ② Orchestration · inside the loop"]
+        App["Agentic app<br/>plan · tool proposal · PEP"]
+    end
+
+    subgraph p3["Plane ③ Model · each inference call"]
+        GW["LLM gateway<br/>capability matrix → endpoint"]
+    end
+
+    LLM["LLM inference"]
+    Tools["Tools / downstream"]
+
+    User --> IR
+    IR -->|"route decision + manifest pin"| App
+    App -->|"needs inference"| GW
+    GW --> LLM
+    LLM -->|"proposal only"| App
+    App -->|"side effect"| Tools
+    Tools -->|"observe"| App
 
     classDef gate fill:#ffedd5,stroke:#fdba74,color:#1e293b,stroke-width:2px
     classDef process fill:#ede9fe,stroke:#c4b5fd,color:#1e293b,stroke-width:2px
+    classDef model fill:#dbeafe,stroke:#93c5fd,color:#1e293b,stroke-width:2px
 
-    class User process
-    class P1,P2 gate
-    class P3,LLM process
+    class User,App,Tools process
+    class IR gate
+    class GW,LLM model
 ```
 <br/>
 
-| Plane | Question | When | Who acts |
+| Plane | Component | Decides | When |
 | --- | --- | --- | --- |
-| **① Intent** | Which workflow, agent profile, and tool manifest? | Once per turn, before the loop | **Intent router** (platform); system decides route |
-| **② Orchestration** | Which step, tool proposal, and policy gate inside the workflow? | Inside plan → act → observe | **Agent planner** proposes; **PEP/PDP** permits |
-| **③ Model** | Which approved model endpoint runs this call? | Per inference (plan, synthesize, classify) | **LLM gateway** (platform); registry picks endpoint |
+| **① Intent** | Intent router | Which workflow, agent profile, and tool manifest | Once per turn, before the loop |
+| **② Orchestration** | Agentic app (+ PEP/PDP) | Which step and tool proposal; policy gate on side effects | Inside plan → act → observe |
+| **③ Model** | LLM gateway | Which approved model endpoint runs this call | Per inference (plan, synthesize, classify) |
+
+Who acts: **①** platform router · **②** planner proposes, PEP/PDP permits · **③** gateway registry picks endpoint.
 
 ## Shared rules (all planes)
 
@@ -96,38 +112,34 @@ A production intent router keeps the full route table in versioned platform conf
 5. **Agentic handoff:** manifest pin and scoped tool schemas; router stays outside the loop
 
 ```mermaid
-flowchart LR
-    subgraph ingress["Ingress"]
-        ID["Token + claims"]
-        IN["Normalized input"]
-    end
+flowchart TD
+    subgraph p1["Plane ① only · Intent routing"]
+        direction TB
+        Claims["Token + claims"]
+        Input["Normalized input"]
+        Table["Route table<br/>versioned"]
+        Elig["Eligible routes<br/>claims ∩ table"]
+        Classify["Layered classify<br/>rules → classifier → LLM fallback → safety"]
+        RDR["Route decision record"]
+        Handoff["Manifest pin<br/>→ Plane ② entry"]
 
-    subgraph router["Intent router"]
-        RT["Route table<br/>versioned"]
-        EL["Eligible routes"]
-        LC["Layered classify"]
-        RD["Route decision record"]
+        Claims --> Elig
+        Table --> Elig
+        Input --> Classify
+        Elig --> Classify
+        Classify --> RDR
+        RDR -->|"route"| Handoff
     end
-
-    subgraph app["Agentic app"]
-        MF["Manifest pin"]
-        LOOP["Plane ② entry"]
-    end
-
-    ID --> EL
-    RT --> EL
-    IN --> LC
-    EL --> LC
-    LC --> RD
-    RD -->|"route"| MF
-    MF --> LOOP
 
     classDef gate fill:#ffedd5,stroke:#fdba74,color:#1e293b,stroke-width:2px
     classDef process fill:#ede9fe,stroke:#c4b5fd,color:#1e293b,stroke-width:2px
 
-    class ID,EL,LC,RD gate
-    class RT,IN,MF,LOOP process
+    class Elig,Classify,RDR gate
+    class Claims,Input,Table,Handoff process
 ```
+<br/>
+
+This diagram is **Plane ① only**. Planes ② and ③ start after handoff (see the overview above).
 
 ### Core artifacts
 
@@ -179,6 +191,50 @@ Eval: [Eval Plane ①: Input](/playbooks/eval-engineering/plane-input).
 **The agentic app orchestrates; the LLM proposes steps; the PEP permits side effects.** This is not intent routing and not model routing.
 :::
 
+### Five capabilities
+
+1. **Session custody:** hold token and pinned manifest; never leak credentials to the model
+2. **Autonomy shape:** run Pattern 0-3 from the [Autonomy Blueprint](/blueprints/autonomy-blueprint) (single call, loop, fixed stages, or guided hybrid)
+3. **Inference handoff:** each plan/synthesize call goes through Plane ③, not a hard-coded model id
+4. **Proposal gate:** validate tool proposals against the scoped manifest before PEP
+5. **PEP → observe:** permit side effects, execute downstream, feed results back into the loop
+
+```mermaid
+flowchart TD
+    subgraph p2["Plane ② only · Orchestration"]
+        direction TB
+        Pin["Manifest + session pin<br/>from Plane ①"]
+        App["Agentic app<br/>loop bounds · pattern"]
+        Infer["Need inference<br/>→ Plane ③"]
+        Prop["LLM proposal<br/>tool / text only"]
+        Check["Manifest check<br/>allowlist · schema"]
+        PEP["PEP + PDP<br/>ALLOW · DENY · STEP_UP"]
+        Down["Downstream tools"]
+        Obs["Observe → next step"]
+
+        Pin --> App
+        App --> Infer
+        Infer --> Prop
+        Prop --> Check
+        Check -->|"tool side effect"| PEP
+        Check -->|"text / done"| Obs
+        PEP -->|"ALLOW"| Down
+        Down --> Obs
+        Obs --> App
+    end
+
+    classDef gate fill:#ffedd5,stroke:#fdba74,color:#1e293b,stroke-width:2px
+    classDef process fill:#ede9fe,stroke:#c4b5fd,color:#1e293b,stroke-width:2px
+    classDef model fill:#dbeafe,stroke:#93c5fd,color:#1e293b,stroke-width:2px
+
+    class Check,PEP gate
+    class Pin,App,Down,Obs process
+    class Infer,Prop model
+```
+<br/>
+
+This diagram is **Plane ② only**. Plane ① ends at the manifest pin; Plane ③ sits on every inference edge.
+
 ### What this plane decides
 
 | Decides | Does not decide |
@@ -191,10 +247,11 @@ In G.A.I.N terms this is the **agent planner** inside the loop, not a second "ag
 
 ### Where to build it
 
-Plane ② is documented under **PGAR**:
+How much next-step freedom the route allows (single inference vs autonomous vs deterministic vs guided hybrid) is the [Autonomy Blueprint](/blueprints/autonomy-blueprint). Policy enforcement for Plane ② is documented under **PGAR**:
 
 | Resource | Purpose |
 | --- | --- |
+| [Autonomy Blueprint](/blueprints/autonomy-blueprint) | Four patterns, contracts, control points |
 | [PGAR Blueprint](/blueprints/pgar-blueprint) | Five boundaries, SARAC, release gates |
 | [PGAR Runtime playbooks](/playbooks/pgar-runtime) | Foundation, assurance, boundary, domain |
 | [Agentic app](/playbooks/pgar-runtime/boundary/agentic-app) | Loop after intent route; manifest pin |
@@ -219,6 +276,46 @@ Start at [PGAR Runtime overview](/playbooks/pgar-runtime):
 :::important[Plane ③ bar]
 **The model does not choose which model runs.** Task-aware routing, abstention, and capability matrix live on the gateway, not in the agent prompt.
 :::
+
+### Five capabilities
+
+1. **Task signal:** receive task type (plan, synthesize, classify) plus `model_profile` from the route
+2. **Capability matrix:** filter approved endpoints by task, data class, region, and entitlements
+3. **Constraint score:** apply cost, latency, and residency rules
+4. **Endpoint pick:** choose stable or canary route; abstain if no approved fit
+5. **Return to Plane ②:** run inference and hand the completion back to the agentic app
+
+```mermaid
+flowchart TD
+    subgraph p3["Plane ③ only · Model routing"]
+        direction TB
+        Req["Inference request<br/>from Plane ②"]
+        Profile["model_profile<br/>+ task type"]
+        Matrix["Capability matrix<br/>approved endpoints"]
+        Filter["Filter<br/>data class · region · cost"]
+        Pick["Endpoint pick<br/>stable or canary"]
+        Run["LLM inference"]
+        Back["Completion<br/>→ Plane ②"]
+
+        Req --> Profile
+        Profile --> Matrix
+        Matrix --> Filter
+        Filter --> Pick
+        Pick --> Run
+        Run --> Back
+    end
+
+    classDef gate fill:#ffedd5,stroke:#fdba74,color:#1e293b,stroke-width:2px
+    classDef process fill:#ede9fe,stroke:#c4b5fd,color:#1e293b,stroke-width:2px
+    classDef model fill:#dbeafe,stroke:#93c5fd,color:#1e293b,stroke-width:2px
+
+    class Filter,Pick gate
+    class Req,Profile,Matrix,Back process
+    class Run model
+```
+<br/>
+
+This diagram is **Plane ③ only**. It does not choose workflows (Plane ①) or tools (Plane ②).
 
 ### What this plane decides
 
@@ -285,4 +382,4 @@ Until then, use [G.A.I.N LLM](/frameworks/gain-llm) for design and ownership.
 
 **Related**
 
-- [G.A.I.N Agents](/frameworks/gain-agents) · [Eval Blueprint](/blueprints/eval-blueprint)
+- [Autonomy Blueprint](/blueprints/autonomy-blueprint) · [G.A.I.N Agents](/frameworks/gain-agents) · [Eval Blueprint](/blueprints/eval-blueprint)

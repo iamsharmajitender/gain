@@ -1,7 +1,7 @@
 ---
 slug: mcp-for-enterprise-business-agents
 title: Is MCP Really Necessary for Business Agents in Large Regulated Enterprises?
-description: "MCP is a valuable standard for AI tool interoperability. For regulated business agents, the question is whether its benefits outweigh operational cost for your use case, not whether MCP is good."
+description: "MCP is a valuable standard for AI tool interoperability. For regulated business agents, pin agent governance first (route contract, tools, permissions, context), then choose MCP only where it beats governed business APIs."
 image: ./mcp-for-enterprise-business-agents.png
 tags:
   - system-architecture
@@ -24,26 +24,27 @@ The architectural question for large regulated enterprises is different. It is n
 This is a **decision guide**: when governed domain APIs are the right starting point, when MCP earns its cost, and how platform teams can adopt MCP internally without changing the business architecture, building on [Policy-Governed Agent Runtime](/insights/policy-governed-agent-runtime) and [Design an Intent Router](/insights/design-intent-router).
 
 :::tip[THE CLAIM]
-**MCP is a valuable standard. Adopt it when it demonstrably simplifies the system.** Business agents and developer agents solve different integration problems. If enterprise APIs already satisfy business agent needs, MCP may not provide sufficient additional value initially. Treat MCP as an implementation choice inside the platform, not a mandatory layer every agent must traverse on day one.
+**MCP is a valuable standard. Adopt it when it demonstrably simplifies the system.** Separate **agent governance** (which agent may call which tools, with which permissions and context) from **integration protocol** (how a capability is invoked). MCP is one protocol. It is not the architecture for governance. If enterprise APIs already satisfy business agent needs, MCP may not provide enough additional value initially.
 :::
 
 <!-- truncate -->
 
 ## The bottom line first
 
+- **Governance first, protocol second:** which tool, for which agent, with which permissions and context, is an agent/runtime problem, not an MCP Gateway problem.
+- **Pin a route contract** at the [intent router](/insights/design-intent-router): agent identity, tool manifest, policy profile, allowed context, execution shape.
 - **MCP is good at what it does**: standardising AI-facing tool discovery, schemas, resources, and sessions across heterogeneous systems.
-- **Business agents and developer agents are different**: Claims and Payments agents invoke governed capabilities; developer agents span GitHub, Slack, IDEs, and hundreds of SaaS tools.
-- **MCP does not replace enterprise APIs**: it standardises the AI-facing surface; REST, OpenAPI, and domain APIs remain the governed execution path.
+- **Business agents and developer / external tools differ**: governed domain APIs vs vendors without a consistent enterprise API contract.
+- **Two invocation paths:** Agent → governed business API for internal capabilities; Agent → MCP → external vendor/tool when you do not control the API.
 - **Ask an economic question**: does MCP reduce complexity more than it introduces?
-- **Platform teams may adopt MCP internally** without changing what business teams see: Business Agent → Capability Registry → Enterprise APIs.
-- **Introduce MCP deliberately**: when measured integration pain justifies platform cost, not because the standard exists.
+- **Do not introduce MCP** to fix missing agent governance. Fix the route contract and PEP first.
 
 ## Three questions, one guide
 
 | Section | Answers |
 | --- | --- |
-| **1. What MCP standardises** | AI-facing interoperability, not REST replacement |
-| **2. Business vs developer agents** | Different integration patterns, different MCP value |
+| **1. What MCP standardises** | AI-facing interoperability, not REST or governance replacement |
+| **2. Business vs developer agents** | Route contracts, two invocation paths, different MCP value |
 | **3. Economics and adoption** | When benefits outweigh cost; platform evolution |
 
 ---
@@ -69,6 +70,14 @@ The argument is narrower and stronger:
 > If enterprise APIs already satisfy the needs of business agents, introducing MCP may not provide sufficient additional value initially.
 
 That is not a criticism of MCP. It is an application of a timeless enterprise architecture principle: **adopt technology when it solves a real problem, not because it is fashionable or expected.**
+
+:::note[Separate two concerns]
+**Agent governance:** which agent can do what, for whom, using which tools, with which permissions and context?
+
+**Integration protocol:** how does the agent technically invoke a capability?
+
+MCP is one possible integration protocol. It should not become the architecture for agent governance. Start with the agent contract (route, identity, permissions, tools, context), then pick the simplest invocation path per tool.
+:::
 
 ---
 
@@ -122,7 +131,60 @@ These capabilities already expose REST APIs, OpenAPI contracts, OAuth, audit log
 | **Finance Agent** | Payments API | Payment provider, core banking product, or wire hub vendor |
 | **Inventory Agent** | Inventory API | Which ERP stores stock levels |
 
-An [intent router](/insights/design-intent-router) maps requests to **business routes** (Claims, Customer, Payments), not vendor names. This mirrors [Retrieval is a governed action](/insights/retrieval-is-a-governed-action): the agent proposes; governance decides.
+An [intent router](/insights/design-intent-router) maps requests to **business routes** (Claims, Customer, Payments), not vendor names. Treat the route as an **agent contract** for that request. Pin it before the agent loop starts. This mirrors [Retrieval is a governed action](/insights/retrieval-is-a-governed-action): the agent proposes; governance decides.
+
+| Contract field | Meaning | Typical artifact |
+| --- | --- | --- |
+| **Agent identity** | Which runtime or agent profile owns the turn | Route / agent profile on the route row |
+| **Tool manifest** | Which tools or APIs this turn may use | `tool_manifest` |
+| **Permissions** | What the agent is authorised to do | `policy_profile` + PEP/PDP ([PGAR](/insights/policy-governed-agent-runtime)) |
+| **Context** | What data and corpora the agent may access | Retrieval scope, entitlements, session claims |
+| **Execution policy** | How the workflow may run (one call, fixed stages, open loop) | Workflow / autonomy pattern ([Autonomy Blueprint](/blueprints/autonomy-blueprint)) |
+
+Once the route is pinned, the agentic app operates **inside that contract**. The governance boundary sits around the **agent and its execution context**, not in an MCP Gateway that rediscovers tools after the fact.
+
+### Two invocation paths
+
+The presence of an agent does not mean every downstream capability must become an MCP tool. Choose the simplest path that preserves the contract:
+
+| Path | Shape | When |
+| --- | --- | --- |
+| **Internal** | Agent → governed business API | Mature enterprise APIs already exist (Claims, Customer, Payments) |
+| **External** | Agent → MCP → vendor / third-party tool | You do not control a consistent enterprise API contract |
+
+```mermaid
+flowchart TB
+    subgraph gov["Agent governance first"]
+        R["Intent router<br/>pins route contract"]
+        A["Agentic app<br/>inside the contract"]
+    end
+
+    subgraph internal["Internal capability"]
+        API["Governed business API"]
+    end
+
+    subgraph external["External capability"]
+        MCP["MCP"]
+        V["Vendor / third-party tool"]
+    end
+
+    R --> A
+    A -->|"prefer when APIs exist"| API
+    A -->|"when no enterprise API"| MCP --> V
+
+    classDef gate fill:#ffedd5,stroke:#fdba74,color:#1e293b,stroke-width:2px
+    classDef process fill:#ede9fe,stroke:#c4b5fd,color:#1e293b,stroke-width:2px
+    classDef api fill:#dbeafe,stroke:#93c5fd,color:#1e293b,stroke-width:2px
+    classDef mcp fill:#fef3c7,stroke:#fcd34d,color:#1e293b,stroke-width:2px
+
+    class R gate
+    class A process
+    class API api
+    class MCP,V mcp
+```
+<br/>
+
+For many regulated enterprises with established API and integration patterns, standing up an **MCP Gateway + MCP Server for every internal business capability** adds discovery, auth, session, observability, and versioning concerns that the domain APIs already handle. Prefer **Agent → governed business API** there. Reserve MCP for external or heterogeneous surfaces where a standard AI-facing protocol earns its keep.
 
 ---
 
@@ -151,10 +213,13 @@ These costs should be justified by **measurable benefits**: reduced integration 
 | Mistake | Why it hurts |
 | --- | --- |
 | **MCP as architectural prerequisite for all agents** | Cost lands before integration pain is measurable |
+| **Hanging governance on an MCP Gateway** | Tool allowlists, permissions, and context belong on the route contract and PEP, not rediscovered at a protocol gateway |
+| **Introducing MCP to fix missing agent governance** | Protocol does not answer which agent may call which tool; pin the route contract first |
 | **Treating MCP as a REST replacement** | Domain APIs remain the governed execution path |
 | **One pattern for business and developer agents** | Different integration profiles deserve different defaults |
 | **Agents calling vendor SaaS directly** | Bypasses gateway, audit, and policy |
 | **Treating MCP as governance** | Protocol standardises invocation; it does not replace PEP or domain auth |
+| **MCP Server per internal business capability by default** | Often duplicates existing API governance; prefer governed business APIs when they already work |
 | **Future-proofing without a trigger** | Operational cost is real; benefit is hypothetical |
 
 ---
@@ -239,21 +304,22 @@ Track where integration cost actually lands: adapter count, schema drift, discov
 
 **Phase 3: MCP where value is demonstrated**
 
-Introduce MCP where it **demonstrably simplifies** the system: developer tooling, cross-vendor SaaS sprawl, platform-internal standardisation, or environments where OpenAPI coverage is thin. Business agents on governed domain APIs may never need to traverse MCP directly.
+Introduce MCP where it **demonstrably simplifies** the system: external vendors without a consistent enterprise API, developer tooling, cross-vendor SaaS sprawl, platform-internal standardisation, or thin OpenAPI coverage. Business agents on governed domain APIs may never need to traverse MCP directly.
 
 :::note[THE ARCHITECTURAL PRINCIPLE]
-Like any architectural abstraction, MCP should be introduced when it demonstrably simplifies the system, not simply because it is available. Architectural maturity is not measured by the number of layers you introduce. It is measured by introducing the right layers at the right time.
+Separate agent governance from integration protocol. Start with the route contract (identity, tools, permissions, context, execution policy). Then choose the simplest invocation path per tool. Introduce MCP when it simplifies that path, not to compensate for missing governance, and not simply because the standard exists.
 :::
 
 ## Key takeaways
 
+- **Governance before protocol:** which agent, which tools, which permissions and context is a runtime problem; MCP is one way to invoke a capability.
+- **Pin a route contract** at the intent router; run the agentic app inside that contract, not behind a rediscovery gateway.
 - **MCP is a valuable standard** for AI tool interoperability; the question is fit and economics, not validity.
-- **Business agents and developer agents differ**: small governed capability sets vs heterogeneous tool sprawl.
-- **MCP standardises the AI-facing surface**; it does not replace REST, OpenAPI, or enterprise domain APIs.
+- **Prefer Agent → governed business API** for mature internal capabilities; use **Agent → MCP → vendor** when you lack an enterprise API contract.
 - **Ask whether MCP reduces complexity** more than it introduces: security, monitoring, support, upgrades, governance, skills.
+- **Do not introduce MCP** to solve a problem that should have been solved by agent governance first.
 - **Platform teams may adopt MCP internally** while business teams continue to see capability registries and domain APIs.
-- **Introduce MCP deliberately** when demonstrated value justifies cost, not as a day-one prerequisite for every agent.
 
 :::info[Builds on]
-[Policy-Governed Agent Runtime](/insights/policy-governed-agent-runtime) · [Design an Intent Router](/insights/design-intent-router) · [RAG Is Not a Database](/insights/rag-is-not-a-database) · [G.A.I.N MCP](/frameworks/gain-mcp)
+[Policy-Governed Agent Runtime](/insights/policy-governed-agent-runtime) · [Design an Intent Router](/insights/design-intent-router) · [Autonomy Blueprint](/blueprints/autonomy-blueprint) · [RAG Is Not a Database](/insights/rag-is-not-a-database) · [G.A.I.N MCP](/frameworks/gain-mcp)
 :::

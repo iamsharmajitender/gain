@@ -67,13 +67,13 @@ So the agent is **not** using a shared service account or Jane's login.
 
 ```mermaid
 flowchart LR
-    Jane["Jane<br/>user claims"] --> UI[UI / ingress]
-    UI --> Agent["payments-agent-v2<br/>agent token"]
-    Agent --> GW[Gateway]
-    GW --> API[Downstream API]
+    Jane["① Jane<br/>user claims"] --> UI["② UI / ingress"]
+    UI --> Agent["③ payments-agent-v2<br/>agent token"]
+    Agent --> GW["④ Gateway"]
+    GW --> API["⑦ Downstream API"]
 
-    GW -.-> CheckU["User check"]
-    GW -.-> CheckA["Agent check"]
+    GW -.-> CheckU["⑤ User check"]
+    GW -.-> CheckA["⑥ Agent check"]
 
     classDef user fill:#dbeafe,stroke:#3b82f6,color:#1e293b,stroke-width:2px
     classDef agent fill:#ede9fe,stroke:#8b5cf6,color:#1e293b,stroke-width:2px
@@ -119,8 +119,8 @@ Do not treat "load every possible claim up front" as the production default.
 
 | Principal | Typical issue | Prefer |
 | --- | --- | --- |
-| **User** | Login JWT with every entitlement Jane might ever use | Hold Jane's entitlements at ingress; **enforce only what this action needs** via PDP (`action` + `resource`). Absence of an entitlement means not entitled; no explicit `false` flags required. |
-| **Agent** | One fat token with every API scope the client is registered for | **After** the route contract loads, request or exchange an agent token whose `scope` is IdP-allowed ∩ **this route's** required scopes. Mid-session route change → new downscoped agent token. |
+| **User** | Jane's login JWT lists every right she might ever need (`accounts:read`, `statements:send`, `payments:initiate`, …) even when she only asked to read one account | Keep her entitlements at ingress. For this call, PDP checks only whether `accounts:read` is in her `emts` for `ACC-4821`. Not listed = deny |
+| **Agent** | One fat agent token carries every API scope the client is registered for | After the route loads, mint a token scoped to **this route only** (e.g. statement tools, not payments). Route change mid-session → new downscoped token |
 
 Order: **route first, then agent token**. The agent must not invent scopes outside IdP registration or the route allowlist.
 :::
@@ -139,8 +139,10 @@ Jane: "Send my statement for ACC-4821." Same session, same agent badge. Tools 1-
 
 ```mermaid
 sequenceDiagram
+    autonumber
     participant Jane as Jane (user)
     participant App as Agentic app
+    participant LLM as LLM
     participant IdP as IdP
     participant GW as Gateway / PDP
     participant API as Downstream API
@@ -152,7 +154,8 @@ sequenceDiagram
     IdP-->>App: Agent bearer
 
     Note over App,API: Tool 1 get_account / accounts:read
-    App->>App: LLM proposes get_account
+    App->>LLM: Prompt (no tokens)
+    LLM-->>App: Propose get_account
     App->>GW: Agent bearer + Jane claims + action
     GW->>GW: Dual check (user + agent)
     GW->>API: ALLOW then execute
@@ -160,7 +163,8 @@ sequenceDiagram
     App->>App: Audit Jane + agent + action
 
     Note over App,API: Tool 2 get_statement_prefs / statements:read
-    App->>App: LLM proposes get_statement_prefs
+    App->>LLM: Prompt (no tokens)
+    LLM-->>App: Propose get_statement_prefs
     App->>GW: Same badges, new action
     GW->>GW: Dual check
     GW->>API: ALLOW then execute
@@ -168,7 +172,8 @@ sequenceDiagram
     App->>App: Audit
 
     Note over App,API: Tool 3 send_statement / statements:send
-    App->>App: LLM proposes send_statement
+    App->>LLM: Prompt (no tokens)
+    LLM-->>App: Propose send_statement
     App->>GW: Same badges, write action
     GW->>GW: Dual check
     GW->>API: ALLOW then execute
@@ -185,25 +190,35 @@ Walk the tabs left to right. Each shows **one** idea. Tools 1–3 reuse the same
 <Tabs groupId="guide-realtime">
   <TabItem value="jane" label="1. Jane" default>
 
-**Who is asking?** Live user claims from Jane's session. Her `emts` say what *she* may do.
+**Who is asking?** Live user claims from Jane's session. Her `emts` say what *she* may do. Extra entries below (`payments:*`, `customers:read`) are real entitlements she holds as a banker; this statement turn never uses them. The gateway only checks the `action` on each tool call.
 
 ```json
 {
   "sub": "jane@bank.example",
   "roles": ["banker"],
   "branch": "SYD-01",
-  "emts": {
-    "accounts:read": true,
-    "statements:read": true,
-    "statements:send": true
-  }
+  "emts": [
+    "accounts:read",
+    "statements:read",
+    "statements:send",
+    "payments:lookup",
+    "payments:reserve",
+    "payments:initiate",
+    "customers:read"
+  ]
 }
 ```
 
   </TabItem>
   <TabItem value="agent" label="2. Agent">
 
-**Which robot is acting?** Issued **after** the route picks `payments-agent-v2`. Scopes are capped to this route — not Jane's full login.
+**Which robot is acting?** Issued **after** the route picks `payments-agent-v2`. Scopes are capped to this route, not Jane's full login and not every API the agent is registered for in the IdP.
+
+Read the token as three answers:
+
+- `client_id`: which software principal is calling; issued by the IdP when this agent is registered (revoke this agent without touching others)
+- `scope`: what *this route* may call (`accounts:read`, statement read/send). No payment scopes here even if the IdP registration allows them elsewhere
+- `jti`: this token instance (rotate or revoke one mint without killing the whole client)
 
 ```json
 {
@@ -217,7 +232,7 @@ Walk the tabs left to right. Each shows **one** idea. Tools 1–3 reuse the same
 }
 ```
 
-Same agent token for tools 1, 2, and 3 in this session.
+Same agent token for tools 1, 2, and 3 in this session. If Jane's next turn routes to a different contract, mint a new downscoped token; do not widen this one mid-flight.
 
   </TabItem>
   <TabItem value="wire" label="3. On the wire">
@@ -243,18 +258,18 @@ Example = tool 3 (`send_statement`):
   </TabItem>
   <TabItem value="check" label="4. Dual check">
 
-Gateway asks **two** questions. Both must be true or the call is denied.
+Gateway asks **two** questions. Both must pass or the call is denied.
 
 | Question | Looks at | For tool 3 |
 | --- | --- | --- |
-| May Jane? | her live `emts` | `statements:send: true` |
+| May Jane? | her live `emts` | includes `statements:send` |
 | May this agent? | agent `scope` | includes `statements:send` |
 
 ```json
 {
   "action": "statements:send",
-  "jane_allowed": true,
-  "agent_allowed": true,
+  "jane_allowed": "yes",
+  "agent_allowed": "yes",
   "verdict": "ALLOW"
 }
 ```
@@ -312,8 +327,10 @@ Jane: "Schedule a $500 AUD payment to VND-ACME from ACC-4821 for tonight." She s
 
 ```mermaid
 sequenceDiagram
+    autonumber
     participant Jane as Jane (user)
     participant App as Agentic app
+    participant LLM as LLM
     participant IdP as IdP
     participant GW as Gateway / PDP
     participant API as Downstream API
@@ -330,6 +347,8 @@ sequenceDiagram
     IdP-->>App: Agent bearer
 
     Note over App,API: Tool 1 validate_vendor / payments:lookup
+    App->>LLM: Prompt (no tokens)
+    LLM-->>App: Propose validate_vendor
     App->>GW: Agent bearer + approval_id + action
     GW->>GW: Approval + Jane now + hash + agent
     GW->>API: ALLOW then execute
@@ -337,6 +356,8 @@ sequenceDiagram
     App->>App: Audit
 
     Note over App,API: Tool 2 reserve_funds / payments:reserve
+    App->>LLM: Prompt (no tokens)
+    LLM-->>App: Propose reserve_funds
     App->>GW: Same badges, new action
     GW->>GW: Re-check all four
     GW->>API: ALLOW then execute
@@ -344,6 +365,8 @@ sequenceDiagram
     App->>App: Audit
 
     Note over App,API: Tool 3 initiate_payment / payments:initiate
+    App->>LLM: Prompt (no tokens)
+    LLM-->>App: Propose initiate_payment
     App->>GW: Same badges, side-effect action
     GW->>GW: Re-check all four
     alt ALLOW
@@ -372,11 +395,11 @@ Walk the tabs left to right. Start with **Jane** (same as real-time), then the f
   "sub": "jane@bank.example",
   "roles": ["banker"],
   "branch": "SYD-01",
-  "emts": {
-    "payments:lookup": true,
-    "payments:reserve": true,
-    "payments:initiate": true
-  }
+  "emts": [
+    "payments:lookup",
+    "payments:reserve",
+    "payments:initiate"
+  ]
 }
 ```
 
@@ -459,17 +482,17 @@ Every tool must pass all four:
 | Check | How it is done |
 | --- | --- |
 | Approval still good? | Load `appr-77b1`. Confirm it exists, is `scheduled` / not cancelled or expired, and lists this `action` in `allowed_actions`. |
-| Jane still allowed **now**? | Take `approved_by` (`jane@bank.example`). Look up her **current** entitlements in the IdP / entitlement store (no live user JWT). Confirm this `action` is still true. |
+| Jane still allowed **now**? | Take `approved_by` (`jane@bank.example`). Look up her **current** entitlements in the IdP / entitlement store (no live user JWT). Confirm this `action` is still listed. |
 | Amount / payload unchanged? | Re-hash the request body. Compare to `payload_hash` on the approval. Mismatch → drift (e.g. amount changed) → `PAUSE` / deny. |
 | This agent still allowed? | Validate the agent bearer. Confirm `client_id` matches `agent_client_id` on the approval, status is active, and `scope` includes this `action`. |
 
 ```json
 {
   "action": "payments:initiate",
-  "approval_valid": true,
-  "jane_allowed_now": true,
-  "payload_unchanged": true,
-  "agent_allowed": true,
+  "approval_valid": "yes",
+  "jane_allowed_now": "yes",
+  "payload_unchanged": "yes",
+  "agent_allowed": "yes",
   "verdict": "ALLOW"
 }
 ```

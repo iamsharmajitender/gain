@@ -5,6 +5,7 @@ export const publishedFrameworkSlugs: readonly string[] = [
   "gain-agents",
   "gain-aiom",
   "gain-evaluation",
+  "gain-governance",
   "gain-identity",
   "gain-llm",
   "gain-mcp",

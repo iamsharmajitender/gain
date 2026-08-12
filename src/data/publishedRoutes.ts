@@ -16,6 +16,7 @@ export type FrameworkNavItem = {
 
 /** Footer / sitemap labels for G.A.I.N domain framework docs (excluding overview). */
 export const FRAMEWORK_NAV_ITEMS: FrameworkNavItem[] = [
+  {label: 'Governance', slug: 'gain-governance'},
   {label: 'LLM', slug: 'gain-llm'},
   {label: 'RAG', slug: 'gain-rag'},
   {label: 'Agents', slug: 'gain-agents'},
@@ -28,7 +29,8 @@ export const FRAMEWORK_NAV_ITEMS: FrameworkNavItem[] = [
 /** Sitemap labels include AIOM and Prompt. */
 export const FRAMEWORK_SITEMAP_ITEMS: FrameworkNavItem[] = [
   {label: 'G.A.I.N AIOM', slug: 'gain-aiom'},
-  ...FRAMEWORK_NAV_ITEMS.map((item) => ({
+  {label: 'G.A.I.N Governance', slug: 'gain-governance'},
+  ...FRAMEWORK_NAV_ITEMS.filter((item) => item.slug !== 'gain-governance').map((item) => ({
     label: `G.A.I.N ${item.label}`,
     slug: item.slug,
   })),

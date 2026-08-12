@@ -12,6 +12,62 @@ export interface DraftInsightPage {
 
 export const draftInsightPages: readonly DraftInsightPage[] = [
   {
+    "title": "CPU vs GPU vs TPU - Under the Hood",
+    "date": "2026-08-11",
+    "description": "What CPUs, GPUs, and TPUs are built to do, how they differ under the hood, when to use each, and the gotchas that waste money and time.",
+    "slug": "cpu-vs-gpu-vs-tpu-under-the-hood",
+    "href": "/insights/cpu-vs-gpu-vs-tpu-under-the-hood"
+  },
+  {
+    "title": "Embedding Classifier: How It Works, Where to Use It, How to Scale",
+    "date": "2026-08-11",
+    "description": "Embed text once, classify with similarity or a small head: how embedding classifiers work, use cases, when to use them vs an LLM, scaling patterns, and failure modes.",
+    "slug": "embedding-classifier",
+    "href": "/insights/embedding-classifier"
+  },
+  {
+    "title": "Responsible AI: Ethical, Accountable, Transparent, Explainable, Trustworthy",
+    "date": "2026-08-11",
+    "description": "Responsible AI as five outcome pillars under AI Governance: ethical, accountable, transparent, explainable, and trustworthy, distinct from Regulatory AI and the governance operating model.",
+    "slug": "responsible-ai-five-buckets",
+    "href": "/insights/responsible-ai-five-buckets"
+  },
+  {
+    "title": "What Is AI Governance: How We Ensure Responsible and Regulatory Outcomes",
+    "date": "2026-08-11",
+    "description": "AI Governance as the enterprise operating model: how controls make Responsible AI outcomes, Regulatory AI obligations, and AI risk management real in production.",
+    "slug": "what-is-ai-governance",
+    "href": "/insights/what-is-ai-governance"
+  },
+  {
+    "title": "What Is AI Risk Management: What Can Go Wrong",
+    "date": "2026-08-11",
+    "description": "AI Risk Management as the discipline of identifying, assessing, mitigating, and monitoring AI risks and residual risk, distinct from Responsible AI principles and Regulatory obligations.",
+    "slug": "what-is-ai-risk-management",
+    "href": "/insights/what-is-ai-risk-management"
+  },
+  {
+    "title": "What Is NVIDIA NeMo: Train, Customize, Guard, Deploy",
+    "date": "2026-08-11",
+    "description": "NVIDIA NeMo explained: Framework for LLM training and PEFT, Retriever for RAG, Guardrails for policy, microservices and NIM for deployment, plus when it fits and when it is overkill.",
+    "slug": "what-is-nvidia-nemo",
+    "href": "/insights/what-is-nvidia-nemo"
+  },
+  {
+    "title": "What Is Regulatory AI: The Must-We Layer",
+    "date": "2026-08-11",
+    "description": "Regulatory AI as compliance obligations for AI: laws, sector rules, required controls, evidence and reporting, distinct from Responsible AI principles and AI Governance as the operating model.",
+    "slug": "what-is-regulatory-ai",
+    "href": "/insights/what-is-regulatory-ai"
+  },
+  {
+    "title": "Spotify Music Discovery: Query Cache and Personalization",
+    "date": "2026-08-10",
+    "description": "After inverted-index ranking: cache popular queries and typeahead, then personalize with taste, prefs, and listening history for suggestions and recommendations.",
+    "slug": "music-search-cache-personalization",
+    "href": "/insights/music-search-cache-personalization"
+  },
+  {
     "title": "Agent Identity: Why the Robot Needs Its Own Badge",
     "date": "2026-08-06",
     "description": "User identity answers who is asking; agent identity answers which software is acting. Least privilege, audit, revoke, and dual gateway checks for real-time and batch.",
@@ -56,7 +112,7 @@ export const draftInsightPages: readonly DraftInsightPage[] = [
   {
     "title": "CUDA Architecture : How a GPU Actually Runs Your Model",
     "date": "2026-07-31",
-    "description": "A learner's pass through the CUDA stack: SMs, warps, and the memory hierarchy that decides performance, why most kernels are memory bound, and what that means for LLM training and inference.",
+    "description": "A learner's pass through the CUDA stack: SMs, warps, memory hierarchy, why most kernels are memory bound, RAPIDS for GPU dataframes and classical ML, and what that means for LLM work.",
     "slug": "cuda-architecture-under-the-hood",
     "href": "/insights/cuda-architecture-under-the-hood"
   },

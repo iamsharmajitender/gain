@@ -93,6 +93,7 @@ export const handbookSections: SitemapSection[] = [
     links: [
       {label: 'Overview', href: '/blueprints'},
       {label: 'Router Blueprint', href: '/blueprints/router-blueprint'},
+      {label: 'Autonomy Blueprint', href: '/blueprints/autonomy-blueprint'},
       {label: 'Eval Blueprint', href: '/blueprints/eval-blueprint'},
       {label: 'Observability Blueprint', href: '/blueprints/observability-blueprint'},
       {label: 'PGAR Blueprint', href: '/blueprints/pgar-blueprint'},

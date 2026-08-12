@@ -4,6 +4,7 @@ const sidebars: SidebarsConfig = {
   blueprintsSidebar: [
     'overview',
     'router-blueprint',
+    'autonomy-blueprint',
     'eval-blueprint',
     'observability-blueprint',
     'pgar-blueprint',
