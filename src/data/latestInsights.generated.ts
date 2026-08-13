@@ -17,6 +17,14 @@ export interface LatestInsight {
 export const latestInsightsByTab: Record<InsightTabId, readonly LatestInsight[]> = {
   "all": [
     {
+      "title": "Agent Identity: Who Is Asking vs Which Software Is Acting",
+      "date": "2026-08-06",
+      "readTime": 15,
+      "description": "User identity answers who is asking; agent identity answers which software is acting. Least privilege, audit, revoke, and dual gateway checks for real-time and batch.",
+      "typeTag": "arch",
+      "to": "/insights/agent-identity"
+    },
+    {
       "title": "Spotify Music Discovery: Inverted Index Search Explained",
       "date": "2026-08-05",
       "readTime": 19,
@@ -71,14 +79,6 @@ export const latestInsightsByTab: Record<InsightTabId, readonly LatestInsight[]>
       "description": "How Netflix turns a studio mezzanine into globally streamed ABR assets: Cosmos microservices, encoding, quality, packaging, and Open Connect delivery.",
       "typeTag": "arch",
       "to": "/insights/netflix-video-processing-pipeline"
-    },
-    {
-      "title": "LLM Hosting Options for Regulated Industries",
-      "date": "2026-07-17",
-      "readTime": 13,
-      "description": "From public SaaS to air-gapped on-prem: a practical ladder of LLM hosting options, and how to choose based on regulatory pressure and engineering maturity.",
-      "typeTag": "arch",
-      "to": "/insights/model-hosting-options-regulated-industries"
     }
   ],
   "system-design": [

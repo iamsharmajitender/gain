@@ -32,7 +32,7 @@ This is a **decision guide**: when governed domain APIs are the right starting p
 ## The bottom line first
 
 - **Governance first, protocol second:** which tool, for which agent, with which permissions and context, is an agent/runtime problem, not an MCP Gateway problem.
-- **Pin a route contract** at the [intent router](/insights/design-intent-router): agent identity, tool manifest, policy profile, allowed context, execution shape.
+- **Pin a route contract** at the [intent router](/insights/design-intent-router): [agent identity](/insights/agent-identity), tool manifest, policy profile, allowed context, execution shape.
 - **MCP is good at what it does**: standardising AI-facing tool discovery, schemas, resources, and sessions across heterogeneous systems.
 - **Business agents and developer / external tools differ**: governed domain APIs vs vendors without a consistent enterprise API contract.
 - **Two invocation paths:** Agent → governed business API for internal capabilities; Agent → MCP → external vendor/tool when you do not control the API.
@@ -321,5 +321,5 @@ Separate agent governance from integration protocol. Start with the route contra
 - **Platform teams may adopt MCP internally** while business teams continue to see capability registries and domain APIs.
 
 :::info[Builds on]
-[Policy-Governed Agent Runtime](/insights/policy-governed-agent-runtime) · [Design an Intent Router](/insights/design-intent-router) · [Autonomy Blueprint](/blueprints/autonomy-blueprint) · [RAG Is Not a Database](/insights/rag-is-not-a-database) · [G.A.I.N MCP](/frameworks/gain-mcp)
+[Policy-Governed Agent Runtime](/insights/policy-governed-agent-runtime) · [Design an Intent Router](/insights/design-intent-router) · [Autonomy Blueprint](/blueprints/autonomy-blueprint) · [RAG Is Not a Database](/insights/rag-is-not-a-database) · [G.A.I.N MCP](/frameworks/gain-mcp) · [Agent Identity](/insights/agent-identity)
 :::

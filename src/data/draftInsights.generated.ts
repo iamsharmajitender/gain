@@ -68,13 +68,6 @@ export const draftInsightPages: readonly DraftInsightPage[] = [
     "href": "/insights/music-search-cache-personalization"
   },
   {
-    "title": "Agent Identity: Why the Robot Needs Its Own Badge",
-    "date": "2026-08-06",
-    "description": "User identity answers who is asking; agent identity answers which software is acting. Least privilege, audit, revoke, and dual gateway checks for real-time and batch.",
-    "slug": "agent-identity",
-    "href": "/insights/agent-identity"
-  },
-  {
     "title": "Enterprise AI Workflow Patterns: Autonomy vs Control",
     "date": "2026-08-05",
     "description": "Choose between single inference, fully autonomous agents, deterministic workflows, and guided hybrid agents. Comparison matrix, JSON contracts, and when to escalate from one call to a full agent.",

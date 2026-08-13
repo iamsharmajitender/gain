@@ -1,6 +1,6 @@
 ---
 slug: agent-identity
-title: "Agent Identity: Why the Robot Needs Its Own Badge"
+title: "Agent Identity: Who Is Asking vs Which Software Is Acting"
 description: "User identity answers who is asking; agent identity answers which software is acting. Least privilege, audit, revoke, and dual gateway checks for real-time and batch."
 image: ./agent-identity.png
 tags:
@@ -11,7 +11,6 @@ tags:
   - compliance
   - gain
 authors: [iamsharmajitender]
-draft: true
 date: 2026-08-06
 ---
 
@@ -22,7 +21,7 @@ import TabItem from '@theme/TabItem';
 
 ![Two badges at a gateway: user identity and agent identity both required for allow](./agent-identity.png)
 
-# Agent Identity: Why the Robot Needs Its Own Badge
+# Agent Identity: Who Is Asking vs Which Software Is Acting
 
 Jane the banker asks an agent to send a statement. If the runtime calls the statements API as Jane, you have borrowed her login. If it calls as a shared `svc-agents` account, you have a fat service identity that every agent shares. Production needs a third option: **Jane is who is asking; `payments-agent-v2` is which software is acting.** Both principals show up on every tool call.
 
@@ -66,22 +65,38 @@ So the agent is **not** using a shared service account or Jane's login.
 ## Dual check (not redundant)
 
 ```mermaid
-flowchart LR
-    Jane["① Jane<br/>user claims"] --> UI["② UI / ingress"]
-    UI --> Agent["③ payments-agent-v2<br/>agent token"]
-    Agent --> GW["④ Gateway"]
-    GW --> API["⑦ Downstream API"]
+flowchart TB
+    Jane["① Jane<br/>user claims"] --> Agent
 
-    GW -.-> CheckU["⑤ User check"]
-    GW -.-> CheckA["⑥ Agent check"]
+    subgraph App["② Agentic app"]
+        Agent["③ payments-agent-v2<br/>agent bearer + Jane context"]
+    end
+
+    Agent --> Entry
+
+    subgraph Dual["④ Gateway dual check"]
+        direction TB
+        Entry["Inbound tool call"]
+        Entry --> CheckU["⑤ User check<br/>May Jane do this on this resource?"]
+        Entry --> CheckA["⑥ Agent check<br/>May this robot call this API?"]
+        CheckU --> Both{"Both pass?"}
+        CheckA --> Both
+    end
+
+    Both -->|Yes| API["⑦ Downstream API"]
+    Both -->|No| Stop["Blocked / no call"]
 
     classDef user fill:#dbeafe,stroke:#3b82f6,color:#1e293b,stroke-width:2px
     classDef agent fill:#ede9fe,stroke:#8b5cf6,color:#1e293b,stroke-width:2px
     classDef gate fill:#ffedd5,stroke:#f97316,color:#1e293b,stroke-width:2px
+    classDef ok fill:#dcfce7,stroke:#16a34a,color:#1e293b,stroke-width:2px
+    classDef deny fill:#fee2e2,stroke:#dc2626,color:#1e293b,stroke-width:2px
 
     class Jane,CheckU user
     class Agent,CheckA agent
-    class GW,UI,API gate
+    class Entry,Both gate
+    class API ok
+    class Stop deny
 ```
 
 <br/>

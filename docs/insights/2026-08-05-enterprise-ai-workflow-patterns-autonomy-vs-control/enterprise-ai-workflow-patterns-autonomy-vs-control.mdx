@@ -44,6 +44,8 @@ This is a **decision guide**: Pattern 0 (single inference), Pattern 1 (fully aut
 - **Pattern 3** fits contract review, regulatory analysis, and enterprise copilots: fixed stages, flexible tools inside a stage.
 - **Governance lives in contracts and checkpoints**, not in hoping the prompt "behaves."
 - **Memory is route policy + session state**, not a workflow step; long-term facts are retrieved, not stuffed into the prompt.
+- **Ingress (UI, API, event) is orthogonal** to Patterns 0-3; pick the pattern for autonomy vs control, then choose how the route starts and resumes.
+- **Default is one agentic app with many routes** (including multiple autonomous ones). Split into another agent or agentic app only when execution boundaries diverge.
 
 ## The autonomy vs control spectrum
 
@@ -1535,34 +1537,79 @@ Same hybrid shape: fixed stages, flexible tools inside Analyse.
 
 Legal review · Contract review · Medical review · Financial advice · Regulatory analysis · Enterprise copilots
 
-## What triggers a route change
+## Choosing a pattern
 
-All four patterns share the same versioning rule: the **route table** is versioned platform config; workflows, manifests, prompts, schemas, and eval suites are separate versioned artifacts the route **references**. See [How to Design an Intent Router](/insights/design-intent-router) and [Route table lifecycle](/playbooks/router/intent-router/route-table-lifecycle).
+Use this section to pick Pattern 0-3. Everything after it (memory, ingress, agent-to-agent, split) is orthogonal: it applies once you have a pattern, and does not change which pattern you chose.
 
-Bump **`route_table_version`** when a **route row** changes (pointers or policy fields), not on every artifact publish behind a stable id.
+### Comparison matrix
 
-| Change | Bump `route_table_version`? | What else |
-| --- | --- | --- |
-| New or removed `route_id` | Yes | Golden routing set |
-| Row points at a new `workflow_id` (e.g. `…_v1` → `…_v2`) | Yes | Pattern 2 and 3 |
-| Row points at a different `tool_manifest`, `prompt_id`, `output_schema_id`, or `eval_suite_id` | Yes | All patterns that use that field |
-| `model_profile`, `policy_profile`, `memory_profile`, `max_loop_steps`, or entitlements on the row | Yes | CI + audit |
-| New `manifest_version` under the **same** `manifest_id` | Often no | Promote manifest; pin `manifest_version` on session |
-| Prompt / eval content bump while the route still references the same artifact id | Often no | Promote that artifact; eval CI for the suite |
-| In-place overwrite of `workflow_id` content without a new id | Avoid in prod | Prefer `v2` + row ref update |
+| Capability | Pattern 0: Single inference | Pattern 1: Autonomous | Pattern 2: Deterministic | Pattern 3: Guided |
+| --- | --- | --- | --- | --- |
+| Is an agent | No | Yes | No (fixed workflow) | Yes (within stages) |
+| Workflow fixed | N/A (one step) | No | Yes | Yes |
+| Tool sequence fixed | N/A (no tools) | No | Yes | No (within a step) |
+| LLM decides next action | No | Yes | No | Yes (inside each step) |
+| Easy to audit | Excellent | No | Yes | Yes |
+| Easy recovery | Excellent (retry call) | Medium | Excellent | Excellent |
+| Flexibility | Low | High | Low | Medium-High |
+| Enterprise governance | Excellent | Medium | Excellent | Excellent |
+| Complexity | Lowest | Medium | Low | High |
+| Agent-to-agent calls | No | Yes (dynamic) | Yes (fixed handoffs only) | Yes (stage-scoped) |
+| Memory | Optional context for one call | Session + loop; long-term via retrieve | Stage / working along fixed path | Stage-scoped working; governed handoffs |
+| Ingress affinity | UI + sync API | UI or async / event for long loops | API + events (UI with gates) | UI review + API / batch |
 
-**Session pin:** at route decision (or session open), pin `route_table_version` and `manifest_version` (and the workflow id those imply). Mid-session promote must not swap an in-flight run without explicit policy.
+### Which should you choose?
 
-**Pattern-specific refs that force a table bump when the pointer changes:**
+#### Choose Pattern 0 if...
 
-| Pattern | Typical row refs |
+- One reasoning pass is enough.
+- No tools (or only deterministic pre/post handled by the agentic app around the call).
+- No side effects driven by the LLM.
+- Latency and cost matter more than multi-step investigation.
+
+Examples: summarization, Q&A over provided context, extraction, classification, rewriting.
+
+#### Choose Pattern 1 if...
+
+- The problem is exploratory.
+- You do not know the execution path in advance.
+- The AI needs maximum autonomy.
+
+Examples: research, coding, investigation, knowledge assistants.
+
+#### Choose Pattern 2 if...
+
+- Every step is mandatory.
+- Order matters.
+- Compliance is critical.
+- Side effects (payments, writes) must be tightly controlled.
+
+Examples: payments, loan approvals, insurance processing, KYC.
+
+#### Choose Pattern 3 if...
+
+- The business process is fixed.
+- Reasoning within each stage is complex and varies.
+- You need both governance and AI flexibility.
+
+Examples: contract review, regulatory compliance, due diligence, financial document analysis, enterprise legal assistants.
+
+Quick filter:
+
+| Signal | Prefer |
 | --- | --- |
-| **0** | `prompt_id`, `output_schema_id`, `eval_suite_id` (`tool_manifest: "none"`) |
-| **1** | `tool_manifest`, `prompt_id`, `max_loop_steps`, eval / output ids |
-| **2** | `workflow_id`, `tool_manifest`, plus prompt / output / eval ids |
-| **3** | `workflow_id` (with stage allowlists), `tool_manifest`, plus prompt / output / eval ids |
+| One call is enough (summarize, Q&A, extract) | Pattern 0 |
+| Unknown path is the product | Pattern 1 |
+| Side effects + mandatory order | Pattern 2 |
+| Fixed stages, variable depth of analysis | Pattern 3 |
 
-## Memory: route policy, session state
+**Escalate from Pattern 0 when** the model needs to search, call APIs, or iterate (Pattern 1 or 3), or when the business requires mandatory ordered stages with side effects (Pattern 2).
+
+## Across every pattern
+
+These concerns cut across Patterns 0-3. Set them on the route and agentic app after you pick a pattern. They do not replace the autonomy-vs-control choice.
+
+### Memory: route policy, session state
 
 Memory is **not** a workflow step on the route row. The route (or its `policy_profile`) declares **whether** memory is allowed and under what isolation / TTL rules. The [agentic app](/playbooks/pgar-runtime/boundary/agentic-app) owns read, write, and assembly during the session. Treat memory like manifests and prompts: **config and runtime**, not another tool the LLM invents mid-path.
 
@@ -1578,7 +1625,7 @@ Split memory by lifecycle (same idea as [G.A.I.N Agents](/frameworks/gain-agents
 
 **Session pin applies here too.** At route decision, pin the route and manifest versions that define which tools and stages may run. Working and loop memory stay under that pin for the in-flight run. Do not swap mid-session memory contracts without explicit policy.
 
-### How each pattern uses memory
+#### How each pattern uses memory
 
 | Pattern | Typical memory | What to avoid |
 | --- | --- | --- |
@@ -1589,7 +1636,7 @@ Split memory by lifecycle (same idea as [G.A.I.N Agents](/frameworks/gain-agents
 
 **Long-term and episodic memory are retrieval**, not free context. Load them in [context assembly](/insights/what-is-agentic-loop) or via an allowlisted tool on the manifest. Do not dump every past session into the system prompt.
 
-### Route shape (optional)
+#### Route shape (optional)
 
 Routes stay lean. Prefer a `memory_profile` (or fields on `policy_profile`) over embedding store credentials or raw history rules in the row.
 
@@ -1624,25 +1671,43 @@ Routes stay lean. Prefer a `memory_profile` (or fields on `policy_profile`) over
 | `ttl_hours` | Soft lifetime for session-scoped stores |
 | `isolation` | Required partition keys so Session A cannot read Session B |
 
-Bump `route_table_version` when the row's memory policy pointer or inline policy fields change, same as `policy_profile` or entitlements.
+When the row's `memory_profile` (or memory fields on `policy_profile`) change, treat it like any other route-row policy change: bump and pin per the [route table lifecycle](/playbooks/router/intent-router/route-table-lifecycle).
 
-## Comparison matrix
+### Ingress: UI, API, or event
 
-| Capability | Pattern 0: Single inference | Pattern 1: Autonomous | Pattern 2: Deterministic | Pattern 3: Guided |
-| --- | --- | --- | --- | --- |
-| Is an agent | No | Yes | No (fixed workflow) | Yes (within stages) |
-| Workflow fixed | N/A (one step) | No | Yes | Yes |
-| Tool sequence fixed | N/A (no tools) | No | Yes | No (within a step) |
-| LLM decides next action | No | Yes | No | Yes (inside each step) |
-| Easy to audit | Excellent | No | Yes | Yes |
-| Easy recovery | Excellent (retry call) | Medium | Excellent | Excellent |
-| Flexibility | Low | High | Low | Medium-High |
-| Enterprise governance | Excellent | Medium | Excellent | Excellent |
-| Complexity | Lowest | Medium | Low | High |
-| Agent-to-agent calls | No | Yes (dynamic) | Yes (fixed handoffs only) | Yes (stage-scoped) |
-| Memory | Optional context for one call | Session + loop; long-term via retrieve | Stage / working along fixed path | Stage-scoped working; governed handoffs |
+Patterns 0-3 answer **who decides the next step**. They do **not** answer **how the run is started**. None of the patterns is UI-only or API/event-only. The same `route_id` can be invoked from a chat UI, a synchronous API, or an event worker. Ingress is a separate concern on the agentic app: latency SLO, sync vs async, human gates, idempotency, and how you wait or resume.
 
-## Note: agent-to-agent calls
+| Ingress | What it is | Typical fit |
+| --- | --- | --- |
+| **UI** | Chat, copilot, form, review screen | Interactive turns; streaming; human approval UX |
+| **API** | Sync request/response (or async job start) | Systems integration; clear request/response contracts |
+| **Event** | Queue, webhook, schedule, domain event | Background work; retries; long runs; side-effect pipelines |
+
+#### Affinity by pattern (not a hard rule)
+
+| Pattern | Typical ingress | Why |
+| --- | --- | --- |
+| **0** Single inference | UI + sync API | Fast, one-shot; summarize, extract, classify |
+| **1** Autonomous | UI copilots; sync or async jobs | Exploratory loops; long runs often better async / event |
+| **2** Deterministic | API + events (UI with gates too) | Fixed order and side effects; queues fit resume and retry |
+| **3** Guided hybrid | UI review + API / batch | Fixed stages; humans often in the loop for report or approve |
+
+#### Does ingress decide the pattern?
+
+**Mostly no.** Choose Pattern 0-3 from process needs (tools? fixed order? stage autonomy?). Then bind the route to one or more ingress adapters without changing the autonomy contract.
+
+**When ingress does matter:**
+
+| Constraint | Implication |
+| --- | --- |
+| Interactive UI, tight latency | Cap loop/stage budgets hard; favor Pattern 0, or short Pattern 1 / 3; stream when you can |
+| Long tool loops or heavy jobs | Prefer async API or event start; do not block a browser on an open Pattern 1 loop |
+| Event-driven side effects | Pattern 2 (and long Pattern 1 / 3) shine: idempotent workers, checkpoint resume, no user waiting |
+| Human approval | Need a channel (UI or ticket); Pattern 2 / 3 already model `human_gate` |
+
+Do **not** map "UI = agent" or "API = workflow." Map the pattern to control; map UI / API / event to how you start, wait, and resume that route.
+
+### Agent-to-agent calls
 
 Not every pattern supports one agent invoking another. The distinction matters when you split capabilities across specialist agents instead of tools.
 
@@ -1660,56 +1725,78 @@ Not every pattern supports one agent invoking another. The distinction matters w
 | Fixed "stage 1 agent → stage 2 agent" pipeline | Pattern 2 or 3 |
 | Governed specialist delegation inside a stage | Pattern 3 |
 
-:::info[Related]
-For when to split agents vs routes on one runtime, see One Agent with Routes vs Specialized Agents (coming soon).
-:::
+## Scaling the platform
 
-## Which should you choose?
+Patterns answer **how much autonomy**. This section answers **how many agentic apps** and where versioning lives. Prefer routes on one runtime until boundaries force a split.
 
-### Choose Pattern 0 if...
+### When to split into another agent or agentic app
 
-- One reasoning pass is enough.
-- No tools (or only deterministic pre/post handled by the agentic app around the call).
-- No side effects driven by the LLM.
-- Latency and cost matter more than multi-step investigation.
+Patterns 0-3 answer **how much autonomy** a capability gets. They do **not** answer **how many agentic apps** you need. Hundreds of routes, including several Pattern 1 autonomous routes, can share one agentic app. A new use case is usually a new **route**, not a new agent.
 
-Examples: summarization, Q&A over provided context, extraction, classification, rewriting.
+| Term | What it is |
+| --- | --- |
+| **Route** | Governed execution contract: tools, policy, model, prompt, workflow, budgets for this intent |
+| **Agentic app / runtime** | Shared service that loads the route and runs the matching pattern |
+| **Specialized agent** | Separate reasoning and ownership boundary (own instructions, memory, evals, release cadence), often its own agentic app or hard isolation |
 
-### Choose Pattern 1 if...
+```mermaid
+flowchart TB
+    User --> Router[Intent router]
+    Router --> R1[Route A<br/>Pattern 0]
+    Router --> R2[Route B<br/>Pattern 1]
+    Router --> R3[Route C<br/>Pattern 3]
+    R1 --> App[Shared agentic app]
+    R2 --> App
+    R3 --> App
+    Router --> Spec[Specialized agent<br/>only when boundaries diverge]
+```
 
-- The problem is exploratory.
-- You do not know the execution path in advance.
-- The AI needs maximum autonomy.
+<br/>
 
-Examples: research, coding, investigation, knowledge assistants.
+#### Stay on one agentic app when...
 
-### Choose Pattern 2 if...
+- The **business domain** is shared (same customer journey, same data owners).
+- Differences are mainly **tools, prompts, workflows, or policy profiles**.
+- One team owns prompts, evals, releases, and monitoring.
+- You need **many Pattern 1 routes** (research, investigation, coding) that still share session, observability, and PEP.
 
-- Every step is mandatory.
-- Order matters.
-- Compliance is critical.
-- Side effects (payments, writes) must be tightly controlled.
+Same runtime, different `route_id`. Autonomy lives in the route contract (`tool_manifest`, `max_loop_steps`, model profile), not in a separate process.
 
-Examples: payments, loan approvals, insurance processing, KYC.
+#### Split into another agent or agentic app when...
 
-### Choose Pattern 3 if...
+| Signal | Why a route is not enough |
+| --- | --- |
+| **Different business domains** | Finance vs HR vs Legal: different systems, policies, and mental models |
+| **Different data boundaries** | Tenant, PII class, or system of record must not share session or retrieval scope |
+| **Different risk / compliance** | Payment or write-path isolation needs a harder boundary than a route allowlist |
+| **Different ownership** | Separate teams need separate release, eval, and incident ownership |
+| **Different reasoning style** | Citation-heavy legal review vs repo-bound coding are different cognitive products |
+| **Different memory contracts** | Episodic or long-term memory must not bleed across domains |
 
-- The business process is fixed.
-- Reasoning within each stage is complex and varies.
-- You need both governance and AI flexibility.
+Mixed signals (same domain, but a high-risk write slice with a different compliance owner) usually mean: **keep the bulk on shared routes; split only the high-risk slice**.
 
-Examples: contract review, regulatory compliance, due diligence, financial document analysis, enterprise legal assistants.
+#### What not to do
+
+- Do **not** create an agent per intent, chatbot, or Pattern 1 route.
+- Do **not** equate "autonomous" with "separate agentic app." Multiple autonomous routes on one runtime is the default.
+- Do **not** start with an agent fleet. Grow: single app → capability routes → specialized agents when boundaries force it.
 
 Quick filter:
 
-| Signal | Prefer |
+| Question | Prefer |
 | --- | --- |
-| One call is enough (summarize, Q&A, extract) | Pattern 0 |
-| Unknown path is the product | Pattern 1 |
-| Side effects + mandatory order | Pattern 2 |
-| Fixed stages, variable depth of analysis | Pattern 3 |
+| Same domain, owner, and data boundary; only tools or pattern differ? | New **route** on the shared agentic app |
+| Multiple exploratory / autonomous capabilities in that domain? | Multiple **Pattern 1 routes**, same app |
+| Domain, risk, data, ownership, or reasoning boundary diverges? | New **specialized agent** / agentic app |
+| Need one specialist to call another? | Keep patterns from [agent-to-agent calls](#agent-to-agent-calls); split only if boundaries require it |
 
-**Escalate from Pattern 0 when** the model needs to search, call APIs, or iterate (Pattern 1 or 3), or when the business requires mandatory ordered stages with side effects (Pattern 2).
+:::info[Related]
+For the deeper routes-vs-agents decision guide, see One Agent with Routes vs Specialized Agents (coming soon).
+:::
+
+### Route versioning
+
+All four patterns share one versioned **route table**. Workflows, manifests, prompts, schemas, and eval suites are separate artifacts the route references. Bump and session-pin rules are the same regardless of Pattern 0-3. For when to bump `route_table_version` and what to pin mid-flight, see [How to Design an Intent Router](/insights/design-intent-router) and [Route table lifecycle](/playbooks/router/intent-router/route-table-lifecycle).
 
 ## Key takeaways
 
@@ -1719,9 +1806,11 @@ Quick filter:
 - **Pattern 2** when order and side effects are non-negotiable.
 - **Pattern 3** when the process is fixed but stage-level reasoning must flex.
 - **Agent-to-agent calls:** Pattern 1 for dynamic delegation; Pattern 2 or 3 for fixed or governed multi-agent handoffs; Pattern 0 does not apply.
+- **Split agents only for execution boundaries** (domain, data, risk, ownership, reasoning), not for each autonomous route.
 - **Encode contracts as JSON** and only add agent or checkpoint machinery when the pattern needs it.
 - **Memory:** declare isolation and TTL on the route; keep working/loop state on the session; retrieve long-term memory, do not treat it as a free step in the path.
+- **Ingress:** UI, API, and events can all start the same route; pick the pattern for autonomy vs control, then choose start / wait / resume for the channel.
 
 :::info[Builds on]
-[Autonomy Blueprint](/blueprints/autonomy-blueprint) · [What Is an Intent Router](/insights/what-is-intent-router) · [How to Design an Intent Router](/insights/design-intent-router) · [Policy-Governed Agent Runtime](/insights/policy-governed-agent-runtime) · [MCP for Enterprise Business Agents](/insights/mcp-for-enterprise-business-agents) · [G.A.I.N Agents](/frameworks/gain-agents)
+[Autonomy Blueprint](/blueprints/autonomy-blueprint) · [What Is an Intent Router](/insights/what-is-intent-router) · [How to Design an Intent Router](/insights/design-intent-router) · [Route table lifecycle](/playbooks/router/intent-router/route-table-lifecycle) · [Policy-Governed Agent Runtime](/insights/policy-governed-agent-runtime) · [MCP for Enterprise Business Agents](/insights/mcp-for-enterprise-business-agents) · [G.A.I.N Agents](/frameworks/gain-agents)
 :::
