@@ -4,10 +4,24 @@
         <title>Jitender Sharma Blog</title>
         <link>https://jitendersharma.dev/insights</link>
         <description>Jitender Sharma Blog</description>
-        <lastBuildDate>Wed, 05 Aug 2026 00:00:00 GMT</lastBuildDate>
+        <lastBuildDate>Thu, 06 Aug 2026 00:00:00 GMT</lastBuildDate>
         <docs>https://validator.w3.org/feed/docs/rss2.html</docs>
         <generator>https://github.com/jpmonette/feed</generator>
         <language>en</language>
+        <item>
+            <title><![CDATA[Agent Identity: Who Is Asking vs Which Software Is Acting]]></title>
+            <link>https://jitendersharma.dev/insights/agent-identity</link>
+            <guid>https://jitendersharma.dev/insights/agent-identity</guid>
+            <pubDate>Thu, 06 Aug 2026 00:00:00 GMT</pubDate>
+            <description><![CDATA[User identity answers who is asking; agent identity answers which software is acting. Least privilege, audit, revoke, and dual gateway checks for real-time and batch.]]></description>
+            <content:encoded><![CDATA[User identity answers who is asking; agent identity answers which software is acting. Least privilege, audit, revoke, and dual gateway checks for real-time and batch.]]></content:encoded>
+            <category>Governance &amp; Trust</category>
+            <category>Architecture</category>
+            <category>Agents</category>
+            <category>Policy</category>
+            <category>Compliance</category>
+            <category>G.A.I.N</category>
+        </item>
         <item>
             <title><![CDATA[Spotify Music Discovery: Inverted Index Search Explained]]></title>
             <link>https://jitendersharma.dev/insights/music-search-inverted-index</link>
@@ -112,18 +126,6 @@
             <category>Observability</category>
         </item>
         <item>
-            <title><![CDATA[SQL vs NoSQL - Under the Hood]]></title>
-            <link>https://jitendersharma.dev/insights/sql-vs-nosql-under-the-hood</link>
-            <guid>https://jitendersharma.dev/insights/sql-vs-nosql-under-the-hood</guid>
-            <pubDate>Sat, 18 Jul 2026 00:00:00 GMT</pubDate>
-            <description><![CDATA[Relational tables, document stores, key-value, graph, vector, and time-series: what each model is, when to use it, when not to, and the tradeoffs under the hood.]]></description>
-            <content:encoded><![CDATA[Relational tables, document stores, key-value, graph, vector, and time-series: what each model is, when to use it, when not to, and the tradeoffs under the hood.]]></content:encoded>
-            <category>Platforms &amp; Engineering</category>
-            <category>Explainer</category>
-            <category>Under the Hood</category>
-            <category>RAG</category>
-        </item>
-        <item>
             <title><![CDATA[Load Balancer - Under the Hood]]></title>
             <link>https://jitendersharma.dev/insights/load-balancer-under-the-hood</link>
             <guid>https://jitendersharma.dev/insights/load-balancer-under-the-hood</guid>
@@ -134,6 +136,18 @@
             <category>Explainer</category>
             <category>Under the Hood</category>
             <category>Observability</category>
+        </item>
+        <item>
+            <title><![CDATA[SQL vs NoSQL - Under the Hood]]></title>
+            <link>https://jitendersharma.dev/insights/sql-vs-nosql-under-the-hood</link>
+            <guid>https://jitendersharma.dev/insights/sql-vs-nosql-under-the-hood</guid>
+            <pubDate>Sat, 18 Jul 2026 00:00:00 GMT</pubDate>
+            <description><![CDATA[Relational tables, document stores, key-value, graph, vector, and time-series: what each model is, when to use it, when not to, and the tradeoffs under the hood.]]></description>
+            <content:encoded><![CDATA[Relational tables, document stores, key-value, graph, vector, and time-series: what each model is, when to use it, when not to, and the tradeoffs under the hood.]]></content:encoded>
+            <category>Platforms &amp; Engineering</category>
+            <category>Explainer</category>
+            <category>Under the Hood</category>
+            <category>RAG</category>
         </item>
         <item>
             <title><![CDATA[LLM Hosting Options for Regulated Industries]]></title>
@@ -233,18 +247,6 @@
             <category>Explainer</category>
             <category>Under the Hood</category>
             <category>Observability</category>
-        </item>
-        <item>
-            <title><![CDATA[Before Training an LLM: From Design Dials to a Frozen Shape]]></title>
-            <link>https://jitendersharma.dev/insights/before-training-an-llm</link>
-            <guid>https://jitendersharma.dev/insights/before-training-an-llm</guid>
-            <pubDate>Wed, 08 Jul 2026 00:00:00 GMT</pubDate>
-            <description><![CDATA[Hyperparameters, vocabulary, and why a 7B model is 7B before day one, how the dials connect, where parameters live, and why the context window is a budgeted choice.]]></description>
-            <content:encoded><![CDATA[Hyperparameters, vocabulary, and why a 7B model is 7B before day one, how the dials connect, where parameters live, and why the context window is a budgeted choice.]]></content:encoded>
-            <category>Strategy &amp; Architecture</category>
-            <category>Explainer</category>
-            <category>LLM</category>
-            <category>Learner</category>
         </item>
     </channel>
 </rss>
