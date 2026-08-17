@@ -15,13 +15,13 @@ Two-phase workflow. **Phase 1 proposes only — no files created.** Phase 2 runs
 
 ## Scope
 
-**Insights only.** Creates and scaffolds articles under `docs/insights/`. Cross-links in proposals and scaffolds are **`/insights/…` only** — scan `docs/insights/**/*.mdx` for companions, series pairs, and `:::info[Builds on]` targets.
+**Insights only.** Creates and scaffolds articles under `docs/insights/`. Companion cross-links in proposals and scaffolds are **`/insights/…` only** — scan `docs/insights/**/*.mdx` for series pairs and `:::info[Builds on]` targets. Finished insights **may** also link to G.A.I.N, blueprints, and playbooks. Those docs must never link back (`docs-link-direction.mdc`).
 
 **Folder convention:** `{YYYY-MM-DD}-{slug}/` on disk (e.g. `2026-07-02-what-is-agentic-loop/`). Series nesting: `system-design` → `docs/insights/system-design/…`; `under-the-hood` → `docs/insights/under-the-hood/…`. If both series tags are present, prefer `system-design`. URL and frontmatter `slug:` stay **without** the date or series prefix (`what-is-agentic-loop` → `/insights/what-is-agentic-loop`).
 
 **Rule = shape.** Read `.cursor/rules/insights-article-structure.mdc` for article types and open/close requirements. This skill orchestrates creation; it does not duplicate that rule.
 
-**Companion skills:** `@remove-draft` to publish and add inbound links after the article is ready.
+**Companion skills:** `@remove-draft` to publish and add inbound links from **other insights** after the article is ready. Never add links from G.A.I.N, blueprints, or playbooks.
 
 ## Invoke
 
@@ -33,14 +33,50 @@ Two-phase workflow. **Phase 1 proposes only — no files created.** Phase 2 runs
 | Rule | Scope |
 | --- | --- |
 | `insights-article-structure.mdc` | Type, open/close sections, hero image |
+| `site-image-chrome.mdc` | G.A.I.N mark (top left) + `jitendersharma.dev` (bottom right) on every generated PNG |
 | `insights-tags.mdc` | Tag layers, counts, and IDs from `tags.yml` |
 | `no-em-dash-content.mdc` | Prose in body, title, description |
 | `collapsible-code-blocks-docs.mdc` | Fenced code → `<Details>` (not mermaid) |
+| `mermaid-spacing-docs.mdc` | `<br/>` after every mermaid fence; color nodes with `classDef` |
 | `no-links-to-draft-articles.mdc` | No inbound links from published pages while `draft: true` |
+| `docs-link-direction.mdc` | Insights may link to G.A.I.N / blueprints / playbooks; never the reverse |
 
 Tag vocabulary: `.cursor/rules/insights-tags.mdc` (source: `docs/insights/tags.yml`).
 
 Scaffolds: [template.mdx](template.mdx) · [decision-guide example](examples/decision-guide.mdx) · [concept-primer example](examples/concept-primer.mdx)
+
+### Mermaid diagrams (when the article has any)
+
+Keep mermaid **visible** (do not wrap in `<Details>`). After every closing fence, put `<br/>` on its own line (`.cursor/rules/mermaid-spacing-docs.mdc`).
+
+**Color every node.** Unstyled mermaid defaults to grey and reads as unfinished. Assign `classDef` roles so layers are visually distinct. Reuse this G.A.I.N palette (same fills as frameworks / design-intent-router):
+
+| Role | Typical nodes | `classDef` |
+| --- | --- | --- |
+| Actor / input | User, client, request | `fill:#dbeafe,stroke:#93c5fd,color:#1e293b,stroke-width:2px` |
+| Gate | Router, policy, PEP, safety | `fill:#ffedd5,stroke:#fdba74,color:#1e293b,stroke-width:2px` |
+| Process | Routes, agents, LLM, runtime steps | `fill:#ede9fe,stroke:#c4b5fd,color:#1e293b,stroke-width:2px` |
+| Shared / platform | Shared runtime, policy platform, state | `fill:#dcfce7,stroke:#86efac,color:#1e293b,stroke-width:2px` |
+| Action / source | Tool execution, catalogs, sources | `fill:#fef3c7,stroke:#fcd34d,color:#1e293b,stroke-width:2px` |
+
+```mermaid
+flowchart TB
+    User["① User"] --> Router["② Intent Router"]
+    Router --> Route["③ Route"]
+    Route --> Runtime["④ Shared runtime"]
+
+    classDef actor fill:#dbeafe,stroke:#93c5fd,color:#1e293b,stroke-width:2px
+    classDef gate fill:#ffedd5,stroke:#fdba74,color:#1e293b,stroke-width:2px
+    classDef process fill:#ede9fe,stroke:#c4b5fd,color:#1e293b,stroke-width:2px
+    classDef runtime fill:#dcfce7,stroke:#86efac,color:#1e293b,stroke-width:2px
+
+    class User actor
+    class Router gate
+    class Route process
+    class Runtime runtime
+```
+
+Map each node to a role with `class NodeName role`. Do not invent a new hex set per article. Insights stay as a bare ` ```mermaid ` fence (no `gain-mermaid` wrapper; that is for framework pages).
 
 ---
 
@@ -158,6 +194,8 @@ Search **`docs/insights/`** only. List **published-only** `/insights/{slug}` lin
 
 If a companion insight is still `draft: true`, use plain text + "(coming soon)" — no link.
 
+Finished articles may also link to `/frameworks/…`, `/blueprints/…`, and `/playbooks/…`. Do not propose the reverse.
+
 ### 8. Propose hero PNG (required)
 
 Every proposal includes a hero image spec. Phase 2 **always** generates the PNG.
@@ -167,6 +205,7 @@ Every proposal includes a hero image spec. Phase 2 **always** generates the PNG.
 | **Path** | `docs/insights/{YYYY-MM-DD}-{slug}/{slug}.png` |
 | **Aspect** | 16:9 (`aspect_ratio: "16:9"` on GenerateImage) |
 | **Style** | G.A.I.N infographic palette: dark navy grid background, subtle technical grid floor, blue / purple / orange accent glows, clean sans-serif title text, isometric or flat diagram nodes with connector arrows |
+| **Chrome (required)** | Follow `.cursor/rules/site-image-chrome.mdc`. Bake chrome into the original GenerateImage: leave clear empty space top-left for the G.A.I.N mark and bottom-right for **jitendersharma.dev**; do not place the article title or labels in those corners. Top left: G.A.I.N mark (circle + hex wireframe + wordmark **G.A.I.N**). Bottom right: **jitendersharma.dev**. No slogan under the logo. Never **gain.inc**. Do not overlay chrome after generation. Never run overlay/compositing scripts on new heroes. |
 | **Alt text** | Short, descriptive, no em dashes (matches hero `![alt](./{slug}.png)` in MDX) |
 | **Concept** | One-line visual brief tied to the article claim (e.g. pipeline stages, platform ring, comparison metaphor) |
 
@@ -240,6 +279,7 @@ N. {Closing section per type}
 | **Path** | `docs/insights/{YYYY-MM-DD}-{slug}/{slug}.png` |
 | **Alt** | {proposed alt} |
 | **Concept** | {one-line visual brief, e.g. find/select/ground pipeline with platform ring} |
+| **Chrome** | Baked into GenerateImage (not overlaid): G.A.I.N mark top left · jitendersharma.dev bottom right; empty padding in those corners |
 
 ### Checklist (will run in Phase 2)
 
@@ -249,10 +289,12 @@ N. {Closing section per type}
 - [ ] Open/close match type in `insights-article-structure`
 - [ ] No em dashes in prose (`no-em-dash-content`)
 - [ ] Code blocks in `<Details>` if any (`collapsible-code-blocks-docs`)
+- [ ] Mermaid: `<br/>` after fence; nodes colored with `classDef` palette (`mermaid-spacing-docs`)
 - [ ] Outbound links in scaffold are `/insights/…` only (published targets)
 - [ ] No inbound links from published pages to this slug while draft
 - [ ] `draft: true` set
 - [ ] Hero PNG `{slug}.png` generated at `docs/insights/{YYYY-MM-DD}-{slug}/{slug}.png`
+- [ ] Hero PNG chrome baked into GenerateImage (not overlaid): G.A.I.N mark top left, `jitendersharma.dev` bottom right, empty corners, no `gain.inc` (`site-image-chrome`)
 
 ```
 
@@ -281,11 +323,12 @@ If the user says **`abort`**, **`cancel`**, **`quit`**, **`exit`**, or **`never 
 Only when the user sends **`approve`** (after any requested edits are reflected in the proposal).
 
 1. **Create folder** `docs/insights/{YYYY-MM-DD}-{slug}/` if it does not exist (date from approved proposal frontmatter). If tags include `system-design`, use `docs/insights/system-design/{YYYY-MM-DD}-{slug}/`. Else if tags include `under-the-hood`, use `docs/insights/under-the-hood/{YYYY-MM-DD}-{slug}/`.
-2. **Write `{slug}.mdx`** inside that folder using [template.mdx](template.mdx), filled from the approved proposal. For type-specific section placeholders, follow [examples/decision-guide.mdx](examples/decision-guide.mdx) or [examples/concept-primer.mdx](examples/concept-primer.mdx) as appropriate.
+2. **Write `{slug}.mdx`** inside that folder using [template.mdx](template.mdx), filled from the approved proposal. For type-specific section placeholders, follow [examples/decision-guide.mdx](examples/decision-guide.mdx) or [examples/concept-primer.mdx](examples/concept-primer.mdx) as appropriate. If the scaffold includes mermaid, color every node with the palette in **Mermaid diagrams** above and put `<br/>` after each fence.
 3. **Add `import Details from '@theme/Details';`** after frontmatter if the scaffold includes fenced code blocks.
 4. **Generate hero PNG** (required on every new insight):
    - Call **GenerateImage** with `aspect_ratio: "16:9"`.
-   - **Description:** combine the approved **Concept**, article **title**, and G.A.I.N style from §8. Include labeled diagram nodes, connector arrows, and the visual metaphor (e.g. find → select → ground pipeline with a platform ring for identity, policy, orchestration, observability).
+   - **Description:** combine the approved **Concept**, article **title**, and G.A.I.N style from §8. Include labeled diagram nodes, connector arrows, and the visual metaphor (e.g. find → select → ground pipeline with a platform ring for identity, policy, orchestration, observability). **Always include chrome** from `.cursor/rules/site-image-chrome.mdc`: top-left G.A.I.N mark (white circle, hex wireframe icon, wordmark G.A.I.N, no tagline underneath); bottom-right URL `jitendersharma.dev` in small white text. Leave clear empty space top-left for the G.A.I.N mark and bottom-right for jitendersharma.dev; do not place the article title or labels in those corners; bake chrome into the image; do not overlay after generation. Never `gain.inc`. Never TRUST / CONTROL / IMPACT or any three-word slogan under the logo.
+   - **Do not** run overlay or compositing scripts (including `scripts/restamp-site-image-chrome.py`) on new heroes.
    - **filename:** `{slug}.png`
    - **Save target:** move or ensure the file lands at `docs/insights/{YYYY-MM-DD}-{slug}/{slug}.png` (co-located with the MDX).
    - **reference_image_paths (optional):** one existing hero from the same topic cluster for style consistency (e.g. `docs/insights/2026-06-27-rag-is-not-a-database/rag-is-not-a-database.png` for RAG articles).
@@ -298,10 +341,12 @@ Only when the user sends **`approve`** (after any requested edits are reflected 
 | Dated folder `{YYYY-MM-DD}-{slug}/`, filename `{slug}.mdx`, frontmatter `slug:` matches | — |
 | `image: ./{slug}.png` + hero `![...](./{slug}.png)` | `insights-article-structure` |
 | `{slug}.png` exists in the dated folder | §8 hero PNG |
+| PNG has chrome baked in (not overlaid): G.A.I.N mark top left, `jitendersharma.dev` bottom right; no `gain.inc`; title/labels not in those corners | `site-image-chrome` |
 | `<!-- truncate -->` after hook, before main body | `insights-article-structure` |
 | Open/close sections match classified type | `insights-article-structure` |
 | No em dashes in title, description, body | `no-em-dash-content` |
 | Fenced code wrapped in `<Details summary="...">` | `collapsible-code-blocks-docs` |
+| Mermaid not wrapped in `<Details>`; `<br/>` after fence; nodes use `classDef` palette | `mermaid-spacing-docs` |
 | Outbound links are `/insights/…` only and target published routes | scope + `no-links-to-draft-articles` |
 | `draft: true` present | default for new insights |
 

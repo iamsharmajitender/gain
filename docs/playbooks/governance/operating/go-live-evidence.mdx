@@ -1,0 +1,64 @@
+---
+slug: /governance/operating/go-live-evidence
+title: "Go-Live Evidence Pack"
+sidebar_label: Go-live evidence pack
+description: "What examiners get before scale: inventory row, obligation map, runtime verdict sample, eval gates."
+tags:
+  - governance-trust
+  - arch
+  - gain
+  - policy
+  - compliance
+---
+
+# Go-Live Evidence Pack
+
+[Operating](/playbooks/governance/operating) · [← Obligation map](/playbooks/governance/operating/obligation-to-control) · **Evidence pack**
+
+The pack is what you hand an examiner (or an exec sponsor) **before** status on the [inventory](/playbooks/governance/operating/inventory) becomes `live`. Evidence is continuous after go-live. This page is the minimum bundle at the gate.
+
+:::tip[THE CLAIM]
+**Evidence is not a binder assembled for the auditor visit.** The pack is generated from inventory, the obligation map, and runtime audit. If a field is only in a slide, it does not count.
+:::
+
+<!-- truncate -->
+
+## What the pack contains
+
+| Artifact | Source |
+| --- | --- |
+| Inventory row (owner, pattern, data class, status) | [Inventory](/playbooks/governance/operating/inventory) |
+| Obligation-to-control rows for this `use_case_id` | [Obligation map](/playbooks/governance/operating/obligation-to-control) |
+| Policy version pin | [Runtime audit](/playbooks/governance/runtime/foundation/audit-and-replay) |
+| Sample ALLOW / DENY / STEP_UP chain | Runtime verdict log |
+| Eval / policy-scenario gate results | [Policy test scenarios](/playbooks/governance/runtime/assurance/policy-test-scenarios) |
+| Residual risk acceptance | Named sponsor on the inventory row |
+
+## Gate
+
+Status may move to `live` only when:
+
+1. Inventory row is complete (named owner, not a mailbox)
+2. Every mapped obligation has a control id that exists
+3. Runtime PEP is on the tool path for this use case
+4. Policy scenarios for this profile pass in CI
+5. Sponsor has accepted residual risk on the record
+
+Miss this pack and you may have ethics slides while the agent ships with no inventory entry. Miss [Runtime](/playbooks/governance/runtime) and you have a pack with no PEP on the tool path.
+
+## Failure classes
+
+- Pack is a PDF with no links to live registers
+- Verdict sample from a different `use_case_id`
+- Go-live without STEP_UP scenarios on a write path
+- Pack frozen at launch; incidents never feed it
+
+## Trace / register fields
+
+`evidence_pack_id`, `use_case_id`, `policy_version`, `scenario_suite_id`, `accepted_by`, `accepted_at`
+
+After go-live, continue on [Runtime](/playbooks/governance/runtime) and feed incidents back into the obligation map.
+
+## Read next
+
+**[Runtime playbooks →](/playbooks/governance/runtime)** · [Operating blueprint](/blueprints/governance/operating)

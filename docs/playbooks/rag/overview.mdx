@@ -1,0 +1,52 @@
+---
+slug: /rag
+title: "RAG Playbooks"
+sidebar_label: Overview
+description: "Hub for G.A.I.N RAG playbooks: retrieval as a governed action, context packs, and PEP-gated search."
+tags:
+  - governance-trust
+  - arch
+  - gain
+  - rag
+  - policy
+---
+
+# RAG Playbooks
+
+[Playbooks](/playbooks) · **RAG overview** · [RAG retrieval →](/playbooks/rag/retrieval)
+
+Implementation guides for [G.A.I.N RAG](/frameworks/gain-rag). The [RAG Blueprint](/blueprints/rag-blueprint) is the reference design. These playbooks are the **how**: who starts retrieve, which corpus is in scope, and how the pack is audited.
+
+PEP still gates every retrieve. Enforcement lives in [Runtime](/playbooks/governance/runtime). This series owns the retrieval store and the pack, not the verdict engine.
+
+:::tip[THE CLAIM]
+**Retrieval is a governed action, not a database query.** The route declares `retrieval`. The app fetches. The LLM does not pick the corpus.
+:::
+
+<!-- truncate -->
+
+## Playbooks
+
+| Playbook | One-line purpose |
+| --- | --- |
+| **[RAG retrieval](/playbooks/rag/retrieval)** | Prefetch vs tool mode, scope, PEP pack, validation, worked example |
+
+## Recommended path
+
+1. **[G.A.I.N RAG](/frameworks/gain-rag):** principles
+2. **[RAG Blueprint](/blueprints/rag-blueprint):** reference design
+3. **[RAG retrieval](/playbooks/rag/retrieval):** implement mode, scope, and the pack
+4. **[Eval Plane ③ Context](/playbooks/evaluation/plane-context):** recall, scope leaks, abstention
+5. **[Runtime](/playbooks/governance/runtime):** PEP/PDP on the retrieve action
+
+## Who should read what
+
+| Role | Start with | Then |
+| --- | --- | --- |
+| **RAG / knowledge teams** | [RAG retrieval](/playbooks/rag/retrieval) | [G.A.I.N RAG](/frameworks/gain-rag), [Eval Context](/playbooks/evaluation/plane-context) |
+| **AI platform** | [RAG retrieval](/playbooks/rag/retrieval) | [Route contract](/playbooks/agents/intent-router/route-contract-reference), [PEP enforcement](/playbooks/governance/runtime/foundation/pep-enforcement) |
+| **Governance** | [Runtime](/playbooks/governance/runtime) | Retrieval scope scenarios in [policy tests](/playbooks/governance/runtime/assurance/policy-test-scenarios) |
+
+## Read next
+
+**[RAG retrieval →](/playbooks/rag/retrieval)**

@@ -84,19 +84,105 @@ const config: Config = {
     [
       '@docusaurus/plugin-client-redirects',
       {
+        redirects: [
+          {
+            from: '/playbooks/pgar-runtime/domain/memory',
+            to: '/playbooks/agents/orchestration/memory',
+          },
+          {
+            from: '/playbooks/pgar-runtime/domain/manifest-registry',
+            to: '/playbooks/agents/manifests/manifest-registry',
+          },
+          {
+            from: '/playbooks/pgar-runtime/domain/tool-registry',
+            to: '/playbooks/agents/manifests/manifest-registry',
+          },
+          {
+            from: '/playbooks/pgar-runtime/domain/manifest-lifecycle',
+            to: '/playbooks/agents/manifests/manifest-lifecycle',
+          },
+          {
+            from: '/playbooks/pgar-runtime/domain/rag-retrieval',
+            to: '/playbooks/rag/retrieval',
+          },
+          {
+            from: '/playbooks/mcp/manifest-registry',
+            to: '/playbooks/agents/manifests/manifest-registry',
+          },
+          {
+            from: '/playbooks/mcp/manifest-lifecycle',
+            to: '/playbooks/agents/manifests/manifest-lifecycle',
+          },
+          {
+            from: '/playbooks/mcp/tool-registry',
+            to: '/playbooks/agents/manifests/manifest-registry',
+          },
+          {
+            from: '/blueprints/governance-operating-blueprint',
+            to: '/blueprints/governance/operating',
+          },
+          {
+            from: '/blueprints/governance-runtime-blueprint',
+            to: '/blueprints/governance/runtime',
+          },
+        ],
         createRedirects(existingPath) {
+          const froms: string[] = [];
           if (existingPath.startsWith('/insights')) {
-            return [existingPath.replace(/^\/insights/, '/blogs')];
+            froms.push(existingPath.replace(/^\/insights/, '/blogs'));
           }
-          if (existingPath.startsWith('/playbooks/router/intent-router')) {
-            return [
+          if (existingPath.startsWith('/playbooks/evaluation')) {
+            froms.push(
               existingPath.replace(
-                '/playbooks/router/intent-router',
-                '/playbooks/intent-router',
+                '/playbooks/evaluation',
+                '/playbooks/eval-engineering',
               ),
-            ];
+            );
           }
-          return undefined;
+          if (existingPath === '/playbooks/governance/runtime') {
+            froms.push('/playbooks/pgar-runtime');
+          } else if (existingPath.startsWith('/playbooks/governance/runtime/')) {
+            const rest = existingPath.slice(
+              '/playbooks/governance/runtime'.length,
+            );
+            froms.push(`/playbooks/governance${rest}`);
+            froms.push(`/playbooks/pgar-runtime${rest}`);
+          }
+          if (existingPath.startsWith('/playbooks/agents')) {
+            froms.push(
+              existingPath.replace('/playbooks/agents', '/playbooks/router'),
+            );
+            if (existingPath.startsWith('/playbooks/agents/intent-router')) {
+              froms.push(
+                existingPath.replace(
+                  '/playbooks/agents/intent-router',
+                  '/playbooks/intent-router',
+                ),
+              );
+            }
+          }
+          if (existingPath === '/playbooks/llm') {
+            froms.push('/playbooks/router/model-routing');
+          } else if (existingPath.startsWith('/playbooks/llm/')) {
+            froms.push(
+              existingPath.replace(
+                '/playbooks/llm/',
+                '/playbooks/router/model-routing/',
+              ),
+            );
+          }
+          if (existingPath === '/blueprints/evaluation-blueprint') {
+            froms.push('/blueprints/eval-blueprint');
+          }
+          if (existingPath === '/blueprints/governance/runtime') {
+            froms.push('/blueprints/governance-blueprint');
+            froms.push('/blueprints/pgar-blueprint');
+          }
+          if (existingPath === '/blueprints/agents-blueprint') {
+            froms.push('/blueprints/autonomy-blueprint');
+            froms.push('/blueprints/router-blueprint');
+          }
+          return froms.length > 0 ? froms : undefined;
         },
       },
     ],

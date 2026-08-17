@@ -1,6 +1,6 @@
 ---
 slug: /observability
-title: Unified Observability Playbooks
+title: Observability Playbooks
 sidebar_label: Overview
 description: Hub for unified observability playbooks. Business, service, and infrastructure layers, correlation graph, governance, maturity, and operating model.
 tags:
@@ -11,7 +11,7 @@ tags:
   - compliance
 ---
 
-# Unified Observability Playbooks
+# Observability Playbooks
 
 [Playbooks](/playbooks) · **Observability overview** · [Business journeys →](/playbooks/observability/business-journey-mapping)
 
@@ -27,12 +27,12 @@ Implementation guides for the [Observability Blueprint](/blueprints/observabilit
 
 | Playbook | What you build |
 | --- | --- |
+| **[Governance rules](/playbooks/observability/governance-rules)** | Standards that prevent observability sprawl |
 | **[Business journey mapping](/playbooks/observability/business-journey-mapping)** | KPIs, journeys, business events, outcome SLOs |
 | **[Service golden signals](/playbooks/observability/service-golden-signals)** | Latency, traffic, errors, saturation, SLIs/SLOs, traces |
 | **[Infrastructure telemetry](/playbooks/observability/infrastructure-telemetry)** | Resource health linked to services and workloads |
 | **[Correlation graph](/playbooks/observability/correlation-graph)** | KPI → service → infra linking, IDs, dependency map |
-| **[Governance rules](/playbooks/observability/governance-rules)** | Standards that prevent observability sprawl |
-| **[Maturity assessment](/playbooks/observability/maturity-assessment)** | L0–L5 ladder, gap analysis, roadmap |
+| **[Maturity assessment](/playbooks/observability/maturity-assessment)** | L0-L5 ladder, gap analysis, roadmap |
 | **[Operating model](/playbooks/observability/operating-model)** | RACI across product, engineering, platform, SRE, architecture |
 
 ## Recommended path
@@ -69,8 +69,7 @@ flowchart LR
 Service-layer playbooks apply to all applications. For **governed AI** (agents, RAG, policy gates), extend service instrumentation with:
 
 - [G.A.I.N Observability](/frameworks/gain-observability)
-- [AI Observability in Enterprise](/insights/ai-observability-in-enterprise)
-- [PGAR audit and replay](/playbooks/pgar-runtime/foundation/audit-and-replay)
-- [Eval plane: Outcome](/playbooks/eval-engineering/plane-outcome)
+- [PGAR audit and replay](/playbooks/governance/runtime/foundation/audit-and-replay)
+- [Eval plane: Outcome](/playbooks/evaluation/plane-outcome)
 
 Bridge reading: [Observability Blueprint](/blueprints/observability-blueprint).

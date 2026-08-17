@@ -1,0 +1,251 @@
+---
+slug: /agents/intent-router/route-contract-reference
+title: "Route Contract Reference"
+sidebar_label: Route contract reference
+description: "Field dictionary for route table rows: route, activation target (which agentic app to start), manifest, policy, retrieval, memory, workflow, and related artifact ids."
+tags:
+  - ai-intelligence
+  - arch
+  - gain
+  - agents
+  - policy
+---
+
+import Details from '@theme/Details';
+
+# Route Contract Reference
+
+[Blueprint](/blueprints/agents-blueprint) · **Route contract** · [Route table lifecycle →](/playbooks/agents/intent-router/route-table-lifecycle)
+
+Bookmark this page when you need the **field dictionary** for a route row. Ops (version, promote, rollback) live in [Route table lifecycle](/playbooks/agents/intent-router/route-table-lifecycle). Tool entry shape lives in [Manifest registry](/playbooks/agents/manifests/manifest-registry). PEP payload shape lives in [Policy contracts](/playbooks/governance/runtime/foundation/policy-contracts).
+
+:::tip[THE CLAIM]
+**A route row is a governed execution contract.** It points at versioned artifacts (manifest, policy, memory, workflow, prompt) and at **which agentic app to start** (`activation_target`). It does not embed secrets, full chat history, or PDP prose.
+:::
+
+<!-- truncate -->
+
+## Route row fields
+
+| Field | Required | Example | Why it matters |
+| --- | --- | --- | --- |
+| `route_id` | Yes | `legal_contract_review` | Stable id; tied to change records and audit |
+| `activation_target` | Optional | `https://assistant-app.internal/v1/runs` | **Which agentic app the router starts.** Omit to use the shared runtime. See [Activation target](#activation-target) |
+| `intent` / `intent_label` | Yes | `contract_review` | Classifier / eval fixture target |
+| `description` | Optional | Contract review for counsel | Human-readable scope |
+| `tool_manifest` | Yes | `contract_review_staged_v3` or `none` | Tool schemas the LLM may propose. See [Manifest registry](/playbooks/agents/manifests/manifest-registry) |
+| `policy_profile` | Yes | `read_only_standard` | PEP rules, limits, attestation profile id |
+| `model_profile` | Yes | `reasoning-standard` | Capability and cost tier at the gateway |
+| `retrieval` | Optional | `{ "mode": "tool", "scope": ["accounts"] }` | Who retrieves, and from which corpora |
+| `memory_profile` | Optional | See [Memory profile](#memory-profile) | Session / working / loop policy; long-term is retrieve-only unless write tools are allowlisted |
+| `workflow_id` | Patterns 2-3 | `contract_review_v3` | Fixed outer stages |
+| `prompt_id` | Usual | `contract_review_v3` | Host / system prompt artifact |
+| `output_schema_id` | Usual | `counsel_memo_v1` | Structured output validation |
+| `eval_suite_id` | Usual | `contract_review_golden` | Offline golden suite |
+| `max_loop_steps` | Pattern 1 | `12` | Bounds Observe → Decide → Tool (omit on Pattern 0) |
+| `fallback` | Optional | `clarify` / `escalate_human` | When entities missing or OOD |
+| `required_claims` | Optional | `["accounts:read"]` | Entitlement filter for eligible routes |
+
+Fields appear when the autonomy pattern needs them. Pattern matrix: [Agents Blueprint](/blueprints/agents-blueprint).
+
+## Activation target
+
+`activation_target` tells Plane ① **which agentic app (runtime) to call** after `outcome=route`. It is not a tool, not a model, and not a second classifier. The UI never uses this URL.
+
+| Value | Meaning |
+| --- | --- |
+| **Omit** (default) | Shared agentic app. Hundreds of routes, one runtime. Prefer this. |
+| HTTP(S) URL | `POST /v1/runs` on that app (async `202` + `correlation_id`) |
+| Queue id | e.g. `kafka:agent.commands.fraud` for an event worker pool |
+
+Pin it on the route pin with `correlation_id`. Resume (`"yes"`) starts the **same** target. Do not re-resolve from `active`. How the POST looks: [Wire agentic app](/playbooks/agents/intent-router/wire-agentic-app).
+
+A new use case is still a new **row**, not a new runtime. Set `activation_target` only when isolation cannot live in the pin (PCI enclave, separate release cadence). Same router either way.
+
+## Retrieval
+
+| `mode` | Who retrieves | Typical use |
+| --- | --- | --- |
+| omit / `none` | Nobody | Chat, handoff, no knowledge path |
+| `deterministic_prefetch` | Agentic app, before the LLM. Model never sees retrieve tools. | Pattern 0 Q&A; or Pattern 2 if `retrieve → generate` is a fixed workflow |
+| `tool` | A search tool runs inside `scope`. PEP still gates it. | Pattern 1: LLM proposes. Pattern 2: workflow names the stage. Pattern 3: LLM proposes inside the stage allowlist. |
+
+`scope` is a list of corpus / index ids the route may touch. One `retrieval` object per row; multiple corpora go in that list, not a second retrieval block. The route **pins** mode and scope for the session. How the app branches on each mode, including more than one retrieve: [RAG retrieval](/playbooks/rag/retrieval#how-the-route-controls-retrieve-mode).
+
+## Memory Profile
+
+Memory is **route policy + session state**, not a workflow step. The row declares what is allowed; the [agentic app](/playbooks/governance/runtime/boundary/agentic-app) owns read, write, and assembly.
+
+| Field | Values | Meaning |
+| --- | --- | --- |
+| `conversation` | `none` / `session` | User / assistant turns for this session |
+| `working` | `none` / `session` | Task slots, route entities, stage outputs |
+| `loop` | `none` / `checkpoint` | Step count, proposals, observations |
+| `long_term` | `none` / `retrieve_only` | Durable facts via retrieval or allowlisted tools; not stuffed into the system prompt. Permission only: who starts recall follows the pattern. See [Autonomy shape](/playbooks/agents/orchestration/autonomy-shape#long_term-retrieve_only-is-permission-not-prefetch) · [Memory](/playbooks/agents/orchestration/memory) |
+| `ttl_hours` | number | Soft lifetime for session-scoped stores |
+| `isolation` | e.g. `["tenant", "user", "session"]` | Partition keys so Session A cannot read Session B |
+
+## Related artifacts (not inlined on the row)
+
+| Artifact | Owned by | Playbook |
+| --- | --- | --- |
+| Tool entries (`name`, `schema`, `pdp_action`, `risk_tier`) | Manifest store | [Manifest registry](/playbooks/agents/manifests/manifest-registry) · [Manifest lifecycle](/playbooks/agents/manifests/manifest-lifecycle) |
+| SARAC / PEP payload | Policy plane | [Policy contracts](/playbooks/governance/runtime/foundation/policy-contracts) |
+| Workflow stages / stage allowlists | Workflow store | [Agents Blueprint](/blueprints/agents-blueprint) (Patterns 2-3) |
+| Prompt / output schema / eval suite | Separate versioned stores | Loaded by id from the row |
+
+## Canonical single-route shape
+
+<Details summary="Canonical route row (JSON)">
+
+```json
+{
+  "route_id": "example_route",
+  "intent": "example_intent",
+  "activation_target": "https://assistant-app.internal/v1/runs",
+  "model_profile": "reasoning-standard",
+  "tool_manifest": "example_v1",
+  "policy_profile": "read_only_standard",
+  "retrieval": { "mode": "tool", "scope": ["example-corpus"] },
+  "memory_profile": {
+    "conversation": "session",
+    "working": "session",
+    "loop": "checkpoint",
+    "long_term": "retrieve_only",
+    "ttl_hours": 24,
+    "isolation": ["tenant", "user", "session"]
+  },
+  "workflow_id": "example_workflow_v1",
+  "prompt_id": "example_v1",
+  "output_schema_id": "example_out_v1",
+  "eval_suite_id": "example_golden",
+  "max_loop_steps": 12,
+  "fallback": "clarify",
+  "required_claims": ["example:read"]
+}
+```
+
+</Details>
+
+## Full route table shape
+
+One published artifact: table metadata plus one object per route row. Entitlements are enforced at runtime from ingress claims, not stored per user.
+
+<Details summary="Route table (JSON): versioned route contracts">
+
+```json
+{
+  "route_table_version": "2026.07.1",
+  "product": "corporate-assistant",
+  "routes": [
+    {
+      "route_id": "agent-account-v3",
+      "intent_label": "account_history",
+      "description": "Read-only account and transaction history",
+      "tool_manifest": "accounts-readonly-v2",
+      "policy_profile": "read_only_standard",
+      "model_profile": "reasoning-standard",
+      "retrieval": { "mode": "tool", "scope": ["accounts"] },
+      "memory_profile": {
+        "conversation": "session",
+        "working": "session",
+        "loop": "checkpoint",
+        "long_term": "retrieve_only",
+        "ttl_hours": 24,
+        "isolation": ["tenant", "user", "session"]
+      },
+      "max_loop_steps": 6,
+      "fallback": "clarify",
+      "required_claims": ["accounts:read"]
+    },
+    {
+      "route_id": "agent-payments-v2",
+      "intent_label": "payment_initiate",
+      "description": "Initiate outbound transfer",
+      "activation_target": "https://payments-app.internal/v1/runs",
+      "tool_manifest": "payments-readwrite-v3",
+      "policy_profile": "high_risk_step_up",
+      "model_profile": "reasoning-standard",
+      "retrieval": { "mode": "tool", "scope": ["policy-engine", "accounts"] },
+      "memory_profile": {
+        "conversation": "session",
+        "working": "session",
+        "loop": "checkpoint",
+        "long_term": "none",
+        "ttl_hours": 8,
+        "isolation": ["tenant", "user", "session"]
+      },
+      "max_loop_steps": 8,
+      "fallback": "escalate_human",
+      "required_claims": ["payments:initiate"]
+    },
+    {
+      "route_id": "agent-policy-qa-v1",
+      "intent_label": "policy_qa",
+      "description": "Policy and procedure Q&A via RAG",
+      "tool_manifest": "none",
+      "policy_profile": "read_only_standard",
+      "model_profile": "reasoning-standard",
+      "retrieval": {
+        "mode": "deterministic_prefetch",
+        "scope": ["policy-engine"]
+      },
+      "fallback": "clarify",
+      "required_claims": ["policy:read"]
+    },
+    {
+      "route_id": "agent-chat-v1",
+      "intent_label": "general_chat",
+      "description": "Lightweight chat with no tools",
+      "tool_manifest": "none",
+      "policy_profile": "low_risk_chat",
+      "model_profile": "lightweight-chat",
+      "max_loop_steps": 2,
+      "fallback": "clarify",
+      "required_claims": []
+    },
+    {
+      "route_id": "agent-escalate-v1",
+      "intent_label": "escalate_human",
+      "description": "Hand off to human agent",
+      "tool_manifest": "handoff-v1",
+      "policy_profile": "read_only_standard",
+      "model_profile": "lightweight-chat",
+      "max_loop_steps": 3,
+      "fallback": "clarify",
+      "required_claims": []
+    }
+  ]
+}
+```
+
+</Details>
+
+## Pattern cheat sheet
+
+| Pattern | Typical row refs |
+| --- | --- |
+| **0** | `prompt_id`, `output_schema_id`, `eval_suite_id` (`tool_manifest: "none"`); optional `retrieval` with `mode: "deterministic_prefetch"`; optional lean `memory_profile` |
+| **1** | `tool_manifest`, `prompt_id`, `max_loop_steps`, `memory_profile`, eval / output ids; optional `retrieval` with `mode: "tool"` |
+| **2** | `workflow_id`, `tool_manifest`, plus prompt / output / eval ids; `memory_profile` for stage working state; optional `retrieval` (`prefetch` as a named stage, or `tool` with fixed order) |
+| **3** | `workflow_id` (stage allowlists), `tool_manifest`, `memory_profile`, plus prompt / output / eval ids; optional `retrieval` with `mode: "tool"` |
+
+Worked JSON per pattern: [Agents Blueprint](/blueprints/agents-blueprint).
+
+## When the row changes
+
+Bump **`route_table_version`** when a **route row** changes (pointers or policy fields), not on every artifact publish behind a stable id.
+
+| Change | Bump `route_table_version`? |
+| --- | --- |
+| New or removed `route_id` | Yes |
+| Row points at a new `workflow_id`, `tool_manifest`, `prompt_id`, schema, or eval id | Yes |
+| `model_profile`, `policy_profile`, `retrieval`, `memory_profile`, `max_loop_steps`, `activation_target`, or entitlements on the row | Yes |
+| New `manifest_version` under the **same** `manifest_id` | Often no (promote + pin on session) |
+| Prompt / eval content bump while the route still references the same artifact id | Often no |
+
+Full promote / rollback: [Route table lifecycle](/playbooks/agents/intent-router/route-table-lifecycle).
+
+## Read next
+
+**[Route table lifecycle →](/playbooks/agents/intent-router/route-table-lifecycle)** · [Layered classifier](/playbooks/agents/intent-router/layered-classifier) · [Manifest registry](/playbooks/agents/manifests/manifest-registry)

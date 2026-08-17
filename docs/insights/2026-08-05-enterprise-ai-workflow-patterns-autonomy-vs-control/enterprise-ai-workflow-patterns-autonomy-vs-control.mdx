@@ -7,12 +7,12 @@ tags:
   - ai-intelligence
   - arch
   - agents
+  - rag
   - policy
   - compliance
   - gain
 authors: [iamsharmajitender]
-draft: true
-date: 2026-08-05
+date: 2026-08-17
 ---
 
 import Tabs from '@theme/Tabs';
@@ -27,7 +27,7 @@ import Details from '@theme/Details';
 
 When designing enterprise AI systems, the hard question is not "should we use an agent?" It is **how much autonomy the model gets versus how much control the business process requires**. Four patterns cover most production designs, starting with a baseline that is **not an agent at all**: a single inference call through the agentic service. Pick wrong and you either overbuild an agent runtime for summarize/Q&A, lose auditability on an open loop, or waste a flexible model on a fixed pipeline.
 
-This is a **decision guide**: Pattern 0 (single inference), Pattern 1 (fully autonomous), Pattern 2 (deterministic), and Pattern 3 (guided hybrid), with comparison criteria and JSON-shaped contracts. The reference design is the [Autonomy Blueprint](/blueprints/autonomy-blueprint). It builds on [How to Design an Intent Router](/insights/design-intent-router) and [Policy-Governed Agent Runtime](/insights/policy-governed-agent-runtime).
+This is a **decision guide**: Pattern 0 (single inference), Pattern 1 (fully autonomous), Pattern 2 (deterministic), and Pattern 3 (guided hybrid), with comparison criteria and JSON-shaped contracts. The reference design is the [Agents Blueprint](/blueprints/agents-blueprint). Route row fields live in [Route contract reference](/playbooks/agents/intent-router/route-contract-reference). It also builds on [How to Design an Intent Router](/insights/design-intent-router) and [Policy-Governed Agent Runtime](/insights/policy-governed-agent-runtime).
 
 :::tip[THE CLAIM]
 **Not every LLM feature is an agent. Start at single inference.** Escalate only when you need tools, fixed multi-step process, or staged autonomy. Fix the business stages when process control matters; give the LLM autonomy inside each stage only when exploration is the product.
@@ -38,23 +38,25 @@ This is a **decision guide**: Pattern 0 (single inference), Pattern 1 (fully aut
 ## The bottom line first
 
 - **Four patterns, one axis:** who decides the next step (nobody beyond one call, the LLM, the workflow designer, or both at different layers).
-- **Pattern 0** is one LLM call through the [agentic app](/playbooks/pgar-runtime/boundary/agentic-app) (summarize, Q&A, extract). No tool loop. Not an agent.
+- **Pattern 0** is one LLM call through the [agentic app](/playbooks/governance/runtime/boundary/agentic-app) (summarize, Q&A, extract). No tool loop. Not an agent.
 - **Pattern 1** fits research, coding, and investigation when the path is unknown.
 - **Pattern 2** fits payments, KYC, claims, and any flow where order and side effects must be fixed.
 - **Pattern 3** fits contract review, regulatory analysis, and enterprise copilots: fixed stages, flexible tools inside a stage.
-- **Governance lives in contracts and checkpoints**, not in hoping the prompt "behaves."
+- **Governance lives in contracts and checkpoints**, not in hoping the prompt "behaves." See [Route contract reference](/playbooks/agents/intent-router/route-contract-reference) for the row fields.
+- **RAG is orthogonal:** same retrieve action on every pattern. `deterministic_prefetch` vs `tool` only changes who starts it. See [RAG across patterns](#rag-same-action-who-starts-retrieve).
 - **Memory is route policy + session state**, not a workflow step; long-term facts are retrieved, not stuffed into the prompt.
 - **Ingress (UI, API, event) is orthogonal** to Patterns 0-3; pick the pattern for autonomy vs control, then choose how the route starts and resumes.
 - **Default is one agentic app with many routes** (including multiple autonomous ones). Split into another agent or agentic app only when execution boundaries diverge.
+- **Regulated default (bank):** Pattern 0 for talk and Q&A; Pattern 2 for money movement and account changes; Pattern 3 for mandated-process advice; Pattern 1 stays behind the firewall unless the manifest is read-only and the budget is tiny.
 
 ## The autonomy vs control spectrum
 
 ```mermaid
 flowchart LR
-    P0["Pattern 0<br/>Single inference"]
-    P2["Pattern 2<br/>Deterministic"]
-    P3["Pattern 3<br/>Guided hybrid"]
-    P1["Pattern 1<br/>Autonomous"]
+    P0["① Pattern 0<br/>Single inference"]
+    P2["② Pattern 2<br/>Deterministic"]
+    P3["③ Pattern 3<br/>Guided hybrid"]
+    P1["④ Pattern 1<br/>Autonomous"]
 
     P0 -->|"more autonomy"| P2
     P2 -->|"more autonomy"| P3
@@ -86,14 +88,14 @@ Use the tabs under each pattern. Every pattern has **two examples**. Each exampl
 
 ### How it works
 
-The [intent router](/insights/what-is-intent-router) (if present) selects a route contract. The [agentic app](/playbooks/pgar-runtime/boundary/agentic-app) assembles the prompt (plus optional context), makes **one** LLM call, and returns the completion. There is no Observe → Decide → Tool cycle and no multi-stage workflow. The model does not choose the next action. Clients do not call the LLM API directly; the agentic service owns session, model profile, and output handling.
+The [intent router](/insights/what-is-intent-router) (if present) selects a [route contract](/playbooks/agents/intent-router/route-contract-reference). The [agentic app](/playbooks/governance/runtime/boundary/agentic-app) assembles the prompt (plus optional context), makes **one** LLM call, and returns the completion. There is no Observe → Decide → Tool cycle and no multi-stage workflow. The model does not choose the next action. Clients do not call the LLM API directly; the agentic service owns session, model profile, and output handling.
 
 ```mermaid
 flowchart LR
-    Input[Input + route contract] --> App[Agentic app]
-    App --> LLM[Single LLM call]
+    Input["① Input + route contract"] --> App["② Agentic app"]
+    App --> LLM["③ Single LLM call"]
     LLM --> App
-    App --> Output[Summary / answer / extract]
+    App --> Output["④ Summary / answer / extract"]
 
     classDef oneshot fill:#ecfdf5,stroke:#10b981,color:#1e293b,stroke-width:2px
     class Input,App,LLM,Output oneshot
@@ -101,7 +103,7 @@ flowchart LR
 
 <br/>
 
-Optional RAG or deterministic pre/post processing can sit **around** the call in the agentic app without making this Pattern 1-3. **RAG prefetch is not an agent**: if the agentic app runs retrieval before the LLM and the model never chooses tools, you are still on Pattern 0 (or Pattern 2 if you model `retrieve → generate` as an explicit fixed two-stage workflow).
+Optional RAG or deterministic pre/post processing can sit **around** the call in the agentic app without making this Pattern 1-3. Declare prefetch on the [route row](/playbooks/agents/intent-router/route-contract-reference): `retrieval: { "mode": "deterministic_prefetch", "scope": [...] }`. **RAG prefetch is not an agent**: if the agentic app runs retrieval before the LLM and the model never chooses tools, you are still on Pattern 0 (or Pattern 2 if you model `retrieve → generate` as an explicit fixed two-stage workflow). Tool-mode retrieve on Patterns 1-3: [RAG across patterns](#rag-same-action-who-starts-retrieve).
 
 **Examples**
 
@@ -115,7 +117,7 @@ Optional RAG or deterministic pre/post processing can sit **around** the call in
 
 ### Contracts (JSON)
 
-A [route contract](/insights/design-intent-router) stays lean. Prompt, output schema, and offline eval suite are separate artifacts the agentic app loads by id.
+A [route contract](/playbooks/agents/intent-router/route-contract-reference) stays lean. Prompt, output schema, and offline eval suite are separate artifacts the agentic app loads by id.
 
 **Example A: email summarize**
 
@@ -194,7 +196,7 @@ Retrieval runs in the agentic app before the LLM call. The model does not choose
   "model_profile": "fast-chat",
   "tool_manifest": "none",
   "policy_profile": "read_only_standard",
-  "retrieval": { "mode": "deterministic_prefetch", "scope": ["policy"] },
+  "retrieval": { "mode": "deterministic_prefetch", "scope": ["policy-engine"] },
   "prompt_id": "policy_qa_grounded_v1",
   "output_schema_id": "cited_answer_v1",
   "eval_suite_id": "policy_qa_golden"
@@ -267,13 +269,13 @@ The router (if any) selects a route and provides the **allowed tools**. The **ag
 
 ```mermaid
 flowchart TB
-    Goal[Goal] --> App[Agentic app]
-    App -->|"context + allowed tools"| LLM[LLM]
+    Goal["① Goal"] --> App["② Agentic app"]
+    App -->|"context + allowed tools"| LLM["③ LLM"]
     LLM -->|"proposes next action"| App
-    App --> Tool[Tool call]
+    App --> Tool["④ Tool call"]
     Tool -->|"result"| App
     App -->|"observe"| LLM
-    App --> Done[Goal complete]
+    App --> Done["⑤ Goal complete"]
 
     classDef app fill:#ede9fe,stroke:#8b5cf6,color:#1e293b,stroke-width:2px
     classDef llm fill:#dbeafe,stroke:#3b82f6,color:#1e293b,stroke-width:2px
@@ -297,7 +299,7 @@ The sequence of tool calls is **not fixed**. Two runs with the same goal can tak
 
 ### Contracts (JSON)
 
-Same route shape as Pattern 0, plus a tool manifest. Path order is not fixed; eval checks goal completion and policy, not a single tool sequence.
+Same [route shape](/playbooks/agents/intent-router/route-contract-reference) as Pattern 0, plus a tool manifest. Path order is not fixed; eval checks goal completion and policy, not a single tool sequence.
 
 :::note[`max_loop_steps` is a run budget]
 `max_loop_steps: 12` caps the **whole** autonomous loop (decide → tool → observe), across all tools combined. It is not “each tool may run 12 times.” One `clause_search` plus one `policy_search` counts as **2** steps toward 12. When the cap is hit, the agentic app stops even if the model wants another call. Pattern 3 uses `max_tool_calls` **per stage** for the same idea inside a fixed outer workflow.
@@ -315,6 +317,15 @@ Same route shape as Pattern 0, plus a tool manifest. Path order is not fixed; ev
   "model_profile": "reasoning-standard",
   "tool_manifest": "contract_investigate_v1",
   "policy_profile": "read_only_standard",
+  "retrieval": { "mode": "tool", "scope": ["clause-index", "legal-playbook"] },
+  "memory_profile": {
+    "conversation": "session",
+    "working": "session",
+    "loop": "checkpoint",
+    "long_term": "retrieve_only",
+    "ttl_hours": 24,
+    "isolation": ["tenant", "user", "session"]
+  },
   "prompt_id": "contract_investigate_v1",
   "output_schema_id": "risk_memo_v1",
   "eval_suite_id": "contract_investigate_golden",
@@ -649,13 +660,13 @@ The workflow is **fixed**. The **agentic app** advances stages from the workflow
 
 ```mermaid
 flowchart TB
-    Input[Input + workflow] --> App[Agentic app]
-    App -->|"next fixed stage"| Tool[Named tool]
+    Input["① Input + workflow"] --> App["② Agentic app"]
+    App -->|"next fixed stage"| Tool["③ Named tool"]
     Tool -->|"result"| App
-    App -->|"llm_role when needed"| LLM[LLM]
+    App -->|"llm_role when needed"| LLM["④ LLM"]
     LLM -->|"query / synthesis"| App
     App -->|"advance stage"| Tool
-    App --> Done[Done]
+    App --> Done["⑤ Done"]
 
     classDef app fill:#ede9fe,stroke:#8b5cf6,color:#1e293b,stroke-width:2px
     classDef llm fill:#dbeafe,stroke:#3b82f6,color:#1e293b,stroke-width:2px
@@ -672,7 +683,7 @@ There is no "LLM decides next action" between stages. Branching, if any, is expl
 
 ### Contracts (JSON)
 
-Route points at a fixed `workflow_id`. Stage order lives in the **Workflow** artifact; the **Manifest** holds tool schemas for PEP. The LLM does not pick the next tool.
+[Route](/playbooks/agents/intent-router/route-contract-reference) points at a fixed `workflow_id`. Stage order lives in the **Workflow** artifact; the **Manifest** holds tool schemas for PEP. The LLM does not pick the next tool.
 
 :::note[No `max_tool_calls` here]
 Pattern 2 has no open tool-choice loop inside a stage. Each stage already names the tool (or a fixed `branch`), so the budget is the stage list itself, plus retries / timeouts. Use `max_tool_calls` on Pattern 3 (and `max_loop_steps` on Pattern 1), where the LLM can call several tools before a stage or goal completes.
@@ -690,6 +701,7 @@ Pattern 2 has no open tool-choice loop inside a stage. Each stage already names 
   "model_profile": "reasoning-standard",
   "tool_manifest": "msa_risk_review_v1",
   "policy_profile": "read_only_standard",
+  "retrieval": { "mode": "tool", "scope": ["clause-index", "legal-playbook"] },
   "workflow_id": "msa_risk_review_v1",
   "prompt_id": "msa_risk_review_v1",
   "output_schema_id": "msa_memo_v1",
@@ -701,15 +713,25 @@ Pattern 2 has no open tool-choice loop inside a stage. Each stage already names 
   </TabItem>
   <TabItem value="workflow" label="Workflow">
 
-Stage order is authoritative. The model cannot reorder stages. `llm_role` scopes what the model may do inside a stage.
+Stage order is authoritative. The model cannot reorder stages. `llm_role` scopes what the model may do inside a stage. Two retrieve stages: bind each to one corpus from `retrieval.scope`. One `retrieval` object, not two.
 
 ```json
 {
   "workflow_id": "msa_risk_review_v1",
   "stages": [
     { "id": "ocr", "tool": "ocr_extract", "llm_role": "none" },
-    { "id": "clause_search", "tool": "clause_search", "llm_role": "query_formulation" },
-    { "id": "policy_search", "tool": "policy_search", "llm_role": "query_formulation" },
+    {
+      "id": "clause_search",
+      "tool": "clause_search",
+      "corpus": "clause-index",
+      "llm_role": "query_formulation"
+    },
+    {
+      "id": "policy_search",
+      "tool": "policy_search",
+      "corpus": "legal-playbook",
+      "llm_role": "query_formulation"
+    },
     { "id": "risk_engine", "tool": "risk_engine", "llm_role": "none" },
     { "id": "memo", "tool": "draft_memo", "llm_role": "synthesis" }
   ]
@@ -1038,14 +1060,14 @@ The **workflow is fixed**. The **reasoning inside each step is flexible**. The *
 
 ```mermaid
 flowchart TB
-    Input[Input + workflow] --> App[Agentic app]
-    App -->|"current stage allowlist"| LLM[LLM]
+    Input["① Input + workflow"] --> App["② Agentic app"]
+    App -->|"current stage allowlist"| LLM["③ LLM"]
     LLM -->|"proposes tool inside stage"| App
-    App --> Tool[Tool call]
+    App --> Tool["④ Tool call"]
     Tool -->|"result"| App
     App -->|"observe"| LLM
     App -->|"stage done → next fixed stage"| LLM
-    App --> Done[Done]
+    App --> Done["⑤ Done"]
 
     classDef app fill:#ede9fe,stroke:#8b5cf6,color:#1e293b,stroke-width:2px
     classDef llm fill:#dbeafe,stroke:#3b82f6,color:#1e293b,stroke-width:2px
@@ -1066,7 +1088,7 @@ The outer workflow stays `Extract → Analyse → Generate Report`. Only the int
 
 ### Contracts (JSON)
 
-Route picks the capability; **Workflow** fixes outer stages; **Manifest** holds tool schemas; each stage has an allowlist. Prompt / output / eval can be stage-scoped.
+[Route](/playbooks/agents/intent-router/route-contract-reference) picks the capability; **Workflow** fixes outer stages; **Manifest** holds tool schemas; each stage has an allowlist. Prompt / output / eval can be stage-scoped.
 
 **Example A: legal contract review**
 
@@ -1082,7 +1104,16 @@ Outer workflow stays `Extract → Analyse → Generate Report`. Inside Analyse, 
   "model_profile": "reasoning-standard",
   "tool_manifest": "contract_review_staged_v3",
   "policy_profile": "read_only_standard",
+  "retrieval": { "mode": "tool", "scope": ["clause-index", "legal-playbook"] },
   "workflow_id": "contract_review_v3",
+  "memory_profile": {
+    "conversation": "session",
+    "working": "session",
+    "loop": "checkpoint",
+    "long_term": "retrieve_only",
+    "ttl_hours": 24,
+    "isolation": ["tenant", "user", "session"]
+  },
   "prompt_id": "contract_review_v3",
   "output_schema_id": "counsel_memo_v1",
   "eval_suite_id": "contract_review_golden"
@@ -1329,7 +1360,16 @@ Same hybrid shape: fixed stages, flexible tools inside Analyse.
   "model_profile": "reasoning-standard",
   "tool_manifest": "regulatory_impact_v1",
   "policy_profile": "read_only_standard",
+  "retrieval": { "mode": "tool", "scope": ["reg-index", "control-library"] },
   "workflow_id": "regulatory_impact_v1",
+  "memory_profile": {
+    "conversation": "session",
+    "working": "session",
+    "loop": "checkpoint",
+    "long_term": "retrieve_only",
+    "ttl_hours": 24,
+    "isolation": ["tenant", "user", "session"]
+  },
   "prompt_id": "regulatory_impact_v1",
   "output_schema_id": "reg_impact_memo_v1",
   "eval_suite_id": "regulatory_impact_golden"
@@ -1539,7 +1579,7 @@ Legal review · Contract review · Medical review · Financial advice · Regulat
 
 ## Choosing a pattern
 
-Use this section to pick Pattern 0-3. Everything after it (memory, ingress, agent-to-agent, split) is orthogonal: it applies once you have a pattern, and does not change which pattern you chose.
+Use this section to pick Pattern 0-3. Everything after it (RAG, memory, ingress, agent-to-agent, split) is orthogonal: it applies once you have a pattern, and does not change which pattern you chose.
 
 ### Comparison matrix
 
@@ -1555,6 +1595,7 @@ Use this section to pick Pattern 0-3. Everything after it (memory, ingress, agen
 | Enterprise governance | Excellent | Medium | Excellent | Excellent |
 | Complexity | Lowest | Medium | Low | High |
 | Agent-to-agent calls | No | Yes (dynamic) | Yes (fixed handoffs only) | Yes (stage-scoped) |
+| Retrieval | Prefetch before the one call | Tool; LLM chooses when | Named retrieve stage; order fixed | Tool; only inside the current stage |
 | Memory | Optional context for one call | Session + loop; long-term via retrieve | Stage / working along fixed path | Stage-scoped working; governed handoffs |
 | Ingress affinity | UI + sync API | UI or async / event for long loops | API + events (UI with gates) | UI review + API / batch |
 
@@ -1605,13 +1646,150 @@ Quick filter:
 
 **Escalate from Pattern 0 when** the model needs to search, call APIs, or iterate (Pattern 1 or 3), or when the business requires mandatory ordered stages with side effects (Pattern 2).
 
+### Which should you choose in a regulated industry?
+
+A retail-banking chatbot is the **channel and session**, not a pattern. The customer talks to one assistant. Each turn still picks a **route**, and the route picks Pattern 0-3. Do not map "we have a chatbot" to Pattern 1. Conversation is [ingress](#ingress-ui-api-or-event). Autonomy is a property of the route.
+
+**Default mix in a bank:** Pattern 0 for talk and Q&A. Pattern 2 for anything that moves money or changes an account. Pattern 3 for advice that has a mandated process. Pattern 1 stays behind the firewall (fraud investigation, coding, research) unless the tool manifest is read-only and the budget is tiny.
+
+```mermaid
+flowchart LR
+    Cust["① Customer"] --> Chat["② Chat UI + session"]
+    Chat --> Router["③ Intent router"]
+    Router --> P0["④ Pattern 0<br/>talk / Q&A"]
+    Router --> P2["⑤ Pattern 2<br/>pay / freeze / KYC"]
+    Router --> P3["⑥ Pattern 3<br/>mandated advice"]
+    Router -.->|"internal only"| P1["⑦ Pattern 1<br/>behind the firewall"]
+
+    classDef oneshot fill:#ecfdf5,stroke:#10b981,color:#1e293b,stroke-width:2px
+    classDef fixed fill:#ede9fe,stroke:#8b5cf6,color:#1e293b,stroke-width:2px
+    classDef hybrid fill:#ffedd5,stroke:#f97316,color:#1e293b,stroke-width:2px
+    classDef flex fill:#dbeafe,stroke:#3b82f6,color:#1e293b,stroke-width:2px
+    classDef other fill:#f1f5f9,stroke:#64748b,color:#1e293b,stroke-width:2px
+
+    class P0 oneshot
+    class P2 fixed
+    class P3 hybrid
+    class P1 flex
+    class Cust,Chat,Router other
+```
+
+<br/>
+
+Same agentic app, many routes. Balance, transactions, statements, and card freeze share customer context. They do **not** share one autonomy contract.
+
+| Customer says | Route | Pattern | Why |
+| --- | --- | --- | --- |
+| "Hi, what's my balance?" | `account_balance` | **0** | One call plus a deterministic balance read. The model does not choose the next step. |
+| "What's the overdraft fee?" | `policy_qa` | **0** | Prefetch from the fee corpus, one grounded answer. |
+| "Show last five transactions" | `account_history` | **0** or **2** | **0** if it is read and format. **2** if you require a fixed `auth → fetch → redact → present` chain. |
+| "Freeze my card" / "Send $500 to Acme" | `card_freeze` / `payment_initiate` | **2** | Order, identity, limits, and side effects are non-negotiable. The model does not invent the next stage. |
+| "Help me understand this loan offer" | `loan_explain` | **3** | Fixed stages (extract → analyse vs policy → explain). Depth can flex inside Analyse. |
+| "Why was I charged this? Dig around." | usually not Pattern 1 | **2** or **3** | Investigation still needs a governed retrieve allowlist and no write tools. Open-loop research is for internal ops, not the customer chat. |
+
+Multi-turn chat is **session memory plus stickiness**, not an autonomous loop. Short replies ("yes", "$500") stay on the active route. A real new intent (balance question to card freeze) is a **new pin**, not more autonomy on the same run. See [How to Design an Intent Router](/insights/design-intent-router).
+
+Quick filter for regulated work:
+
+| Signal | Prefer |
+| --- | --- |
+| Talk, FAQ, grounded policy Q&A, read and format | Pattern 0 |
+| Write path: pay, freeze, open, close, dispute | Pattern 2 |
+| Mandated process, variable depth of analysis | Pattern 3 |
+| Open-ended path is the product (internal only) | Pattern 1, read-only manifest + hard budget |
+
+If a step can **write**, the outer process is Pattern 2. The model may draft a confirmation or a query inside a stage. It does not choose whether activation happens. If a step is **read plus explain**, stay on Pattern 0 until you need tools or fixed stages.
+
+Putting the whole bot on Pattern 1 is how you get an unauditable payment path with a friendly chat UI.
+
 ## Across every pattern
 
-These concerns cut across Patterns 0-3. Set them on the route and agentic app after you pick a pattern. They do not replace the autonomy-vs-control choice.
+These concerns cut across Patterns 0-3. Set them on the [route](/playbooks/agents/intent-router/route-contract-reference) and agentic app after you pick a pattern. They do not replace the autonomy-vs-control choice.
+
+### RAG: same action, who starts retrieve
+
+RAG is not a fifth pattern. It is the same action on every route: fetch chunks from a corpus, pack them as context, then generate. Patterns 0-3 only change **who starts retrieve** and **when**. Declare it on the route as `retrieval`.
+
+Two modes:
+
+| `retrieval.mode` | Who starts retrieve | Fits |
+| --- | --- | --- |
+| omit / `none` | Nobody | Chat or handoff with no knowledge path |
+| `deterministic_prefetch` | Agentic app, before the LLM. Model never sees retrieve tools. | Pattern 0 Q&A. Pattern 2 if `retrieve → generate` is a named workflow. |
+| `tool` | LLM may propose retrieve inside `scope`. PEP still gates the action. | Patterns 1-3. On Pattern 2 the workflow names the stage; the LLM does not choose when. |
+
+`scope` is the list of corpus / index ids the route may touch. More than one retrieve still uses **one** `retrieval` object: put every corpus in `scope`. Bind each Pattern 2 stage with `corpus`. Do not add a second `retrieval` key.
+
+```mermaid
+flowchart LR
+    Q["① User question"] --> Who{"② Who starts retrieve?"}
+    Who -->|"App, before the LLM"| P0["③ Pattern 0<br/>prefetch"]
+    Who -->|"Workflow, named stage"| P2["④ Pattern 2<br/>retrieve then generate"]
+    Who -->|"LLM, any time in the loop"| P1["⑤ Pattern 1<br/>tool RAG"]
+    Who -->|"LLM, only inside this stage"| P3["⑥ Pattern 3<br/>staged tool RAG"]
+
+    classDef oneshot fill:#ecfdf5,stroke:#10b981,color:#1e293b,stroke-width:2px
+    classDef fixed fill:#ede9fe,stroke:#8b5cf6,color:#1e293b,stroke-width:2px
+    classDef hybrid fill:#ffedd5,stroke:#f97316,color:#1e293b,stroke-width:2px
+    classDef flex fill:#dbeafe,stroke:#3b82f6,color:#1e293b,stroke-width:2px
+    classDef other fill:#f1f5f9,stroke:#64748b,color:#1e293b,stroke-width:2px
+
+    class P0 oneshot
+    class P2 fixed
+    class P3 hybrid
+    class P1 flex
+    class Q,Who other
+```
+
+<br/>
+
+<Details summary="Route retrieval field (JSON)">
+
+Prefetch (Pattern 0). Two corpora: app packs each, then one LLM call.
+
+```json
+{
+  "retrieval": {
+    "mode": "deterministic_prefetch",
+    "scope": ["policy-engine", "product-faq"]
+  }
+}
+```
+
+Tool mode (Patterns 1-3). One object, two corpora. Each tool call or stage hits one corpus in `scope`.
+
+```json
+{
+  "retrieval": {
+    "mode": "tool",
+    "scope": ["clause-index", "legal-playbook"]
+  }
+}
+```
+
+</Details>
+
+#### How each pattern uses RAG
+
+| Pattern | Mode | What happens | In this article |
+| --- | --- | --- | --- |
+| **0** | `deterministic_prefetch` | App retrieves, then one LLM call. Not an agent. | Example B: `policy_qa` |
+| **1** | `tool` | LLM may retrieve zero, one, or many times, in any order, mixed with other tools. | Contract investigation: `clause_search` / `policy_search` |
+| **2** | Prefetch as a named stage, or `tool` with fixed order | Workflow owns order. LLM may formulate the query (`llm_role: query_formulation`); it cannot skip or reorder retrieve. | MSA risk review: `clause_search` then `policy_search` |
+| **3** | `tool`, stage-scoped | Outer stages stay fixed. Retrieve only from the current stage allowlist. | Contract review: Analyse allowlist |
+
+| | Pattern 0 | Pattern 1 | Pattern 2 | Pattern 3 |
+| --- | --- | --- | --- | --- |
+| Can skip retrieve? | No, if prefetch is declared | Yes | No | Yes, inside that stage only |
+| Can retrieve twice? | No (one pack, one call) | Yes | Only if the workflow has two retrieve stages | Yes, until `max_tool_calls` |
+
+**Pick the pattern from process control, then attach RAG.** Prefetch Q&A is Pattern 0. Mandatory search-then-generate is Pattern 2. Exploratory multi-hop retrieve is Pattern 1. Fixed stages with flexible retrieve inside one stage is Pattern 3.
+
+Long-term and episodic memory are also retrieval (`long_term: "retrieve_only"`). They do not pick the pattern. Load them in context assembly or via an allowlisted tool. See [Memory](#memory-route-policy-session-state).
 
 ### Memory: route policy, session state
 
-Memory is **not** a workflow step on the route row. The route (or its `policy_profile`) declares **whether** memory is allowed and under what isolation / TTL rules. The [agentic app](/playbooks/pgar-runtime/boundary/agentic-app) owns read, write, and assembly during the session. Treat memory like manifests and prompts: **config and runtime**, not another tool the LLM invents mid-path.
+Memory is **not** a workflow step on the route row. The route (or its `policy_profile` / `memory_profile`) declares **whether** memory is allowed and under what isolation / TTL rules. Field dictionary: [Route contract reference](/playbooks/agents/intent-router/route-contract-reference). How to build the store: [Memory](/playbooks/agents/orchestration/memory). The [agentic app](/playbooks/governance/runtime/boundary/agentic-app) owns read, write, and assembly during the session. Treat memory like manifests and prompts: **config and runtime**, not another tool the LLM invents mid-path.
 
 Split memory by lifecycle (same idea as [G.A.I.N Agents](/frameworks/gain-agents)):
 
@@ -1634,11 +1812,11 @@ Split memory by lifecycle (same idea as [G.A.I.N Agents](/frameworks/gain-agents
 | **2** | Working / stage outputs along the fixed workflow; loop only inside LLM stages | Letting the model rewrite prior stage outputs as "memory" |
 | **3** | Stage-scoped working memory; clear handoff of allowed slots between stages | Carrying Stage A tool results into Stage B outside the allowlist |
 
-**Long-term and episodic memory are retrieval**, not free context. Load them in [context assembly](/insights/what-is-agentic-loop) or via an allowlisted tool on the manifest. Do not dump every past session into the system prompt.
+**Long-term and episodic memory are retrieval**, not free context. Load them in context assembly (What Is the Agentic Loop, coming soon) or via an allowlisted tool on the manifest. Do not dump every past session into the system prompt. Corpus RAG (prefetch vs tool) is a separate route field: [RAG across patterns](#rag-same-action-who-starts-retrieve).
 
 #### Route shape (optional)
 
-Routes stay lean. Prefer a `memory_profile` (or fields on `policy_profile`) over embedding store credentials or raw history rules in the row.
+Routes stay lean. Prefer a `memory_profile` (or fields on `policy_profile`) over embedding store credentials or raw history rules in the row. Full field list: [Route contract reference](/playbooks/agents/intent-router/route-contract-reference).
 
 <Details summary="Route memory_profile example (JSON)">
 
@@ -1646,9 +1824,11 @@ Routes stay lean. Prefer a `memory_profile` (or fields on `policy_profile`) over
 {
   "route_id": "legal_contract_review",
   "intent": "contract_review",
+  "model_profile": "reasoning-standard",
   "tool_manifest": "contract_review_staged_v3",
-  "workflow_id": "contract_review_stages_v3",
   "policy_profile": "read_only_standard",
+  "retrieval": { "mode": "tool", "scope": ["clause-index", "legal-playbook"] },
+  "workflow_id": "contract_review_v3",
   "memory_profile": {
     "conversation": "session",
     "working": "session",
@@ -1657,7 +1837,8 @@ Routes stay lean. Prefer a `memory_profile` (or fields on `policy_profile`) over
     "ttl_hours": 24,
     "isolation": ["tenant", "user", "session"]
   },
-  "prompt_id": "contract_review_host_v3",
+  "prompt_id": "contract_review_v3",
+  "output_schema_id": "counsel_memo_v1",
   "eval_suite_id": "contract_review_golden"
 }
 ```
@@ -1671,7 +1852,7 @@ Routes stay lean. Prefer a `memory_profile` (or fields on `policy_profile`) over
 | `ttl_hours` | Soft lifetime for session-scoped stores |
 | `isolation` | Required partition keys so Session A cannot read Session B |
 
-When the row's `memory_profile` (or memory fields on `policy_profile`) change, treat it like any other route-row policy change: bump and pin per the [route table lifecycle](/playbooks/router/intent-router/route-table-lifecycle).
+When the row's `memory_profile` (or memory fields on `policy_profile`) change, treat it like any other route-row policy change: bump and pin per the [route table lifecycle](/playbooks/agents/intent-router/route-table-lifecycle). Field dictionary: [Route contract reference](/playbooks/agents/intent-router/route-contract-reference).
 
 ### Ingress: UI, API, or event
 
@@ -1731,7 +1912,7 @@ Patterns answer **how much autonomy**. This section answers **how many agentic a
 
 ### When to split into another agent or agentic app
 
-Patterns 0-3 answer **how much autonomy** a capability gets. They do **not** answer **how many agentic apps** you need. Hundreds of routes, including several Pattern 1 autonomous routes, can share one agentic app. A new use case is usually a new **route**, not a new agent.
+Patterns 0-3 answer **how much autonomy** a capability gets. They do **not** answer **how many agentic apps** you need. Hundreds of routes, including several Pattern 1 autonomous routes **and several Pattern 2 write workflows**, can share one agentic app. A new use case is usually a new **route**, not a new agent.
 
 | Term | What it is |
 | --- | --- |
@@ -1741,14 +1922,16 @@ Patterns 0-3 answer **how much autonomy** a capability gets. They do **not** ans
 
 ```mermaid
 flowchart TB
-    User --> Router[Intent router]
-    Router --> R1[Route A<br/>Pattern 0]
-    Router --> R2[Route B<br/>Pattern 1]
-    Router --> R3[Route C<br/>Pattern 3]
-    R1 --> App[Shared agentic app]
+    User["① User"] --> Router["② Intent router"]
+    Router --> R0["③ Route A<br/>Pattern 0"]
+    Router --> R1["④ Route B<br/>Pattern 1"]
+    Router --> R2["⑤ Route C<br/>Pattern 2"]
+    Router --> R3["⑥ Route D<br/>Pattern 3"]
+    R0 --> App["⑦ Shared agentic app"]
+    R1 --> App
     R2 --> App
     R3 --> App
-    Router --> Spec[Specialized agent<br/>only when boundaries diverge]
+    Router --> Spec["⑧ Specialized agent<br/>only when boundaries diverge"]
 ```
 
 <br/>
@@ -1759,8 +1942,9 @@ flowchart TB
 - Differences are mainly **tools, prompts, workflows, or policy profiles**.
 - One team owns prompts, evals, releases, and monitoring.
 - You need **many Pattern 1 routes** (research, investigation, coding) that still share session, observability, and PEP.
+- You need **many Pattern 2 routes** (pay, freeze, KYC, claims) that still share session and PEP. Fixed order lives in `workflow_id` on the route, not in a second app.
 
-Same runtime, different `route_id`. Autonomy lives in the route contract (`tool_manifest`, `max_loop_steps`, model profile), not in a separate process.
+Same runtime, different `route_id`. Autonomy lives in the [route contract](/playbooks/agents/intent-router/route-contract-reference) (`tool_manifest`, `workflow_id`, `max_loop_steps`, model profile), not in a separate process.
 
 #### Split into another agent or agentic app when...
 
@@ -1768,7 +1952,7 @@ Same runtime, different `route_id`. Autonomy lives in the route contract (`tool_
 | --- | --- |
 | **Different business domains** | Finance vs HR vs Legal: different systems, policies, and mental models |
 | **Different data boundaries** | Tenant, PII class, or system of record must not share session or retrieval scope |
-| **Different risk / compliance** | Payment or write-path isolation needs a harder boundary than a route allowlist |
+| **Different risk / compliance** | Payment or write-path isolation needs a harder boundary than a Pattern 2 route allowlist |
 | **Different ownership** | Separate teams need separate release, eval, and incident ownership |
 | **Different reasoning style** | Citation-heavy legal review vs repo-bound coding are different cognitive products |
 | **Different memory contracts** | Episodic or long-term memory must not bleed across domains |
@@ -1777,8 +1961,8 @@ Mixed signals (same domain, but a high-risk write slice with a different complia
 
 #### What not to do
 
-- Do **not** create an agent per intent, chatbot, or Pattern 1 route.
-- Do **not** equate "autonomous" with "separate agentic app." Multiple autonomous routes on one runtime is the default.
+- Do **not** create an agent per intent, chatbot, Pattern 1 route, or Pattern 2 workflow.
+- Do **not** equate "autonomous" or "deterministic write path" with "separate agentic app." Multiple Pattern 1 and Pattern 2 routes on one runtime is the default.
 - Do **not** start with an agent fleet. Grow: single app → capability routes → specialized agents when boundaries force it.
 
 Quick filter:
@@ -1787,16 +1971,17 @@ Quick filter:
 | --- | --- |
 | Same domain, owner, and data boundary; only tools or pattern differ? | New **route** on the shared agentic app |
 | Multiple exploratory / autonomous capabilities in that domain? | Multiple **Pattern 1 routes**, same app |
+| Multiple write / KYC / claims flows in that domain? | Multiple **Pattern 2 routes**, same app |
 | Domain, risk, data, ownership, or reasoning boundary diverges? | New **specialized agent** / agentic app |
 | Need one specialist to call another? | Keep patterns from [agent-to-agent calls](#agent-to-agent-calls); split only if boundaries require it |
 
 :::info[Related]
-For the deeper routes-vs-agents decision guide, see One Agent with Routes vs Specialized Agents (coming soon).
+For the deeper routes-vs-agents decision guide, see [One Agent with Routes vs Specialized Agents](/insights/one-agent-routes-vs-specialized-agents).
 :::
 
 ### Route versioning
 
-All four patterns share one versioned **route table**. Workflows, manifests, prompts, schemas, and eval suites are separate artifacts the route references. Bump and session-pin rules are the same regardless of Pattern 0-3. For when to bump `route_table_version` and what to pin mid-flight, see [How to Design an Intent Router](/insights/design-intent-router) and [Route table lifecycle](/playbooks/router/intent-router/route-table-lifecycle).
+All four patterns share one versioned **route table**. Workflows, manifests, prompts, schemas, and eval suites are separate artifacts the route references. Bump and session-pin rules are the same regardless of Pattern 0-3. For fields and when to bump `route_table_version`, see [Route contract reference](/playbooks/agents/intent-router/route-contract-reference) and [Route table lifecycle](/playbooks/agents/intent-router/route-table-lifecycle).
 
 ## Key takeaways
 
@@ -1808,9 +1993,11 @@ All four patterns share one versioned **route table**. Workflows, manifests, pro
 - **Agent-to-agent calls:** Pattern 1 for dynamic delegation; Pattern 2 or 3 for fixed or governed multi-agent handoffs; Pattern 0 does not apply.
 - **Split agents only for execution boundaries** (domain, data, risk, ownership, reasoning), not for each autonomous route.
 - **Encode contracts as JSON** and only add agent or checkpoint machinery when the pattern needs it.
+- **RAG:** prefetch for Pattern 0 Q&A; tool-mode retrieve for Patterns 1-3; Pattern 2 names retrieve as a stage. Same `retrieval` field; who starts retrieve follows the pattern.
 - **Memory:** declare isolation and TTL on the route; keep working/loop state on the session; retrieve long-term memory, do not treat it as a free step in the path.
 - **Ingress:** UI, API, and events can all start the same route; pick the pattern for autonomy vs control, then choose start / wait / resume for the channel.
+- **Regulated mix:** the chatbot is the session, not the pattern. Pattern 0 for talk and Q&A, Pattern 2 for writes, Pattern 3 for mandated advice, Pattern 1 behind the firewall.
 
 :::info[Builds on]
-[Autonomy Blueprint](/blueprints/autonomy-blueprint) · [What Is an Intent Router](/insights/what-is-intent-router) · [How to Design an Intent Router](/insights/design-intent-router) · [Route table lifecycle](/playbooks/router/intent-router/route-table-lifecycle) · [Policy-Governed Agent Runtime](/insights/policy-governed-agent-runtime) · [MCP for Enterprise Business Agents](/insights/mcp-for-enterprise-business-agents) · [G.A.I.N Agents](/frameworks/gain-agents)
+[Agents Blueprint](/blueprints/agents-blueprint) · [What Is an Intent Router](/insights/what-is-intent-router) · [How to Design an Intent Router](/insights/design-intent-router) · [Route contract reference](/playbooks/agents/intent-router/route-contract-reference) · [Route table lifecycle](/playbooks/agents/intent-router/route-table-lifecycle) · [Policy-Governed Agent Runtime](/insights/policy-governed-agent-runtime) · [Retrieval Is a Governed Action](/insights/retrieval-is-a-governed-action) · [RAG Is Not a Database](/insights/rag-is-not-a-database) · [MCP for Enterprise Business Agents](/insights/mcp-for-enterprise-business-agents) · [G.A.I.N Agents](/frameworks/gain-agents)
 :::

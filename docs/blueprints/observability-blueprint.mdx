@@ -1,6 +1,7 @@
 ---
 slug: observability-blueprint
-title: "Observability Blueprint: Three Layers, One Graph"
+title: "Observability: Three Layers, One Graph"
+sidebar_label: "Observability: Three Layers, One Graph"
 description: Reference architecture for unified observability in regulated enterprises. Business, service, and infrastructure layers, the observability graph, capability model, maturity levels, and consumption patterns.
 image: ./img/observability-maturity-model.png
 
@@ -14,9 +15,9 @@ tags:
 
 import Details from '@theme/Details';
 
-# Observability Blueprint: Three Layers, One Graph
+# Observability: Three Layers, One Graph
 
-This is the **implementation guide** for the unified observability executive insight (*Building a Unified Observability Framework*, draft in local dev). That piece explains *why* siloed monitoring fails. This blueprint explains *what* to build: three layers, one observability graph, four capability planes, and a maturity path from reactive logs to business-aware operations.
+This is the **implementation guide** for unified observability in regulated enterprises. Principles live in [G.A.I.N Observability](/frameworks/gain-observability). This blueprint explains *what* to build: three layers, one observability graph, four capability planes, and a maturity path from reactive logs to business-aware operations.
 
 :::tip[THE CLAIM]
 **A production observability stack connects business KPIs to service traces and infrastructure signals through correlation IDs and journey mapping. Dashboards consume the graph; they do not replace it.**
@@ -26,14 +27,14 @@ This is the **implementation guide** for the unified observability executive ins
 
 ## What you are building
 
-A unified observability framework is six connected capabilities:
+A unified observability framework is three layers plus a graph, a capability platform, and an operating model:
 
-1. **Business journey map:** KPIs and SLAs tied to named workflows, not orphan metrics
-2. **Service instrumentation:** Golden signals, distributed traces, dependency graph, SLIs/SLOs
-3. **Infrastructure telemetry:** Resource and platform health linked to service identities
-4. **Observability graph:** Correlation from KPI → transaction → resource
-5. **Capability platform:** Collection, correlation, intelligence, action layers
-6. **Operating model:** Shared ownership across product, engineering, platform, SRE, architecture
+1. **Layer ① Business:** KPIs and SLAs tied to named workflows, not orphan metrics
+2. **Layer ② Service:** golden signals, distributed traces, dependency graph, SLIs/SLOs
+3. **Layer ③ Infrastructure:** resource and platform health linked to service identities
+4. **Observability graph:** correlation from KPI → transaction → resource
+5. **Capability platform:** collection, correlation, intelligence, action
+6. **Operating model:** shared ownership across product, engineering, platform, SRE, architecture
 
 ```mermaid
 flowchart TB
@@ -70,6 +71,74 @@ flowchart TB
 
 Read the top row left to right: **Business → Service → Infrastructure**, then down through the **observability graph** and **capability platform**.
 
+| Layer | Component | Decides | When |
+| --- | --- | --- | --- |
+| **① Business** | Journey map + outcome SLOs | Why the customer or obligation moved | Per named workflow |
+| **② Service** | Golden signals + traces | What failed in the request path | Per service hop |
+| **③ Infrastructure** | Resource telemetry | Where saturation or faults live | Per resource bound to a service |
+
+---
+
+## Layer ①: Business
+
+**The why: journeys, KPIs, outcome SLOs.** Playbook: [Business journey mapping](/playbooks/observability/business-journey-mapping).
+
+:::important[Layer ① bar]
+Product and business operations own this layer. Platform teams support emission and storage; they do not define what success means for a regulated journey.
+:::
+
+### Five capabilities
+
+1. **Name the journeys:** revenue, risk, or regulation, not every screen
+2. **KPIs per journey:** payment success, first-touch resolution, verification completion
+3. **Business events:** `checkout.payment.failed` with principal and step
+4. **Outcome SLOs:** customer-completing-the-workflow, not host CPU
+5. **Drop-off visibility:** which step drives degradation
+
+Playbook: [Business journey mapping](/playbooks/observability/business-journey-mapping).
+
+---
+
+## Layer ②: Service
+
+**The what: golden signals, traces, SLIs/SLOs.** Playbook: [Service golden signals](/playbooks/observability/service-golden-signals).
+
+:::important[Layer ② bar]
+Engineering and SRE own this layer. Every production service exposes mechanism-level truth: what failed, where latency entered, which dependencies broke.
+:::
+
+### Five capabilities
+
+1. **Golden signals:** latency, traffic, errors, saturation
+2. **Distributed traces:** one failed business event across all hops
+3. **SLIs / SLOs:** error budgets tied to the journey
+4. **Dependency graph:** which upstream caused the burn
+5. **AI hop set:** gateway, policy, retrieval, model, tool, and validation spans on agent paths
+
+Playbook: [Service golden signals](/playbooks/observability/service-golden-signals). Related: [G.A.I.N Observability](/frameworks/gain-observability).
+
+---
+
+## Layer ③: Infrastructure
+
+**The where: resources bound to service identity.** Playbook: [Infrastructure telemetry](/playbooks/observability/infrastructure-telemetry).
+
+:::important[Layer ③ bar]
+The goal is not more host graphs. It is binding resource stress to the services and journeys that consume those resources.
+:::
+
+### Five capabilities
+
+1. **Service identity labels:** every resource tagged to an owning service
+2. **Compute:** CPU throttle, memory pressure, OOM
+3. **Orchestration:** pod restarts, pending, eviction
+4. **Network and storage:** latency, loss, I/O wait, replication lag
+5. **Data plane:** connection pools, replica lag, lock waits
+
+Playbook: [Infrastructure telemetry](/playbooks/observability/infrastructure-telemetry).
+
+---
+
 ## The observability graph
 
 The graph is the **unifying artifact**. It answers: when this KPI moved, which service transactions and which infra resources moved with it?
@@ -91,7 +160,7 @@ The graph is the **unifying artifact**. It answers: when this KPI moved, which s
 One incident narrative. No manual portal hopping.
 
 :::important[AI workloads]
-For agent and RAG paths, service spans must include **gateway, policy, retrieval, model, tool, and validation** hops. See [G.A.I.N Observability](/frameworks/gain-observability) and [AI Observability in Enterprise](/insights/ai-observability-in-enterprise). The graph shape is the same; the span set is richer.
+For agent and RAG paths, service spans must include **gateway, policy, retrieval, model, tool, and validation** hops. See [G.A.I.N Observability](/frameworks/gain-observability). The graph shape is the same; the span set is richer.
 :::
 
 ## Capability model
@@ -180,9 +249,9 @@ Playbook: [Operating model](/playbooks/observability/operating-model).
 
 | Layer / topic | Playbook |
 | --- | --- |
-| Business journeys | [Business journey mapping](/playbooks/observability/business-journey-mapping) |
-| Service golden signals | [Service golden signals](/playbooks/observability/service-golden-signals) |
-| Infrastructure | [Infrastructure telemetry](/playbooks/observability/infrastructure-telemetry) |
+| **① Business** journeys | [Business journey mapping](/playbooks/observability/business-journey-mapping) |
+| **② Service** golden signals | [Service golden signals](/playbooks/observability/service-golden-signals) |
+| **③ Infrastructure** | [Infrastructure telemetry](/playbooks/observability/infrastructure-telemetry) |
 | Correlation graph | [Correlation graph](/playbooks/observability/correlation-graph) |
 | Governance | [Governance rules](/playbooks/observability/governance-rules) |
 | Maturity | [Maturity assessment](/playbooks/observability/maturity-assessment) |
@@ -196,4 +265,4 @@ Start at [Observability playbooks overview](/playbooks/observability).
 | --- | --- |
 | [G.A.I.N Observability](/frameworks/gain-observability) | AI service-layer depth: capture, retention, audit |
 | [G.A.I.N Evaluation](/frameworks/gain-evaluation) | Quality and drift consumers of telemetry |
-| [PGAR audit and replay](/playbooks/pgar-runtime/foundation/audit-and-replay) | Policy verdict chain as audit-tier signal |
+| [PGAR audit and replay](/playbooks/governance/runtime/foundation/audit-and-replay) | Policy verdict chain as audit-tier signal |

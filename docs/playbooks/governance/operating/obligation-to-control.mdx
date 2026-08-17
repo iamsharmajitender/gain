@@ -1,0 +1,63 @@
+---
+slug: /governance/operating/obligation-to-control
+title: "Obligation-to-Control Map"
+sidebar_label: Obligation-to-control map
+description: "Map each must-we obligation to a named control and an evidence artifact. Governance Operating how-to."
+tags:
+  - governance-trust
+  - arch
+  - gain
+  - policy
+  - compliance
+---
+
+# Obligation-to-Control Map
+
+[Operating](/playbooks/governance/operating) · [← Inventory](/playbooks/governance/operating/inventory) · **Obligation map** · [Evidence pack →](/playbooks/governance/operating/go-live-evidence)
+
+Each **must-we** (law, sector rule, internal policy) maps to a **named control** you can point at, and to an **evidence artifact** you can produce. The map sits under Governance. It does not merge Responsible, Regulatory, and Risk into one slogan. [Types live on the blueprint](/blueprints/governance/operating#layer-model).
+
+:::tip[THE CLAIM]
+**If you cannot name the control, you do not have the obligation covered.** A principle in a PDF is not a control.
+:::
+
+<!-- truncate -->
+
+## What the map owns
+
+| Owns | Does not own |
+| --- | --- |
+| Obligation id, source, must-we text | PDP rule syntax ([Runtime](/playbooks/governance/runtime/foundation/pdp-policy-surfaces)) |
+| Control id, owner, where it runs | Tool allowlists (manifests) |
+| Evidence artifact id | The verdict log implementation |
+
+## Minimum row
+
+| Field | Example |
+| --- | --- |
+| `obligation_id` | `APRA-CPS-230-op-res` |
+| `source` | APRA CPS 230 / internal refund policy |
+| `must_we` | Reconstruct who approved a refund over threshold |
+| `control_id` | `pep-step-up-refund` |
+| `control_where` | Runtime PEP STEP_UP; Operating evidence pack |
+| `evidence_id` | Verdict log + attestation record |
+| `use_case_id` | Inventory row this obligation applies to |
+
+One obligation may bind several use cases. One use case usually has several obligations. Do not hide that in a single "compliant" flag.
+
+## Failure classes
+
+- Obligation register in Legal with no control id
+- Control id that does not exist in Runtime or in the evidence pack
+- Responsible AI outcome treated as a must-we (wrong type)
+- Map updated; PEP policy version not pinned
+
+## Trace / register fields
+
+`obligation_id`, `source`, `control_id`, `evidence_id`, `use_case_id`
+
+Next: assemble those artifacts into the [go-live pack](/playbooks/governance/operating/go-live-evidence).
+
+## Read next
+
+**[Go-live evidence pack →](/playbooks/governance/operating/go-live-evidence)**

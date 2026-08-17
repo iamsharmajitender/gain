@@ -1,0 +1,22 @@
+---
+description: Required chrome on every generated site image (G.A.I.N mark + jitendersharma.dev)
+globs: docs/**/*.png,static/**/*.png
+alwaysApply: true
+---
+
+# Site image chrome
+
+Every **generated** raster image on this site (insight heroes, call images, infographics, diagram PNGs via GenerateImage) must include both of these, and nothing else as brand copy.
+
+| Slot | Put | Do not put |
+| --- | --- | --- |
+| **Top left** | G.A.I.N **mark**: white circle with hex wireframe icon + wordmark **G.A.I.N** | Slogan under the logo. No TRUST / CONTROL / IMPACT. No G.A.I.N SYSTEMS unless the canvas is wide and the navbar lockup is the brief. |
+| **Bottom right** | Source URL **jitendersharma.dev** in small, readable sans-serif | **gain.inc** or any other domain. That URL is a different company. |
+
+The diagram, title, and footer claims (e.g. "Governed. Observable. Secure.") are content. The mark and URL are chrome. Do not invent a three-word tagline.
+
+**Compose in GenerateImage.** Chrome must be **composed in the original GenerateImage**, not stamped afterwards. When generating, reserve empty padding in the top-left and bottom-right (no title, no diagram labels, no legend in those corners). NEVER overlay or composite a logo or URL onto an existing PNG that already has content in those corners. NEVER use `scripts/restamp-site-image-chrome.py` for new images.
+
+**Out of scope:** mermaid, author photos, vendor/credential logos, screenshots of the live UI.
+
+When calling **GenerateImage**, put both chrome items in the `description` every time. Match `static/img/logo.svg` for the icon (circle + hex wireframe + center dot). Tell the model to leave clear empty space in those corners for the mark and URL.

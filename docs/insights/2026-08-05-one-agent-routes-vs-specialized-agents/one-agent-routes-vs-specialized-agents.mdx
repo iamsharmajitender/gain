@@ -10,8 +10,7 @@ tags:
   - policy
   - gain
 authors: [iamsharmajitender]
-draft: true
-date: 2026-08-05
+date: 2026-08-15
 ---
 
 <br/>
@@ -47,14 +46,26 @@ One agent platform. Requests land in an [intent router](/insights/what-is-intent
 
 ```mermaid
 flowchart TB
-    User --> Router[Intent Router]
-    Router --> Account[Account Route]
-    Router --> Payment[Payment Route]
-    Router --> Policy[Policy Route]
-    Account --> Runtime[Shared Agent Runtime]
+    User["① User"] --> Router["② Intent Router"]
+    Router --> Account["③ Account Route"]
+    Router --> Payment["④ Payment Route"]
+    Router --> Policy["⑤ Policy Route"]
+    Account --> Runtime["⑥ Shared Agent Runtime"]
     Payment --> Runtime
     Policy --> Runtime
-    Runtime --> Tools[Tool Execution]
+    Runtime --> Tools["⑦ Tool Execution"]
+
+    classDef actor fill:#dbeafe,stroke:#93c5fd,color:#1e293b,stroke-width:2px
+    classDef gate fill:#ffedd5,stroke:#fdba74,color:#1e293b,stroke-width:2px
+    classDef route fill:#ede9fe,stroke:#c4b5fd,color:#1e293b,stroke-width:2px
+    classDef runtime fill:#dcfce7,stroke:#86efac,color:#1e293b,stroke-width:2px
+    classDef tool fill:#fef3c7,stroke:#fcd34d,color:#1e293b,stroke-width:2px
+
+    class User actor
+    class Router gate
+    class Account,Payment,Policy route
+    class Runtime runtime
+    class Tools tool
 ```
 
 <br/>
@@ -103,19 +114,32 @@ One team owns prompts, evaluations, tools, releases, and monitoring. A single pl
 
 ## Pattern 2: Multiple specialized agents
 
-The router selects a **specialized agent**, not only a route on a shared brain.
+The router selects a **specialized agent**, not only a route on a shared brain. Agents own reasoning and domain capability. **Policy and guardrails still come from the platform**, not from each agent stack.
 
 ```mermaid
 flowchart TB
-    User --> Router[Intent Router]
-    Router --> Finance[Finance Agent]
-    Router --> HR[HR Agent]
-    Router --> Legal[Legal Agent]
+    User["① User"] --> Router["② Intent Router"]
+    Router --> Finance["③ Finance Agent"]
+    Router --> HR["④ HR Agent"]
+    Router --> Legal["⑤ Legal Agent"]
+    Finance --> Platform["⑥ Platform: Policy and Guardrails"]
+    HR --> Platform
+    Legal --> Platform
+
+    classDef actor fill:#dbeafe,stroke:#93c5fd,color:#1e293b,stroke-width:2px
+    classDef gate fill:#ffedd5,stroke:#fdba74,color:#1e293b,stroke-width:2px
+    classDef agent fill:#ede9fe,stroke:#c4b5fd,color:#1e293b,stroke-width:2px
+    classDef platform fill:#dcfce7,stroke:#86efac,color:#1e293b,stroke-width:2px
+
+    class User actor
+    class Router gate
+    class Finance,HR,Legal agent
+    class Platform platform
 ```
 
 <br/>
 
-Each agent has its own instructions, memory, tools, retrieval sources, policies, and evaluation framework.
+Each agent has its own instructions, memory, tools, retrieval sources, and evaluation framework. Approval gates, content limits, audit, and action controls are enforced by the shared platform layer so governance stays consistent across specialized agents.
 
 ### Enterprise assistant example
 
@@ -125,13 +149,13 @@ Each agent has its own instructions, memory, tools, retrieval sources, policies,
 | HR | Leave policy, employee info, benefits | HR systems, employee privacy |
 | Legal | Contract analysis, regulatory questions | Legal corpora, citations, heavier reasoning |
 
-These domains are fundamentally different. A single agent becomes hard to govern, evaluate, and own.
+These domains are fundamentally different. A single agent becomes hard to govern, evaluate, and own. Specialization splits reasoning and ownership; the platform still holds policy and guardrails.
 
 ## When Pattern 2 works best
 
 ### 1. Different business domains
 
-Finance and HR are not just different tools. They have different data, processes, policies, and ownership. Separate agents create cleaner boundaries.
+Finance and HR are not just different tools. They have different data, processes, and ownership. Separate agents create cleaner boundaries while the platform keeps shared policy enforcement.
 
 ### 2. Different risk levels
 
@@ -140,7 +164,7 @@ Finance and HR are not just different tools. They have different data, processes
 | HR | Lower | Read employee information |
 | Payment | High | Move money, require approval and MFA |
 
-A dedicated payment agent gives stronger isolation for high-impact actions.
+A dedicated payment agent gives stronger isolation for high-impact actions. Higher risk still maps to stricter platform policies, not a separate ad-hoc guardrail stack per team.
 
 ### 3. Different reasoning styles
 
@@ -148,7 +172,7 @@ A legal agent may need citation generation, contract interpretation, and regulat
 
 ### 4. Different ownership models
 
-Large enterprises often map agents to teams: HR Team owns the HR Agent; Finance owns Finance; Security owns Security. Each team manages its own tools, policies, evaluations, and releases.
+Large enterprises often map agents to teams: HR Team owns the HR Agent; Finance owns Finance; Security owns Security. Each team manages its own tools, evaluations, and releases. Policy and guardrails remain platform-owned so every specialized agent inherits the same control plane.
 
 ## The evolution path most enterprises should follow
 
@@ -183,7 +207,7 @@ Mixed signals (same domain but different compliance owners, for example) usually
 - **Routes scope access; agents scope reasoning and ownership.** Do not conflate use cases with agents.
 - **Default to one runtime with governed routes** until domain, risk, data, or ownership forces a split.
 - **Evolve Stage 1 → routes → specialized agents**; do not start at Stage 3.
-- **Wire routes into policy enforcement** so capability limits are runtime facts, not prompt suggestions.
+- **Keep policy and guardrails on the platform** in both patterns so specialized agents do not invent parallel control planes.
 - **Optimize for clear boundaries and operable ownership**, not agent count.
 
 :::info[Builds on]

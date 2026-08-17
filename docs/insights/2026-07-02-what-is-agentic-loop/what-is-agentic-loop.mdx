@@ -128,7 +128,7 @@ These run **once per user turn** (usually) before the inner loop begins.
 | **Output** | `session_id`, identity claims, entitlements |
 | **Failure** | Unauthenticated access, session hijack, missing tenant context |
 
-The ingress boundary is where trust starts. Everything downstream assumes identity is already verified. See [PGAR Boundary ①: Ingress](/playbooks/pgar-runtime/boundary/ingress).
+The ingress boundary is where trust starts. Everything downstream assumes identity is already verified. See [PGAR Boundary ①: Ingress](/playbooks/governance/runtime/boundary/ingress).
 
 ### ② Input plane — parse and safety
 
@@ -140,7 +140,7 @@ The ingress boundary is where trust starts. Everything downstream assumes identi
 | **Output** | `normalized_input`, `safety_flags`, optional redaction map |
 | **Failure** | Injection passes through; PII logged in cleartext; malformed payload crashes downstream |
 
-Evaluated on the [Eval Input plane](/playbooks/eval-engineering/plane-input): injection resistance, schema validation, PII handling.
+Evaluated on the [Eval Input plane](/playbooks/evaluation/plane-input): injection resistance, schema validation, PII handling.
 
 ### ③ Intent router — select the governed path
 
@@ -164,7 +164,7 @@ See [What Is an Intent Router](/insights/what-is-intent-router). Routing happens
 | **Output** | Scoped message array + tool schemas from manifest |
 | **Failure** | Stale memory; cross-tenant context leak; policy text in system prompt |
 
-The [agentic app](/playbooks/pgar-runtime/boundary/agentic-app) assembles context. The LLM receives messages and schemas — never the bearer token.
+The [agentic app](/playbooks/governance/runtime/boundary/agentic-app) assembles context. The LLM receives messages and schemas — never the bearer token.
 
 ---
 
@@ -230,7 +230,7 @@ Subject, action, resource, context — evaluated against policy. The LLM never s
 | **Output** | Approved context attached; loop resumes at ⑧ |
 | **Failure** | Step-up context lost on retry; approval forged without re-PEP |
 
-STEP_UP is a **PDP verdict**, not a model feature. See [Step-up and attestation](/playbooks/pgar-runtime/foundation/step-up-and-attestation).
+STEP_UP is a **PDP verdict**, not a model feature. See [Step-up and attestation](/playbooks/governance/runtime/foundation/step-up-and-attestation).
 
 ### ⑩ Execute — run the permitted action
 
@@ -472,5 +472,5 @@ Each maps to an architecture fix — not a prompt tweak.
 - **Trace proposal, PEP verdict, and manifest version per step:** audit must answer who authorized what before money moved.
 
 :::info[Builds on]
-[G.A.I.N Agents](/frameworks/gain-agents) · [Policy-Governed Agent Runtime](/insights/policy-governed-agent-runtime) · [What Is an Intent Router](/insights/what-is-intent-router) · [PGAR Boundary ②: Agentic App](/playbooks/pgar-runtime/boundary/agentic-app)
+[G.A.I.N Agents](/frameworks/gain-agents) · [Policy-Governed Agent Runtime](/insights/policy-governed-agent-runtime) · [What Is an Intent Router](/insights/what-is-intent-router) · [Enterprise AI Workflow Patterns](/insights/enterprise-ai-workflow-patterns-autonomy-vs-control) (Pattern 1 is one of four) · [PGAR Boundary ②: Agentic App](/playbooks/governance/runtime/boundary/agentic-app)
 :::

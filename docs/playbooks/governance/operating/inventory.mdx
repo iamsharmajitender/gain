@@ -1,0 +1,67 @@
+---
+slug: /governance/operating/inventory
+title: "Inventory Record"
+sidebar_label: Inventory record
+description: "No inventory, no owner, no go-live. Minimum fields for an AI use-case row before runtime scale."
+tags:
+  - governance-trust
+  - arch
+  - gain
+  - policy
+  - compliance
+---
+
+# Inventory Record
+
+[Operating](/playbooks/governance/operating) · **Inventory** · [Obligation map →](/playbooks/governance/operating/obligation-to-control)
+
+Every in-production agent, copilot, or model-backed workflow gets a **row** before it can cause a side effect. The row is the approve step on the [control path](/blueprints/governance/operating#control-path). It is not the route table and not the PEP.
+
+:::tip[THE CLAIM]
+**No inventory, no owner, no go-live.** Ethics slides and a policy PDF do not substitute for a named use case with an accountable owner.
+:::
+
+<!-- truncate -->
+
+## What the row owns
+
+| Owns | Does not own |
+| --- | --- |
+| Use-case id, name, owner, sponsor | Route `route_id` (Agents) |
+| Autonomy pattern (0-3), data class, region | Tool schemas (manifests) |
+| Go-live state: proposed / approved / live / retired | ALLOW / DENY / STEP_UP (Runtime) |
+| Link to obligation map and evidence pack | PEP implementation |
+
+## Minimum fields
+
+| Field | Why |
+| --- | --- |
+| `use_case_id` | Stable id for audit and KRIs |
+| `name` | Human label (refund agent, contract review) |
+| `owner` | Named accountable human or team |
+| `exec_sponsor` | Who accepted residual risk |
+| `pattern` | 0-3 from the [Agents Blueprint](/blueprints/agents-blueprint) |
+| `data_class` | What the runtime and model gateway may see |
+| `region` / residency | Where inference and logs may live |
+| `status` | proposed / approved / live / retired |
+| `runtime_profile` | Pointer to policy profile / PEP surface |
+| `evidence_pack_id` | Link to the [go-live pack](/playbooks/governance/operating/go-live-evidence) |
+
+Do not store entitlements per user here. Claims stay on the IdP. Do not store tool lists here. Those live on the [manifest](/playbooks/agents/manifests/manifest-registry).
+
+## Failure classes
+
+- Agent in production with no row
+- Owner is a shared mailbox with no named human
+- Status `live` with empty evidence pack
+- Row exists; route table and PEP never linked
+
+## Trace / register fields
+
+`use_case_id`, `owner`, `status`, `pattern`, `data_class`, `evidence_pack_id`, `approved_at`
+
+Blueprint: [Operating](/blueprints/governance/operating). Runtime after approve: [Runtime playbooks](/playbooks/governance/runtime).
+
+## Read next
+
+**[Obligation-to-control map →](/playbooks/governance/operating/obligation-to-control)**

@@ -1,0 +1,140 @@
+---
+slug: /llm/capability-matrix
+title: "Capability Matrix"
+sidebar_label: Capability matrix
+description: "Versioned registry of approved model endpoints per profile, task, data class, and region: the Plane ③ source of truth."
+tags:
+  - ai-intelligence
+  - arch
+  - gain
+  - llm
+---
+
+import Details from '@theme/Details';
+
+# Capability Matrix
+
+[Blueprint](/blueprints/llm-blueprint) · **Capability matrix** · [Gateway task routing →](/playbooks/llm/gateway-task-routing)
+
+The matrix is **versioned platform config**, same discipline as the [route table](/playbooks/agents/intent-router/route-table-lifecycle). It lists which endpoints may serve which `model_profile` and task. The agent prompt does not.
+
+:::tip[THE CLAIM]
+**If it is not in the matrix, it is not a production model.** Ad-hoc vendor URLs in application config are demos only.
+:::
+
+<!-- truncate -->
+
+## Non-negotiables
+
+| Requirement | Why |
+| --- | --- |
+| **Version id** (`2026.08.1`) | Examiners ask which pool served the call |
+| **Pin `matrix_version` per request** | Mid-flight swap breaks replay |
+| **Gateway loads; LLM never owns the matrix** | The model cannot promote itself |
+| **CI on change** | Golden task set blocks regression |
+| **Audit** | `matrix_version` + `model_route_id` on every inference |
+
+## Row shape
+
+Each profile is a coarse tier from Plane ① (`model_profile` on the [route row](/playbooks/agents/intent-router/route-contract-reference)). Tasks are Plane ② signals (`plan`, `synthesize`, `classify`).
+
+| Field | Purpose |
+| --- | --- |
+| `profile_id` | Matches `model_profile` on the route |
+| `tasks` | Per-task `stable` and optional `canary` endpoint ids |
+| `data_classes` | Allowed sensitivity (public, internal, confidential, restricted) |
+| `regions` | Residency filter at the gateway |
+| `max_cost_usd_per_1k_tokens` | Hard cap; exceed → next fit or abstain |
+| `max_latency_ms` | SLO filter |
+| `entitlements` | Optional claims required to use this profile |
+
+<Details summary="Capability matrix (JSON)">
+
+```json
+{
+  "matrix_version": "2026.08.1",
+  "profiles": [
+    {
+      "profile_id": "reasoning-standard",
+      "data_classes": ["internal", "confidential"],
+      "regions": ["au-east"],
+      "max_cost_usd_per_1k_tokens": 0.04,
+      "max_latency_ms": 8000,
+      "tasks": {
+        "plan": {
+          "stable": "ep.reason.au.stable",
+          "canary": "ep.reason.au.canary"
+        },
+        "synthesize": {
+          "stable": "ep.reason.au.stable"
+        }
+      }
+    },
+    {
+      "profile_id": "fast-chat",
+      "data_classes": ["public", "internal"],
+      "regions": ["au-east", "us-east"],
+      "max_cost_usd_per_1k_tokens": 0.008,
+      "max_latency_ms": 2000,
+      "tasks": {
+        "synthesize": { "stable": "ep.chat.au.stable" },
+        "classify": { "stable": "ep.chat.au.stable" }
+      }
+    }
+  ]
+}
+```
+
+</Details>
+
+Endpoints (`ep.reason.au.stable`) are registry ids, not vendor URLs. Map them in a separate endpoint catalog (provider, region, model revision, auth).
+
+## Storage patterns
+
+| Pattern | Regulated fit |
+| --- | --- |
+| **GitOps + object storage** | Strong: PR review, immutable artifacts, rollback via `active` pointer |
+| **Model registry API** | Strong: runtime rollback, multi-tenant, audit |
+| **Versioned file in repo** | Good pilot; rollback may need redeploy |
+| **Hardcoded in app** | Demos only |
+
+Typical layout:
+
+<Details summary="Matrix and endpoint catalog layout">
+
+```text
+platform/models/
+  capability-matrix/
+    2026.08.1.yaml
+  active → 2026.08.1
+  endpoints/
+    2026.08.1.yaml
+```
+
+</Details>
+
+## What does not belong here
+
+| Leave out | Why |
+| --- | --- |
+| Route `route_id` / manifests | Plane ① / ② |
+| PEP rules | PGAR |
+| Prompt text | Prompt store, referenced from the route |
+| API keys | Secret store; gateway injects at call time |
+
+## Failure classes
+
+| Failure | Symptom |
+| --- | --- |
+| Squad pastes a vendor model name in the agent | Matrix bypass; no residency or cost control |
+| One mega-profile for every task | Cost and latency SLOs cannot be met |
+| Matrix only in the system prompt | Injection can rewrite the pool |
+| No `matrix_version` in logs | Cannot tell which pool served an incident |
+
+## Trace fields
+
+`matrix_version`, `model_profile`, `task_type`, `data_class`, `region`, `eligible_endpoints`
+
+## Read next
+
+**[Gateway task routing →](/playbooks/llm/gateway-task-routing)**

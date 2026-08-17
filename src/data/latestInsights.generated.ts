@@ -17,6 +17,22 @@ export interface LatestInsight {
 export const latestInsightsByTab: Record<InsightTabId, readonly LatestInsight[]> = {
   "all": [
     {
+      "title": "Enterprise AI Workflow Patterns: Autonomy vs Control",
+      "date": "2026-08-17",
+      "readTime": 45,
+      "description": "Choose between single inference, fully autonomous agents, deterministic workflows, and guided hybrid agents. Comparison matrix, JSON contracts, and when to escalate from one call to a full agent.",
+      "typeTag": "arch",
+      "to": "/insights/enterprise-ai-workflow-patterns-autonomy-vs-control"
+    },
+    {
+      "title": "One Agent with Routes vs Specialized Agents: When to Split",
+      "date": "2026-08-15",
+      "readTime": 8,
+      "description": "Enterprise agent architecture: when a shared runtime with governed routes is enough, and when different execution boundaries require specialized agents.",
+      "typeTag": "arch",
+      "to": "/insights/one-agent-routes-vs-specialized-agents"
+    },
+    {
       "title": "Agent Identity: Who Is Asking vs Which Software Is Acting",
       "date": "2026-08-06",
       "readTime": 15,
@@ -63,22 +79,6 @@ export const latestInsightsByTab: Record<InsightTabId, readonly LatestInsight[]>
       "description": "What happens inside the weight tensors as an LLM trains: random initialisation, the four-step training loop (forward, loss, backprop, optimizer), and what each component learns as a next-token model.",
       "typeTag": "exp",
       "to": "/insights/during-training-an-llm"
-    },
-    {
-      "title": "Adaptive Video Streaming Explained: How Netflix Streams One Chunk at a Time",
-      "date": "2026-07-21",
-      "readTime": 9,
-      "description": "Netflix does not stream one file. Chunks, quality ladders, manifests, ABR decisions, buffering, seeking, and CDN caching, one segment at a time.",
-      "typeTag": "exp",
-      "to": "/insights/adaptive-video-streaming-explained"
-    },
-    {
-      "title": "Netflix Video Processing Pipeline: From Studio Upload to Global Streaming",
-      "date": "2026-07-21",
-      "readTime": 12,
-      "description": "How Netflix turns a studio mezzanine into globally streamed ABR assets: Cosmos microservices, encoding, quality, packaging, and Open Connect delivery.",
-      "typeTag": "arch",
-      "to": "/insights/netflix-video-processing-pipeline"
     }
   ],
   "system-design": [

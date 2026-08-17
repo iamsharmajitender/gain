@@ -68,20 +68,6 @@ export const draftInsightPages: readonly DraftInsightPage[] = [
     "href": "/insights/music-search-cache-personalization"
   },
   {
-    "title": "Enterprise AI Workflow Patterns: Autonomy vs Control",
-    "date": "2026-08-05",
-    "description": "Choose between single inference, fully autonomous agents, deterministic workflows, and guided hybrid agents. Comparison matrix, JSON contracts, and when to escalate from one call to a full agent.",
-    "slug": "enterprise-ai-workflow-patterns-autonomy-vs-control",
-    "href": "/insights/enterprise-ai-workflow-patterns-autonomy-vs-control"
-  },
-  {
-    "title": "One Agent with Routes vs Specialized Agents: When to Split",
-    "date": "2026-08-05",
-    "description": "Enterprise agent architecture: when a shared runtime with governed routes is enough, and when different execution boundaries require specialized agents.",
-    "slug": "one-agent-routes-vs-specialized-agents",
-    "href": "/insights/one-agent-routes-vs-specialized-agents"
-  },
-  {
     "title": "Active Token Concurrency: Turning a Spike into a Pace",
     "date": "2026-08-04",
     "description": "System design of active booking tokens: only a few thousand users enter hold and pay at once, token TTL and drain rate, and why a queue position is not a seat.",

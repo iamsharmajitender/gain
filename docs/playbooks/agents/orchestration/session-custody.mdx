@@ -1,0 +1,185 @@
+---
+slug: /agents/orchestration/session-custody
+title: "Session Custody"
+sidebar_label: Session custody
+description: "Two pins, durable run store, and when a checkpointer or Temporal is enough: loop bounds, credential stripping, restart by run_id."
+tags:
+  - ai-intelligence
+  - governance-trust
+  - arch
+  - gain
+  - agents
+  - policy
+---
+
+import Details from '@theme/Details';
+
+# Session Custody
+
+[Blueprint](/blueprints/agents-blueprint) · [← Wire app](/playbooks/agents/intent-router/wire-agentic-app) · **Session custody** · [Memory →](/playbooks/agents/orchestration/memory)
+
+Plane ① **decides** and may **freeze the route** (stickiness + version pointers). Plane ② starts when the [agentic app](/playbooks/governance/runtime/boundary/agentic-app) **copies those pointers**, writes the **run pin**, and takes custody of token, loop budget, and checkpoints.
+
+:::tip[THE CLAIM]
+**The agentic app is the only component that holds both the conversation and the credentials. It never sends the latter to the LLM.** The router may pin the route. It does not pin the loop. Nobody re-resolves `active` after decide.
+:::
+
+<!-- truncate -->
+
+## Who pins what
+
+Two records. The router **should** pin first so stickiness and the async start share the same freeze. The app **must** persist a copy so a worker restart does not depend on router TTL, and so it never looks up `active` again.
+
+| Record | Who writes it | Lives where | Job |
+| --- | --- | --- | --- |
+| **Route pin** | Intent router (or front door cache) | Hot KV with TTL | `session_id` → frozen `route_id` + `route_table_version` + `activation_target` + `correlation_id` |
+| **Decision** | Intent router | Audit / decision store | `router_layer`, `outcome`, `eligible_routes` |
+| **Run pin** | **Agentic app** | Durable run store | Copy of those versions plus `loop_step`, checkpoint, token, `run_id` |
+
+`correlation_id` on the async start **is** `run_id` (or maps 1:1). The UI never pins. The Kafka producer never pins. The model never pins.
+
+**Do not** "pin the rest later from the route" by loading whatever is `active` for `route_id`. The async body carries frozen pointers. The app stores that copy, then pins loop and token.
+
+How-to for async start: [Wire agentic app](/playbooks/agents/intent-router/wire-agentic-app). Stickiness as a classify layer: [Layered classifier](/playbooks/agents/intent-router/layered-classifier).
+
+## What you pin on the run
+
+Write at route decision (before the first LLM call). Mid-session promote of any artifact must not change an in-flight run without explicit policy.
+
+| Pin | Source | Why |
+| --- | --- | --- |
+| `route_table_version` | Plane ① decision | Replay which contract classified the turn |
+| `route_id` | Route decision record | Scoped manifest and policy |
+| `activation_target` | Route row | Which agentic app Plane ① starts. Omit = shared runtime. Pin with `correlation_id` so resume hits the same app |
+| `manifest_version` | When `tool_manifest` is not `none` | Tool schemas stay stable for the run |
+| `policy_profile` | Route row | PEP/PDP version for side effects |
+| `model_profile` | Route row | Coarse tier passed to Plane ③; not a vendor model id |
+| `workflow_id` | Patterns 2-3 | Fixed outer stages |
+| `max_loop_steps` | Pattern 1 | Cap for Observe → Decide → Tool |
+| `memory_profile` | Route row | Isolation, TTL, whether long-term recall is allowed |
+
+The catalog is not the pin. Reload `fraud-investigate-v2` at the **pinned** `manifest_version`, not whatever is `active` now. Field dictionary: [Route contract reference](/playbooks/agents/intent-router/route-contract-reference). Token shape: [Token and session boundary](/playbooks/governance/runtime/foundation/token-and-session-boundary). Store, recall, erase: [Memory](/playbooks/agents/orchestration/memory). Manifest pointer: [Manifest lifecycle](/playbooks/agents/manifests/manifest-lifecycle).
+
+## Durable run record
+
+Do not keep the pin only in process memory. A pod restart must load the same contract by `run_id`.
+
+<Details summary="Run record (JSON)">
+
+```json
+{
+  "run_id": "run-9f3c",
+  "correlation_id": "run-9f3c",
+  "session_id": "sess-88",
+  "status": "running",
+  "pinned_at": "2026-08-14T02:11:05Z",
+  "expires_at": "2026-08-15T02:11:05Z",
+  "pin": {
+    "route_id": "fraud_investigate",
+    "route_table_version": "2026.08.1",
+    "activation_target": "https://assistant-app.internal/v1/runs",
+    "manifest_id": "fraud-investigate-v2",
+    "manifest_version": "2026.08.1",
+    "policy_profile": "fraud_ops_read_plus_notes",
+    "model_profile": "reasoning-standard",
+    "max_loop_steps": 12,
+    "loop_step": 3
+  },
+  "checkpoint": {
+    "last_tool": "get_alert",
+    "working": { "alert_id": "alert-88421", "account_id": "acct-4412" }
+  }
+}
+```
+
+</Details>
+
+Update `loop_step` and `checkpoint` after each tool, especially before a write. `memory_profile.loop: checkpoint` is the **policy** that this record exists. This page is where it lives.
+
+### Store options
+
+| Data | v1 | When to escalate |
+| --- | --- | --- |
+| **Run pin** + working slots + status | Postgres `runs` keyed by `run_id` | Always for production Plane ② |
+| **Loop checkpoint** (Pattern 1 / 2 side effects) | Same row, or Temporal / step table (`run_id` = `workflow_id`) | Fraud, payments, any resume-at-step-K |
+| **Conversation** | Session store with `ttl_hours` | Chat. Kafka jobs often omit this |
+| **Stickiness / route pin** | Redis TTL: `session_id` → `route_id` + `correlation_id` + versions | Plane ①. Not enough by itself for loop resume |
+| **Token** | Token store or re-mint from IdP on resume | Never conversation Redis, never the LLM trace |
+
+**Do not** replay only the chat log into the model and call that resume. That is not exact step recovery.
+
+## Durability is a job, not always Temporal
+
+You always need a **durable store** if the run must survive a crash. You do **not** always need Temporal, Camunda, or Step Functions. A workflow engine is one implementation of durability. LangChain retries of an LLM call are not durability for a wire.
+
+Temporal (when you use it) lives in the **agentic app**, not in the intent router. Workers stay almost stateless. The Temporal **cluster** has its own database (Postgres, MySQL, or Cassandra). Typical enterprise: one cluster, many task queues. Do not give each agent its own Temporal database.
+
+`workflow_id` on the **route row** is the versioned stage graph. Temporal `workflow_id` is **this execution**. Map `run_id` / `correlation_id` to that instance. Sticky `"yes"` **signals** the same workflow; it does not `Start` a new one.
+
+| Need | Enough | Overkill |
+| --- | --- | --- |
+| Pattern 0, one inference | Nothing extra | Temporal |
+| Short Pattern 1, one app, resume this graph | LangGraph (or similar) **checkpointer**, or Postgres `runs` | Camunda |
+| Pattern 2, a few stages, same service | **Step table** (`run_id`, `current_stage`, idempotency keys) | Full BPM suite |
+| Multi-day human wait, many workers, money, sagas across systems | **Temporal / Camunda / Step Functions** | Homemade sleep + cron |
+
+Idempotency keys plus a row already prevent double-pay. A workflow engine adds activity retry policy, timers, and history so you do not invent those.
+
+**Where the LLM framework fits:** Pattern 2/3 outer **order** stays in the step table or Temporal. LangChain / LangGraph / Strands run **inside** a stage (`llm_role`, or Pattern 1's loop). Do not let the planner own KYC stage order. Do not start every copilot with Camunda. Do not run KYC only in RAM.
+
+GAIN v1: Postgres `runs` in the agentic app. Promote to Temporal when that table becomes a homemade workflow engine.
+
+### Restart path
+
+```text
+pod dies
+  → new instance gets resume for run_id
+  → load pin from runs table
+  → load manifest at pinned version
+  → load checkpoint (or continue Temporal workflow)
+  → next tool still hits PEP with the same subject
+```
+
+The front door needs `session_id` → `correlation_id` so the next `"yes"` or Kafka retry hits **this** row. If the router pin has expired, resume from the app's run record, not from `active`.
+
+## Loop bounds
+
+The app owns the budget. The LLM only proposes.
+
+| Bound | Applies | On hit |
+| --- | --- | --- |
+| `max_loop_steps` | Pattern 1 whole loop | Stop; return partial or escalate |
+| Stage list + timeouts | Pattern 2 | Advance or fail the stage; the model cannot invent a stage |
+| `max_tool_calls` per stage | Pattern 3 | Stop that stage; do not leak the next stage allowlist |
+
+## Credential stripping
+
+Before any inference call:
+
+1. Strip auth headers, env, and downstream secrets from the payload
+2. Send messages + **scoped tool schemas only** (or none on Pattern 0)
+3. Keep the token in app custody for PEP, never in the model context
+4. On resume, re-bind or refresh the token. Do not paste a stale bearer from the conversation store
+
+See [PGAR LLM proposal](/playbooks/governance/runtime/boundary/llm-proposal) · [Token and session boundary](/playbooks/governance/runtime/foundation/token-and-session-boundary).
+
+## Failure classes
+
+| Failure | Symptom |
+| --- | --- |
+| Token forwarded to LLM | PGAR test failure; secrets in trace |
+| No `route_table_version` on the run | Cannot replay which contract ran |
+| Pin only in one pod's RAM | Restart starts a new run or drifts to `active` manifest |
+| Router Redis as the only pin | App infers the contract; mid-run table publish leaks new tools |
+| App re-resolves `active` after start | "Pin later from the route"; versions drift |
+| Mid-session manifest swap | Tool set drifts; eval cannot attribute |
+| Unbounded loop | Cost blow-up; no `max_loop_steps` |
+| LangChain retry as the only write recovery | Duplicate side effect, or silent drop after crash |
+
+## Trace fields
+
+`session_id`, `run_id`, `correlation_id`, `route_id`, `route_table_version`, `manifest_version`, `policy_profile`, `model_profile`, `orchestration_step`, `loop_step`, `max_loop_steps`
+
+## Read next
+
+**[Memory →](/playbooks/agents/orchestration/memory)**

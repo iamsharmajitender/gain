@@ -371,7 +371,7 @@ LangChain and LangGraph will happily pass raw tool output back to the model. **V
 
 | Validation | When | Where to implement |
 | --- | --- | --- |
-| **Input** | Before loop | Pre-loop; [Eval Input plane](/playbooks/eval-engineering/plane-input) |
+| **Input** | Before loop | Pre-loop; [Eval Input plane](/playbooks/evaluation/plane-input) |
 | **Proposal** | Tool name + args | Before PEP; manifest schema check |
 | **Policy** | Authorization | PEP/PDP — outside both libraries |
 | **Observation** | Tool/RAG result | After execute, before next plan or synth |

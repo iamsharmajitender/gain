@@ -1,0 +1,49 @@
+---
+slug: /mcp
+title: "MCP Playbooks"
+sidebar_label: Overview
+description: "Hub for G.A.I.N MCP: MCP is transport. Tool contracts (manifests) live under Agents."
+tags:
+  - governance-trust
+  - arch
+  - gain
+  - agents
+  - policy
+---
+
+# MCP Playbooks
+
+[Playbooks](/playbooks) · **MCP overview** · [Manifest registry →](/playbooks/agents/manifests/manifest-registry)
+
+Implementation guides for [G.A.I.N MCP](/frameworks/gain-mcp). The [MCP Blueprint](/blueprints/mcp-blueprint) is the reference design for MCP as **transport**. The tool contract (what the LLM may propose) lives in the [Agents Blueprint](/blueprints/agents-blueprint) under Manifests. How-to: [Agents: Manifests](/playbooks/agents/manifests/manifest-registry). MCP is one way to expose those tools, not the catalog.
+
+PEP still gates every tool side effect. Enforcement lives in [Runtime](/playbooks/governance/runtime).
+
+:::tip[THE CLAIM]
+**MCP is a governed capability surface, not the tool allowlist.** The pinned manifest is the contract. MCP, OpenAPI, and domain APIs are adapters.
+:::
+
+<!-- truncate -->
+
+## Where to go
+
+| Need | Start here |
+| --- | --- |
+| Tool schema, `pdp_action`, unknown-tool reject | [Manifest registry](/playbooks/agents/manifests/manifest-registry) |
+| Version, pin, promote, roll back | [Manifest lifecycle](/playbooks/agents/manifests/manifest-lifecycle) |
+| MCP principles | [G.A.I.N MCP](/frameworks/gain-mcp) |
+| MCP reference design (transport) | [MCP Blueprint](/blueprints/mcp-blueprint) |
+| Manifest design (pinned tools) | [Agents Blueprint](/blueprints/agents-blueprint) |
+| PEP maps `pdp_action` | [Runtime](/playbooks/governance/runtime) |
+| Schema and allowlist eval | [Eval Plane ⑤ Tool](/playbooks/evaluation/plane-tool) |
+
+## Recommended path
+
+1. **[Manifest registry](/playbooks/agents/manifests/manifest-registry):** contract shape (transport-agnostic)
+2. **[Manifest lifecycle](/playbooks/agents/manifests/manifest-lifecycle):** storage and pin
+3. **[G.A.I.N MCP](/frameworks/gain-mcp)** and **[MCP Blueprint](/blueprints/mcp-blueprint)** when MCP is the adapter
+4. **[Runtime](/playbooks/governance/runtime):** PEP maps `pdp_action` to a verdict
+
+## Read next
+
+**[Manifest registry →](/playbooks/agents/manifests/manifest-registry)**

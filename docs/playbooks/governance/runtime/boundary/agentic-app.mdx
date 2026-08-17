@@ -1,0 +1,60 @@
+---
+slug: /governance/runtime/boundary/agentic-app
+title: "PGAR Boundary ②: Agentic App"
+sidebar_label: Agentic app
+description: Session custody, orchestration, proposal routing, and receiving results before validation or synthesis.
+tags:
+  - governance-trust
+  - arch
+  - gain
+  - agents
+  - policy
+---
+
+# PGAR Boundary ②: Agentic App
+
+[Blueprint](/blueprints/governance/runtime) · [← Ingress](/playbooks/governance/runtime/boundary/ingress) · **Agentic app** · [LLM proposal →](/playbooks/governance/runtime/boundary/llm-proposal)
+
+The agentic app is the **orchestrator**. It holds the token, talks to the LLM, forwards proposals to the PEP, receives downstream results, initiates validation, and only then sends validated context back to the model.
+
+:::tip[THE CLAIM]
+**The agentic app is the only component that holds both the conversation and the credentials. It never sends the latter to the LLM.**
+:::
+
+<!-- truncate -->
+
+## Responsibilities
+
+| Owns | Does not own |
+| --- | --- |
+| Session state, token custody | PDP rule authoring |
+| LLM call adapter (strip auth) | Downstream business logic |
+| Route proposals → PEP | Generating verdicts |
+| Step-up UX handoff | Vector search ranking |
+| Initiate validation after retrieval | Policy in system prompt |
+
+## Request loop
+
+1. Receive user message + session from ingress (or event via the [front door](/playbooks/agents/intent-router/wire-agentic-app))
+2. On `route`, receive the **frozen** contract from Plane ① (`correlation_id`, versions). **Copy** it into the run pin. Do not reload `active`. Durable store: [Session custody](/playbooks/agents/orchestration/session-custody)
+3. If `retrieval.mode` is `deterministic_prefetch` → retrieve inside `scope` (PEP-gated), validate the pack, then **one** LLM call with no tool schemas (Pattern 0)
+4. Else if `tool_manifest` is `none` → one LLM call with no tool schemas
+5. Else → call LLM with messages + tool schemas only
+6. On tool proposal → validate against manifest → PEP with token + claims
+7. On ALLOW result → receive downstream/context pack
+8. Run validation gate (app-initiated)
+9. Call LLM for synthesis with validated context only
+10. Return response to user
+
+## Failure classes
+
+- **Direct downstream:** app calls payment hub or vector DB without PEP
+- **Token forwarded to LLM:** PGAR test failure
+- **Validation skipped:** raw retrieval pasted into second LLM call
+- **Stateless chaos:** multi-step flow loses approval context
+
+## Trace fields
+
+`session_id`, `orchestration_step`, `proposal_count`, `pep_calls`, `validation_passed`
+
+See: [Orchestration playbooks](/playbooks/agents/orchestration) · [PEP enforcement](/playbooks/governance/runtime/foundation/pep-enforcement) · [Manifest lifecycle](/playbooks/agents/manifests/manifest-lifecycle) · [RAG retrieval](/playbooks/rag/retrieval) · [Memory](/playbooks/agents/orchestration/memory) · [Boundary overview](/playbooks/governance/runtime/boundary)

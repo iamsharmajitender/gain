@@ -12,7 +12,7 @@ Docusaurus **excludes** pages with `draft: true` from production builds. Any lin
 
 When you **create** an insight article with `draft: true`, or **set** `draft: true` on an existing one:
 
-1. **Do not add** links to that article from any other doc page (insights, playbooks, blueprints, frameworks, etc.).
+1. **Do not add** links to that article from any other page. After publish, only **other insights** may link here (`docs-link-direction.mdc`). G.A.I.N, blueprints, and playbooks never link to insights.
 2. **Remove or replace** existing inbound links before leaving the article as draft.
 
 Draft articles may still link **out** to published pages. The ban is on **inbound** links only.
@@ -32,9 +32,9 @@ Before adding `[text](/insights/<slug>)`, confirm the target file does **not** h
 
 ## When publishing
 
-Remove `draft: true` (or set `draft: false`) **first**, then add inbound links from other pages.
+Remove `draft: true` (or set `draft: false`) **first**, then add inbound links from **other insights** only.
 
-For the full publish workflow (scan `docs/` for link opportunities, suggest only, apply after approval), use the **remove-draft** skill: `.cursor/skills/remove-draft/SKILL.md`.
+For the full publish workflow (scan `docs/insights/` for link opportunities, suggest only, apply after approval), use the **remove-draft** skill: `.cursor/skills/remove-draft/SKILL.md`.
 
 ## Examples
 
@@ -45,7 +45,7 @@ Deep dive: [The Blueprint Before Training](/insights/before-training-an-llm)
 # GOOD — wait until draft is removed, or use plain text with no link
 Deep dive: The Blueprint Before Training (coming soon)
 
-# GOOD — after draft: true is removed from the target
+# GOOD — after draft: true is removed, from another insight only
 Deep dive: [The Blueprint Before Training](/insights/before-training-an-llm)
 ```
 

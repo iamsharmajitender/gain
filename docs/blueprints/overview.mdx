@@ -7,67 +7,73 @@ description: End-to-end reference designs for enterprise AI capabilities.
 
 # Blueprints
 
-Reference architectures, full operating models for a capability, not a one-off essay.
+Reference architectures, full operating models for a capability, not a one-off essay. One G.A.I.N subject maps to one playbook series. Governance has two blueprints (operating and runtime) because the audience splits; it is still one G.A.I.N subject.
 
-## Eval engineering
-
-The **Eval Blueprint** and executive insight are in **draft** alongside the eval playbooks, visible in local dev, not yet published to production.
+## 1. Evaluation: eight planes
 
 | | |
 | --- | --- |
-| **[G.A.I.N Evaluation](/frameworks/gain-evaluation)** | Principles, ownership, and pillar mapping — published |
-| **[Eval Blueprint](/blueprints/eval-blueprint)** | Sources, scorers, modes, gates, eight planes — draft |
-| **Eval Engineering (executive insight)** | Board case for eval as control system — draft |
+| **[G.A.I.N Evaluation](/frameworks/gain-evaluation)** | Principles, ownership, and pillar mapping: published |
+| **[Eval Blueprint](/blueprints/evaluation-blueprint)** | Sources, scorers, modes, gates, eight planes: draft |
 
-Implementation playbooks live under [Playbooks](/playbooks).
+Playbooks: [Evaluation](/playbooks/evaluation). Planes: ① Input · ② Data · ③ Context · ④ Reasoning · ⑤ Tool · ⑥ Memory · ⑦ Action · ⑧ Outcome.
 
-## PGAR runtime
+## 2. Agents: intent, orchestration, manifests
 
-The **PGAR Blueprint** and playbook series implement [Policy-Governed Agent Runtime](/insights/policy-governed-agent-runtime): five trust boundaries, PEP/PDP enforcement, audit replay, and domain patterns for tools and RAG.
-
-| | |
-| --- | --- |
-| **[G.A.I.N Agents](/frameworks/gain-agents)** | Principles, policy gate, orchestration — published |
-| **[PGAR Blueprint](/blueprints/pgar-blueprint)** | SARAC contracts, boundaries, release gates — draft |
-| **[Policy-Governed Agent Runtime](/insights/policy-governed-agent-runtime)** | Executive architecture breakdown — published |
-| **[PGAR with RAG](/insights/retrieval-is-a-governed-action)** | Retrieval as governed action — published |
-
-Playbooks: [PGAR Runtime](/playbooks/pgar-runtime) series under [Playbooks](/playbooks).
-
-## Router (three planes)
-
-The **Router Blueprint** covers intent dispatch at ingress, orchestration inside the agent loop, and model selection at the LLM gateway.
-
-| | |
-| --- | --- |
-| **[G.A.I.N Agents](/frameworks/gain-agents)** · **[G.A.I.N LLM](/frameworks/gain-llm)** | Principles for agents and gateway routing — published |
-| **[Router Blueprint](/blueprints/router-blueprint)** | Three planes, playbooks, release gates — draft |
-| **[What Is an Intent Router](/insights/what-is-intent-router)** | Primer — published |
-| **[How to Design an Intent Router](/insights/design-intent-router)** | Decision guide — published |
-
-Playbooks: [Router](/playbooks/router) (Plane ① [Intent router](/playbooks/router/intent-router)) · [PGAR Runtime](/playbooks/pgar-runtime) (Plane ②). Plane ③: [G.A.I.N LLM](/frameworks/gain-llm) (dedicated playbooks planned).
-
-## Autonomy (four patterns)
-
-The **Autonomy Blueprint** standardizes how much next-step freedom a route allows after intent routing: single inference, autonomous loop, deterministic workflow, or guided hybrid. It sits between Router (which route) and PGAR (whether a proposed side effect may run).
+Intent at ingress, orchestration in the loop, versioned manifests (pinned tools, schemas only), four autonomy patterns on the route. Model endpoint selection is the [LLM Blueprint](/blueprints/llm-blueprint). PEP is [Governance](/blueprints/governance/runtime). MCP is transport only.
 
 | | |
 | --- | --- |
 | **[G.A.I.N Agents](/frameworks/gain-agents)** | Principles, policy gate, orchestration: published |
-| **[Autonomy Blueprint](/blueprints/autonomy-blueprint)** | Four patterns, one axis, contracts, control points: draft |
-| **Enterprise AI Workflow Patterns (decision guide)** | When to choose each pattern: draft (local dev) |
+| **[Agents Blueprint](/blueprints/agents-blueprint)** | Intent, orchestration, manifests, Pattern 0-3: draft |
 
-Bridge: [Router Blueprint](/blueprints/router-blueprint) · [PGAR Blueprint](/blueprints/pgar-blueprint). Worked JSON examples stay in the decision guide until published.
+Playbooks: [Agents](/playbooks/agents) (Plane ① [Intent router](/playbooks/agents/intent-router) · Plane ② [Orchestration](/playbooks/agents/orchestration) including [Memory](/playbooks/agents/orchestration/memory) · [Manifests](/playbooks/agents/manifests/manifest-registry)). Patterns: 0 Single inference · 1 Autonomous loop · 2 Deterministic · 3 Guided hybrid.
 
-## Unified observability
+## 3. LLM: gateway model routing
 
-The **Observability Blueprint** and playbook series cover business, service, and infrastructure layers plus the correlation graph for regulated enterprises. The executive insight is in **draft** (local dev only).
+| | |
+| --- | --- |
+| **[G.A.I.N LLM](/frameworks/gain-llm)** | Gateway stack principles: published |
+| **[LLM Blueprint](/blueprints/llm-blueprint)** | Capability matrix, task routing, canary: draft |
+
+Playbooks: [LLM](/playbooks/llm). Handoff from agents: [Inference handoff](/playbooks/agents/orchestration/inference-handoff).
+
+## 4. Governance: operating model and runtime
+
+Two blueprints, one G.A.I.N subject. Operating is the estate control system. Runtime is PGAR on the request path. PGAR gates side effects. It does not own RAG corpora, tool manifests, or the memory store.
+
+| | |
+| --- | --- |
+| **[G.A.I.N Governance](/frameworks/gain-governance)** | Control system: policy, inventory, runtime, evidence: published |
+| **[Governance](/blueprints/governance)** | Two views, one subject: draft |
+| **[Operating](/blueprints/governance/operating)** | Four questions, one control system: draft |
+| **[Runtime](/blueprints/governance/runtime)** | SARAC contracts, five boundaries, release gates: draft |
+
+Playbooks: [Governance](/playbooks/governance) ([Operating](/playbooks/governance/operating) · [Runtime](/playbooks/governance/runtime)). Boundaries: ① Ingress · ② Agentic app · ③ LLM proposal · ④ PEP + PDP · ⑤ Downstream.
+
+## 5. Observability: three layers
 
 | | |
 | --- | --- |
 | **[G.A.I.N Observability](/frameworks/gain-observability)** | AI capture path, retention tiers, audit: published |
 | **[Observability Blueprint](/blueprints/observability-blueprint)** | Three layers, graph, maturity, reference architecture: published |
-| **[AI Observability in Enterprise](/insights/ai-observability-in-enterprise)** | Service-layer AI breakdown: published |
-| **Unified Observability Framework (executive insight)** | Board case for three-layer model: draft |
 
-Playbooks: [Unified Observability](/playbooks/observability) (journeys, golden signals, infra, correlation, governance, maturity, operating model).
+Playbooks: [Observability](/playbooks/observability).
+
+## 6. RAG: governed retrieve
+
+| | |
+| --- | --- |
+| **[G.A.I.N RAG](/frameworks/gain-rag)** | Grounded retrieve, validation, attribution: published |
+| **[RAG Blueprint](/blueprints/rag-blueprint)** | Mode, scope, PEP pack, validate then synthesize: draft |
+
+Playbooks: [RAG](/playbooks/rag). Eval: [Context plane](/playbooks/evaluation/plane-context).
+
+## 7. MCP: transport
+
+| | |
+| --- | --- |
+| **[G.A.I.N MCP](/frameworks/gain-mcp)** | Tool transport, registry, policy gate: published |
+| **[MCP Blueprint](/blueprints/mcp-blueprint)** | Gateway, server registry, adapter (not the catalog): draft |
+
+Playbooks: [MCP](/playbooks/mcp) (transport). Tool contracts: [Agents: Manifests](/playbooks/agents/manifests/manifest-registry). Eval: [Tool plane](/playbooks/evaluation/plane-tool).

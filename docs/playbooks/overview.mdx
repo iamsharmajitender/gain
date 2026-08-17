@@ -2,50 +2,76 @@
 title: Playbooks
 sidebar_label: Overview
 slug: /
-description: Operational guides — gates, schemas, checklists, and plane-specific recipes.
+description: "Operational guides: gates, schemas, checklists, and plane-specific recipes."
 ---
 
 # Playbooks
 
-How to implement — paired with [Blueprints](/blueprints) for reference designs.
+How to implement, paired with [Blueprints](/blueprints) for reference designs. One G.A.I.N subject maps to one blueprint and one playbook series.
 
-## Eval engineering
+## Evaluation
 
-Start with [G.A.I.N Evaluation](/frameworks/gain-evaluation) for principles, then the [Eval Blueprint](/blueprints/eval-blueprint) and the [Eval Engineering overview](/playbooks/eval-engineering).
-
-| Group | Start here | Covers |
-| --- | --- | --- |
-| **Methods** | [Golden datasets](/playbooks/eval-engineering/golden-datasets) | Datasets, synthetic, online, human review, LLM-as-judge |
-| **Planes** | [Input](/playbooks/eval-engineering/plane-input) | Gates for planes ①–⑧ |
-
-## PGAR runtime
-
-Four playbook groups for [Policy-Governed Agent Runtime](/insights/policy-governed-agent-runtime). Start at the [PGAR Runtime overview](/playbooks/pgar-runtime).
+Start with [G.A.I.N Evaluation](/frameworks/gain-evaluation), then the [Eval Blueprint](/blueprints/evaluation-blueprint) and the [Evaluation overview](/playbooks/evaluation).
 
 | Group | Start here | Covers |
 | --- | --- | --- |
-| **Foundation** | [Overview](/playbooks/pgar-runtime/foundation) | SARAC, token custody, PEP/PDP, step-up, audit |
-| **Assurance** | [Policy test scenarios](/playbooks/pgar-runtime/assurance/policy-test-scenarios) | CI authorization cases, adversarial bypass |
-| **Boundary** | [Overview](/playbooks/pgar-runtime/boundary) | Five trust boundaries in request order |
-| **Domain** | [Manifest registry](/playbooks/pgar-runtime/domain/manifest-registry) | Tools, manifests, RAG retrieval |
+| **Methods** | [Golden datasets](/playbooks/evaluation/golden-datasets) | Datasets, synthetic, online, human review, LLM-as-judge |
+| **Planes** | [Input](/playbooks/evaluation/plane-input) | Gates for planes ①-⑧ |
 
-Also see [PGAR Blueprint](/blueprints/pgar-blueprint) for the reference design. Bridge reading: [PGAR with RAG](/insights/retrieval-is-a-governed-action). Eval overlap: [Action plane](/playbooks/eval-engineering/plane-action) and [Tool plane](/playbooks/eval-engineering/plane-tool).
+## Agents
 
-## Router
+[G.A.I.N Agents](/frameworks/gain-agents). Start at the [Agents overview](/playbooks/agents).
 
-Three planes for the [Router Blueprint](/blueprints/router-blueprint). Start at the [Router overview](/playbooks/router).
-
-| Plane | Start here | Covers |
+| Group | Start here | Covers |
 | --- | --- | --- |
-| **Intent router (Plane ①)** | [Overview](/playbooks/router/intent-router) | Route table, classifier, wire app, routing eval CI |
-| **Orchestration (Plane ②)** | [PGAR Runtime](/playbooks/pgar-runtime) | Agent loop, PEP/PDP, manifests |
-| **Model routing (Plane ③)** | [G.A.I.N LLM](/frameworks/gain-llm) | Gateway profiles (dedicated playbooks planned) |
+| **Intent router** | [Overview](/playbooks/agents/intent-router) | Route table, classifier, event bind, wire app, routing eval CI |
+| **Orchestration** | [Overview](/playbooks/agents/orchestration) | Durable run pin, memory, autonomy shape, inference handoff |
+| **Manifests** | [Registry](/playbooks/agents/manifests/manifest-registry) | Tool contract, `pdp_action`, version, pin |
 
-Also see [Router Blueprint](/blueprints/router-blueprint). Bridge reading: [What Is an Intent Router](/insights/what-is-intent-router). Plane ② detail: [PGAR Runtime](/playbooks/pgar-runtime).
+Also see [Agents Blueprint](/blueprints/agents-blueprint). PEP: [Runtime](/playbooks/governance/runtime).
 
-## Unified observability
+## LLM
 
-Business, service, and infrastructure observability with a shared correlation graph. Start at [Unified Observability overview](/playbooks/observability).
+[G.A.I.N LLM](/frameworks/gain-llm). Start at the [LLM overview](/playbooks/llm).
+
+| Playbook | Covers |
+| --- | --- |
+| **[Capability matrix](/playbooks/llm/capability-matrix)** | Approved endpoints per profile, task, data class, region |
+| **[Gateway task routing](/playbooks/llm/gateway-task-routing)** | Plan vs synthesize vs classify; failover, cost, abstain |
+| **[Canary promotion](/playbooks/llm/canary-promotion)** | Eval-gated model swap and rollback |
+
+Also see [LLM Blueprint](/blueprints/llm-blueprint). Handoff from agents: [Inference handoff](/playbooks/agents/orchestration/inference-handoff).
+
+## Governance
+
+[G.A.I.N Governance](/frameworks/gain-governance). Start at the [Governance overview](/playbooks/governance).
+
+| Group | Start here | Covers |
+| --- | --- | --- |
+| **Operating** | [Overview](/playbooks/governance/operating) | Inventory, obligation-to-control map, go-live evidence pack |
+| **Runtime** | [Overview](/playbooks/governance/runtime) | Foundation, assurance, five boundaries |
+
+Also see [Governance blueprints](/blueprints/governance) ([Operating](/blueprints/governance/operating) · [Runtime](/blueprints/governance/runtime)). Eval overlap: [Action plane](/playbooks/evaluation/plane-action).
+
+## RAG
+
+[G.A.I.N RAG](/frameworks/gain-rag). Start at the [RAG overview](/playbooks/rag).
+
+| Playbook | Covers |
+| --- | --- |
+| **[RAG retrieval](/playbooks/rag/retrieval)** | Prefetch vs tool, scope, PEP pack, validation |
+
+Also see [RAG Blueprint](/blueprints/rag-blueprint). Eval: [Context plane](/playbooks/evaluation/plane-context).
+
+## MCP
+
+[G.A.I.N MCP](/frameworks/gain-mcp). Start at the [MCP overview](/playbooks/mcp). MCP is transport. Tool contracts live under [Agents: Manifests](/playbooks/agents/manifests/manifest-registry).
+
+Also see [MCP Blueprint](/blueprints/mcp-blueprint) (transport) · [Agents Blueprint](/blueprints/agents-blueprint) (manifests). Eval: [Tool plane](/playbooks/evaluation/plane-tool).
+
+## Observability
+
+[G.A.I.N Observability](/frameworks/gain-observability). Start at [Observability overview](/playbooks/observability).
 
 | Playbook | Covers |
 | --- | --- |
@@ -54,7 +80,7 @@ Business, service, and infrastructure observability with a shared correlation gr
 | **[Service signals](/playbooks/observability/service-golden-signals)** | Golden signals, traces, SLIs |
 | **[Infrastructure](/playbooks/observability/infrastructure-telemetry)** | Resource health linked to services |
 | **[Correlation graph](/playbooks/observability/correlation-graph)** | KPI → trace → infra |
-| **[Maturity](/playbooks/observability/maturity-assessment)** | L0–L5 assessment |
+| **[Maturity](/playbooks/observability/maturity-assessment)** | L0-L5 assessment |
 | **[Operating model](/playbooks/observability/operating-model)** | RACI and cadence |
 
-Also see [Observability Blueprint](/blueprints/observability-blueprint) and [G.A.I.N Observability](/frameworks/gain-observability) for AI depth.
+Also see [Observability Blueprint](/blueprints/observability-blueprint).

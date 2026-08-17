@@ -102,7 +102,7 @@ export const advisoryCaseStudies: AdvisoryCaseStudy[] = [
   },
   {
     title: 'Mortgage Factory',
-    outcome: 'Designed automated home loan workflow: unconditional approval from days to ~1 hour',
+    outcome: 'Designed and architected automated home loan workflow: unconditional approval from days to ~1 hour',
     domain: 'banking',
   },
   {

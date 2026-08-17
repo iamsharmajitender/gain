@@ -1,0 +1,42 @@
+---
+description: Insights may link to G.A.I.N, blueprints, and playbooks; those docs must not link to insights
+globs: docs/**/*.mdx
+alwaysApply: false
+---
+
+# Docs link direction
+
+Insights are commentary. G.A.I.N, blueprints, and playbooks are the durable product docs. Links go **from insights into product docs**, never the reverse.
+
+| Source | May link to `/insights/…` | May link to G.A.I.N / blueprints / playbooks |
+| --- | --- | --- |
+| **Insights** (`docs/insights/`) | Yes (other published insights) | Yes |
+| **G.A.I.N** (`docs/frameworks/`) | **No** | Yes |
+| **Blueprints** (`docs/blueprints/`) | **No** | Yes |
+| **Playbooks** (`docs/playbooks/`) | **No** | Yes |
+
+Draft targets are a separate ban: `.cursor/rules/no-links-to-draft-articles.mdc`.
+
+## Do
+
+```markdown
+# Insight → product docs (allowed)
+Full reference: [Agents Blueprint](/blueprints/agents-blueprint).
+How-to: [Autonomy shape](/playbooks/agents/orchestration/autonomy-shape).
+Principles: [G.A.I.N Agents](/frameworks/gain-agents).
+```
+
+## Do not
+
+```markdown
+# G.A.I.N / blueprint / playbook → insight (forbidden)
+Decision guide: [Enterprise AI Workflow Patterns](/insights/enterprise-ai-workflow-patterns-autonomy-vs-control)
+```
+
+Keep the same idea as plain text, or link a product-doc page instead.
+
+## Before finishing
+
+1. New or edited `docs/frameworks/**`, `docs/blueprints/**`, `docs/playbooks/**`: no `/insights/` hrefs.
+2. New or edited insights: outbound `/frameworks/`, `/blueprints/`, `/playbooks/` is fine.
+3. Do not add inbound links to an insight from G.A.I.N, blueprints, or playbooks (including `remove-draft` suggestions).

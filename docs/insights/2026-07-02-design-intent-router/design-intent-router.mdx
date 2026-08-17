@@ -23,7 +23,7 @@ import Details from '@theme/Details';
 
 You know you need an intent router — see [What Is an Intent Router](/insights/what-is-intent-router) for why it is not optional in agentic systems. The design question is harder: **how few routes can you ship**, **how do you classify reliably**, and **how do you gate changes** so routing does not become the silent source of production incidents?
 
-This is a **decision guide** for intent router design — route contracts, layered dispatch, uncertainty handling, and eval integration — aligned with [G.A.I.N Agents](/frameworks/gain-agents) and the [Eval Input plane](/playbooks/eval-engineering/plane-input).
+This is a **decision guide** for intent router design — route contracts, layered dispatch, uncertainty handling, and eval integration — aligned with [G.A.I.N Agents](/frameworks/gain-agents) and the [Eval Input plane](/playbooks/evaluation/plane-input).
 
 :::tip[THE CLAIM]
 **Design the route table before the classifier.** Intents are business contracts — tool manifests, policy profiles, model paths — not labels you discover after the agent is built. The router implements the table; it does not invent it.
@@ -37,124 +37,49 @@ This is a **decision guide** for intent router design — route contracts, layer
 - **Use a layered router**: eligible routes → rules → classifier → LLM fallback → safety. Top-k + user pick only when ambiguous or high-risk, not every turn.
 - **Treat clarify and abstain as first-class outcomes**, not errors.
 - **Respect session stickiness** — mid-flow utterances inherit route context.
-- **Gate every routing change** with a golden eval set in CI — same discipline as [Eval Plane ①: Input](/playbooks/eval-engineering/plane-input).
+- **Gate every routing change** with a golden eval set in CI — same discipline as [Eval Plane ①: Input](/playbooks/evaluation/plane-input).
 
 ## Step 1 — Define the route table
 
 Before writing classification code, write the **route contract** for each path. Every row is a row in your capability matrix.
 
-| Field | Example | Why it matters |
+**Source of truth for fields and JSON shapes:** [Route contract reference](/playbooks/agents/intent-router/route-contract-reference) (playbook). Ops (version, promote, rollback): [Route table lifecycle](/playbooks/agents/intent-router/route-table-lifecycle).
+
+Summary of what each row must decide:
+
+| Concern | Typical fields |
+| --- | --- |
+| Identity | `route_id`, `intent` / `intent_label`, `description` |
+| Capability | `tool_manifest`, `model_profile`, optional `workflow_id` |
+| Governance | `policy_profile`, optional `retrieval`, optional `memory_profile` |
+| Artifacts | `prompt_id`, `output_schema_id`, `eval_suite_id` |
+| Bounds | `max_loop_steps`, `fallback`, `required_claims` |
+
+`retrieval.mode` is how RAG sits on the route without changing the autonomy pattern:
+
+| `mode` | Who retrieves | Typical pattern |
 | --- | --- | --- |
-| `route_id` | `agent-payments-v2` | Versioned; tied to change records |
-| `intent_label` | `payment_initiate` | Eval fixture target |
-| `description` | Initiate outbound transfer | Human-readable scope |
-| `tool_manifest` | `payments-readwrite-v3` | Schemas the LLM may propose |
-| `policy_profile` | `high_risk_step_up` | PEP rules, limits, attestation |
-| `model_profile` | `reasoning-standard` | Capability and cost tier |
-| `retrieval_scope` | `policy-engine,accounts` | RAG corpora if applicable |
-| `max_loop_steps` | `8` | Bounds plan → act → observe |
-| `fallback` | `clarify` or `escalate_human` | When entities missing or OOD |
-
-<Details summary="Route table (JSON) — versioned route contracts">
-
-One published artifact: table metadata plus one object per route row. References (`tool_manifest`, `policy_profile`) point at versioned stores elsewhere; entitlements are enforced at runtime from ingress claims, not stored per user.
-
-```json
-{
-  "route_table_version": "2026.07.1",
-  "product": "corporate-assistant",
-  "routes": [
-    {
-      "route_id": "agent-account-v3",
-      "intent_label": "account_history",
-      "description": "Read-only account and transaction history",
-      "tool_manifest": "accounts-readonly-v2",
-      "policy_profile": "read_only_standard",
-      "model_profile": "reasoning-standard",
-      "retrieval_scope": ["accounts"],
-      "max_loop_steps": 6,
-      "fallback": "clarify",
-      "required_claims": ["accounts:read"]
-    },
-    {
-      "route_id": "agent-payments-v2",
-      "intent_label": "payment_initiate",
-      "description": "Initiate outbound transfer",
-      "tool_manifest": "payments-readwrite-v3",
-      "policy_profile": "high_risk_step_up",
-      "model_profile": "reasoning-standard",
-      "retrieval_scope": ["policy-engine", "accounts"],
-      "max_loop_steps": 8,
-      "fallback": "escalate_human",
-      "required_claims": ["payments:initiate"]
-    },
-    {
-      "route_id": "agent-policy-qa-v1",
-      "intent_label": "policy_qa",
-      "description": "Policy and procedure Q&A via RAG",
-      "tool_manifest": "rag-readonly-v1",
-      "policy_profile": "read_only_standard",
-      "model_profile": "reasoning-standard",
-      "retrieval_scope": ["policy-engine"],
-      "max_loop_steps": 4,
-      "fallback": "clarify",
-      "required_claims": ["policy:read"]
-    },
-    {
-      "route_id": "agent-chat-v1",
-      "intent_label": "general_chat",
-      "description": "Lightweight chat with no tools",
-      "tool_manifest": "none",
-      "policy_profile": "low_risk_chat",
-      "model_profile": "lightweight-chat",
-      "retrieval_scope": [],
-      "max_loop_steps": 2,
-      "fallback": "clarify",
-      "required_claims": []
-    },
-    {
-      "route_id": "agent-escalate-v1",
-      "intent_label": "escalate_human",
-      "description": "Hand off to human agent",
-      "tool_manifest": "handoff-v1",
-      "policy_profile": "read_only_standard",
-      "model_profile": "lightweight-chat",
-      "retrieval_scope": [],
-      "max_loop_steps": 3,
-      "fallback": "clarify",
-      "required_claims": []
-    }
-  ]
-}
-```
-
-</Details>
+| omit / `none` | Nobody | Chat, handoff, no knowledge path |
+| `deterministic_prefetch` | Agentic app, before the LLM. Model never sees retrieve tools. | [Pattern 0](/blueprints/agents-blueprint) (or Pattern 2 if you name `retrieve → generate` as a fixed workflow) |
+| `tool` | LLM may propose retrieve inside `scope`. PEP still gates the action. | [Patterns 1-3](/blueprints/agents-blueprint) |
 
 Example starter routes for a regulated assistant:
 
 | Intent | User example | Manifest family |
 | --- | --- | --- |
-| `account_history` | “Show my last three wires” | Read-only account tools |
-| `payment_initiate` | “Send $500 to Acme Corp” | Payment tools + PEP step-up |
-| `policy_qa` | “What is our refund policy?” | RAG-only, no side effects |
-| `general_chat` | “Thanks, that helped” | No tools, lightweight model |
-| `escalate_human` | “I need a supervisor” | Handoff workflow |
+| `account_history` | "Show my last three wires" | Read-only account tools |
+| `payment_initiate` | "Send $500 to Acme Corp" | Payment tools + PEP step-up |
+| `policy_qa` | "What is our refund policy?" | Prefetch RAG, no tools |
+| `general_chat` | "Thanks, that helped" | No tools, lightweight model |
+| `escalate_human` | "I need a supervisor" | Handoff workflow |
 
 :::important[Ask before you ship]
 **Can this route be distinguished from the others by tools and policy alone?** If two routes share the same manifest and profile, merge them until they differ.
 :::
 
-**Logical table, versioned platform config.** Each row is a route contract; storage is an ops choice. Same discipline as [manifest lifecycle](/playbooks/pgar-runtime/domain/manifest-lifecycle): version id, CI on change, pin `route_table_version` per session, audit on every decision. **Eligible routes** are not a second store: ingress claims filter the table at request time.
+**Logical table, versioned platform config.** Each row is a route contract; storage is an ops choice. Same discipline as [manifest lifecycle](/playbooks/agents/manifests/manifest-lifecycle): version id, CI on change, pin `route_table_version` per session, audit on every decision. **Eligible routes** are not a second store: ingress claims filter the table at request time. Storage patterns and promote/rollback: [Route table lifecycle](/playbooks/agents/intent-router/route-table-lifecycle).
 
-| Pattern | Maintain where | Regulated fit |
-| --- | --- | --- |
-| **GitOps + object storage** | YAML/JSON in Git; publish immutable artifact (S3/GCS) | Strong: PR review, immutable releases, rollback via `active` pointer |
-| **Route registry API** | Platform service; Git or approved UI as source | Strong: runtime rollback, multi-tenant, natural `route_table_version` audit |
-| **Versioned file in repo** | `platform/routes/{product}/2026.07.1.yaml` | Good pilot / single team; rollback often needs redeploy |
-| **Config service** | Consul, AppConfig, etc. | OK if your stack already has versioned, audited config |
-| **Hardcoded in app code** | Python/TS dict | Demos only; not production PGAR |
-
-Row fields reference other artifacts by id (`tool_manifest`, `policy_profile`); those live in their own versioned stores. Do not put entitlements in the route table; the router intersects claims from ingress with route requirements.
+Row fields reference other artifacts by id (`tool_manifest`, `policy_profile`, `memory_profile`); those live in their own versioned stores. Do not put entitlements in the route table; the router intersects claims from ingress with route requirements.
 
 ## Step 2 — Classify in layers
 
@@ -197,7 +122,7 @@ flowchart LR
 | **① Rules** | Every turn | Explicit commands, channel routing, **session stickiness** | Mid-flow utterances (“yes”, “the second one”, “$500”) stay on the active route; do not re-classify from scratch |
 | **② Classifier** | No rule match | Small model or kNN on **your** golden set; fixed label set | Target most clear traffic here in &lt;50ms; auto-route when confidence meets threshold (Step 3) |
 | **③ LLM router** | Low confidence only | Structured JSON: pick from **fixed** `route_id` list, extract entities, flag `needs_clarification` | Fallback only, not every turn. May return top 3 options for user pick when ambiguous or high-risk (`payment_initiate`); manifest loads after selection |
-| **④ Safety** | Always, after any layer | Injection scan, PII handling, block or force a safe route | Can **veto** a confident classification; [Input plane](/playbooks/eval-engineering/plane-input) requires **100%** adversarial pass before release |
+| **④ Safety** | Always, after any layer | Injection scan, PII handling, block or force a safe route | Can **veto** a confident classification; [Input plane](/playbooks/evaluation/plane-input) requires **100%** adversarial pass before release |
 
 :::tip[Why session stickiness matters]
 Most follow-up turns in a multi-step flow are **continuations**, not new intents. Short replies like "yes", "$500", or "the second one" carry almost no standalone intent signal. Re-classifying every turn invites silent misroutes (for example, `general_chat` for "yes" mid-wire). Stickiness keeps the active `route_id` and partial `entities` in session state so Layer ① resolves continuations **deterministically**, without another classifier call or confidence lottery.
@@ -253,14 +178,16 @@ Align with Input plane trace fields: `raw_input`, `normalized_input`, `intent_sc
 
 ## Step 5 — Wire into the agentic app
 
-The router sits **outside** the plan → act → observe loop. The [agentic app](/playbooks/pgar-runtime/boundary/agentic-app) consumes the route contract:
+The router sits **outside** the plan → act → observe loop. The [agentic app](/playbooks/governance/runtime/boundary/agentic-app) consumes the route contract:
 
 1. Receive user message from ingress
 2. **Call intent router** → get route decision
 3. On `clarify` / `abstain` → return UX response; do not call LLM with tools
-4. On `route` → load pinned **tool manifest** for `route_id`
-5. Call LLM with messages + **scoped schemas only**
-6. On tool proposal → validate against manifest → PEP → downstream
+4. On `route` → pin `route_table_version` (and `manifest_version` if `tool_manifest` is not `none`)
+5. If `retrieval.mode` is `deterministic_prefetch` → agentic app retrieves inside `scope` (PEP-gated), then **one** LLM call with no tool schemas
+6. Else if `tool_manifest` is `none` → one LLM call with no tool schemas
+7. Else → load pinned **tool manifest** for `route_id`; call LLM with messages + **scoped schemas only**
+8. On tool proposal → validate against manifest → PEP → downstream
 
 The LLM never sees tools from routes that were not selected. This is the same boundary as PGAR: proposal is not permission, and **manifest scope is not negotiable**.
 
@@ -268,26 +195,32 @@ The LLM never sees tools from routes that were not selected. This is the same bo
 flowchart LR
     Router["Intent router<br/>route contract"]
     App["Agentic app"]
-    Manifest["Tool manifest<br/>for route_id"]
-    LLM["LLM<br/>propose only"]
+    Pin["Route pin"]
+    Prefetch["Optional prefetch"]
+    Manifest["Tool manifest<br/>if any"]
+    LLM["LLM"]
     PEP["PEP + PDP"]
 
     Router --> App
-    App --> Manifest
+    App --> Pin
+    Pin --> Prefetch
+    Prefetch --> LLM
+    Pin --> Manifest
     Manifest --> LLM
-    LLM -->|"tool proposal"| App
+    LLM -->|"tool proposal if any"| App
     App --> PEP
 
     classDef gate fill:#ffedd5,stroke:#fdba74,color:#1e293b,stroke-width:2px
     classDef process fill:#ede9fe,stroke:#c4b5fd,color:#1e293b,stroke-width:2px
 
     class Router,PEP gate
-    class App,Manifest,LLM process
+    class App,Pin,Prefetch,Manifest,LLM process
 ```
+<br/>
 
 ## Step 6 — Build the eval suite in parallel
 
-Do not ship routing without a golden set. Minimum coverage per [Eval Input plane](/playbooks/eval-engineering/plane-input):
+Do not ship routing without a golden set. Minimum coverage per [Eval Input plane](/playbooks/evaluation/plane-input):
 
 | Scenario type | Example | Expected |
 | --- | --- | --- |
@@ -304,7 +237,7 @@ Do not ship routing without a golden set. Minimum coverage per [Eval Input plane
 - Zero PII-in-context violations on compliance subset
 - Confusion matrix reviewed for high-risk route pairs (`payment_initiate` vs `account_history`)
 
-Every production misroute becomes a permanent fixture. That is how routing quality compounds — the same principle as eval coverage on the [Eval Input plane](/playbooks/eval-engineering/plane-input).
+Every production misroute becomes a permanent fixture. That is how routing quality compounds — the same principle as eval coverage on the [Eval Input plane](/playbooks/evaluation/plane-input).
 
 ## Step 7 — Operate and evolve
 
@@ -334,7 +267,7 @@ Use canary routing for classifier model changes — same pattern as [G.A.I.N LLM
 
 Before calling the router done:
 
-- [ ] Route table documented with manifest, policy, and model per row
+- [ ] Route table documented per [Route contract reference](/playbooks/agents/intent-router/route-contract-reference) (manifest, policy, model, `retrieval`, `memory_profile` where needed)
 - [ ] Layered router implemented (rules + classifier + optional LLM fallback)
 - [ ] Safety gate with adversarial eval at 100%
 - [ ] Confidence thresholds per risk tier
@@ -346,7 +279,7 @@ Before calling the router done:
 
 ## Key takeaways
 
-- **Write the route table before the classifier:** each row binds manifest, policy profile, model path, and eval fixtures.
+- **Write the route table before the classifier:** each row binds manifest, policy profile, model path, optional `retrieval`, and eval fixtures.
 - **Layer dispatch:** eligible routes → rules → classifier → LLM fallback → safety; top-k + user pick for ambiguous or high-risk paths only.
 - **Tune confidence by risk tier:** payment routes need higher bars than general chat; session stickiness inherits mid-flow context.
 - **Emit a route decision record on every request:** without trace fields, misroutes cannot become regression tests.
@@ -354,5 +287,5 @@ Before calling the router done:
 - **Gate every routing change in CI:** adversarial 100%, representative ≥95%, production incidents as permanent fixtures.
 
 :::info[Builds on]
-[Router Blueprint](/blueprints/router-blueprint) · [What Is an Intent Router](/insights/what-is-intent-router) · [G.A.I.N Agents](/frameworks/gain-agents) · [Eval Plane ①: Input](/playbooks/eval-engineering/plane-input) · [PGAR Boundary ②: Agentic App](/playbooks/pgar-runtime/boundary/agentic-app)
+[Agents Blueprint](/blueprints/agents-blueprint) · [Route contract reference](/playbooks/agents/intent-router/route-contract-reference) · [Route table lifecycle](/playbooks/agents/intent-router/route-table-lifecycle) · [What Is an Intent Router](/insights/what-is-intent-router) · [G.A.I.N Agents](/frameworks/gain-agents) · [Eval Plane ①: Input](/playbooks/evaluation/plane-input) · [PGAR Boundary ②: Agentic App](/playbooks/governance/runtime/boundary/agentic-app)
 :::

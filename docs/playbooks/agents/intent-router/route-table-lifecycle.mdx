@@ -1,0 +1,79 @@
+---
+slug: /agents/intent-router/route-table-lifecycle
+title: "Route Table Lifecycle"
+sidebar_label: Route table lifecycle
+description: Where route contracts live, how to version and promote them, entitlement requirements per row, and rollback in regulated environments.
+tags:
+  - ai-intelligence
+  - arch
+  - gain
+  - agents
+---
+
+# Route Table Lifecycle
+
+[Blueprint](/blueprints/agents-blueprint) · [← Route contract](/playbooks/agents/intent-router/route-contract-reference) · **Lifecycle** · [Layered classifier →](/playbooks/agents/intent-router/layered-classifier)
+
+Field dictionary: [Route contract reference](/playbooks/agents/intent-router/route-contract-reference). This page is **operations**: version, store, promote, roll back. Same discipline as [manifest lifecycle](/playbooks/agents/manifests/manifest-lifecycle).
+
+:::tip[THE CLAIM]
+**Design the route table before the classifier.** Intents are business contracts, not labels you discover after the agent ships.
+:::
+
+<!-- truncate -->
+
+## Non-negotiables
+
+| Requirement | Why |
+| --- | --- |
+| **Version id** (`2026.07.1`) | Examiners ask which route contract was active |
+| **Pin per session** | Mid-session route table swap breaks replay |
+| **Router loads; LLM never owns table** | Descriptions are not negotiable prompt text |
+| **CI on change** | Golden intent set blocks regression |
+| **Audit** | `route_table_version` on every route decision |
+
+## Storage patterns
+
+| Pattern | Maintain where | Regulated fit |
+| --- | --- | --- |
+| **GitOps + object storage** | YAML in Git; publish to S3/GCS | Strong: PR review, immutable artifacts |
+| **Route registry API** | Platform service | Strong: runtime rollback, multi-tenant |
+| **Versioned file in repo** | `platform/routes/{product}/2026.07.1.yaml` | Good pilot; rollback may need redeploy |
+| **Config service** | Consul, AppConfig | OK if versioning and audit already exist |
+| **Hardcoded in app** | Code dict | Demos only |
+
+Row fields (`tool_manifest`, `policy_profile`, `retrieval`, `memory_profile`, …) are defined in [Route contract reference](/playbooks/agents/intent-router/route-contract-reference). Entitlements live in IdP claims, not in the table.
+
+## Typical layout
+
+```text
+platform/routes/
+  corporate-assistant/
+    2026.07.1.yaml
+    2026.08.1.yaml
+  active → 2026.07.1
+```
+
+## Release and rollback
+
+| Event | Action |
+| --- | --- |
+| **New route row** | Bump version; add eval fixtures; CI pass |
+| **Promote** | Repoint `active` pointer |
+| **Rollback** | Repoint to prior version; no classifier redeploy if using registry |
+| **Audit** | Log `route_table_version`, `eligible_routes`, `route_id` |
+
+See [Routing eval CI](/playbooks/agents/intent-router/routing-eval-ci) for gates.
+
+## Anti-patterns
+
+| Anti-pattern | Why it fails |
+| --- | --- |
+| Route table only in LLM prompt | Not enforceable; injection can rewrite |
+| Per-instance ad hoc routes | Drift; no replay |
+| No `route_table_version` in logs | Examiners cannot identify active contract |
+| Entitlements stored per user in route table | Stale; use ingress claims + filter at runtime |
+
+## Read next
+
+**[Layered classifier →](/playbooks/agents/intent-router/layered-classifier)**

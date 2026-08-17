@@ -1,14 +1,14 @@
 ---
-description: Add <br/> after every mermaid diagram in docs (docs/**/*.mdx)
+description: Add <br/> after every mermaid diagram in docs, and color nodes with classDef (docs/**/*.mdx)
 globs: docs/**/*.mdx
 alwaysApply: false
 ---
 
-# Mermaid spacing in docs
+# Mermaid spacing and color in docs
 
-When writing or editing `docs/**/*.mdx`, add **`<br/>`** on its own line immediately after every ` ```mermaid ` closing fence.
+When writing or editing `docs/**/*.mdx`, add **`<br/>`** on its own line immediately after every ` ```mermaid ` closing fence, and **color every node** with `classDef` (do not ship grey default mermaid).
 
-Reference: `docs/frameworks/gain-mcp.mdx`, `docs/blueprints/router-blueprint.mdx`.
+Reference: `docs/frameworks/gain-mcp.mdx`, `docs/insights/2026-08-05-one-agent-routes-vs-specialized-agents/one-agent-routes-vs-specialized-agents.mdx`.
 
 ## Required pattern (bare mermaid)
 
@@ -37,6 +37,35 @@ When the fence is inside `<div className="gain-mermaid">`, put `<br/>` after `</
 
 Optional `<br/>` before the wrapper is fine for top spacing. **After** the diagram is required.
 
+## Color nodes (`classDef`)
+
+Unstyled mermaid is grey. Assign a role to every node. Reuse this palette; do not invent a new hex set per page.
+
+| Role | Typical nodes | `classDef` |
+| --- | --- | --- |
+| Actor / input | User, client, request | `fill:#dbeafe,stroke:#93c5fd,color:#1e293b,stroke-width:2px` |
+| Gate | Router, policy, PEP, safety | `fill:#ffedd5,stroke:#fdba74,color:#1e293b,stroke-width:2px` |
+| Process | Routes, agents, LLM, runtime steps | `fill:#ede9fe,stroke:#c4b5fd,color:#1e293b,stroke-width:2px` |
+| Shared / platform | Shared runtime, policy platform, state | `fill:#dcfce7,stroke:#86efac,color:#1e293b,stroke-width:2px` |
+| Action / source | Tool execution, catalogs, sources | `fill:#fef3c7,stroke:#fcd34d,color:#1e293b,stroke-width:2px` |
+
+    [mermaid fence open]
+    flowchart TB
+        User["① User"] --> Router["② Intent Router"]
+        Router --> Runtime["③ Shared runtime"]
+
+        classDef actor fill:#dbeafe,stroke:#93c5fd,color:#1e293b,stroke-width:2px
+        classDef gate fill:#ffedd5,stroke:#fdba74,color:#1e293b,stroke-width:2px
+        classDef runtime fill:#dcfce7,stroke:#86efac,color:#1e293b,stroke-width:2px
+
+        class User actor
+        class Router gate
+        class Runtime runtime
+    [mermaid fence close]
+    <br/>
+
+Map with `class NodeName role`. Insights use a bare mermaid fence. Framework pages may wrap in `<div className="gain-mermaid">`.
+
 ## Do not add
 
 - `<br/>` inside the mermaid fence (breaks the diagram).
@@ -45,4 +74,5 @@ Optional `<br/>` before the wrapper is fine for top spacing. **After** the diagr
 ## Before finishing
 
 1. Every ` ```mermaid ` block in changed `.mdx` files has `<br/>` after the closing fence (or after `</div>` when wrapped).
-2. When editing a section with mermaid, fix spacing on blocks you touch; do not bulk-rewrite unrelated diagrams.
+2. Every node in those diagrams has a `classDef` color (no grey defaults).
+3. When editing a section with mermaid, fix spacing and color on blocks you touch; do not bulk-rewrite unrelated diagrams.

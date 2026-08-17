@@ -1,8 +1,10 @@
 ---
 name: remove-draft
 description: >-
-  Publish a draft insight by scanning docs/ for inbound link opportunities,
-  presenting suggestions only, then applying changes after explicit user approval.
+  Publish a draft insight by scanning other insights for inbound link
+  opportunities, presenting suggestions only, then applying changes after
+  explicit user approval. G.A.I.N, blueprints, and playbooks must not link to
+  insights.
   Use when the user says "remove draft", "publish insight", "take out of draft",
   invokes /remove-draft or @remove-draft, or asks where links can be added after
   publishing an insight article.
@@ -18,7 +20,7 @@ disable-model-invocation: true
 
 On-demand workflow. **Never edit files in Phase 1.** Only suggest. Apply changes in Phase 2 after explicit user approval.
 
-Related rule: `.cursor/rules/no-links-to-draft-articles.mdc` (why inbound links were blocked while draft).
+Related rules: `.cursor/rules/no-links-to-draft-articles.mdc` (why inbound links were blocked while draft); `.cursor/rules/docs-link-direction.mdc` (only other insights may link here).
 
 ## Phase 1 — Suggest only (no edits)
 
@@ -29,9 +31,9 @@ Related rule: `.cursor/rules/no-links-to-draft-articles.mdc` (why inbound links 
 
 Record: **file path**, **slug**, **title**, **tags**, **description**, article type (from `insights-article-structure` rule).
 
-### 2. Scan `docs/` for link opportunities
+### 2. Scan other insights for link opportunities
 
-Search the whole `docs/` tree (insights, playbooks, blueprints, frameworks). Grep for:
+Search **`docs/insights/` only**. G.A.I.N, blueprints, and playbooks must not link to insights (`docs-link-direction`). Grep for:
 
 | Signal | Example |
 | --- | --- |

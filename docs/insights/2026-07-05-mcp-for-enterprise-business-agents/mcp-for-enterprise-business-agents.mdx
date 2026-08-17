@@ -138,8 +138,8 @@ An [intent router](/insights/design-intent-router) maps requests to **business r
 | **Agent identity** | Which runtime or agent profile owns the turn | Route / agent profile on the route row |
 | **Tool manifest** | Which tools or APIs this turn may use | `tool_manifest` |
 | **Permissions** | What the agent is authorised to do | `policy_profile` + PEP/PDP ([PGAR](/insights/policy-governed-agent-runtime)) |
-| **Context** | What data and corpora the agent may access | Retrieval scope, entitlements, session claims |
-| **Execution policy** | How the workflow may run (one call, fixed stages, open loop) | Workflow / autonomy pattern ([Autonomy Blueprint](/blueprints/autonomy-blueprint)) |
+| **Context** | What data and corpora the agent may access | `retrieval` (`mode` + `scope`), entitlements, session claims |
+| **Execution policy** | How the workflow may run (one call, fixed stages, open loop) | Workflow / autonomy pattern ([Agents Blueprint](/blueprints/agents-blueprint)) |
 
 Once the route is pinned, the agentic app operates **inside that contract**. The governance boundary sits around the **agent and its execution context**, not in an MCP Gateway that rediscovers tools after the fact.
 
@@ -321,5 +321,5 @@ Separate agent governance from integration protocol. Start with the route contra
 - **Platform teams may adopt MCP internally** while business teams continue to see capability registries and domain APIs.
 
 :::info[Builds on]
-[Policy-Governed Agent Runtime](/insights/policy-governed-agent-runtime) · [Design an Intent Router](/insights/design-intent-router) · [Autonomy Blueprint](/blueprints/autonomy-blueprint) · [RAG Is Not a Database](/insights/rag-is-not-a-database) · [G.A.I.N MCP](/frameworks/gain-mcp) · [Agent Identity](/insights/agent-identity)
+[Policy-Governed Agent Runtime](/insights/policy-governed-agent-runtime) · [Design an Intent Router](/insights/design-intent-router) · [Agents Blueprint](/blueprints/agents-blueprint) · [RAG Is Not a Database](/insights/rag-is-not-a-database) · [G.A.I.N MCP](/frameworks/gain-mcp) · [Agent Identity](/insights/agent-identity)
 :::
