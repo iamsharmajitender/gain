@@ -4,10 +4,38 @@
         <title>Jitender Sharma Blog</title>
         <link>https://jitendersharma.dev/insights</link>
         <description>Jitender Sharma Blog</description>
-        <lastBuildDate>Thu, 06 Aug 2026 00:00:00 GMT</lastBuildDate>
+        <lastBuildDate>Mon, 17 Aug 2026 00:00:00 GMT</lastBuildDate>
         <docs>https://validator.w3.org/feed/docs/rss2.html</docs>
         <generator>https://github.com/jpmonette/feed</generator>
         <language>en</language>
+        <item>
+            <title><![CDATA[Enterprise AI Workflow Patterns: Autonomy vs Control]]></title>
+            <link>https://jitendersharma.dev/insights/enterprise-ai-workflow-patterns-autonomy-vs-control</link>
+            <guid>https://jitendersharma.dev/insights/enterprise-ai-workflow-patterns-autonomy-vs-control</guid>
+            <pubDate>Mon, 17 Aug 2026 00:00:00 GMT</pubDate>
+            <description><![CDATA[Choose between single inference, fully autonomous agents, deterministic workflows, and guided hybrid agents. Comparison matrix, JSON contracts, and when to escalate from one call to a full agent.]]></description>
+            <content:encoded><![CDATA[Choose between single inference, fully autonomous agents, deterministic workflows, and guided hybrid agents. Comparison matrix, JSON contracts, and when to escalate from one call to a full agent.]]></content:encoded>
+            <category>AI &amp; Intelligence</category>
+            <category>Architecture</category>
+            <category>Agents</category>
+            <category>RAG</category>
+            <category>Policy</category>
+            <category>Compliance</category>
+            <category>G.A.I.N</category>
+        </item>
+        <item>
+            <title><![CDATA[One Agent with Routes vs Specialized Agents: When to Split]]></title>
+            <link>https://jitendersharma.dev/insights/one-agent-routes-vs-specialized-agents</link>
+            <guid>https://jitendersharma.dev/insights/one-agent-routes-vs-specialized-agents</guid>
+            <pubDate>Sat, 15 Aug 2026 00:00:00 GMT</pubDate>
+            <description><![CDATA[Enterprise agent architecture: when a shared runtime with governed routes is enough, and when different execution boundaries require specialized agents.]]></description>
+            <content:encoded><![CDATA[Enterprise agent architecture: when a shared runtime with governed routes is enough, and when different execution boundaries require specialized agents.]]></content:encoded>
+            <category>AI &amp; Intelligence</category>
+            <category>Architecture</category>
+            <category>Agents</category>
+            <category>Policy</category>
+            <category>G.A.I.N</category>
+        </item>
         <item>
             <title><![CDATA[Agent Identity: Who Is Asking vs Which Software Is Acting]]></title>
             <link>https://jitendersharma.dev/insights/agent-identity</link>
@@ -23,17 +51,6 @@
             <category>G.A.I.N</category>
         </item>
         <item>
-            <title><![CDATA[Spotify Music Discovery: Inverted Index Search Explained]]></title>
-            <link>https://jitendersharma.dev/insights/music-search-inverted-index</link>
-            <guid>https://jitendersharma.dev/insights/music-search-inverted-index</guid>
-            <pubDate>Wed, 05 Aug 2026 00:00:00 GMT</pubDate>
-            <description><![CDATA[System design of inverted index search with a Spotify worked example: catalog vs index, title artist album lyrics postings, autocomplete, fuzzy match, ranking, and play hydration.]]></description>
-            <content:encoded><![CDATA[System design of inverted index search with a Spotify worked example: catalog vs index, title artist album lyrics postings, autocomplete, fuzzy match, ranking, and play hydration.]]></content:encoded>
-            <category>Platforms &amp; Engineering</category>
-            <category>Architecture</category>
-            <category>System Design</category>
-        </item>
-        <item>
             <title><![CDATA[Spotify Music Streaming Pipeline: From Upload to Search and Play]]></title>
             <link>https://jitendersharma.dev/insights/spotify-music-streaming-pipeline</link>
             <guid>https://jitendersharma.dev/insights/spotify-music-streaming-pipeline</guid>
@@ -44,6 +61,17 @@
             <category>Architecture</category>
             <category>System Design</category>
             <category>Observability</category>
+        </item>
+        <item>
+            <title><![CDATA[Spotify Music Discovery: Inverted Index Search Explained]]></title>
+            <link>https://jitendersharma.dev/insights/music-search-inverted-index</link>
+            <guid>https://jitendersharma.dev/insights/music-search-inverted-index</guid>
+            <pubDate>Wed, 05 Aug 2026 00:00:00 GMT</pubDate>
+            <description><![CDATA[System design of inverted index search with a Spotify worked example: catalog vs index, title artist album lyrics postings, autocomplete, fuzzy match, ranking, and play hydration.]]></description>
+            <content:encoded><![CDATA[System design of inverted index search with a Spotify worked example: catalog vs index, title artist album lyrics postings, autocomplete, fuzzy match, ranking, and play hydration.]]></content:encoded>
+            <category>Platforms &amp; Engineering</category>
+            <category>Architecture</category>
+            <category>System Design</category>
         </item>
         <item>
             <title><![CDATA[After Training an LLM: From Frozen Weights to Token-by-Token Inference]]></title>
@@ -219,30 +247,6 @@
             <pubDate>Tue, 14 Jul 2026 00:00:00 GMT</pubDate>
             <description><![CDATA[TCP is a reliable byte stream with handshake, ACKs, and congestion control. UDP is datagrams with no delivery guarantee. Components, steps, use cases, and which failures people mislabel as app bugs.]]></description>
             <content:encoded><![CDATA[TCP is a reliable byte stream with handshake, ACKs, and congestion control. UDP is datagrams with no delivery guarantee. Components, steps, use cases, and which failures people mislabel as app bugs.]]></content:encoded>
-            <category>Platforms &amp; Engineering</category>
-            <category>Explainer</category>
-            <category>Under the Hood</category>
-            <category>Observability</category>
-        </item>
-        <item>
-            <title><![CDATA[Anycast vs Unicast - Under the Hood]]></title>
-            <link>https://jitendersharma.dev/insights/anycast-vs-unicast-under-the-hood</link>
-            <guid>https://jitendersharma.dev/insights/anycast-vs-unicast-under-the-hood</guid>
-            <pubDate>Mon, 13 Jul 2026 00:00:00 GMT</pubDate>
-            <description><![CDATA[Unicast maps one IP to one place. Anycast maps one IP to many places and lets BGP pick the path. How both work, where DNS and CDNs use them, and which failures look like app bugs.]]></description>
-            <content:encoded><![CDATA[Unicast maps one IP to one place. Anycast maps one IP to many places and lets BGP pick the path. How both work, where DNS and CDNs use them, and which failures look like app bugs.]]></content:encoded>
-            <category>Platforms &amp; Engineering</category>
-            <category>Explainer</category>
-            <category>Under the Hood</category>
-            <category>Observability</category>
-        </item>
-        <item>
-            <title><![CDATA[DNS - Under the Hood]]></title>
-            <link>https://jitendersharma.dev/insights/dns-under-the-hood</link>
-            <guid>https://jitendersharma.dev/insights/dns-under-the-hood</guid>
-            <pubDate>Mon, 13 Jul 2026 00:00:00 GMT</pubDate>
-            <description><![CDATA[DNS is a globally distributed, hierarchical, eventually consistent naming database. Stub, recursive resolver, root, TLD, authoritative name server, caching, TTL, and anycast.]]></description>
-            <content:encoded><![CDATA[DNS is a globally distributed, hierarchical, eventually consistent naming database. Stub, recursive resolver, root, TLD, authoritative name server, caching, TTL, and anycast.]]></content:encoded>
             <category>Platforms &amp; Engineering</category>
             <category>Explainer</category>
             <category>Under the Hood</category>

@@ -2,11 +2,47 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://jitendersharma.dev/insights</id>
     <title>Jitender Sharma Blog</title>
-    <updated>2026-08-06T00:00:00.000Z</updated>
+    <updated>2026-08-17T00:00:00.000Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://jitendersharma.dev/insights"/>
     <subtitle>Jitender Sharma Blog</subtitle>
     <icon>https://jitendersharma.dev/img/favicon.ico</icon>
+    <entry>
+        <title type="html"><![CDATA[Enterprise AI Workflow Patterns: Autonomy vs Control]]></title>
+        <id>https://jitendersharma.dev/insights/enterprise-ai-workflow-patterns-autonomy-vs-control</id>
+        <link href="https://jitendersharma.dev/insights/enterprise-ai-workflow-patterns-autonomy-vs-control"/>
+        <updated>2026-08-17T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[Choose between single inference, fully autonomous agents, deterministic workflows, and guided hybrid agents. Comparison matrix, JSON contracts, and when to escalate from one call to a full agent.]]></summary>
+        <content type="html"><![CDATA[Choose between single inference, fully autonomous agents, deterministic workflows, and guided hybrid agents. Comparison matrix, JSON contracts, and when to escalate from one call to a full agent.]]></content>
+        <author>
+            <name>Jitender Sharma</name>
+            <uri>https://jitendersharma.dev</uri>
+        </author>
+        <category label="AI &amp; Intelligence" term="AI &amp; Intelligence"/>
+        <category label="Architecture" term="Architecture"/>
+        <category label="Agents" term="Agents"/>
+        <category label="RAG" term="RAG"/>
+        <category label="Policy" term="Policy"/>
+        <category label="Compliance" term="Compliance"/>
+        <category label="G.A.I.N" term="G.A.I.N"/>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[One Agent with Routes vs Specialized Agents: When to Split]]></title>
+        <id>https://jitendersharma.dev/insights/one-agent-routes-vs-specialized-agents</id>
+        <link href="https://jitendersharma.dev/insights/one-agent-routes-vs-specialized-agents"/>
+        <updated>2026-08-15T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[Enterprise agent architecture: when a shared runtime with governed routes is enough, and when different execution boundaries require specialized agents.]]></summary>
+        <content type="html"><![CDATA[Enterprise agent architecture: when a shared runtime with governed routes is enough, and when different execution boundaries require specialized agents.]]></content>
+        <author>
+            <name>Jitender Sharma</name>
+            <uri>https://jitendersharma.dev</uri>
+        </author>
+        <category label="AI &amp; Intelligence" term="AI &amp; Intelligence"/>
+        <category label="Architecture" term="Architecture"/>
+        <category label="Agents" term="Agents"/>
+        <category label="Policy" term="Policy"/>
+        <category label="G.A.I.N" term="G.A.I.N"/>
+    </entry>
     <entry>
         <title type="html"><![CDATA[Agent Identity: Who Is Asking vs Which Software Is Acting]]></title>
         <id>https://jitendersharma.dev/insights/agent-identity</id>
@@ -26,21 +62,6 @@
         <category label="G.A.I.N" term="G.A.I.N"/>
     </entry>
     <entry>
-        <title type="html"><![CDATA[Spotify Music Discovery: Inverted Index Search Explained]]></title>
-        <id>https://jitendersharma.dev/insights/music-search-inverted-index</id>
-        <link href="https://jitendersharma.dev/insights/music-search-inverted-index"/>
-        <updated>2026-08-05T00:00:00.000Z</updated>
-        <summary type="html"><![CDATA[System design of inverted index search with a Spotify worked example: catalog vs index, title artist album lyrics postings, autocomplete, fuzzy match, ranking, and play hydration.]]></summary>
-        <content type="html"><![CDATA[System design of inverted index search with a Spotify worked example: catalog vs index, title artist album lyrics postings, autocomplete, fuzzy match, ranking, and play hydration.]]></content>
-        <author>
-            <name>Jitender Sharma</name>
-            <uri>https://jitendersharma.dev</uri>
-        </author>
-        <category label="Platforms &amp; Engineering" term="Platforms &amp; Engineering"/>
-        <category label="Architecture" term="Architecture"/>
-        <category label="System Design" term="System Design"/>
-    </entry>
-    <entry>
         <title type="html"><![CDATA[Spotify Music Streaming Pipeline: From Upload to Search and Play]]></title>
         <id>https://jitendersharma.dev/insights/spotify-music-streaming-pipeline</id>
         <link href="https://jitendersharma.dev/insights/spotify-music-streaming-pipeline"/>
@@ -55,6 +76,21 @@
         <category label="Architecture" term="Architecture"/>
         <category label="System Design" term="System Design"/>
         <category label="Observability" term="Observability"/>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Spotify Music Discovery: Inverted Index Search Explained]]></title>
+        <id>https://jitendersharma.dev/insights/music-search-inverted-index</id>
+        <link href="https://jitendersharma.dev/insights/music-search-inverted-index"/>
+        <updated>2026-08-05T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[System design of inverted index search with a Spotify worked example: catalog vs index, title artist album lyrics postings, autocomplete, fuzzy match, ranking, and play hydration.]]></summary>
+        <content type="html"><![CDATA[System design of inverted index search with a Spotify worked example: catalog vs index, title artist album lyrics postings, autocomplete, fuzzy match, ranking, and play hydration.]]></content>
+        <author>
+            <name>Jitender Sharma</name>
+            <uri>https://jitendersharma.dev</uri>
+        </author>
+        <category label="Platforms &amp; Engineering" term="Platforms &amp; Engineering"/>
+        <category label="Architecture" term="Architecture"/>
+        <category label="System Design" term="System Design"/>
     </entry>
     <entry>
         <title type="html"><![CDATA[After Training an LLM: From Frozen Weights to Token-by-Token Inference]]></title>
@@ -286,38 +322,6 @@
         <updated>2026-07-14T00:00:00.000Z</updated>
         <summary type="html"><![CDATA[TCP is a reliable byte stream with handshake, ACKs, and congestion control. UDP is datagrams with no delivery guarantee. Components, steps, use cases, and which failures people mislabel as app bugs.]]></summary>
         <content type="html"><![CDATA[TCP is a reliable byte stream with handshake, ACKs, and congestion control. UDP is datagrams with no delivery guarantee. Components, steps, use cases, and which failures people mislabel as app bugs.]]></content>
-        <author>
-            <name>Jitender Sharma</name>
-            <uri>https://jitendersharma.dev</uri>
-        </author>
-        <category label="Platforms &amp; Engineering" term="Platforms &amp; Engineering"/>
-        <category label="Explainer" term="Explainer"/>
-        <category label="Under the Hood" term="Under the Hood"/>
-        <category label="Observability" term="Observability"/>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[Anycast vs Unicast - Under the Hood]]></title>
-        <id>https://jitendersharma.dev/insights/anycast-vs-unicast-under-the-hood</id>
-        <link href="https://jitendersharma.dev/insights/anycast-vs-unicast-under-the-hood"/>
-        <updated>2026-07-13T00:00:00.000Z</updated>
-        <summary type="html"><![CDATA[Unicast maps one IP to one place. Anycast maps one IP to many places and lets BGP pick the path. How both work, where DNS and CDNs use them, and which failures look like app bugs.]]></summary>
-        <content type="html"><![CDATA[Unicast maps one IP to one place. Anycast maps one IP to many places and lets BGP pick the path. How both work, where DNS and CDNs use them, and which failures look like app bugs.]]></content>
-        <author>
-            <name>Jitender Sharma</name>
-            <uri>https://jitendersharma.dev</uri>
-        </author>
-        <category label="Platforms &amp; Engineering" term="Platforms &amp; Engineering"/>
-        <category label="Explainer" term="Explainer"/>
-        <category label="Under the Hood" term="Under the Hood"/>
-        <category label="Observability" term="Observability"/>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[DNS - Under the Hood]]></title>
-        <id>https://jitendersharma.dev/insights/dns-under-the-hood</id>
-        <link href="https://jitendersharma.dev/insights/dns-under-the-hood"/>
-        <updated>2026-07-13T00:00:00.000Z</updated>
-        <summary type="html"><![CDATA[DNS is a globally distributed, hierarchical, eventually consistent naming database. Stub, recursive resolver, root, TLD, authoritative name server, caching, TTL, and anycast.]]></summary>
-        <content type="html"><![CDATA[DNS is a globally distributed, hierarchical, eventually consistent naming database. Stub, recursive resolver, root, TLD, authoritative name server, caching, TTL, and anycast.]]></content>
         <author>
             <name>Jitender Sharma</name>
             <uri>https://jitendersharma.dev</uri>
