@@ -262,7 +262,7 @@ Mode and scope do not set ranker, chunk size, embeddings, or index URLs. Those l
 | `workflow_id` | **When** retrieve runs on Patterns 2-3 (named stage or stage allowlist). |
 | `tool_manifest` | **How** retrieve is called: tool name, schema, `pdp_action`, risk tier. |
 | `policy_profile` | PEP/PDP rules around that action (tenant, entitlements). |
-| `prompt_id` | Query formulation or synthesis. The model does not pick the corpus. |
+| `prompt_id` | Query formulation or synthesis. The model does not pick the corpus. Pack shape: [Prompt artifact](/playbooks/agents/intent-router/route-contract-reference#prompt-artifact) |
 
 ### Pattern 2: named search stage
 
@@ -274,14 +274,25 @@ The workflow owns order. The LLM does not choose "search now" or a different ind
 {
   "route_id": "msa_risk_review",
   "intent": "msa_risk_review",
+  "description": "Fixed-stage MSA risk review for counsel: OCR, clause search, playbook, risk, memo",
   "model_profile": "reasoning-standard",
   "tool_manifest": "msa_risk_review_v1",
   "policy_profile": "read_only_standard",
   "retrieval": { "mode": "tool", "scope": ["clause-index", "legal-playbook"] },
+  "memory_profile": {
+    "conversation": "session",
+    "working": "session",
+    "loop": "checkpoint",
+    "long_term": "retrieve_only",
+    "ttl_hours": 24,
+    "isolation": ["tenant", "user", "session"]
+  },
   "workflow_id": "msa_risk_review_v1",
   "prompt_id": "msa_risk_review_v1",
   "output_schema_id": "msa_memo_v1",
-  "eval_suite_id": "msa_risk_review_golden"
+  "eval_suite_id": "msa_risk_review_golden",
+  "fallback": "clarify",
+  "required_claims": ["legal:msa_review"]
 }
 ```
 

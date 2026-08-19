@@ -39,7 +39,7 @@ Bookmark this page when you need the **field dictionary** for a route row. Ops (
 | `retrieval` | Optional | `{ "mode": "tool", "scope": ["accounts"] }` | Who retrieves, and from which corpora |
 | `memory_profile` | Optional | See [Memory profile](#memory-profile) | Session / working / loop policy; long-term is retrieve-only unless write tools are allowlisted |
 | `workflow_id` | Patterns 2-3 | `contract_review_v3` | Fixed outer stages |
-| `prompt_id` | Usual | `contract_review_v3` | Host / system prompt artifact |
+| `prompt_id` | Usual | `contract_review_v3` | Versioned prompt **pack**. One id on the row; multiple templates inside. See [Prompt artifact](#prompt-artifact) |
 | `output_schema_id` | Usual | `counsel_memo_v1` | Structured output validation |
 | `eval_suite_id` | Usual | `contract_review_golden` | Offline golden suite |
 | `max_loop_steps` | Pattern 1 | `12` | Bounds Observe → Decide → Tool (omit on Pattern 0) |
@@ -85,28 +85,43 @@ Memory is **route policy + session state**, not a workflow step. The row declare
 | `ttl_hours` | number | Soft lifetime for session-scoped stores |
 | `isolation` | e.g. `["tenant", "user", "session"]` | Partition keys so Session A cannot read Session B |
 
-## Related artifacts (not inlined on the row)
+## Prompt artifact
 
-| Artifact | Owned by | Playbook |
-| --- | --- | --- |
-| Tool entries (`name`, `schema`, `pdp_action`, `risk_tier`) | Manifest store | [Manifest registry](/playbooks/agents/manifests/manifest-registry) · [Manifest lifecycle](/playbooks/agents/manifests/manifest-lifecycle) |
-| SARAC / PEP payload | Policy plane | [Policy contracts](/playbooks/governance/runtime/foundation/policy-contracts) |
-| Workflow stages / stage allowlists | Workflow store | [Agents Blueprint](/blueprints/agents-blueprint) (Patterns 2-3) |
-| Prompt / output schema / eval suite | Separate versioned stores | Loaded by id from the row |
+`prompt_id` names **one pack**, not one string. The agentic app loads it after the route pin, then picks a template by `llm_role` (Patterns 2-3) or uses `host` alone (Pattern 0). Conversation and working memory are assembled at inference time. They are not extra `prompt_id`s.
 
-## Canonical single-route shape
+| Pattern | What the pack holds |
+| --- | --- |
+| **0** | `host` only. One call. |
+| **1** | `host` plus loop instructions. Same pack for every step. |
+| **2-3** | `host` plus templates keyed by `llm_role`. `none` means no LLM call. |
 
-<Details summary="Canonical route row (JSON)">
+Two stages may share one template. Key by role, not by `stage_id`. Do not put PEP limits in the pack.
+
+Worked example: MSA risk review. This pack is `prompt_id` on **route** `msa_risk_review`. That row's **manifest** is `msa_risk_review_v1`. Full row and workflow: [RAG retrieval](/playbooks/rag/retrieval#pattern-2-named-search-stage). How `llm_role` is assigned: [Autonomy shape](/playbooks/agents/orchestration/autonomy-shape). Assembly: [Inference handoff](/playbooks/agents/orchestration/inference-handoff). Manifest entry shape: [Manifest registry](/playbooks/agents/manifests/manifest-registry).
+
+| This pack | Used by |
+| --- | --- |
+| `prompt_id` | `msa_risk_review_v1` (this artifact) |
+| Route | `route_id: msa_risk_review` |
+| Manifest | `tool_manifest: msa_risk_review_v1` |
+| Workflow | `workflow_id: msa_risk_review_v1` |
+
+<Details summary="Route row: msa_risk_review (JSON)">
+
+Pattern 2. Shared runtime (no `activation_target`). No `max_loop_steps`: the workflow owns the budget. Same ids as the [MSA row in RAG retrieval](/playbooks/rag/retrieval#pattern-2-named-search-stage). The prompt pack does not list tools. The manifest does.
 
 ```json
 {
-  "route_id": "example_route",
-  "intent": "example_intent",
-  "activation_target": "https://assistant-app.internal/v1/runs",
+  "route_id": "msa_risk_review",
+  "intent": "msa_risk_review",
+  "description": "Fixed-stage MSA risk review for counsel: OCR, clause search, playbook, risk, memo",
   "model_profile": "reasoning-standard",
-  "tool_manifest": "example_v1",
+  "tool_manifest": "msa_risk_review_v1",
   "policy_profile": "read_only_standard",
-  "retrieval": { "mode": "tool", "scope": ["example-corpus"] },
+  "retrieval": {
+    "mode": "tool",
+    "scope": ["clause-index", "legal-playbook"]
+  },
   "memory_profile": {
     "conversation": "session",
     "working": "session",
@@ -115,13 +130,109 @@ Memory is **route policy + session state**, not a workflow step. The row declare
     "ttl_hours": 24,
     "isolation": ["tenant", "user", "session"]
   },
-  "workflow_id": "example_workflow_v1",
-  "prompt_id": "example_v1",
-  "output_schema_id": "example_out_v1",
-  "eval_suite_id": "example_golden",
-  "max_loop_steps": 12,
+  "workflow_id": "msa_risk_review_v1",
+  "prompt_id": "msa_risk_review_v1",
+  "output_schema_id": "msa_memo_v1",
+  "eval_suite_id": "msa_risk_review_golden",
   "fallback": "clarify",
-  "required_claims": ["example:read"]
+  "required_claims": ["legal:msa_review"]
+}
+```
+
+</Details>
+
+| Field | What it means on this route |
+| --- | --- |
+| `route_id` / `intent` | This turn is MSA risk review. Classifier target and audit id. |
+| `description` | Human-readable scope. Not sent to the model. |
+| `model_profile` | Reasoning tier at the gateway. Not a vendor model id. |
+| `tool_manifest` | Load `msa_risk_review_v1`. Tool schemas and `pdp_action` live there. |
+| `policy_profile` | PEP uses `read_only_standard`. The registry does not grant permission. |
+| `retrieval` | Search tools may run, only against `clause-index` and `legal-playbook`. |
+| `memory_profile` | Session conversation, stage working slots, checkpointed loop. Long-term is retrieve-only. |
+| `workflow_id` | Pattern 2 stage order. The LLM does not pick the next stage. |
+| `prompt_id` | This pack: `host` plus `query_formulation` and `synthesis`. |
+| `output_schema_id` | Counsel memo shape (`msa_memo_v1`). App validates before return. |
+| `eval_suite_id` | Golden checks: stage order, required stages, memo grounded. |
+| `fallback` | Clarify when entities are missing or the turn is out of domain. |
+| `required_claims` | Ingress must carry `legal:msa_review` or this row is not eligible. |
+
+| Stage | `llm_role` | Template from this pack |
+| --- | --- | --- |
+| `ocr` | `none` | None. No LLM call. |
+| `clause_search` | `query_formulation` | `by_llm_role.query_formulation` |
+| `policy_search` | `query_formulation` | Same template. Corpus comes from the workflow, not the prompt. |
+| `risk_engine` | `none` | None. No LLM call. |
+| `memo` | `synthesis` | `by_llm_role.synthesis` |
+
+<Details summary="Prompt pack msa_risk_review_v1 (JSON)">
+
+One pack. The [route](/playbooks/rag/retrieval#pattern-2-named-search-stage) `msa_risk_review` points here and at `tool_manifest: msa_risk_review_v1`. Five stages. Two templates. `task_type` is what Plane ③ sees (`plan` / `synthesize`). It is not a second `prompt_id`.
+
+```json
+{
+  "prompt_id": "msa_risk_review_v1",
+  "prompt_version": "2026.08.1",
+  "host": "You are counsel's MSA risk-review worker. Do only the current stage. Do not choose the next stage. Do not invent tools.",
+  "by_llm_role": {
+    "query_formulation": {
+      "task_type": "plan",
+      "text": "Write the search query for this stage's corpus only. Do not pick a different index."
+    },
+    "synthesis": {
+      "task_type": "synthesize",
+      "text": "Draft the counsel memo from validated stage outputs only. Ground claims in retrieved clauses and playbook hits."
+    }
+  }
+}
+```
+
+</Details>
+
+Changing prompt **text** under the same `prompt_id` does not bump `route_table_version`. Pointing the row at a **new** `prompt_id` does. Same rule as other artifact ids: [When the row changes](#when-the-row-changes).
+
+## Related artifacts (not inlined on the row)
+
+| Artifact | Owned by | Playbook |
+| --- | --- | --- |
+| Tool entries (`name`, `schema`, `pdp_action`, `risk_tier`) | Manifest store | [Manifest registry](/playbooks/agents/manifests/manifest-registry) · [Manifest lifecycle](/playbooks/agents/manifests/manifest-lifecycle) |
+| SARAC / PEP payload | Policy plane | [Policy contracts](/playbooks/governance/runtime/foundation/policy-contracts) |
+| Workflow stages / stage allowlists | Workflow store | [Agents Blueprint](/blueprints/agents-blueprint) (Patterns 2-3) |
+| Prompt pack (`host`, `by_llm_role`) | Prompt store | [Prompt artifact](#prompt-artifact) |
+| Output schema / eval suite | Separate versioned stores | Loaded by id from the row |
+
+## Canonical single-route shape
+
+Worked Pattern 2 row: MSA risk review. Same contract as [Prompt artifact](#prompt-artifact). Fields appear when the autonomy pattern needs them.
+
+<Details summary="Canonical route row: msa_risk_review (JSON)">
+
+```json
+{
+  "route_id": "msa_risk_review",
+  "intent": "msa_risk_review",
+  "description": "Fixed-stage MSA risk review for counsel: OCR, clause search, playbook, risk, memo",
+  "model_profile": "reasoning-standard",
+  "tool_manifest": "msa_risk_review_v1",
+  "policy_profile": "read_only_standard",
+  "retrieval": {
+    "mode": "tool",
+    "scope": ["clause-index", "legal-playbook"]
+  },
+  "memory_profile": {
+    "conversation": "session",
+    "working": "session",
+    "loop": "checkpoint",
+    "long_term": "retrieve_only",
+    "ttl_hours": 24,
+    "isolation": ["tenant", "user", "session"]
+  },
+  "workflow_id": "msa_risk_review_v1",
+  "prompt_id": "msa_risk_review_v1",
+  "output_schema_id": "msa_memo_v1",
+  "eval_suite_id": "msa_risk_review_golden",
+  "fallback": "clarify",
+  "required_claims": ["legal:msa_review"]
 }
 ```
 

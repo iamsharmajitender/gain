@@ -27,7 +27,7 @@ Inside the loop, the agentic app does **not** call a vendor model id. It asks Pl
 
 ## Request sequence (one loop step)
 
-1. Assemble messages from session memory (no credentials)
+1. Assemble messages from the pinned `prompt_id` pack (template for this `llm_role`, or `host` only on Pattern 0) plus session memory (no credentials)
 2. Attach **scoped** tool schemas for this pattern/stage, or none
 3. Call Plane ③ with `model_profile` + task type (`plan`, `synthesize`, or `classify`)
 4. Receive completion (text and/or tool proposal)
@@ -63,8 +63,8 @@ Pass a **task signal** so Plane ③ can pick the endpoint. Do not bury it in the
 
 | Task | When | Typical `model_profile` use |
 | --- | --- | --- |
-| `plan` | Pattern 1/3 next-step, Pattern 2 stage with `llm_role: plan` | Reasoning tier |
-| `synthesize` | User-facing answer, Pattern 0 completion | Chat or reasoning per route |
+| `plan` | Pattern 1/3 next-step, Pattern 2 `llm_role: query_formulation` or `plan` | Reasoning tier |
+| `synthesize` | User-facing answer, Pattern 0 completion, Pattern 2 `llm_role: synthesis` | Chat or reasoning per route |
 | `classify` | Rare in-loop; Plane ① fallback is a different caller | Lightweight |
 
 `model_profile` on the route is a **coarse tier** (`reasoning-standard`, `fast-chat`). The gateway resolves it to an approved endpoint. The app never stores a vendor model name as the production target.

@@ -60,6 +60,10 @@ flowchart TB
 
 Prefetch (`retrieval.mode: deterministic_prefetch`) around a single call does not make the run Pattern 1. If the model never chooses tools, stay on Pattern 0 (or Pattern 2 if `retrieve → generate` is an explicit two-stage workflow).
 
+## prompt_id is a pack
+
+The row has **one** `prompt_id`. That artifact can hold several templates. Pattern 2/3 stages select by `llm_role`. `none` means skip the LLM. Two search stages can share `query_formulation`. Worked table and JSON: [Prompt artifact](/playbooks/agents/intent-router/route-contract-reference#prompt-artifact).
+
 ## Durability follows the pattern
 
 Crash recovery is **not** the same as "use Temporal." Pattern 0 needs none. Short Pattern 1 can use a checkpointer or a `runs` row. Pattern 2/3 need a **stage store** (step table, then Temporal when waits and writes get hard). The LLM framework runs **inside** a stage or loop; it does not replace the outer engine.

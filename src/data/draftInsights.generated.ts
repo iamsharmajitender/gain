@@ -12,6 +12,20 @@ export interface DraftInsightPage {
 
 export const draftInsightPages: readonly DraftInsightPage[] = [
   {
+    "title": "Durable Runs Across Workflow Patterns: Survive the Restart",
+    "date": "2026-08-17",
+    "description": "One Postgres runs row makes Patterns 0-3 restart-safe. Checkpoint shape changes: completion, loop step, stage plus idempotency, or stage plus inner loop.",
+    "slug": "durable-runs-across-workflow-patterns",
+    "href": "/insights/durable-runs-across-workflow-patterns"
+  },
+  {
+    "title": "Versioned Capability Registry: Pin Tools Without MCP",
+    "date": "2026-08-17",
+    "description": "Publishers put one version in a capability registry. Agent developers refer to those versions in the tool manifest, without MCP.",
+    "slug": "versioned-capability-registry",
+    "href": "/insights/versioned-capability-registry"
+  },
+  {
     "title": "CPU vs GPU vs TPU - Under the Hood",
     "date": "2026-08-11",
     "description": "What CPUs, GPUs, and TPUs are built to do, how they differ under the hood, when to use each, and the gotchas that waste money and time.",
