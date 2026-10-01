@@ -1,10 +1,10 @@
 import type {SectionNavItem} from '@site/src/components/SectionPageLayout';
 
 export const aboutSubtitle =
-  'I lead through design authority and operating models: strategy, platforms, and regulator-aligned AI for teams that need architecture to hold up in production.';
+  'Architect and engineering leader: system design, platforms, and regulator-aligned AI — close enough to the code that architecture holds up in production.';
 
 export const advisorySubtitle =
-  'Advisory for CIOs, CTOs, and transformation leaders who need architecture decisions that survive production, regulation, and scale.';
+  'Advisory for CIOs, CTOs, and transformation leaders who need architecture decisions that survive production, regulation, and scale — from someone still close to the engineering.';
 
 export const aboutTabs = [
   {id: 'about', label: 'About'},

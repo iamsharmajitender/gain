@@ -76,6 +76,46 @@ for case in active_scenarios:
 
 Only `status: active` scenarios block releases.
 
+## Worked example: suite `pol-refund-write-v4`
+
+This is the CI library the [evidence pack](/playbooks/governance/operating/go-live-evidence) cites. Same three samples as Operating, plus the bypass cases [Adversarial](/playbooks/governance/runtime/assurance/adversarial-testing) owns.
+
+| Scenario id | Layer | Input | Expected |
+| --- | --- | --- | --- |
+| `pol-refund-rep-080` | Representative | $80, purpose `duplicate_charge`, `emts` present | ALLOW, `downstream_called: true` |
+| `pol-refund-edge-500` | Edge | $500 exactly | ALLOW |
+| `pol-refund-edge-501` | Edge | $501, no approval | STEP_UP, ledger not called |
+| `pol-refund-rep-750` | Representative | $750, no approval | STEP_UP `refund_above_auto_approved` |
+| `pol-refund-rep-750-att` | Representative | $750 + `att-2026-03-11-1842` | ALLOW after re-eval |
+| `pol-refund-den-purpose` | Representative | $80, purpose `goodwill_unmapped` | DENY `purpose_mismatch` |
+| `pol-refund-adv-direct` | Adversarial | App hits ledger URL with own key | Blocked at infra; no ALLOW |
+
+<Details summary="Representative fixture pol-refund-rep-080 (JSON)">
+
+```json
+{
+  "id": "pol-refund-rep-080",
+  "version": "2026.03.1",
+  "domain": "payments",
+  "scenario": "representative",
+  "input": {
+    "subject": { "sub": "staff-priya-shah", "emts": { "payments.refund.issue": true } },
+    "action": "issue_refund",
+    "resource": { "account_id": "acct-4412", "use_case_id": "uc-refund-agent" },
+    "context": { "amount_aud": 80, "purpose": "duplicate_charge" }
+  },
+  "expected": {
+    "verdict": "ALLOW",
+    "downstream_called": true,
+    "policy_version": "pdp-refund-write-v4"
+  }
+}
+```
+
+</Details>
+
+HR FAQ suite `pol-hr-faq-read-v1` is retrieve ALLOW on `hr-handbook` and DENY `corpus_forbidden`. Do not add a $750 fixture there.
+
 ## When to run (before, during, after)
 
 Assurance runs at different depths across the delivery lifecycle. **Policy test scenarios** are the deterministic core (SARAC in, verdict out). **[Adversarial testing](/playbooks/governance/runtime/assurance/adversarial-testing)** adds bypass and injection paths on top.
@@ -100,7 +140,15 @@ flowchart LR
   D --> CN[Canary / shadow]
   A --> MON[Monitor + sample replay]
   A --> INC[Incident → new scenarios]
+
+  classDef process fill:#ede9fe,stroke:#c4b5fd,color:#1e293b,stroke-width:2px
+  classDef gate fill:#ffedd5,stroke:#fdba74,color:#1e293b,stroke-width:2px
+
+  class B,D,A,ST,CN,MON process
+  class CI,U,INC gate
 ```
+
+<br/>
 
 ### Who runs what (summary)
 

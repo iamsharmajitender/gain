@@ -11,6 +11,8 @@ tags:
   - compliance
 ---
 
+import Details from '@theme/Details';
+
 # Go-Live Evidence Pack
 
 [Operating](/playbooks/governance/operating) · [← Obligation map](/playbooks/governance/operating/obligation-to-control) · **Evidence pack**
@@ -46,12 +48,73 @@ Status may move to `live` only when:
 
 Miss this pack and you may have ethics slides while the agent ships with no inventory entry. Miss [Runtime](/playbooks/governance/runtime) and you have a pack with no PEP on the tool path.
 
+## Worked example: `ev-refund-agent-2026-03`
+
+Examiner (or CRO) asks one question per artifact. You point at a live register, not a slide.
+
+| They ask | You open |
+| --- | --- |
+| Who owns this agent? | [Inventory](/playbooks/governance/operating/inventory) `uc-refund-agent` → Priya Shah, Pattern 3, AU, `customer_financial` |
+| Which obligations apply? | [Obligation map](/playbooks/governance/operating/obligation-to-control) four rows for this `use_case_id` |
+| What happens above AUD 500? | Verdict sample `STEP_UP` on `issue_refund` for $750; attestation `att-2026-03-11-1842` |
+| Can you reconstruct last month? | Policy pin `pdp-refund-write-v4` + verdict log ids on this pack |
+| Did eval block a bad promote? | Suite `pol-refund-write-v4` green in CI, including DENY on a known jailbreak fixture |
+| Who accepted residual fraud? | `exec_sponsor: James Cole (CRO)` on the inventory row, `accepted_at: 2026-03-12` |
+
+<Details summary="Example pack index for uc-refund-agent (YAML)">
+
+```yaml
+evidence_pack_id: ev-refund-agent-2026-03
+use_case_id: uc-refund-agent
+policy_version: pdp-refund-write-v4
+scenario_suite_id: pol-refund-write-v4
+accepted_by: James Cole (CRO)
+accepted_at: 2026-03-12
+artifacts:
+  inventory: uc-refund-agent
+  obligations:
+    - APRA-CPS-230-op-res
+    - PRIV-APP-purpose
+    - CONS-DUTY-fair-outcome
+    - INT-FRAUD-limit-500
+  verdict_samples:
+    - { id: v-10041, action: issue_refund, amount_aud: 80, verdict: ALLOW }
+    - { id: v-10058, action: issue_refund, amount_aud: 750, verdict: STEP_UP }
+    - { id: v-10062, action: issue_refund, amount_aud: 80, verdict: DENY, reason: purpose_mismatch }
+  eval_run: ev-refund-fair-2026-03
+```
+
+</Details>
+
+<Details summary="Example verdict samples (what STEP_UP must show)">
+
+The $750 sample is the CPS 230 / fraud-limit row. If the pack only has ALLOW at $80, the write path is not evidenced.
+
+```text
+v-10041  ALLOW    issue_refund  $80   staff token, in-policy, under band
+v-10058  STEP_UP  issue_refund  $750  band hit; attestation att-2026-03-11-1842
+v-10062  DENY     issue_refund  $80   retrieval purpose_mismatch; no downstream call
+```
+
+</Details>
+
+The HR FAQ pack is smaller: inventory row, one corpus-scope obligation, a DENY on out-of-corpus retrieval, no STEP_UP fixture. Do not paste these three refund verdicts onto `uc-hr-policy-faq`.
+
+## Good vs bad pack
+
+| Bad | Why it fails | Good |
+| --- | --- | --- |
+| 12-page PDF emailed to Audit | No link to live registers | Pack id that resolves to inventory + map + verdicts |
+| Verdicts from `uc-hr-policy-faq` | Wrong `use_case_id` | All samples stamped `uc-refund-agent` |
+| Only ALLOW samples | Write path never forced a human | ALLOW + STEP_UP + DENY |
+| "Residual accepted" in meeting notes | No name and date | Sponsor field on the inventory row |
+
 ## Failure classes
 
-- Pack is a PDF with no links to live registers
-- Verdict sample from a different `use_case_id`
-- Go-live without STEP_UP scenarios on a write path
-- Pack frozen at launch; incidents never feed it
+- Pack is a PDF with no links to live registers: "Refund agent evidence.pptx"
+- Verdict sample from a different `use_case_id`: FAQ DENY used as the refund pack
+- Go-live without STEP_UP scenarios on a write path: only $80 ALLOW fixtures
+- Pack frozen at launch; incidents never feed it: fraud band changed, pack still cites $500 after the limit moved to $250
 
 ## Trace / register fields
 

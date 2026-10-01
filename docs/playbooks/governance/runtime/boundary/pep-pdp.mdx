@@ -42,6 +42,20 @@ sequenceDiagram
     end
 ```
 
+<br/>
+
+## Worked example: three verdicts, one profile
+
+Profile `pdp-refund-write-v4`. Audit written before the ledger hears anything.
+
+| Proposal | Verdict | Audit | Ledger |
+| --- | --- | --- | --- |
+| $80, `duplicate_charge` | ALLOW | `v-10041` | Called |
+| $750, no attestation | STEP_UP `refund_above_auto_approved` | `v-10058` | Idle |
+| $80, `goodwill_unmapped` | DENY `purpose_mismatch` | `v-10062` | Idle |
+
+DENY on purpose mismatch is the control working. Do not retry around it with a rewritten purpose unless a human changes the SARAC.
+
 ## DENY is success
 
 When sanctions hit or entitlements fail, **DENY with audit** is the control working, not an error to retry around.

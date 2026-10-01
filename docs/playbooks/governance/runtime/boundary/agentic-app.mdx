@@ -46,6 +46,19 @@ The agentic app is the **orchestrator**. It holds the token, talks to the LLM, f
 9. Call LLM for synthesis with validated context only
 10. Return response to user
 
+## Worked example: refund loop
+
+Priya: "refund the duplicate $80 on acct-4412."
+
+1. Ingress session already bound. App copies `uc-refund-agent` and `pdp-refund-write-v4` into the run pin
+2. Manifest includes `issue_refund`. HR FAQ would stop at retrieve-only
+3. LLM called with schemas. Token stays here
+4. Proposal `$80` → PEP → ALLOW `v-10041` → payment hub
+5. Proposal `$750` → PEP → STEP_UP `v-10058` → four-eyes UX in this app, not in chat
+6. Hub result sanitized, then a synthesis call. Bearer never in messages
+
+If this app has the ledger API key in its env, you failed the playbook before the model spoke.
+
 ## Failure classes
 
 - **Direct downstream:** app calls payment hub or vector DB without PEP

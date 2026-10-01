@@ -11,6 +11,8 @@ tags:
   - policy
 ---
 
+import Details from '@theme/Details';
+
 # PEP Enforcement
 
 [Blueprint](/blueprints/governance/runtime) · [← Token & session](/playbooks/governance/runtime/foundation/token-and-session-boundary) · **PEP enforcement** · [PDP surfaces →](/playbooks/governance/runtime/foundation/pdp-policy-surfaces)
@@ -38,7 +40,39 @@ flowchart LR
     PEP --> AUD["Audit log"]
     PEP -->|"ALLOW"| DS["Downstream"]
     PEP -->|"DENY / STEP_UP"| APP
+
+    classDef process fill:#ede9fe,stroke:#c4b5fd,color:#1e293b,stroke-width:2px
+    classDef gate fill:#ffedd5,stroke:#fdba74,color:#1e293b,stroke-width:2px
+    classDef action fill:#fef3c7,stroke:#fcd34d,color:#1e293b,stroke-width:2px
+
+    class APP process
+    class PEP,PDP gate
+    class AUD process
+    class DS action
 ```
+
+<br/>
+
+## Worked example: three `issue_refund` proposals
+
+Control `pep-step-up-refund` on profile `pdp-refund-write-v4`. Audit id is written in step 3, before step 4.
+
+| Proposal | PDP verdict | Downstream | Audit id (evidence pack) |
+| --- | --- | --- | --- |
+| $80, purpose `duplicate_charge` | ALLOW | Payment hub `issue_refund` | `v-10041` |
+| $750, no attestation | STEP_UP | Not called | `v-10058` |
+| $80, purpose mismatch | DENY | Not called | `v-10062` |
+
+<Details summary="What the app must not do (refund)">
+
+```text
+BAD   app → https://ledger.internal/refunds     (own API key)
+GOOD  app → PEP → (ALLOW) → ledger              (ledger trusts PEP path only)
+```
+
+</Details>
+
+HR FAQ: every retrieve still crosses this PEP. "It is only a read" is not a fast path.
 
 ## Structural enforcement (non-negotiable)
 

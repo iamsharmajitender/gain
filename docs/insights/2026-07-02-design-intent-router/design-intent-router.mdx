@@ -50,6 +50,7 @@ Summary of what each row must decide:
 | Concern | Typical fields |
 | --- | --- |
 | Identity | `route_id`, `intent` / `intent_label`, `description` |
+| Robot | `agent_client_id` (IdP client pointer; not a secret) |
 | Capability | `tool_manifest`, `model_profile`, optional `workflow_id` |
 | Governance | `policy_profile`, optional `retrieval`, optional `memory_profile` |
 | Artifacts | `prompt_id`, `output_schema_id`, `eval_suite_id` |
@@ -79,7 +80,7 @@ Example starter routes for a regulated assistant:
 
 **Logical table, versioned platform config.** Each row is a route contract; storage is an ops choice. Same discipline as [manifest lifecycle](/playbooks/agents/manifests/manifest-lifecycle): version id, CI on change, pin `route_table_version` per session, audit on every decision. **Eligible routes** are not a second store: ingress claims filter the table at request time. Storage patterns and promote/rollback: [Route table lifecycle](/playbooks/agents/intent-router/route-table-lifecycle).
 
-Row fields reference other artifacts by id (`tool_manifest`, `policy_profile`, `memory_profile`); those live in their own versioned stores. Do not put entitlements in the route table; the router intersects claims from ingress with route requirements.
+Row fields reference other artifacts by id (`tool_manifest`, `policy_profile`, `memory_profile`, `agent_client_id`); those live in their own versioned stores (IdP for the agent client). Do not put entitlements or client secrets in the route table; the router intersects claims from ingress with route requirements.
 
 ## Step 2 — Classify in layers
 

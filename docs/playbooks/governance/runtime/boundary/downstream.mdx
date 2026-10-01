@@ -34,6 +34,19 @@ Downstream services (payment hub, retrieval gateway, CRM APIs) execute **only on
 
 Both must pass. PGAR without downstream re-auth is half a control.
 
+## Worked example: payment hub after ALLOW
+
+Only `v-10041` reaches the hub. `v-10058` and `v-10062` never leave the PEP.
+
+| Check | Refund hub |
+| --- | --- |
+| Token still Priya's | Hub re-auths `staff-priya-shah` on `acct-4412` |
+| Idempotency | `idem:uc-refund-agent:acct-4412:80:req-2026-03-11-1841` |
+| Return path | Hub → app. App strips account internals, then synthesis |
+| Orphan | No hub row without a matching ALLOW audit id |
+
+HR FAQ downstream is the retrieval gateway. Same double auth: PEP ALLOW on corpus, then gateway ACL on `hr-handbook`.
+
 ## Return path
 
 <Details summary="Downstream return path (pseudo-code)">

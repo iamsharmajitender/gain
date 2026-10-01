@@ -11,11 +11,13 @@ tags:
   - compliance
 ---
 
+import Details from '@theme/Details';
+
 # Inventory Record
 
 [Operating](/playbooks/governance/operating) · **Inventory** · [Obligation map →](/playbooks/governance/operating/obligation-to-control)
 
-Every in-production agent, copilot, or model-backed workflow gets a **row** before it can cause a side effect. The row is the approve step on the [control path](/blueprints/governance/operating#control-path). It is not the route table and not the PEP.
+Every in-production agent, copilot, or model-backed workflow gets a **row** before it can cause a side effect. The row is the approve step on the [control path](/frameworks/gain-governance#control-path). It is not the route table and not the PEP.
 
 :::tip[THE CLAIM]
 **No inventory, no owner, no go-live.** Ethics slides and a policy PDF do not substitute for a named use case with an accountable owner.
@@ -49,12 +51,73 @@ Every in-production agent, copilot, or model-backed workflow gets a **row** befo
 
 Do not store entitlements per user here. Claims stay on the IdP. Do not store tool lists here. Those live on the [manifest](/playbooks/agents/manifests/manifest-registry).
 
+## Worked examples
+
+Two rows. Same register. Different risk, so different pattern, data class, and runtime profile. Do not clone the refund row onto a read-only FAQ.
+
+<Details summary="Example row: bank refund agent (YAML)">
+
+Write path. Pattern 3 from the [Agents Blueprint](/blueprints/agents-blueprint). Status stays `approved` until the [evidence pack](/playbooks/governance/operating/go-live-evidence) exists.
+
+```yaml
+use_case_id: uc-refund-agent
+name: Customer refund agent
+owner: Priya Shah (Payments Operations)
+exec_sponsor: James Cole (CRO)
+pattern: 3
+data_class: customer_financial
+region: AU
+status: approved
+runtime_profile: pdp-refund-write-v4
+evidence_pack_id: ev-refund-agent-2026-03
+approved_at: 2026-03-12
+```
+
+</Details>
+
+<Details summary="Example row: staff HR policy FAQ (YAML)">
+
+Read path. Pattern 0: one LLM call, no tool loop. Still needs a row before it sees staff documents.
+
+```yaml
+use_case_id: uc-hr-policy-faq
+name: Staff HR policy FAQ
+owner: Minh Tran (People Systems)
+exec_sponsor: Ana Ruiz (CHRO)
+pattern: 0
+data_class: internal_unclassified
+region: AU
+status: live
+runtime_profile: pdp-hr-faq-read-v1
+evidence_pack_id: ev-hr-policy-faq-2026-01
+approved_at: 2026-01-20
+```
+
+</Details>
+
+| Field | Refund agent | HR policy FAQ |
+| --- | --- | --- |
+| `pattern` | `3` (model may pick tools inside a fixed refund stage) | `0` (no tools) |
+| `data_class` | `customer_financial` | `internal_unclassified` |
+| `runtime_profile` | Write PEP, STEP_UP above the fraud band | Read-only retrieval scope |
+| `owner` | Named human in Payments, not `payments-ops@` | Named human in People Systems |
+
+## Good vs bad row
+
+| Bad | Why it fails | Good |
+| --- | --- | --- |
+| `owner: payments-ops@bank.example` | Mailbox cannot accept residual risk | `owner: Priya Shah (Payments Operations)` |
+| `status: live` and empty `evidence_pack_id` | Gate skipped | `approved` until `ev-refund-agent-2026-03` exists |
+| `pattern: 1` on a refund write path | Open loop on money movement | `pattern: 3` (or `2`) with PEP on `issue_refund` |
+| `data_class` blank | Runtime and hosting have no scope | `customer_financial` + `region: AU` |
+| Tools listed on this row | Wrong register | Pointer to the [manifest](/playbooks/agents/manifests/manifest-registry) only |
+
 ## Failure classes
 
-- Agent in production with no row
-- Owner is a shared mailbox with no named human
-- Status `live` with empty evidence pack
-- Row exists; route table and PEP never linked
+- Agent in production with no row: refund bot in a business-unit Slack, no `use_case_id`
+- Owner is a shared mailbox with no named human: `ai-coe@` as owner
+- Status `live` with empty evidence pack: row ticked "approved" in a spreadsheet
+- Row exists; route table and PEP never linked: `runtime_profile` is a comment, not a profile id
 
 ## Trace / register fields
 

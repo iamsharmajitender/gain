@@ -7,14 +7,15 @@ const pillars = [
   {
     icon: '⬡',
     title: 'Strategy & Architecture',
-    description: 'Roadmaps, reference models, and design authority for enterprise transformation.',
+    description: 'Roadmaps, system design, and design authority for enterprise transformation.',
     tag: 'system-architecture',
     color: 'blue',
   },
   {
     icon: '⚙',
     title: 'Platforms & Engineering',
-    description: 'Cloud-native, event-driven, and observable systems that scale.',
+    description:
+      'Cloud-native, event-driven, and observable systems, designed close enough to the code to survive production.',
     tag: 'platforms-engineering',
     color: 'purple',
   },
@@ -42,7 +43,8 @@ export default function HomepagePillars(): ReactNode {
           <div className="gain-home-pillars__intro">
             <h2>Core Domains</h2>
             <p>
-              Where I lead. Every domain is built through the G.A.I.N operating model.
+              Where I lead architecture and engineering. Every domain is built through the G.A.I.N
+              operating model.
             </p>
           </div>
         </div>

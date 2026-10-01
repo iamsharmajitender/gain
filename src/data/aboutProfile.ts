@@ -143,11 +143,11 @@ export const backgroundEntries: BackgroundEntry[] = [
     context: 'National Australia Bank (NAB), Melbourne',
     timeline: {yearStart: 2020, yearEnd: null, org: 'NAB', tier: 'enterprise'},
     highlights: [
-      'Directed hybrid and multi-cloud architecture governance across core banking, digital channels, payments, and enterprise data services',
-      'Partnered with business, risk, compliance, and security to align target architectures to operational resilience and regulatory expectations',
-      'Established architecture review board and design authority operating model across portfolios',
-      'Defined enterprise-wide standards for cloud, API, event-driven, and microservices architecture',
-      'Led AI and GenAI architecture enablement with reusable enterprise patterns for responsible, scalable adoption',
+      'Led hybrid and multi-cloud architecture across core banking, digital channels, payments, and enterprise data',
+      'Partnered with engineering leads on complex platform problems; set the bar and kept practices in production',
+      'Ran design authority with business, risk, compliance, and security so scalable outcomes could ship',
+      'Set standards for cloud, API, event-driven, and microservices architecture',
+      'Led AI and GenAI architecture for regulated, production-ready delivery — patterns engineering teams can run',
     ],
   },
   {
@@ -156,9 +156,9 @@ export const backgroundEntries: BackgroundEntry[] = [
     context: 'National Australia Bank (NAB), Melbourne',
     timeline: {yearStart: 2019, yearEnd: 2020, org: 'NAB', tier: 'architect'},
     highlights: [
-      'Defined enterprise engineering patterns and 10+ reusable libraries and quickstarts, saving ~AUD 100K per implementation + Led API, microservices, and event-driven communities of practice',
-      'Led API, microservices, and event-driven architecture communities of practice',
-      'Provided distributed systems architecture leadership for critical banking services and modernization programs',
+      'Defined enterprise engineering patterns and 10+ reusable libraries and quickstarts, saving ~AUD 100K per implementation',
+      'Led API, microservices, and event-driven communities of practice',
+      'Led distributed systems decisions for critical banking platforms: reliability and production trade-offs',
     ],
   },
   {
@@ -169,7 +169,7 @@ export const backgroundEntries: BackgroundEntry[] = [
     highlights: [
       'Event-driven and microservice architecture for mission-critical energy platforms',
       'Legacy-to-hybrid-cloud migration (Azure & on-prem), DevOps and CI/CD adoption',
-      'Provided technical leadership and mentoring to development teams',
+      'Mentored engineering teams through design reviews, hard trade-offs, and capability uplift',
       'Aligned platform strategy with business outcomes alongside senior stakeholders',
     ],
   },
@@ -410,8 +410,8 @@ export const profileName = 'Jitender Sharma';
 
 /** Homepage hero supporting line: one sharp claim, not a résumé digest. */
 export const profileHeroBio =
-  'I help enterprises modernize platforms and ship governed AI that holds up under regulatory scrutiny.';
+  'I help enterprises modernize platforms and ship governed AI that holds up in production and under regulatory scrutiny — close enough to the code to keep those decisions honest.';
 
 /** Homepage profile card: current role and context. */
 export const profileCardBio =
-  'Enterprise Architect at NAB. Cloud modernization, platform architecture, and governed GenAI in regulated banking.';
+  'Enterprise Architect at NAB. Architecture and engineering leadership for cloud, platforms, and governed GenAI in regulated banking.';

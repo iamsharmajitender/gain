@@ -7,15 +7,17 @@ Cursor-focused brief for this repo. Skills and rules under `.cursor/` are the so
 | Path | Role |
 |------|------|
 | `.cursor/rules/agent-skills.mdc` | Always-on skill routing |
-| `.cursor/skills/<name>/SKILL.md` | Workflows (edit in place) |
-| `.cursor/commands/` | Slash commands (`/spec`, `/plan`, …) |
+| `.cursor/skills/write-insight` | Project skill: new insight articles |
+| `.cursor/skills/remove-draft` | Project skill: publish draft insights |
+| `~/.cursor/skills/<name>/SKILL.md` | Personal workflows (shared across projects) |
+| `.cursor/commands/` | Slash commands (`/write-insight`, `/remove-draft`) |
 | `.cursor/agents/` | Optional review personas |
 | `.cursor/references/` | Checklists skills may load |
 
 ## Core rules
 
 - If a skill matches the task, read and follow it before implementing.
-- Start with `.cursor/skills/using-agent-skills/SKILL.md` when unsure which skill applies.
+- Prefer a project skill under `.cursor/skills/` when one exists; otherwise use `~/.cursor/skills/<name>/SKILL.md`.
 - Do not invent process that already exists as a skill.
 - Prefer extending an existing skill over adding a near-duplicate. Format: [skill-anatomy.md](https://github.com/addyosmani/agent-skills/blob/main/docs/skill-anatomy.md).
 
@@ -42,4 +44,4 @@ Cursor-focused brief for this repo. Skills and rules under `.cursor/` are the so
 - API / boundaries → `api-and-interface-design`
 - Ship → `shipping-and-launch`
 
-Full catalog: [README.md](README.md).
+Personal catalog: `~/.cursor/skills/`.

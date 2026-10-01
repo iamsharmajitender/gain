@@ -35,7 +35,7 @@ The Policy Decision Point evaluates SARAC requests against versioned policy surf
 
 Example DENY reason codes: `sanctions_hit`, `entitlement_missing`, `corpus_forbidden`.
 
-Example STEP_UP reason codes: `wire_above_auto_approved`, `classification_requires_supervisor`.
+Example STEP_UP reason codes: `wire_above_auto_approved`, `refund_above_auto_approved`, `classification_requires_supervisor`.
 
 ## Policy versioning
 
@@ -51,6 +51,22 @@ pgar.retrieval.corpus/v2
 </Details>
 
 Version bumps require full [policy test scenario](/playbooks/governance/runtime/assurance/policy-test-scenarios) replay before promotion.
+
+## Worked example: `pdp-refund-write-v4`
+
+This is the surface inventory `runtime_profile` and the route `policy_profile` both point at. Inventory does not embed the rules. This page does.
+
+| Rule | Verdict | Reason |
+| --- | --- | --- |
+| `emts.payments.refund.issue` missing | DENY | `entitlement_missing` |
+| `amount_aud <= 500`, purpose in allowlist | ALLOW | `in_policy` |
+| `amount_aud > 500`, `approval` empty | STEP_UP | `refund_above_auto_approved` |
+| `amount_aud > 500`, valid `att-…` attestation | ALLOW (re-eval) | `attested` |
+| Purpose not in allowlist | DENY | `purpose_mismatch` |
+
+HR FAQ surface `pdp-hr-faq-read-v1`: ALLOW retrieve on `hr-handbook`; DENY `corpus_forbidden` on anything else; no STEP_UP rules.
+
+Changing the fraud band from 500 to 250 is a new surface version (`v5`), a [policy test](/playbooks/governance/runtime/assurance/policy-test-scenarios) replay, and an inventory pin update. It is not a prompt edit.
 
 ## Rule ownership
 

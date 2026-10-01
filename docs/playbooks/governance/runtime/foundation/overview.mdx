@@ -46,9 +46,32 @@ flowchart LR
   PDP --> SU[Step-up]
   PEP --> AUD[Audit & replay]
   SU --> PEP
+
+  classDef process fill:#ede9fe,stroke:#c4b5fd,color:#1e293b,stroke-width:2px
+  classDef gate fill:#ffedd5,stroke:#fdba74,color:#1e293b,stroke-width:2px
+
+  class TC,SARAC,SU,AUD process
+  class PEP,PDP gate
 ```
 
+<br/>
+
 Every tool proposal at runtime flows: agentic app assembles SARAC → PEP asks PDP → verdict logged → ALLOW reaches downstream or DENY/STEP_UP returns to app.
+
+## Worked example: `uc-refund-agent`
+
+Profile `pdp-refund-write-v4`. Same three samples as the [evidence pack](/playbooks/governance/operating/go-live-evidence).
+
+| Foundation | Refund request |
+| --- | --- |
+| [Policy contracts](/playbooks/governance/runtime/foundation/policy-contracts) | `action: issue_refund`, `resource.account_id`, `context.amount_aud` |
+| [Token & session](/playbooks/governance/runtime/foundation/token-and-session-boundary) | Staff token stays in the app. Model sees schemas for `issue_refund` only |
+| [PEP enforcement](/playbooks/governance/runtime/foundation/pep-enforcement) | No path from the app to the ledger except this PEP |
+| [PDP surfaces](/playbooks/governance/runtime/foundation/pdp-policy-surfaces) | $80 ALLOW, $750 STEP_UP (`refund_above_auto_approved`), purpose mismatch DENY |
+| [Step-up](/playbooks/governance/runtime/foundation/step-up-and-attestation) | Attestation `att-2026-03-11-1842`, then re-eval ALLOW |
+| [Audit & replay](/playbooks/governance/runtime/foundation/audit-and-replay) | `v-10041` / `v-10058` / `v-10062` without opening chat |
+
+HR FAQ skips step-up. Its foundation path is retrieve → DENY if corpus is outside the handbook.
 
 ## Assurance (after foundations)
 

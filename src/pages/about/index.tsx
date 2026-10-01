@@ -55,32 +55,41 @@ function AboutTab(): ReactNode {
         than exceptions.
       </p>
       <p>
-        I lead at the intersection of business strategy, platform architecture, and AI capability,
-        helping organisations modernise safely in regulated environments across Australia, the UAE,
-        and India.
+        I lead as an architect and engineering leader: business strategy, system design, and AI
+        capability, helping organisations modernise safely in regulated environments across
+        Australia, the UAE, and India.
       </p>
       <p>
         Today that work spans enterprise cloud and application modernisation at NAB, multi-cloud
-        platforms (AWS and Azure), and responsible GenAI adoption: setting direction, standards, and
-        roadmaps with senior stakeholders, and enabling teams through patterns, governance, and
-        architecture boards.
+        platforms (AWS and Azure), and responsible GenAI adoption. I set direction with senior
+        stakeholders, review designs with engineering leads, and enable teams through patterns that
+        have to run in production — not only through governance and architecture boards.
       </p>
 
       <h3 className={styles.tabSectionTitle}>How I Lead</h3>
-      <p>I lead through design authority and operating models, not engineering people management.</p>
+      <p>
+        I lead through design authority and engineering judgement. I do not manage an engineering
+        reporting line; I stay close enough to the code and the production trade-offs that
+        architecture stays implementable.
+      </p>
       <ul>
         <li>Set technical direction and reference architectures across delivery streams</li>
-        <li>Partner with business and executive stakeholders on roadmaps and tradeoffs</li>
-        <li>Establish standards, architecture review boards, COEs, and governance frameworks</li>
-        <li>Shape AI and platform adoption strategies that hold up in production</li>
-        <li>Enable teams through patterns, playbooks, and clear decision frameworks</li>
+        <li>
+          Partner with engineering leads on production trade-offs, and with business stakeholders on
+          roadmaps
+        </li>
+        <li>Set standards, review boards, and CoEs — and keep the patterns in production</li>
+        <li>Shape AI and platform adoption that risk, security, and engineering will accept</li>
+        <li>
+          Enable teams through libraries, quickstarts, playbooks, and clear decision frameworks
+        </li>
       </ul>
-      <p>This is the work I do in enterprise architecture, and what I write about publicly.</p>
+      <p>This is the work I do as an architect and engineering leader, and what I write about publicly.</p>
 
       <h3 className={styles.tabSectionTitle}>Why This Exists</h3>
       <p>
         This site is where I build in public: frameworks, architecture notes, playbooks, blueprints,
-        and insights from enterprise architecture work.
+        and insights from architecture and engineering leadership in the enterprise.
       </p>
       <p>
         I publish for architects, engineering leaders, and transformation teams navigating AI,
@@ -96,21 +105,23 @@ function WorkTab(): ReactNode {
     <div className={styles.tabBox}>
       <h2 className={styles.tabBoxTitle}>Work</h2>
       <p>
-        I advise and lead architecture for enterprise platforms and AI-enabled systems, currently as
-        Enterprise Architect at NAB, with deep prior work in aviation (Emirates), energy (AusNet
-        Services), retail (Tesco), and digital transformation consulting (Sapient) across banking and
-        enterprise clients in India and the UAE.
+        I lead architecture and engineering for enterprise platforms and AI-enabled systems,
+        currently as Enterprise Architect at NAB, with deep prior work in aviation (Emirates),
+        energy (AusNet Services), retail (Tesco), and digital transformation consulting (Sapient)
+        across banking and enterprise clients in India and the UAE.
       </p>
       <p>
         My work spans cloud modernisation, distributed and event-driven platforms, integration
         architecture, and governed production AI, including GenAI adoption strategy, agent runtimes,
-        RAG pipelines, and the observability and policy layers that make AI trustworthy at scale.
+        RAG pipelines, and the observability and policy layers that make AI trustworthy at scale. I
+        work at the grain of APIs, failure modes, and production trade-offs, not only at the grain of
+        operating models.
       </p>
 
       <h3 className={styles.tabSectionTitle}>Industries</h3>
       <p>
-        Deep experience in regulated, mission-critical environments where architecture, governance,
-        and operational resilience are non-negotiable.
+        Deep experience in regulated, mission-critical environments where architecture, engineering
+        judgement, and operational resilience are non-negotiable.
       </p>
       <ul>
         <li>Banking & financial services: core banking, payments, digital channels</li>
@@ -129,9 +140,9 @@ function BackgroundTab(): ReactNode {
     <div className={styles.tabBox}>
       <h2 className={styles.tabBoxTitle}>Background</h2>
       <p className={styles.lead}>
-        A condensed arc from software engineering through enterprise architecture in regulated
-        banking, aviation, and critical infrastructure. Outcomes and scope matter more than title
-        inflation.
+        A condensed arc from software engineering through architecture and engineering leadership in
+        regulated banking, aviation, and critical infrastructure. Outcomes and scope matter more than
+        title inflation.
       </p>
 
       <h3 className={styles.tabSectionTitle}>Career Highlights</h3>

@@ -158,7 +158,7 @@ export const siteSections: SitemapSection[] = [
     title: 'About',
     question: 'Who builds this handbook',
     description:
-      'Who builds this handbook, what they work on, career background, and credentials.',
+      'Architect and engineering leader behind this handbook: work, background, and credentials.',
     href: '/about',
     links: [
       {label: 'About', href: '/about'},
@@ -170,9 +170,9 @@ export const siteSections: SitemapSection[] = [
   {
     id: 'advisory',
     title: 'Advisory',
-    question: 'How to engage for architecture and governed AI',
+    question: 'How to engage for architecture, engineering leadership, and governed AI',
     description:
-      'Advisory services for enterprise architecture, platform modernization, and governed AI.',
+      'Advisory for enterprise architecture and engineering leadership, platform modernization, and governed AI.',
     href: '/advisory',
     links: [
       {label: 'Advisory', href: '/advisory'},

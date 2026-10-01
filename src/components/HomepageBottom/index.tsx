@@ -61,7 +61,8 @@ export default function HomepageBottom(): ReactNode {
             <div className="gain-latest-insights__intro">
               <h2>Latest Insights</h2>
               <p>
-                Fresh perspectives, architecture deep-dives, and lessons from building AI systems.
+                Fresh perspectives, architecture and engineering notes, and lessons from systems that
+                have to run.
               </p>
             </div>
             <Link to="/insights" className="gain-latest-insights__view-all">

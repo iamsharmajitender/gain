@@ -23,10 +23,10 @@ export type AdvisoryEngagementModel = {
 };
 
 export const servicesLead =
-  'I advise CIOs, CTOs, and transformation leaders when architecture decisions must hold up in production, under regulatory scrutiny, and at enterprise scale.';
+  'I advise CIOs, CTOs, and transformation leaders when architecture decisions must hold up in production, under regulatory scrutiny, and at enterprise scale. I stay close enough to the code and the engineering leads that those decisions remain implementable.';
 
 export const servicesWhenToEngage =
-  'Engage when modernization is stalled, design authority is unclear, or GenAI needs a path that risk and security will accept.';
+  'Engage when modernization is stalled, design authority is unclear, or GenAI needs a path that risk, security, and engineering will accept.';
 
 export const servicesProofOutcomes: string[] = [
   'Cloud-aligned modernization across 2,000+ enterprise applications',
@@ -57,24 +57,24 @@ export const advisoryServices: AdvisoryService[] = [
     icon: '▦',
     title: 'System design for scale & resilience',
     description:
-      'End-to-end distributed-system design for capacity, failure modes, and operability, including APIs, microservices, and event-driven platforms where they earn their place.',
+      'End-to-end distributed-system design for capacity, failure modes, and operability. I still work at this grain with engineering leads — APIs, microservices, and event-driven platforms where they earn their place.',
   },
 ];
 
 export const approachIntro =
-  'I work from first principles: understanding the business problem, constraints, and success criteria before defining architecture. Every engagement balances speed with governance, especially where risk, compliance, and security are in the room from day one.';
+  'I work from first principles: understanding the business problem, constraints, and success criteria before defining architecture. I stay close to the system design — APIs, failure modes, production trade-offs — so governance does not float above the code. Every engagement balances speed with governance, especially where risk, compliance, and security are in the room from day one.';
 
 export const approachPrinciples: string[] = [
   'Start with the problem, not the technology',
   'Design for evolution, not just delivery',
   'Embed observability and governance from day one',
   'Partner with risk, compliance, and security stakeholders to align architecture to operational resilience and regulatory expectations',
-  'Enable teams through clarity, patterns, and standards',
+  'Enable teams through clarity, patterns, standards, and production trade-offs',
   'Build in public: share patterns and lessons that accelerate outcomes',
 ];
 
 export const caseStudiesIntro =
-  'Representative outcomes from enterprise architecture engagements across banking, aviation, and critical infrastructure.';
+  'Representative outcomes from architecture and engineering leadership across banking, aviation, and critical infrastructure.';
 
 export const advisoryCaseStudies: AdvisoryCaseStudy[] = [
   {
@@ -146,7 +146,7 @@ export const advisoryEngagementModels: AdvisoryEngagementModel[] = [
   {
     title: 'Fractional leadership',
     description:
-      'Hands-on design authority embedded in cloud, application, and platform modernization programs',
+      'Design authority embedded in cloud, application, and platform modernization programs — close enough to engineering that architecture stays implementable',
   },
   {
     title: 'Design authority',
@@ -156,12 +156,12 @@ export const advisoryEngagementModels: AdvisoryEngagementModel[] = [
   {
     title: 'Capability uplift',
     description:
-      'Engineering patterns, quickstarts, and architecture mentoring to accelerate team delivery',
+      'Engineering patterns, quickstarts, and architecture mentoring — close enough to the code that teams can ship',
   },
 ];
 
 export const advisoryCtaText =
-  'I advise on cloud modernization, platform architecture, and governed AI. Tell me your context and we can decide if a short conversation is useful.';
+  'I advise on cloud modernization, platform architecture, and governed AI as an architect who still works at engineering grain. Tell me your context and we can decide if a short conversation is useful.';
 
 export const contactIntro =
   'Interested in advisory work or an architecture conversation? Reach out with your context.';

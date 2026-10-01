@@ -36,9 +36,45 @@ flowchart LR
   B5 --> B2
   B2 --> B3
   B2 --> U
+
+  classDef actor fill:#dbeafe,stroke:#93c5fd,color:#1e293b,stroke-width:2px
+  classDef process fill:#ede9fe,stroke:#c4b5fd,color:#1e293b,stroke-width:2px
+  classDef gate fill:#ffedd5,stroke:#fdba74,color:#1e293b,stroke-width:2px
+  classDef action fill:#fef3c7,stroke:#fcd34d,color:#1e293b,stroke-width:2px
+
+  class U actor
+  class B1,B2,B3 process
+  class B4 gate
+  class B5 action
 ```
 
+<br/>
+
 The loop is intentional: the agentic app orchestrates multiple LLM calls and PEP gates. The model proposes; the app and policy layer permit.
+
+## Worked example: one `issue_refund` request
+
+Same `uc-refund-agent` as [Operating](/playbooks/governance/operating). Priya asks to refund a duplicate charge.
+
+| # | Boundary | Refund path |
+| --- | --- | --- |
+| ① | [Ingress](/playbooks/governance/runtime/boundary/ingress) | Staff token for `staff-priya-shah`. Claims include `payments.refund.issue` |
+| ② | [Agentic app](/playbooks/governance/runtime/boundary/agentic-app) | Holds token. Loads refund manifest. Does not call the ledger |
+| ③ | [LLM proposal](/playbooks/governance/runtime/boundary/llm-proposal) | Proposes `issue_refund` $80 / $750. Sees schemas only |
+| ④ | [PEP + PDP](/playbooks/governance/runtime/boundary/pep-pdp) | `pdp-refund-write-v4`: ALLOW / STEP_UP / DENY before any money moves |
+| ⑤ | [Downstream](/playbooks/governance/runtime/boundary/downstream) | Payment hub only after ALLOW. Result returns to the app, not the model |
+
+HR FAQ is the same five hops. ③ has no write schema. ⑤ is retrieve. STEP_UP never fires.
+
+## What "not done" looks like
+
+| Symptom | Broken boundary |
+| --- | --- |
+| Slack bot accepts chat without login | ① Ingress |
+| App POSTs to the ledger with a service key | ② Agentic app |
+| System prompt contains "never refund above $500" | ③ LLM proposal |
+| Framework auto-runs `issue_refund` | ④ PEP + PDP |
+| Ledger trusts PEP and skips token check | ⑤ Downstream |
 
 ## The five boundaries
 
@@ -105,7 +141,19 @@ flowchart TB
   B5 --> A2
   A2 --> Sup
   Sup --> U
+
+  classDef actor fill:#dbeafe,stroke:#93c5fd,color:#1e293b,stroke-width:2px
+  classDef process fill:#ede9fe,stroke:#c4b5fd,color:#1e293b,stroke-width:2px
+  classDef gate fill:#ffedd5,stroke:#fdba74,color:#1e293b,stroke-width:2px
+  classDef action fill:#fef3c7,stroke:#fcd34d,color:#1e293b,stroke-width:2px
+
+  class U actor
+  class B1,Sup,M1,A2,M2 process
+  class B4a,B4b gate
+  class B5 action
 ```
+
+<br/>
 
 ### What stays the same
 

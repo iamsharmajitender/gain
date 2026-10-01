@@ -11,11 +11,13 @@ tags:
   - compliance
 ---
 
+import Details from '@theme/Details';
+
 # Obligation-to-Control Map
 
 [Operating](/playbooks/governance/operating) · [← Inventory](/playbooks/governance/operating/inventory) · **Obligation map** · [Evidence pack →](/playbooks/governance/operating/go-live-evidence)
 
-Each **must-we** (law, sector rule, internal policy) maps to a **named control** you can point at, and to an **evidence artifact** you can produce. The map sits under Governance. It does not merge Responsible, Regulatory, and Risk into one slogan. [Types live on the blueprint](/blueprints/governance/operating#layer-model).
+Each **must-we** (law, sector rule, internal policy) maps to a **named control** you can point at, and to an **evidence artifact** you can produce. The map sits under Governance. It does not merge Responsible, Regulatory, and Risk into one slogan. [Types live on G.A.I.N Governance](/frameworks/gain-governance#layer-model-parent-control-system-three-workstreams).
 
 :::tip[THE CLAIM]
 **If you cannot name the control, you do not have the obligation covered.** A principle in a PDF is not a control.
@@ -45,12 +47,74 @@ Each **must-we** (law, sector rule, internal policy) maps to a **named control**
 
 One obligation may bind several use cases. One use case usually has several obligations. Do not hide that in a single "compliant" flag.
 
+## Worked example: four must-we rows for the refund agent
+
+The [inventory row](/playbooks/governance/operating/inventory) `uc-refund-agent` is not covered by one obligation. These four are typical for a bank write path. Fair treatment is a Responsible AI *outcome*; the consumer-duty row is the *must-we* that Legal can point at.
+
+| `obligation_id` | Type | `must_we` | `control_id` | Where it runs |
+| --- | --- | --- | --- | --- |
+| `APRA-CPS-230-op-res` | Regulatory | Reconstruct who approved a refund over threshold | `pep-step-up-refund` | Runtime PEP STEP_UP + attestation |
+| `PRIV-APP-purpose` | Regulatory | Use customer data only for the refund purpose the customer was told | `retrieval-scope-refund-ledger` | Governed retrieval + output filter |
+| `CONS-DUTY-fair-outcome` | Regulatory | Comparable customers get comparable refund treatment; exceptions named | `eval-refund-fairness-gate` | Eval gate before promote |
+| `INT-FRAUD-limit-500` | Internal policy | Auto-refunds above AUD 500 require a human | `pep-step-up-refund` | Same PEP control as CPS 230 |
+
+`pep-step-up-refund` is shared by two obligations. That is allowed. The evidence pack must still show one verdict sample that satisfies both.
+
+<Details summary="Example map rows for uc-refund-agent (YAML)">
+
+```yaml
+- obligation_id: APRA-CPS-230-op-res
+  source: APRA CPS 230
+  must_we: Reconstruct who approved a refund over threshold
+  control_id: pep-step-up-refund
+  control_where: Runtime PEP STEP_UP; attestation on the evidence pack
+  evidence_id: verdict-log + attestation-record
+  use_case_id: uc-refund-agent
+
+- obligation_id: PRIV-APP-purpose
+  source: Privacy Act APP 6 / bank privacy notice
+  must_we: Customer data used only for the stated refund purpose
+  control_id: retrieval-scope-refund-ledger
+  control_where: Retrieval scope on the route; output filter
+  evidence_id: retrieval-acl-snapshot
+  use_case_id: uc-refund-agent
+
+- obligation_id: CONS-DUTY-fair-outcome
+  source: Consumer duty / unfair contract terms review
+  must_we: Comparable customers get comparable refund treatment
+  control_id: eval-refund-fairness-gate
+  control_where: Evaluation promotion gate
+  evidence_id: eval-run ev-refund-fair-2026-03
+  use_case_id: uc-refund-agent
+
+- obligation_id: INT-FRAUD-limit-500
+  source: Internal fraud appetite (signed 2026-01)
+  must_we: Auto-refunds above AUD 500 require a human
+  control_id: pep-step-up-refund
+  control_where: Runtime PEP STEP_UP
+  evidence_id: verdict-log STEP_UP sample
+  use_case_id: uc-refund-agent
+```
+
+</Details>
+
+The HR FAQ use case (`uc-hr-policy-faq`) does not get these four rows. It might get a single internal-policy row: "staff handbook retrieval stays inside the published corpus." Copy-paste is how the map goes stale.
+
+## Wrong type vs missing control
+
+| What someone wrote | Why it fails | Fix |
+| --- | --- | --- |
+| `must_we: Be fair and trustworthy` | Responsible outcome, not a must-we | Outcome stays on Responsible AI. Must-we is the consumer-duty row above. |
+| `control_id: ethics-board` | A committee is not a control on the path | Name `pep-step-up-refund` or an eval gate |
+| `control_id: pep-step-up-refund` but PEP profile missing | Map points at air | Control id must exist in [Runtime](/playbooks/governance/runtime) |
+| One row: `must_we: Comply with all AU banking law` | Not reconstructable | Split into named sources, one control each |
+
 ## Failure classes
 
-- Obligation register in Legal with no control id
-- Control id that does not exist in Runtime or in the evidence pack
-- Responsible AI outcome treated as a must-we (wrong type)
-- Map updated; PEP policy version not pinned
+- Obligation register in Legal with no control id: SharePoint memo, empty `control_id`
+- Control id that does not exist in Runtime or in the evidence pack: `pep-step-up-refund` never created
+- Responsible AI outcome treated as a must-we: "be explainable" as the only refund row
+- Map updated; PEP policy version not pinned: fraud limit changed to AUD 250, profile still `v4` at 500
 
 ## Trace / register fields
 

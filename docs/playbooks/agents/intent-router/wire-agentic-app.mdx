@@ -173,6 +173,7 @@ The producer names the capability. Classification does not run. The router still
   "route_id": "fraud_investigate",
   "route_table_version": "2026.08.1",
   "activation_target": "https://assistant-app.internal/v1/runs",
+  "agent_client_id": "fraud-investigate-v2",
   "contract": {
     "tool_manifest": "fraud-investigate-v2",
     "manifest_version": "2026.08.1",
@@ -193,7 +194,7 @@ Agent responds `202 { "correlation_id": "corr-9f3c" }` (same as `run_id`, or 1:1
 
 ## Route pin and run pin
 
-The **router** writes the route pin (`session_id` → versions + `activation_target` + `correlation_id`) when it starts the run. `activation_target` is **which agentic app to call**. Omit on the row for the shared runtime. The **app** copies those versions and adds loop/token. Mid-session promote must not change an in-flight run. Durable store and restart: [Session custody](/playbooks/agents/orchestration/session-custody). Field: [Route contract](/playbooks/agents/intent-router/route-contract-reference#activation-target).
+The **router** writes the route pin (`session_id` → versions + `activation_target` + `agent_client_id` + `correlation_id`) when it starts the run. `activation_target` is **which agentic app to call**. `agent_client_id` is **which IdP client** the app requests a token for after freeze. Omit `activation_target` on the row for the shared runtime. The **app** copies those versions and adds loop/token. Mid-session promote must not change an in-flight run. Durable store and restart: [Session custody](/playbooks/agents/orchestration/session-custody). Fields: [Activation target](/playbooks/agents/intent-router/route-contract-reference#activation-target) · [Agent client id](/playbooks/agents/intent-router/route-contract-reference#agent-client-id).
 
 ## Failure classes
 
@@ -206,6 +207,7 @@ The **router** writes the route pin (`session_id` → versions + `activation_tar
 | App re-resolves `active` after `202` | Versions drift mid-run |
 | UI calls the fraud MS directly | Side door; entitlements only in the chat path |
 | Event skips Plane ① | Worker hardcodes tools; pin and audit missing |
+| Start or run pin missing `agent_client_id` | App cannot mint the robot; falls back to a shared NAR identity |
 
 ## Plane handoff
 

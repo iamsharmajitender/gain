@@ -32,7 +32,7 @@ Two records. The router **should** pin first so stickiness and the async start s
 
 | Record | Who writes it | Lives where | Job |
 | --- | --- | --- | --- |
-| **Route pin** | Intent router (or front door cache) | Hot KV with TTL | `session_id` → frozen `route_id` + `route_table_version` + `activation_target` + `correlation_id` |
+| **Route pin** | Intent router (or front door cache) | Hot KV with TTL | `session_id` → frozen `route_id` + `route_table_version` + `activation_target` + `agent_client_id` + `correlation_id` |
 | **Decision** | Intent router | Audit / decision store | `router_layer`, `outcome`, `eligible_routes` |
 | **Run pin** | **Agentic app** | Durable run store | Copy of those versions plus `loop_step`, checkpoint, token, `run_id` |
 
@@ -51,6 +51,7 @@ Write at route decision (before the first LLM call). Mid-session promote of any 
 | `route_table_version` | Plane ① decision | Replay which contract classified the turn |
 | `route_id` | Route decision record | Scoped manifest and policy |
 | `activation_target` | Route row | Which agentic app Plane ① starts. Omit = shared runtime. Pin with `correlation_id` so resume hits the same app |
+| `agent_client_id` | Route row | Which IdP client the app requests a token for after freeze. Pointer only. See [Agent client id](/playbooks/agents/intent-router/route-contract-reference#agent-client-id) |
 | `manifest_version` | When `tool_manifest` is not `none` | Tool schemas stay stable for the run |
 | `policy_profile` | Route row | PEP/PDP version for side effects |
 | `model_profile` | Route row | Coarse tier passed to Plane ③; not a vendor model id |
@@ -78,6 +79,7 @@ Do not keep the pin only in process memory. A pod restart must load the same con
     "route_id": "fraud_investigate",
     "route_table_version": "2026.08.1",
     "activation_target": "https://assistant-app.internal/v1/runs",
+    "agent_client_id": "fraud-investigate-v2",
     "manifest_id": "fraud-investigate-v2",
     "manifest_version": "2026.08.1",
     "policy_profile": "fraud_ops_read_plus_notes",
@@ -178,7 +180,7 @@ See [PGAR LLM proposal](/playbooks/governance/runtime/boundary/llm-proposal) · 
 
 ## Trace fields
 
-`session_id`, `run_id`, `correlation_id`, `route_id`, `route_table_version`, `manifest_version`, `policy_profile`, `model_profile`, `orchestration_step`, `loop_step`, `max_loop_steps`
+`session_id`, `run_id`, `correlation_id`, `route_id`, `route_table_version`, `agent_client_id`, `manifest_version`, `policy_profile`, `model_profile`, `orchestration_step`, `loop_step`, `max_loop_steps`
 
 ## Read next
 

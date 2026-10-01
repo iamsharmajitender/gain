@@ -42,6 +42,18 @@ The LLM operates on conversation and tool schemas. It **proposes** tool calls. I
 | "Does amount exceed limit?" | PDP |
 | "Record approval for audit" | PEP |
 
+## Worked example: what the refund model may see
+
+| In the messages | Not in the messages |
+| --- | --- |
+| User text: "duplicate charge on acct-4412" | Bearer token, `emts`, fraud band AUD 500 |
+| Schema for `issue_refund` (`account_id`, `amount_aud`, `purpose`) | Policy text "never refund above 500" |
+| Prior tool results after the app sanitized them | Ledger credentials |
+
+The model may propose `$750`. That is planning. Permission is ④. If `$750` posts because the framework auto-ran the tool, ③ leaked into ⑤.
+
+HR FAQ: no `issue_refund` in the schema. A proposal to search payroll is rejected as unknown or sent to PEP and DENY `corpus_forbidden`.
+
 ## Tool manifest
 
 Only tools in the manifest appear in the LLM schema. Unknown proposals are rejected by the agentic app before PEP.

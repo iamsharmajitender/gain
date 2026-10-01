@@ -17,13 +17,13 @@ export default function Home(): ReactNode {
   return (
     <Layout
       title={siteConfig.title}
-      description="Advisor and technical leader for enterprise platforms and governed AI. Building in public at jitendersharma.dev.">
+      description="Architect and engineering leader for enterprise platforms and governed AI. Building in public at jitendersharma.dev.">
       <header className="gain-hero">
         <div className="container">
           <div className="gain-hero__grid">
             <div className="gain-hero__main">
               <h1 className="gain-hero__title">
-                Advisor and technical leader for enterprise platforms and AI.
+                Architect and engineering leader for enterprise platforms and AI.
               </h1>
               <p className="gain-hero__subtitle">
                 {profileHeroBio} G.A.I.N (Governed AI-Native Systems) is the operating model I use to

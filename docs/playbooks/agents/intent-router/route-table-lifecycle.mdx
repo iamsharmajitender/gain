@@ -42,7 +42,7 @@ Field dictionary: [Route contract reference](/playbooks/agents/intent-router/rou
 | **Config service** | Consul, AppConfig | OK if versioning and audit already exist |
 | **Hardcoded in app** | Code dict | Demos only |
 
-Row fields (`tool_manifest`, `policy_profile`, `retrieval`, `memory_profile`, …) are defined in [Route contract reference](/playbooks/agents/intent-router/route-contract-reference). Entitlements live in IdP claims, not in the table.
+Row fields (`tool_manifest`, `policy_profile`, `agent_client_id`, `retrieval`, `memory_profile`, …) are defined in [Route contract reference](/playbooks/agents/intent-router/route-contract-reference). Entitlements live in IdP claims, not in the table. The IdP holds the agent client secret; the row holds the pointer only.
 
 ## Typical layout
 

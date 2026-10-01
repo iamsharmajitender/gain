@@ -45,7 +45,7 @@ function CareerTimelineRail({
         <p className={styles.railSummary}>
           <span className={styles.railYears}>18+ years</span>
           <span className={styles.railDivider}>·</span>
-          <span>Engineering to enterprise architecture</span>
+          <span>Engineering to architecture leadership</span>
         </p>
       </div>
 

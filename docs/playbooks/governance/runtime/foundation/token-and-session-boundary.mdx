@@ -78,6 +78,16 @@ See [Policy contracts](/playbooks/governance/runtime/foundation/policy-contracts
 
 No `Authorization` header. No roles. No limits. No policy text.
 
+## Worked example: refund vs FAQ
+
+| | Refund agent (`pdp-refund-write-v4`) | HR FAQ (`pdp-hr-faq-read-v1`) |
+| --- | --- | --- |
+| App session holds | Staff token, `payments.refund.issue`, fraud band fetched at PEP time | Staff token, handbook read entitlement |
+| LLM sees | Schemas for `issue_refund` (and lookup tools) | No tools, or retrieve-only schema |
+| LLM must not see | `$500` band, bearer, `emts` | Corpus ACL, bearer |
+
+If the refund system prompt says "never refund more than 500," you failed this playbook. The band lives in the PDP surface, not in the messages array.
+
 ## The PGAR test (automate this)
 
 | Check | Pass criteria |

@@ -162,7 +162,7 @@ This diagram is **Plane ① only**. Plane ② starts after handoff. Chat, API, a
 
 | Artifact | Purpose |
 | --- | --- |
-| **Route contract** (table row) | `route_id`, `intent_label`, manifest ref, `policy_profile`, `model_profile`, optional `retrieval`, optional `memory_profile` |
+| **Route contract** (table row) | `route_id`, `intent_label`, `agent_client_id`, manifest ref, `policy_profile`, `model_profile`, optional `retrieval`, optional `memory_profile`, optional `activation_target` |
 | **Route decision record** | Per-turn audit: `route_table_version`, `eligible_routes`, `outcome`, `router_layer` |
 | **Session pin** | Router: route pin + `correlation_id`. App: copy of versions + loop/token |
 | **Golden intent set** | CI fixtures for representative, edge, adversarial, session stickiness |
@@ -544,7 +544,7 @@ Every pattern shares the same versioning rule: the **route table** is versioned 
 
 | Artifact | Role |
 | --- | --- |
-| **Route** | `route_id`, `model_profile`, `policy_profile`, optional `retrieval`, pointers to other artifacts, optional budgets |
+| **Route** | `route_id`, `agent_client_id`, `model_profile`, `policy_profile`, optional `retrieval`, pointers to other artifacts, optional budgets |
 | **Workflow** | Stage order (Patterns 2-3); stage allowlists and `max_tool_calls` (Pattern 3) |
 | **Manifest** | Tool schemas and `pdp_action` / risk tier for PEP |
 | **Prompt** | System/user text, optionally stage-scoped |
@@ -560,6 +560,7 @@ Canonical route shape (fields appear when the pattern needs them):
 {
   "route_id": "example_route",
   "intent": "example_intent",
+  "agent_client_id": "example-agent-v1",
   "activation_target": "https://assistant-app.internal/v1/runs",
   "model_profile": "reasoning-standard",
   "tool_manifest": "example_v1",
@@ -583,6 +584,8 @@ Canonical route shape (fields appear when the pattern needs them):
 
 </Details>
 
+Every row carries `agent_client_id`. Patterns below are the extra refs.
+
 | Pattern | Typical row refs |
 | --- | --- |
 | **0** | `prompt_id`, `output_schema_id`, `eval_suite_id` (`tool_manifest: "none"`); optional `retrieval` with `mode: "deterministic_prefetch"`; optional lean `memory_profile` |
@@ -600,7 +603,7 @@ Bump **`route_table_version`** when a **route row** changes (pointers or policy 
 | --- | --- |
 | New or removed `route_id` | Yes |
 | Row points at a new `workflow_id`, `tool_manifest`, `prompt_id`, schema, or eval id | Yes |
-| `model_profile`, `policy_profile`, `retrieval`, `memory_profile`, `max_loop_steps`, `activation_target`, or entitlements on the row | Yes |
+| `model_profile`, `policy_profile`, `retrieval`, `memory_profile`, `max_loop_steps`, `activation_target`, `agent_client_id`, or entitlements on the row | Yes |
 | New `manifest_version` under the **same** `manifest_id` | Often no (promote + pin on session) |
 | Prompt / eval content bump while the route still references the same artifact id | Often no |
 

@@ -59,6 +59,50 @@ For retrieval paths, also log the assembled context pack (sources, scores, polic
 
 See [RAG retrieval](/playbooks/rag/retrieval).
 
+## Worked example: `ev-refund-agent-2026-03`
+
+Examiner opens the [evidence pack](/playbooks/governance/operating/go-live-evidence) and these three rows. Chat is optional color. It is not the source of truth.
+
+<Details summary="Refund audit rows matching the evidence pack (JSON)">
+
+```json
+[
+  {
+    "audit_id": "v-10041",
+    "use_case_id": "uc-refund-agent",
+    "action": "issue_refund",
+    "context_redacted": { "amount_aud": 80, "purpose": "duplicate_charge" },
+    "policy_version": "pdp-refund-write-v4",
+    "verdict": "ALLOW",
+    "downstream_called": true
+  },
+  {
+    "audit_id": "v-10058",
+    "use_case_id": "uc-refund-agent",
+    "action": "issue_refund",
+    "context_redacted": { "amount_aud": 750, "purpose": "duplicate_charge" },
+    "policy_version": "pdp-refund-write-v4",
+    "verdict": "STEP_UP",
+    "reason_code": "refund_above_auto_approved",
+    "downstream_called": false
+  },
+  {
+    "audit_id": "v-10062",
+    "use_case_id": "uc-refund-agent",
+    "action": "issue_refund",
+    "context_redacted": { "amount_aud": 80, "purpose": "goodwill_unmapped" },
+    "policy_version": "pdp-refund-write-v4",
+    "verdict": "DENY",
+    "reason_code": "purpose_mismatch",
+    "downstream_called": false
+  }
+]
+```
+
+</Details>
+
+Replay `v-10058` against `pdp-refund-write-v4` without the attestation: still STEP_UP. After attaching `att-2026-03-11-1842`: ALLOW. If replay disagrees with the log, the pack is broken.
+
 ## Failure classes
 
 - **Chat as audit:** only conversation history, no PEP record

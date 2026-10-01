@@ -44,6 +44,12 @@ flowchart TB
   B[Boundary]
   F --> A
   F --> B
+
+  classDef process fill:#ede9fe,stroke:#c4b5fd,color:#1e293b,stroke-width:2px
+  classDef gate fill:#ffedd5,stroke:#fdba74,color:#1e293b,stroke-width:2px
+
+  class F,B process
+  class A gate
 ```
 
 <br/>
@@ -55,6 +61,31 @@ flowchart TB
 Then call other G.A.I.N series for the thing being gated: [Manifests](/playbooks/agents/manifests/manifest-registry), [RAG](/playbooks/rag), [Memory](/playbooks/agents/orchestration/memory).
 
 Eval overlap: [Action plane](/playbooks/evaluation/plane-action) · [Tool plane](/playbooks/evaluation/plane-tool).
+
+## Worked example: bank refund agent
+
+Same ids as [Operating](/playbooks/governance/operating): `uc-refund-agent`, profile `pdp-refund-write-v4`, control `pep-step-up-refund`. Operating approved the row. This series is one request.
+
+| Group | What happens on `issue_refund` |
+| --- | --- |
+| **[Foundation](/playbooks/governance/runtime/foundation)** | SARAC for $80 / $750 / purpose-mismatch; token stays in the app; PEP asks PDP; STEP_UP above AUD 500; audit written before any ledger call |
+| **[Assurance](/playbooks/governance/runtime/assurance/policy-test-scenarios)** | Suite `pol-refund-write-v4`: ALLOW $80, STEP_UP $750, DENY purpose_mismatch, plus bypass fixtures |
+| **[Boundary](/playbooks/governance/runtime/boundary)** | Ingress binds Priya's staff token → app holds it → model proposes `issue_refund` → PEP/PDP verdict → payment hub only on ALLOW |
+
+The evidence pack [`ev-refund-agent-2026-03`](/playbooks/governance/operating/go-live-evidence) is those three verdict samples plus the policy pin. If Runtime cannot produce them, the pack is a slide.
+
+A staff HR FAQ (`uc-hr-policy-faq`, `pdp-hr-faq-read-v1`) is the same five boundaries with no write tool and no STEP_UP. DENY is out-of-corpus retrieval. Do not copy the $750 fixture onto that path.
+
+## What "not done" looks like
+
+| Symptom | Missing playbook |
+| --- | --- |
+| Model told "do not refund above $500" in the system prompt | [PDP surfaces](/playbooks/governance/runtime/foundation/pdp-policy-surfaces) |
+| App calls the payment hub with its own API key | [PEP enforcement](/playbooks/governance/runtime/foundation/pep-enforcement) |
+| Bearer token in the LLM messages | [Token & session](/playbooks/governance/runtime/foundation/token-and-session-boundary) |
+| User types "approved" in chat; $750 posts | [Step-up](/playbooks/governance/runtime/foundation/step-up-and-attestation) |
+| Examiner needs the Slack thread to reconstruct the refund | [Audit & replay](/playbooks/governance/runtime/foundation/audit-and-replay) |
+| Inventory `live`, no CI fixture for `issue_refund` | [Policy test scenarios](/playbooks/governance/runtime/assurance/policy-test-scenarios) |
 
 ## All playbooks at a glance
 

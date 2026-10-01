@@ -2,7 +2,7 @@
 slug: /agents/intent-router/route-contract-reference
 title: "Route Contract Reference"
 sidebar_label: Route contract reference
-description: "Field dictionary for route table rows: route, activation target (which agentic app to start), manifest, policy, retrieval, memory, workflow, and related artifact ids."
+description: "Field dictionary for route table rows: route, activation target (which agentic app to start), agent_client_id (which IdP client is acting), manifest, policy, retrieval, memory, workflow, and related artifact ids."
 tags:
   - ai-intelligence
   - arch
@@ -20,7 +20,7 @@ import Details from '@theme/Details';
 Bookmark this page when you need the **field dictionary** for a route row. Ops (version, promote, rollback) live in [Route table lifecycle](/playbooks/agents/intent-router/route-table-lifecycle). Tool entry shape lives in [Manifest registry](/playbooks/agents/manifests/manifest-registry). PEP payload shape lives in [Policy contracts](/playbooks/governance/runtime/foundation/policy-contracts).
 
 :::tip[THE CLAIM]
-**A route row is a governed execution contract.** It points at versioned artifacts (manifest, policy, memory, workflow, prompt) and at **which agentic app to start** (`activation_target`). It does not embed secrets, full chat history, or PDP prose.
+**A route row is a governed execution contract.** It points at versioned artifacts (manifest, policy, memory, workflow, prompt), at **which agentic app to start** (`activation_target`), and at **which IdP client is acting** (`agent_client_id`). It does not embed secrets, tokens, full chat history, or PDP prose.
 :::
 
 <!-- truncate -->
@@ -31,6 +31,7 @@ Bookmark this page when you need the **field dictionary** for a route row. Ops (
 | --- | --- | --- | --- |
 | `route_id` | Yes | `legal_contract_review` | Stable id; tied to change records and audit |
 | `activation_target` | Optional | `https://assistant-app.internal/v1/runs` | **Which agentic app the router starts.** Omit to use the shared runtime. See [Activation target](#activation-target) |
+| `agent_client_id` | Yes | `payments-agent-v2` | **Which IdP-registered software principal acts on this route.** Pointer only. See [Agent client id](#agent-client-id) |
 | `intent` / `intent_label` | Yes | `contract_review` | Classifier / eval fixture target |
 | `description` | Optional | Contract review for counsel | Human-readable scope |
 | `tool_manifest` | Yes | `contract_review_staged_v3` or `none` | Tool schemas the LLM may propose. See [Manifest registry](/playbooks/agents/manifests/manifest-registry) |
@@ -61,6 +62,20 @@ Fields appear when the autonomy pattern needs them. Pattern matrix: [Agents Blue
 Pin it on the route pin with `correlation_id`. Resume (`"yes"`) starts the **same** target. Do not re-resolve from `active`. How the POST looks: [Wire agentic app](/playbooks/agents/intent-router/wire-agentic-app).
 
 A new use case is still a new **row**, not a new runtime. Set `activation_target` only when isolation cannot live in the pin (PCI enclave, separate release cadence). Same router either way.
+
+## Agent client id {#agent-client-id}
+
+`agent_client_id` is **which robot** this route is. It is an IdP client pointer on the catalogue row. It is not a secret, not a token, and not `activation_target`.
+
+| Value | Meaning |
+| --- | --- |
+| IdP `client_id` string | Register this agent in the IdP. After freeze, the agentic app requests a token for **this** client, downscoped to this route's manifest. |
+
+Pin it on the route pin and the run pin with `route_id` and versions. Resume re-mints the same client. Route change mid-session: new downscoped token for the new row's `agent_client_id`. Do not derive the id from `route_id`. Do not put the client on NAR / `activation_target` config (shared runtime would become one fat identity). Do not inline scopes or client secrets on the row. The IdP holds registration, secret, allowed scopes, and status.
+
+A new use case is a new **row** and usually a new **agent client**. Two rows may share a client only when they are the same software principal; prefer 1:1 so revoke does not take unrelated routes.
+
+How the freeze carries it: [Session custody](/playbooks/agents/orchestration/session-custody) · [Wire agentic app](/playbooks/agents/intent-router/wire-agentic-app). Token boundary: [Token and session boundary](/playbooks/governance/runtime/foundation/token-and-session-boundary).
 
 ## Retrieval
 
@@ -114,6 +129,7 @@ Pattern 2. Shared runtime (no `activation_target`). No `max_loop_steps`: the wor
 {
   "route_id": "msa_risk_review",
   "intent": "msa_risk_review",
+  "agent_client_id": "msa-risk-review-v1",
   "description": "Fixed-stage MSA risk review for counsel: OCR, clause search, playbook, risk, memo",
   "model_profile": "reasoning-standard",
   "tool_manifest": "msa_risk_review_v1",
@@ -144,6 +160,7 @@ Pattern 2. Shared runtime (no `activation_target`). No `max_loop_steps`: the wor
 | Field | What it means on this route |
 | --- | --- |
 | `route_id` / `intent` | This turn is MSA risk review. Classifier target and audit id. |
+| `agent_client_id` | IdP client `msa-risk-review-v1`. NAR requests a token for this robot after freeze. |
 | `description` | Human-readable scope. Not sent to the model. |
 | `model_profile` | Reasoning tier at the gateway. Not a vendor model id. |
 | `tool_manifest` | Load `msa_risk_review_v1`. Tool schemas and `pdp_action` live there. |
@@ -200,6 +217,7 @@ Changing prompt **text** under the same `prompt_id` does not bump `route_table_v
 | Workflow stages / stage allowlists | Workflow store | [Agents Blueprint](/blueprints/agents-blueprint) (Patterns 2-3) |
 | Prompt pack (`host`, `by_llm_role`) | Prompt store | [Prompt artifact](#prompt-artifact) |
 | Output schema / eval suite | Separate versioned stores | Loaded by id from the row |
+| IdP agent registration (secret, allowed scopes, status) | IdP / agent security | Pointer on the row is `agent_client_id` only. See [Agent client id](#agent-client-id) |
 
 ## Canonical single-route shape
 
@@ -211,6 +229,7 @@ Worked Pattern 2 row: MSA risk review. Same contract as [Prompt artifact](#promp
 {
   "route_id": "msa_risk_review",
   "intent": "msa_risk_review",
+  "agent_client_id": "msa-risk-review-v1",
   "description": "Fixed-stage MSA risk review for counsel: OCR, clause search, playbook, risk, memo",
   "model_profile": "reasoning-standard",
   "tool_manifest": "msa_risk_review_v1",
@@ -252,6 +271,7 @@ One published artifact: table metadata plus one object per route row. Entitlemen
     {
       "route_id": "agent-account-v3",
       "intent_label": "account_history",
+      "agent_client_id": "accounts-agent-v3",
       "description": "Read-only account and transaction history",
       "tool_manifest": "accounts-readonly-v2",
       "policy_profile": "read_only_standard",
@@ -272,6 +292,7 @@ One published artifact: table metadata plus one object per route row. Entitlemen
     {
       "route_id": "agent-payments-v2",
       "intent_label": "payment_initiate",
+      "agent_client_id": "payments-agent-v2",
       "description": "Initiate outbound transfer",
       "activation_target": "https://payments-app.internal/v1/runs",
       "tool_manifest": "payments-readwrite-v3",
@@ -293,6 +314,7 @@ One published artifact: table metadata plus one object per route row. Entitlemen
     {
       "route_id": "agent-policy-qa-v1",
       "intent_label": "policy_qa",
+      "agent_client_id": "policy-qa-agent-v1",
       "description": "Policy and procedure Q&A via RAG",
       "tool_manifest": "none",
       "policy_profile": "read_only_standard",
@@ -307,6 +329,7 @@ One published artifact: table metadata plus one object per route row. Entitlemen
     {
       "route_id": "agent-chat-v1",
       "intent_label": "general_chat",
+      "agent_client_id": "chat-agent-v1",
       "description": "Lightweight chat with no tools",
       "tool_manifest": "none",
       "policy_profile": "low_risk_chat",
@@ -318,6 +341,7 @@ One published artifact: table metadata plus one object per route row. Entitlemen
     {
       "route_id": "agent-escalate-v1",
       "intent_label": "escalate_human",
+      "agent_client_id": "escalate-agent-v1",
       "description": "Hand off to human agent",
       "tool_manifest": "handoff-v1",
       "policy_profile": "read_only_standard",
@@ -333,6 +357,8 @@ One published artifact: table metadata plus one object per route row. Entitlemen
 </Details>
 
 ## Pattern cheat sheet
+
+Every row carries `agent_client_id`. Patterns below are the extra refs.
 
 | Pattern | Typical row refs |
 | --- | --- |
@@ -351,7 +377,7 @@ Bump **`route_table_version`** when a **route row** changes (pointers or policy 
 | --- | --- |
 | New or removed `route_id` | Yes |
 | Row points at a new `workflow_id`, `tool_manifest`, `prompt_id`, schema, or eval id | Yes |
-| `model_profile`, `policy_profile`, `retrieval`, `memory_profile`, `max_loop_steps`, `activation_target`, or entitlements on the row | Yes |
+| `model_profile`, `policy_profile`, `retrieval`, `memory_profile`, `max_loop_steps`, `activation_target`, `agent_client_id`, or entitlements on the row | Yes |
 | New `manifest_version` under the **same** `manifest_id` | Often no (promote + pin on session) |
 | Prompt / eval content bump while the route still references the same artifact id | Often no |
 

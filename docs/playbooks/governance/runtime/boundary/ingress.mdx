@@ -32,6 +32,18 @@ Ingress receives the user request, validates the token, and issues claims to the
 | Rate limits, WAF | Business logic |
 | Correlation / request id | Context pack assembly |
 
+## Worked example: Priya opens the refund agent
+
+| Field | Value |
+| --- | --- |
+| `sub` | `staff-priya-shah` |
+| `roles` | `payments_ops` |
+| `emts` | `payments.refund.issue: true` |
+| `use_case_id` | `uc-refund-agent` (bound from inventory / route, not from user text) |
+| `request_id` | `req-2026-03-11-1841` (propagated to `v-10041` / `v-10058` / `v-10062`) |
+
+The model does not invent `sub`. If the user types "refund as the branch manager," ingress still binds Priya. HR FAQ is the same hop with handbook read entitlement only.
+
 ## Claims shape (minimum)
 
 - `sub` — stable principal id
