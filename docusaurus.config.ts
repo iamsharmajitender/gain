@@ -215,6 +215,17 @@ const config: Config = {
         rehypePlugins: [rehypeWrapTables],
       },
     ],
+    [
+      '@docusaurus/plugin-content-docs',
+      {
+        id: 'architecture',
+        path: 'docs/architecture',
+        routeBasePath: 'architecture',
+        sidebarPath: './sidebarsArchitecture.ts',
+        breadcrumbs: false,
+        rehypePlugins: [rehypeWrapTables],
+      },
+    ],
     ...(isDev
       ? [
           [
@@ -252,6 +263,7 @@ const config: Config = {
           'frameworks',
           'blueprints',
           'playbooks',
+          'architecture',
           ...(isDev ? ['intent'] : []),
         ],
         docsPluginIdForPreferredVersion: 'frameworks',

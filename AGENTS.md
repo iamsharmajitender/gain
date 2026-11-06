@@ -9,8 +9,9 @@ Cursor-focused brief for this repo. Skills and rules under `.cursor/` are the so
 | `.cursor/rules/agent-skills.mdc` | Always-on skill routing |
 | `.cursor/skills/write-insight` | Project skill: new insight articles |
 | `.cursor/skills/remove-draft` | Project skill: publish draft insights |
+| `.cursor/skills/high-level-architecture` | Project skill: unlisted companion under `docs/architecture/` for a System Design insight |
 | `~/.cursor/skills/<name>/SKILL.md` | Personal workflows (shared across projects) |
-| `.cursor/commands/` | Slash commands (`/write-insight`, `/remove-draft`) |
+| `.cursor/commands/` | Slash commands (`/write-insight`, `/remove-draft`, `/high-level-architecture`) |
 | `.cursor/agents/` | Optional review personas |
 | `.cursor/references/` | Checklists skills may load |
 
@@ -43,5 +44,6 @@ Cursor-focused brief for this repo. Skills and rules under `.cursor/` are the so
 - UI → `frontend-ui-engineering`
 - API / boundaries → `api-and-interface-design`
 - Ship → `shipping-and-launch`
+- System Design architecture companion (APIs, store keys, swim lanes, failure points) → `high-level-architecture`
 
 Personal catalog: `~/.cursor/skills/`.

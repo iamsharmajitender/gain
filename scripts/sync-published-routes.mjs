@@ -64,6 +64,11 @@ function isHomepageExcluded(frontmatter) {
   return /^(?!\/\/)\s*homepage:\s*false\s*$/m.test(frontmatter);
 }
 
+/** Architecture companions: published URL, never a list/tag/homepage card (`unlisted: true`). */
+function isUnlisted(frontmatter) {
+  return /^(?!\/\/)\s*unlisted:\s*true\s*$/m.test(frontmatter);
+}
+
 function parseSlug(frontmatter, filePath) {
   const slugMatch = frontmatter.match(/^slug:\s*(.+)$/m);
   if (slugMatch) {
@@ -125,7 +130,7 @@ function scanInsightTags() {
   for (const filePath of readMdxFiles('docs/insights')) {
     const content = fs.readFileSync(filePath, 'utf8');
     const frontmatter = parseFrontmatter(content);
-    if (isDraft(frontmatter)) {
+    if (isDraft(frontmatter) || isUnlisted(frontmatter)) {
       continue;
     }
 
@@ -145,7 +150,7 @@ function scanInsightTypeTags() {
   for (const filePath of readMdxFiles('docs/insights')) {
     const content = fs.readFileSync(filePath, 'utf8');
     const frontmatter = parseFrontmatter(content);
-    if (isDraft(frontmatter)) {
+    if (isDraft(frontmatter) || isUnlisted(frontmatter)) {
       continue;
     }
 
@@ -167,7 +172,7 @@ function scanInsightSeriesTags() {
     const frontmatter = parseFrontmatter(content);
     // Series pills preview drafts in dev (npm start passes --include-drafts);
     // production builds gate them out until a series post is actually published.
-    if (isDraft(frontmatter) && !includeDrafts) {
+    if (isUnlisted(frontmatter) || (isDraft(frontmatter) && !includeDrafts)) {
       continue;
     }
 
@@ -220,8 +225,8 @@ function scanLatestPosts() {
   for (const filePath of readMdxFiles('docs/insights')) {
     const content = fs.readFileSync(filePath, 'utf8');
     const frontmatter = parseFrontmatter(content);
-    // Homepage cards are production surface: never include drafts, even with --include-drafts.
-    if (isDraft(frontmatter)) {
+    // Homepage cards are production surface: never include drafts or unlisted companions.
+    if (isDraft(frontmatter) || isUnlisted(frontmatter)) {
       continue;
     }
 
@@ -310,7 +315,7 @@ export const latestInsights: readonly LatestInsight[] = latestInsightsByTab.all;
   console.log(
     `  homepage insights: all=${latestInsightsByTab.all.length}` +
       SERIES_TAG_IDS.map((id) => `, ${id}=${latestInsightsByTab[id].length}`).join('') +
-      ` (drafts excluded; series tabs include homepage: false)`,
+      ` (drafts and unlisted excluded; series tabs include homepage: false)`,
   );
 }
 
@@ -325,7 +330,7 @@ function scanDraftInsights() {
   for (const filePath of readMdxFiles('docs/insights')) {
     const content = fs.readFileSync(filePath, 'utf8');
     const frontmatter = parseFrontmatter(content);
-    if (!isDraft(frontmatter)) {
+    if (!isDraft(frontmatter) || isUnlisted(frontmatter)) {
       continue;
     }
 

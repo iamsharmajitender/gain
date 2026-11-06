@@ -5,7 +5,7 @@ alwaysApply: true
 
 Before non-trivial technical work:
 
-1. Prefer a matching project skill under `.cursor/skills/<name>/SKILL.md` (this repo: `write-insight`, `remove-draft`).
+1. Prefer a matching project skill under `.cursor/skills/<name>/SKILL.md` (this repo: `write-insight`, `remove-draft`, `high-level-architecture`).
 2. Otherwise read and follow `~/.cursor/skills/<name>/SKILL.md`.
 3. Open `reference.md` in that folder when the skill links to it.
 4. Prefer existing skills over guessing; user does not need to say "read skill" each time.

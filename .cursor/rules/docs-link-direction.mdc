@@ -1,19 +1,20 @@
 ---
-description: Insights may link to G.A.I.N, blueprints, and playbooks; those docs must not link to insights
+description: Insights may link to G.A.I.N, blueprints, playbooks, and their architecture companion; those docs must not link to insights except architecture parent back-links
 globs: docs/**/*.mdx
 alwaysApply: false
 ---
 
 # Docs link direction
 
-Insights are commentary. G.A.I.N, blueprints, and playbooks are the durable product docs. Links go **from insights into product docs**, never the reverse.
+Insights are commentary. G.A.I.N, blueprints, and playbooks are the durable product docs. Architecture companions are unlisted detail pages for System Design insights. Links go **from insights into product docs**, never the reverse, except the architecture ↔ parent pair below.
 
-| Source | May link to `/insights/…` | May link to G.A.I.N / blueprints / playbooks |
-| --- | --- | --- |
-| **Insights** (`docs/insights/`) | Yes (other published insights) | Yes |
-| **G.A.I.N** (`docs/frameworks/`) | **No** | Yes |
-| **Blueprints** (`docs/blueprints/`) | **No** | Yes |
-| **Playbooks** (`docs/playbooks/`) | **No** | Yes |
+| Source | May link to `/insights/…` | May link to `/architecture/…` | May link to G.A.I.N / blueprints / playbooks |
+| --- | --- | --- | --- |
+| **Insights** (`docs/insights/`) | Yes (other published insights) | Yes (that insight's companion only) | Yes |
+| **Architecture** (`docs/architecture/`) | **Parent insight only** | No | Yes |
+| **G.A.I.N** (`docs/frameworks/`) | **No** | **No** | Yes |
+| **Blueprints** (`docs/blueprints/`) | **No** | **No** | Yes |
+| **Playbooks** (`docs/playbooks/`) | **No** | **No** | Yes |
 
 Draft targets are a separate ban: `.cursor/rules/no-links-to-draft-articles.mdc`.
 
@@ -35,8 +36,11 @@ Decision guide: [Enterprise AI Workflow Patterns](/insights/enterprise-ai-workfl
 
 Keep the same idea as plain text, or link a product-doc page instead.
 
+Architecture companions may include **Parent insight:** `[{title}](/insights/{parent-slug})`. That is the only `/insights/` href allowed from `docs/architecture/`.
+
 ## Before finishing
 
-1. New or edited `docs/frameworks/**`, `docs/blueprints/**`, `docs/playbooks/**`: no `/insights/` hrefs.
-2. New or edited insights: outbound `/frameworks/`, `/blueprints/`, `/playbooks/` is fine.
-3. Do not add inbound links to an insight from G.A.I.N, blueprints, or playbooks (including `remove-draft` suggestions).
+1. New or edited `docs/frameworks/**`, `docs/blueprints/**`, `docs/playbooks/**`: no `/insights/` or `/architecture/` hrefs.
+2. New or edited insights: outbound `/frameworks/`, `/blueprints/`, `/playbooks/`, and that story's `/architecture/…` companion is fine.
+3. New or edited `docs/architecture/**` (except `index.mdx`): `/insights/` only for the parent System Design insight.
+4. Do not add inbound links to an insight from G.A.I.N, blueprints, or playbooks (including `remove-draft` suggestions).

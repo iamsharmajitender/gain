@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Virtual waiting room · Architecture</title>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --color-paper:   #f8fafc;
+      --color-ink:     #1e293b;
+      --color-muted:   #64748b;
+      --color-accent:  #3b82f6;
+      --font-sans:     'Inter', system-ui, sans-serif;
+      --font-serif:    'Instrument Serif', serif;
+      --font-mono:     ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background: var(--color-paper);
+      color: var(--color-ink);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem 2rem;
+    }
+
+    .frame { max-width: 1280px; width: 100%; }
+
+    .eyebrow {
+      font-family: var(--font-mono);
+      font-size: 0.66rem;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--color-muted);
+      margin-bottom: 0.5rem;
+    }
+
+    h1 {
+      font-family: var(--font-serif);
+      font-size: clamp(1.5rem, 2.4vw + 0.75rem, 2rem);
+      font-weight: 400;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+      color: var(--color-ink);
+      margin-bottom: 1.5rem;
+    }
+
+    svg { width: 100%; min-width: 960px; display: block; }
+  </style>
+</head>
+<body>
+  <div class="frame">
+    <p class="eyebrow">Architecture · Waiting room</p>
+    <h1>Who talks to whom, request by request</h1>
+
+    <svg viewBox="0 0 1280 720" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="waiting-room-architecture-title waiting-room-architecture-desc">
+      <title id="waiting-room-architecture-title">Virtual waiting room architecture</title>
+      <desc id="waiting-room-architecture-desc">ticket-web sends requests 1 to 5 through api-gateway. Requests 1 to 4 go to waiting-room-service and waiting-room-redis. Request 5 goes to booking-service and inventory-service.</desc>
+      <defs>
+        <marker id="arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#64748b"/></marker>
+        <marker id="arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#3b82f6"/></marker>
+        <marker id="arrow-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#2563eb"/></marker>
+      </defs>
+
+      <rect width="100%" height="100%" fill="#f8fafc"/>
+
+      <!-- Zones -->
+      <rect x="32" y="256" width="192" height="144" rx="8" fill="rgba(30,41,59,0.02)" stroke="rgba(30,41,59,0.10)" stroke-width="0.8"/>
+      <rect x="92" y="260" width="72" height="12" rx="2" fill="#f8fafc"/>
+      <text x="128" y="269" fill="rgba(30,41,59,0.40)" font-size="8" font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace" text-anchor="middle" letter-spacing="0.14em">CLIENT</text>
+
+      <rect x="232" y="256" width="208" height="144" rx="8" fill="rgba(30,41,59,0.02)" stroke="rgba(30,41,59,0.10)" stroke-width="0.8"/>
+      <rect x="296" y="260" width="80" height="12" rx="2" fill="#f8fafc"/>
+      <text x="336" y="269" fill="rgba(30,41,59,0.40)" font-size="8" font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace" text-anchor="middle" letter-spacing="0.14em">GATEWAY</text>
+
+      <rect x="520" y="256" width="496" height="144" rx="8" fill="rgba(30,41,59,0.02)" stroke="rgba(30,41,59,0.10)" stroke-width="0.8"/>
+      <rect x="700" y="260" width="136" height="12" rx="2" fill="#f8fafc"/>
+      <text x="768" y="269" fill="rgba(30,41,59,0.40)" font-size="8" font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace" text-anchor="middle" letter-spacing="0.14em">WAITING ROOM</text>
+
+      <rect x="520" y="448" width="496" height="144" rx="8" fill="rgba(30,41,59,0.02)" stroke="rgba(30,41,59,0.10)" stroke-width="0.8"/>
+      <rect x="724" y="452" width="88" height="12" rx="2" fill="#f8fafc"/>
+      <text x="768" y="461" fill="rgba(30,41,59,0.40)" font-size="8" font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace" text-anchor="middle" letter-spacing="0.14em">BOOKING</text>
+
+      <!-- Arrows -->
+      <line x1="208" y1="328" x2="248" y2="328" stroke="#2563eb" stroke-width="1.2" marker-end="url(#arrow-link)"/>
+      <line x1="424" y1="328" x2="536" y2="328" stroke="#3b82f6" stroke-width="1.4" marker-end="url(#arrow-accent)"/>
+      <line x1="752" y1="328" x2="800" y2="328" stroke="#64748b" stroke-width="1.2" marker-end="url(#arrow)"/>
+      <path d="M 336,368 V 416 H 636 Q 644,416 644,424 V 480" fill="none" stroke="#2563eb" stroke-width="1.2" marker-end="url(#arrow-link)"/>
+      <line x1="752" y1="520" x2="800" y2="520" stroke="#64748b" stroke-width="1.2" marker-end="url(#arrow)"/>
+
+      <!-- Arrow labels -->
+      <rect x="216" y="308" width="24" height="12" rx="2" fill="#f8fafc"/>
+      <text x="228" y="317" fill="#2563eb" font-size="8" font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace" text-anchor="middle" letter-spacing="0.06em">1-5</text>
+
+      <rect x="428" y="300" width="20" height="20" rx="4" fill="#f8fafc" stroke="#3b82f6" stroke-width="1"/>
+      <text x="438" y="314" fill="#1e293b" font-size="12" font-weight="600" font-family="Inter, system-ui, sans-serif" text-anchor="middle">1</text>
+      <rect x="456" y="300" width="20" height="20" rx="4" fill="#f8fafc" stroke="#3b82f6" stroke-width="1"/>
+      <text x="466" y="314" fill="#1e293b" font-size="12" font-weight="600" font-family="Inter, system-ui, sans-serif" text-anchor="middle">2</text>
+      <rect x="484" y="300" width="20" height="20" rx="4" fill="#f8fafc" stroke="#3b82f6" stroke-width="1"/>
+      <text x="494" y="314" fill="#1e293b" font-size="12" font-weight="600" font-family="Inter, system-ui, sans-serif" text-anchor="middle">3</text>
+      <rect x="512" y="300" width="20" height="20" rx="4" fill="#f8fafc" stroke="#3b82f6" stroke-width="1"/>
+      <text x="522" y="314" fill="#1e293b" font-size="12" font-weight="600" font-family="Inter, system-ui, sans-serif" text-anchor="middle">4</text>
+
+      <rect x="760" y="308" width="36" height="12" rx="2" fill="#f8fafc"/>
+      <text x="778" y="317" fill="#64748b" font-size="8" font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace" text-anchor="middle" letter-spacing="0.06em">LINE</text>
+
+      <rect x="456" y="396" width="80" height="12" rx="2" fill="#f8fafc"/>
+      <text x="496" y="405" fill="#2563eb" font-size="8" font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace" text-anchor="middle" letter-spacing="0.06em">5 POST /HOLD</text>
+
+      <rect x="764" y="500" width="32" height="12" rx="2" fill="#f8fafc"/>
+      <text x="780" y="509" fill="#64748b" font-size="8" font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace" text-anchor="middle" letter-spacing="0.06em">RESERVE</text>
+
+      <!-- ticket-web -->
+      <rect x="48" y="288" width="160" height="80" rx="6" fill="#f8fafc"/>
+      <rect x="48" y="288" width="160" height="80" rx="6" fill="rgba(100,116,139,0.10)" stroke="#94a3b8" stroke-width="1"/>
+      <rect x="56" y="296" width="28" height="12" rx="2" fill="transparent" stroke="rgba(148,163,184,0.40)" stroke-width="0.8"/>
+      <text x="70" y="305" fill="#94a3b8" font-size="8" font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace" text-anchor="middle" letter-spacing="0.08em">WEB</text>
+      <text x="128" y="328" fill="#1e293b" font-size="12" font-weight="600" font-family="Inter, system-ui, sans-serif" text-anchor="middle">ticket-web</text>
+      <text x="128" y="348" fill="#64748b" font-size="8" font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace" text-anchor="middle">Maya browser</text>
+
+      <!-- api-gateway -->
+      <rect x="248" y="288" width="176" height="80" rx="6" fill="#f8fafc"/>
+      <rect x="248" y="288" width="176" height="80" rx="6" fill="#ffffff" stroke="#1e293b" stroke-width="1"/>
+      <rect x="256" y="296" width="24" height="12" rx="2" fill="transparent" stroke="rgba(30,41,59,0.40)" stroke-width="0.8"/>
+      <text x="268" y="305" fill="rgba(30,41,59,0.80)" font-size="8" font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace" text-anchor="middle" letter-spacing="0.08em">GW</text>
+      <text x="336" y="328" fill="#1e293b" font-size="12" font-weight="600" font-family="Inter, system-ui, sans-serif" text-anchor="middle">api-gateway</text>
+      <text x="336" y="348" fill="#64748b" font-size="8" font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace" text-anchor="middle">route + pass check</text>
+
+      <!-- waiting-room-service -->
+      <rect x="536" y="288" width="216" height="80" rx="6" fill="#f8fafc"/>
+      <rect x="536" y="288" width="216" height="80" rx="6" fill="rgba(59,130,246,0.08)" stroke="#3b82f6" stroke-width="1"/>
+      <rect x="544" y="296" width="36" height="12" rx="2" fill="transparent" stroke="rgba(59,130,246,0.40)" stroke-width="0.8"/>
+      <text x="562" y="305" fill="#3b82f6" font-size="8" font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace" text-anchor="middle" letter-spacing="0.08em">ROOM</text>
+      <text x="644" y="328" fill="#1e293b" font-size="12" font-weight="600" font-family="Inter, system-ui, sans-serif" text-anchor="middle">waiting-room-service</text>
+      <text x="644" y="348" fill="#64748b" font-size="8" font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace" text-anchor="middle">enter / status / pass</text>
+
+      <!-- waiting-room-redis -->
+      <rect x="800" y="288" width="200" height="80" rx="6" fill="#f8fafc"/>
+      <rect x="800" y="288" width="200" height="80" rx="6" fill="rgba(30,41,59,0.05)" stroke="#64748b" stroke-width="1"/>
+      <rect x="808" y="296" width="40" height="12" rx="2" fill="transparent" stroke="rgba(100,116,139,0.40)" stroke-width="0.8"/>
+      <text x="828" y="305" fill="#64748b" font-size="8" font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace" text-anchor="middle" letter-spacing="0.08em">REDIS</text>
+      <text x="900" y="328" fill="#1e293b" font-size="12" font-weight="600" font-family="Inter, system-ui, sans-serif" text-anchor="middle">waiting-room-redis</text>
+      <text x="900" y="348" fill="#64748b" font-size="8" font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace" text-anchor="middle">line + tickets</text>
+
+      <!-- booking-service -->
+      <rect x="536" y="480" width="216" height="80" rx="6" fill="#f8fafc"/>
+      <rect x="536" y="480" width="216" height="80" rx="6" fill="#ffffff" stroke="#1e293b" stroke-width="1"/>
+      <rect x="544" y="488" width="36" height="12" rx="2" fill="transparent" stroke="rgba(30,41,59,0.40)" stroke-width="0.8"/>
+      <text x="562" y="497" fill="rgba(30,41,59,0.80)" font-size="8" font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace" text-anchor="middle" letter-spacing="0.08em">BOOK</text>
+      <text x="644" y="520" fill="#1e293b" font-size="12" font-weight="600" font-family="Inter, system-ui, sans-serif" text-anchor="middle">booking-service</text>
+      <text x="644" y="540" fill="#64748b" font-size="8" font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace" text-anchor="middle">hold / pay</text>
+
+      <!-- inventory-service -->
+      <rect x="800" y="480" width="200" height="80" rx="6" fill="#f8fafc"/>
+      <rect x="800" y="480" width="200" height="80" rx="6" fill="rgba(30,41,59,0.05)" stroke="#64748b" stroke-width="1"/>
+      <rect x="808" y="488" width="28" height="12" rx="2" fill="transparent" stroke="rgba(100,116,139,0.40)" stroke-width="0.8"/>
+      <text x="822" y="497" fill="#64748b" font-size="8" font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace" text-anchor="middle" letter-spacing="0.08em">INV</text>
+      <text x="900" y="520" fill="#1e293b" font-size="12" font-weight="600" font-family="Inter, system-ui, sans-serif" text-anchor="middle">inventory-service</text>
+      <text x="900" y="540" fill="#64748b" font-size="8" font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace" text-anchor="middle">seat counter</text>
+
+      <!-- Legend -->
+      <line x1="32" y1="652" x2="1248" y2="652" stroke="rgba(30,41,59,0.10)" stroke-width="0.8"/>
+      <text x="32" y="676" fill="#64748b" font-size="8" font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace" letter-spacing="0.14em">REQUESTS</text>
+      <text x="128" y="676" fill="#1e293b" font-size="8" font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace">1 GET /sale</text>
+      <text x="280" y="676" fill="#1e293b" font-size="8" font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace">2 POST /room/enter</text>
+      <text x="472" y="676" fill="#1e293b" font-size="8" font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace">3 GET /room/status</text>
+      <text x="664" y="676" fill="#1e293b" font-size="8" font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace">4 GET /room/status + pass</text>
+      <text x="920" y="676" fill="#1e293b" font-size="8" font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace">5 POST /hold</text>
+    </svg>
+  </div>
+</body>
+</html>

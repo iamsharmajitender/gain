@@ -12,6 +12,27 @@ export interface DraftInsightPage {
 
 export const draftInsightPages: readonly DraftInsightPage[] = [
   {
+    "title": "What Is a Context Window: How It Is Determined, and When It Degrades",
+    "date": "2026-11-06",
+    "description": "The context window is not a single dial. Positional encoding, training length, and KV-cache memory set the max. Quality usually drops before the card number.",
+    "slug": "what-is-a-context-window",
+    "href": "/insights/what-is-a-context-window"
+  },
+  {
+    "title": "What Is an Embedding Model: How Meaning Becomes a Vector You Can Search",
+    "date": "2026-11-06",
+    "description": "An embedding model maps text to one vector so you can compare, not generate. It is the geometry under RAG, search, and cheap classification, and it is not the LLM token table.",
+    "slug": "what-is-an-embedding-model",
+    "href": "/insights/what-is-an-embedding-model"
+  },
+  {
+    "title": "What Is Positional Encoding: How Order Is Injected, and When It Fails",
+    "date": "2026-11-06",
+    "description": "Attention has no sense of order on its own. Absolute tables, RoPE, and ALiBi decide whether a longer position is even representable, and quality fails when you leave the trained geometry.",
+    "slug": "what-is-positional-encoding",
+    "href": "/insights/what-is-positional-encoding"
+  },
+  {
     "title": "Durable Runs Across Workflow Patterns: Survive the Restart",
     "date": "2026-08-17",
     "description": "One Postgres runs row makes Patterns 0-3 restart-safe. Checkpoint shape changes: completion, loop step, stage plus idempotency, or stage plus inner loop.",
@@ -98,7 +119,7 @@ export const draftInsightPages: readonly DraftInsightPage[] = [
   {
     "title": "Virtual Waiting Room: Absorbing the Open-Second Stampede",
     "date": "2026-08-04",
-    "description": "System design of a virtual waiting room: edge admission before booking, Redis-backed queue position, shed under overload, and why 2M users must never hit the book path directly.",
+    "description": "System design of a virtual waiting room: queue the crowd at the edge, admit a trickle to booking, and shed when even waiting is too expensive.",
     "slug": "virtual-waiting-room-system-design",
     "href": "/insights/virtual-waiting-room-system-design"
   },

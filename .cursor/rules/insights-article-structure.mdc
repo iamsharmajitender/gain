@@ -87,6 +87,8 @@ Reference articles: `langchain-vs-langgraph.mdx` (decision guide), `policy-gover
 
 **Examples:** `eval-engineering-control-system-trustworthy-ai`
 
+Architecture companions live under `docs/architecture/` and are **not** an insight type. Use `@high-level-architecture`.
+
 ## Picking the type
 
 | Signal in title or intent | Type |
@@ -97,7 +99,7 @@ Reference articles: `langchain-vs-langgraph.mdx` (decision guide), `policy-gover
 | Stages, lifecycle, "under the hood", worked examples | Explainer |
 | Executive, maturity, "questions to ask", numbered program | Executive |
 
-When unsure, prefer **architecture breakdown** for trace/wire articles and **decision guide** for comparison matrices.
+When unsure, prefer **architecture breakdown** for trace/wire articles and **decision guide** for comparison matrices. High-level architecture companions are `@high-level-architecture`, not this rule.
 
 ## Before finishing
 

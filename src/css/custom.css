@@ -174,12 +174,21 @@
 }
 
 /* ── Shared side navigation (docs, about, advisory - not insights) ── */
+.gain-sidebar,
+.theme-doc-sidebar-container {
+  background: #ffffff;
+  border-right: 1px solid var(--gain-border);
+  --ifm-menu-color: var(--gain-text-muted);
+  --ifm-menu-color-active: var(--gain-navy);
+  --ifm-menu-color-background-active: transparent;
+  --ifm-menu-color-background-hover: transparent;
+  --ifm-menu-link-sublist-icon-filter: none;
+}
+
 .gain-sidebar {
   width: 300px;
   flex-shrink: 0;
   padding: 1rem;
-  border-right: 1px solid var(--gain-border);
-  background: var(--gain-sidebar-bg);
 }
 
 .gain-sidebar__label {
@@ -202,12 +211,13 @@
 }
 
 .gain-sidebar__link,
-.theme-doc-sidebar-container .menu__link:not(.menu__link--sublist) {
+.theme-doc-sidebar-container .menu__link {
   font-family: var(--ifm-font-family-base);
   font-size: 0.9375rem;
   font-weight: 500;
-  border-radius: 6px;
-  color: var(--gain-text);
+  border-radius: 0;
+  color: var(--gain-text-muted);
+  background: transparent;
 }
 
 .gain-sidebar__link {
@@ -226,31 +236,73 @@ button.gain-sidebar__link {
 }
 
 .gain-sidebar__link:hover,
-.theme-doc-sidebar-container .menu__link:not(.menu__link--sublist):hover {
+.theme-doc-sidebar-container .menu__link:hover {
   text-decoration: none;
-  color: var(--gain-blue);
+  color: var(--gain-navy);
+  background: transparent;
 }
 
 .gain-sidebar__link--active,
 .theme-doc-sidebar-container .menu__link--active:not(.menu__link--sublist) {
-  background-color: var(--gain-blue-light);
-  color: var(--gain-blue);
+  background: transparent !important;
+  color: var(--gain-navy);
   font-weight: 600;
+  box-shadow: inset 2px 0 0 var(--gain-blue);
 }
 
-[data-theme='dark'] .gain-sidebar__link--active,
-[data-theme='dark'] .theme-doc-sidebar-container .menu__link--active:not(.menu__link--sublist) {
-  background-color: rgba(59, 130, 246, 0.15);
-  color: #93c5fd;
+.gain-sidebar__link:focus-visible,
+.theme-doc-sidebar-container .menu__link:focus-visible {
+  outline: 2px solid var(--gain-blue);
+  outline-offset: 2px;
 }
 
 /* ── Doc sidebar container ── */
-.theme-doc-sidebar-container {
+.theme-doc-sidebar-container,
+[data-theme='light'] .theme-doc-sidebar-container {
+  background-color: #ffffff !important;
   border-right: 1px solid var(--gain-border) !important;
 }
 
-[data-theme='light'] .theme-doc-sidebar-container {
+[data-theme='dark'] .gain-sidebar,
+[data-theme='dark'] .theme-doc-sidebar-container {
+  background: var(--gain-sidebar-bg) !important;
   background-color: var(--gain-sidebar-bg) !important;
+  border-right-color: var(--gain-border) !important;
+  --ifm-menu-color: rgba(255, 255, 255, 0.75);
+  --ifm-menu-color-active: #ffffff;
+  --ifm-menu-link-sublist-icon-filter: invert(1);
+}
+
+[data-theme='dark'] .gain-sidebar__label,
+[data-theme='dark'] .gain-sidebar__link,
+[data-theme='dark'] .theme-doc-sidebar-container .menu__link {
+  color: rgba(255, 255, 255, 0.75);
+}
+
+[data-theme='dark'] .gain-sidebar__link:hover,
+[data-theme='dark'] .theme-doc-sidebar-container .menu__link:hover,
+[data-theme='dark'] .gain-sidebar__link--active,
+[data-theme='dark'] .theme-doc-sidebar-container .menu__link--active:not(.menu__link--sublist) {
+  color: #ffffff;
+}
+
+.theme-doc-sidebar-container .menu,
+.theme-doc-sidebar-container nav {
+  background: transparent;
+}
+
+.theme-doc-sidebar-container .menu__link--sublist-caret:after,
+.theme-doc-sidebar-container .menu__caret:before {
+  opacity: 0.45;
+  width: 14px;
+  height: 14px;
+  min-width: 14px;
+  background-size: 22px 22px;
+}
+
+.theme-doc-sidebar-container .menu__link:hover:after,
+.theme-doc-sidebar-container .menu__link:hover:before {
+  opacity: 0.9;
 }
 
 .theme-doc-sidebar-container .menu {
@@ -294,7 +346,17 @@ button.gain-sidebar__link {
 }
 
 .theme-doc-sidebar-container .menu__list .menu__list .menu__list-item-collapsible > .menu__link--sublist:hover {
-  color: var(--gain-blue);
+  color: var(--gain-navy);
+}
+
+[data-theme='dark'] .theme-doc-sidebar-container .menu > .menu__list > .menu__list-item > .menu__link--sublist,
+[data-theme='dark'] .theme-doc-sidebar-container .menu > .menu__list > .menu__list-item-collapsible > .menu__link--sublist,
+[data-theme='dark'] .theme-doc-sidebar-container .menu__list .menu__list .menu__list-item-collapsible > .menu__link--sublist {
+  color: rgba(255, 255, 255, 0.55);
+}
+
+[data-theme='dark'] .theme-doc-sidebar-container .menu__list .menu__list .menu__list-item-collapsible > .menu__link--sublist:hover {
+  color: #ffffff;
 }
 
 /* ── Doc content ── */

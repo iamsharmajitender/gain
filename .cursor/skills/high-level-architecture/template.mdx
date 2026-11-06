@@ -1,0 +1,89 @@
+---
+id: {companion-slug}
+slug: /{companion-slug}
+title: "{Story}: High-level architecture"
+description: "{description}"
+draft: true
+pagination_prev: null
+pagination_next: null
+---
+
+<br/>
+![{hero-alt}](./{companion-slug}.png)
+
+# {title}
+
+Detailed architecture for [{parent-title}](/insights/{parent-slug}): services, APIs, store keys, and the request path. The parent insight keeps the claim and the tradeoffs.
+
+## Problem statement
+
+{problem}
+
+## Assumptions
+
+- {assumption-1}
+- {assumption-2}
+
+## Service diagram
+
+{mermaid flowchart of services and stores}
+
+<br/>
+
+## Per-service role, APIs, and store keys
+
+### {service-1}
+
+**Role.** {one or two sentences}
+
+**APIs.**
+
+| Method | Path | Caller | Returns / effect |
+| --- | --- | --- | --- |
+| | | | |
+
+**Store keys.**
+
+| Key / structure | Type | Holds | Operations |
+| --- | --- | --- | --- |
+| | | | |
+
+## Swim lanes per interaction
+
+### {interaction-1}
+
+{mermaid sequenceDiagram}
+
+<br/>
+
+1. **{step}.** {who calls whom, what is read or written, what the client sees}
+
+## Failure points
+
+{one or two sentences: what melts the protected path}
+
+### Kill the protected path
+
+| Failure | Blast | How we handle | What remains |
+| --- | --- | --- | --- |
+| | | | |
+
+### Freeze the scarce pool
+
+| Failure | Blast | How we handle | What remains |
+| --- | --- | --- | --- |
+| | | | |
+
+### Desync two planes
+
+| Failure | Blast | How we handle | What remains |
+| --- | --- | --- | --- |
+| | | | |
+
+### Fairness
+
+| Failure | Blast | How we handle | What remains |
+| --- | --- | --- | --- |
+| | | | |
+
+**Parent insight:** [{parent-title}](/insights/{parent-slug})

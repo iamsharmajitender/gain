@@ -27,7 +27,7 @@ Related rules: `.cursor/rules/no-links-to-draft-articles.mdc` (why inbound links
 ### 1. Identify the target article
 
 - If the user names a file or slug, use that insight.
-- Otherwise list `docs/insights/**/*.mdx` with `draft: true` and ask which to publish (or publish all if they said so).
+- Otherwise list `docs/insights/**/*.mdx` and `docs/architecture/**/*.mdx` (except `index.mdx`) with `draft: true` and ask which to publish (or publish all if they said so).
 
 Record: **file path**, **slug**, **title**, **tags**, **description**, article type (from `insights-article-structure` rule).
 
@@ -45,6 +45,8 @@ Search **`docs/insights/` only**. G.A.I.N, blueprints, and playbooks must not li
 | Draft-to-draft links | other drafts already link to this slug (candidates once published) |
 
 **Only suggest links from pages that will be published** (no `draft: true` on the source file). Skip linking *into* other draft insights unless the user also publishes those.
+
+**Architecture companions** (`docs/architecture/**`): the only inbound link is the parent System Design insight. Do not suggest other insights, `docs/architecture/index.mdx`, tag pages, or homepage cards. When the target is a companion, skip Medium/Optional rows that are not that parent. At publish: remove `draft: true` **and set `unlisted: true`** (docs cannot be both at once).
 
 ### 3. Present the suggestion report
 
@@ -119,7 +121,7 @@ Only run when the user provides **row numbers** from the Phase 1 table (e.g. `1`
 
 **Do not run Phase 2** if the user sent an abort keyword (see above).
 
-1. **Remove draft** from the target insight frontmatter (`draft: true` line or set `draft: false`).
+1. **Remove draft** from the target frontmatter (`draft: true` line or set `draft: false`). If the target is an architecture companion under `docs/architecture/`, also **set `unlisted: true`** (do not leave it listed in the architecture sidebar or sitemap).
 2. **Apply only the numbered rows** the user listed. Skip **Draft source** rows unless the user included those numbers (they are informational by default).
 3. **Do not** apply rows the user omitted.
 4. Run `npm run build` (or report if build cannot run).

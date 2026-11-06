@@ -15,13 +15,13 @@ Two-phase workflow. **Phase 1 proposes only — no files created.** Phase 2 runs
 
 ## Scope
 
-**Insights only.** Creates and scaffolds articles under `docs/insights/`. Companion cross-links in proposals and scaffolds are **`/insights/…` only** — scan `docs/insights/**/*.mdx` for series pairs and `:::info[Builds on]` targets. Finished insights **may** also link to G.A.I.N, blueprints, and playbooks. Those docs must never link back (`docs-link-direction.mdc`).
+**Insights only.** Creates and scaffolds articles under `docs/insights/`. Companion cross-links in proposals and scaffolds are **`/insights/…` only** — scan `docs/insights/**/*.mdx` for series pairs and `:::info[Builds on]` targets. Finished insights **may** also link to G.A.I.N, blueprints, playbooks, and that story's `/architecture/…` companion. Those docs must never link back except the architecture companion's parent back-link (`docs-link-direction.mdc`).
 
 **Folder convention:** `{YYYY-MM-DD}-{slug}/` on disk (e.g. `2026-07-02-what-is-agentic-loop/`). Series nesting: `system-design` → `docs/insights/system-design/…`; `under-the-hood` → `docs/insights/under-the-hood/…`. If both series tags are present, prefer `system-design`. URL and frontmatter `slug:` stay **without** the date or series prefix (`what-is-agentic-loop` → `/insights/what-is-agentic-loop`).
 
 **Rule = shape.** Read `.cursor/rules/insights-article-structure.mdc` for article types and open/close requirements. This skill orchestrates creation; it does not duplicate that rule.
 
-**Companion skills:** `@remove-draft` to publish and add inbound links from **other insights** after the article is ready. Never add links from G.A.I.N, blueprints, or playbooks.
+**Companion skills:** `@remove-draft` to publish and add inbound links from **other insights** after the article is ready. Never add links from G.A.I.N, blueprints, or playbooks. `@high-level-architecture` writes an unlisted companion under `docs/architecture/` (APIs, store keys, swim lanes) for a System Design insight. Do not put that packet in the essay.
 
 ## Invoke
 

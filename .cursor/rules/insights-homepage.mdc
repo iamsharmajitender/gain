@@ -17,7 +17,8 @@ Homepage “latest insights” come from `src/data/latestInsights.generated.ts`,
 ## Do not put these on the homepage
 
 1. **Drafts** (`draft: true`) — never appear in any tab. The sync script skips them even if you pass `--include-drafts`.
-2. **Under the Hood (Internet foundations) series** and any insight that should stay off the flat All strip — set:
+2. **Architecture companions** — they live under `docs/architecture/`, not Insights. They never appear on homepage tabs. Discovery is one link from the parent System Design insight (`@high-level-architecture`).
+3. **Under the Hood (Internet foundations) series** and any insight that should stay off the flat All strip — set:
 
 ```yaml
 homepage: false

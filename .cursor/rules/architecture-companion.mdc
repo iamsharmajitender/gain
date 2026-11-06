@@ -1,0 +1,44 @@
+---
+description: High-level architecture companions under docs/architecture (not insights)
+globs: docs/architecture/**/*.mdx
+alwaysApply: false
+---
+
+# Architecture companion
+
+Pages under `docs/architecture/` except `index.mdx`. Created only by `@high-level-architecture`.
+
+Skip this rule for `docs/architecture/index.mdx` (plugin anchor, unlisted, not a companion).
+
+## Frontmatter
+
+```yaml
+id: {slug}
+slug: /{slug}
+title: "{Story}: High-level architecture"
+description: "{one line}"
+draft: true
+pagination_prev: null
+pagination_next: null
+```
+
+Docusaurus docs cannot be `draft` and `unlisted` at once. Draft with `draft: true` only. At publish, remove `draft` and set `unlisted: true`. Do not add insight `tags`, `authors`, or `homepage`. Do not put these files under `docs/insights/`.
+
+## Required body
+
+Hero PNG co-located as `{slug}.png`, then six H2s in this order:
+
+1. Problem statement
+2. Assumptions
+3. Service diagram
+4. Per-service role, APIs, and store keys
+5. Swim lanes per interaction
+6. Failure points (load, RPS, memory, and shed are rows here, not a second table)
+
+Open and close with a back-link to the parent System Design insight. No `:::tip[THE CLAIM]`, no `## Where I land`, no `## Key takeaways`.
+
+## Discovery
+
+One inbound link from the parent insight. No navbar item, no Insights card, no sitemap section, no docs sidebar entry.
+
+Full packet: `.cursor/skills/high-level-architecture/SKILL.md` and `reference.md`.

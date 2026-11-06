@@ -13,7 +13,7 @@ import DocBreadcrumbs from '@theme/DocBreadcrumbs';
 import ContentVisibility from '@theme/ContentVisibility';
 import ContextualBackLink from '@site/src/components/ContextualBackLink';
 import ViewCounter from '@site/src/components/ViewCounter';
-import {backToFrameworks} from '@site/src/data/contextualBackLinks';
+import {backToFrameworks, backToInsights} from '@site/src/data/contextualBackLinks';
 import type {Props} from '@theme/DocItem/Layout';
 
 import styles from './styles.module.css';
@@ -52,6 +52,19 @@ function FrameworkBackLink(): ReactNode {
   return <ContextualBackLink {...backToFrameworks} />;
 }
 
+function ArchitectureBackLink(): ReactNode {
+  const {metadata} = useDoc();
+  const isArchitectureIndex =
+    metadata.pluginId === 'architecture' &&
+    (metadata.slug === '/' || metadata.permalink === '/architecture');
+
+  if (metadata.pluginId !== 'architecture' || isArchitectureIndex) {
+    return null;
+  }
+
+  return <ContextualBackLink {...backToInsights} />;
+}
+
 export default function DocItemLayout({children}: Props): ReactNode {
   const docTOC = useDocTOC();
   const {metadata} = useDoc();
@@ -63,6 +76,7 @@ export default function DocItemLayout({children}: Props): ReactNode {
         <div className={styles.docItemContainer}>
           <article>
             <FrameworkBackLink />
+            <ArchitectureBackLink />
             <DocBreadcrumbs />
             <DocVersionBadge />
             <div className="gain-view-counter">
